@@ -11,7 +11,7 @@
     du[1] = u[2]
     du[2] = aux - aux5 * aux4
     du[3] = u[4]
-    du[4] = aux3 / aux2 * aux4
+    du[4] = aux3 * aux4
     
     return du
 end
