@@ -7,13 +7,13 @@ _vec(A::AbstractVector) = A
 
 
 """
-    readnn(file, key="controller")
+    readnn(file; key="controller")
 
-Return the list of vertices of a polyhedron in constraint representation.
+Return the neural network using the internal format of NeuralVerification.jl.
 
 ### Input
 
-- `file` -- string indicating the location of the file containing the NN
+- `file` -- string indicating the location of the file containing the neural network
 - `key` -- (optional, default: `"controller"`) key used to search the dictionary
 
 ### Output
@@ -21,7 +21,7 @@ Return the list of vertices of a polyhedron in constraint representation.
 A Neural Network using the internal format of NeuralVerification.jl
 
 """
-function readnn(file, key="controller")
+function readnn(file; key="controller")
     vars = matread(file)
     !haskey(vars, key) && throw(ArgumentError("didn't find key $key"))
     dic = vars[key]
