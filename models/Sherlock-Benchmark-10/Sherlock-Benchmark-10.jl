@@ -11,7 +11,7 @@ using ReachabilityAnalysis
 end
 
 # define the initial-value problem
-X₀ = Hyperrectangle(low=[9.5, -4.5, 2.1, 1.5, -1e-4], high=[9.55, -4.45, 2.11, 1.55, 1e-1])
+X₀ = Hyperrectangle(low=[9.5, -4.5, 2.1, 1.5, -1e-4], high=[9.55, -4.45, 2.11, 1.51, 1e-1])
 
 prob = @ivp(x' = benchmark10!(x), dim: 5, x(0) ∈ X₀)
 
