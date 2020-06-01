@@ -6,15 +6,15 @@ DocMeta.setdocmeta!(NeuralNetworkAnalysis, :DocTestSetup,
 makedocs(
     sitename = "NeuralNetworkAnalysis.jl",
     modules = [NeuralNetworkAnalysis],
-    format = Documenter.HTML(
-        prettyurls = get(ENV, "CI", nothing) == "true",
+    format = Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true"),
     pages = [
         "Home" => "index.md",
         "About" => "about.md"
     ],
-    strict = true
+    strict = false
 )
 
 deploydocs(
     repo = "github.com/JuliaReach/NeuralNetworkAnalysis.jl.git",
+    push_preview=true
 )
