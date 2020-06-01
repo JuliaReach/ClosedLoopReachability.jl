@@ -7,7 +7,11 @@ _vec(A::AbstractVector) = A
 
 function readnn(file)
     vars = matread(file)
-    dic = vars["controller"]
+    if(first(keys(vars)) == "controller")
+        dic = vars["controller"]
+    else
+        error("error, did not found key \"controller\"")
+    end
 
     nLayers = Int(dic["number_of_layers"])
     layers = Vector{Layer}(undef, nLayers)
