@@ -7,7 +7,7 @@ _vec(A::AbstractVector) = A
 
 function readnn(file, key="controller")
     vars = matread(file)
-    !haskey(vars, key) && throw(ArgumentError("didn't find key \"controller\""))
+    !haskey(vars, key) && throw(ArgumentError("didn't find key $key"))
     dic = vars[key]
 
     nLayers = Int(dic["number_of_layers"])
