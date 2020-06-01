@@ -8,7 +8,6 @@ makedocs(
     modules = [NeuralNetworkAnalysis],
     format = Documenter.HTML(
         prettyurls = get(ENV, "CI", nothing) == "true",
-        assets = ["assets/juliareach.css"]),
     pages = [
         "Home" => "index.md",
         "About" => "about.md"
