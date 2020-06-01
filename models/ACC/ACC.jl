@@ -2,21 +2,14 @@ using ReachabilityAnalysis
 
 @taylorize function ACC!(dx, x, p, t)
     local u, a_lead, a_ego = 0.0001, -2., -1.
-    # x[1] = x_lead
-    # x[2] = v_lead
-    # x[3] = γ_lead
-    # x[4] = x_ego
-    # x[5] = v_ego
-    # x[6] = γ_ego
-
-    aux = 2 * u
+    x_lead, v_lead, γ_lead, x_ego, v_ego, γ_ego = x
     
-    dx[1] = x[2]
-    dx[2] = x[3]
-    dx[3] = -2 * x[3] + 2 * a_lead - aux * x[2] * x[2]
-    dx[4] = x[5]
-    dx[5] = x[6]
-    dx[6] = -2 * x[6] + 2 * a_ego - aux * x[5] * x[5]
+    dx[1] = v_lead
+    dx[2] = γ_lead
+    dx[3] = 2 * (a_lead - γ_lead) - u * v_lead^2
+    dx[4] = v_ego
+    dx[5] = γ_ego
+    dx[6] = 2 * (a_ego - γ_ego) - u * v_ego^2
     return dx
 end
 
