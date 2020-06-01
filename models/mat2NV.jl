@@ -20,7 +20,7 @@ function readnn(file)
     for n = 1:nLayers
         W = dic["W"][n]
         b = dic["b"][n]
-        if(aF[n] == "relu")
+        if aF[n] == "relu"
             act = ReLU()
         elseif(aF[n] == "linear")
             act = Id()
