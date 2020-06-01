@@ -37,3 +37,4 @@ jobs:
                                                Pkg.instantiate();'
         - travis_wait 25 julia --project=docs/ docs/make.jl
       after_success: skip
+      
