@@ -31,4 +31,4 @@ function readnn(file)
     end
 
     return Network(layers)
-ends
+end
