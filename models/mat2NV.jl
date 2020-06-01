@@ -5,13 +5,10 @@ _vec(A::AbstractMatrix) = vec(A)
 _vec(A::Number) = [A]
 _vec(A::AbstractVector) = A
 
-function readnn(file)
+function readnn(file, key="controller")
     vars = matread(file)
-    if(first(keys(vars)) == "controller")
-        dic = vars["controller"]
-    else
-        error("error, did not found key \"controller\"")
-    end
+    !haskey(vars, key) && throw(ArgumentError("didn't find key \"controller\""))
+    dic = vars[key]
 
     nLayers = Int(dic["number_of_layers"])
     layers = Vector{Layer}(undef, nLayers)
