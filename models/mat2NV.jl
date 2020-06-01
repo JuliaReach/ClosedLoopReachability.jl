@@ -22,7 +22,7 @@ function readnn(file)
         b = dic["b"][n]
         if aF[n] == "relu"
             act = ReLU()
-        elseif(aF[n] == "linear")
+        elseif aF[n] == "linear"
             act = Id()
         else
             error("error, aF = $(aF[n]), nLayer = $n")
