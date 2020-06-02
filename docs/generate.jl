@@ -2,8 +2,8 @@
 import Literate
 
 MODELS = [
-    joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-9"),
-    joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-10")
+    joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-7"),
+    joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-9")
 ]
 GENERATEDDIR = joinpath(@__DIR__, "src", "models")
 mkpath(GENERATEDDIR)
