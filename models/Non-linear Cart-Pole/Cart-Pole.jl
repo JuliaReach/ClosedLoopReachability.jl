@@ -25,7 +25,7 @@
 # respectively, and two outputs. The two outputs are then compared, and the
 # input sent to the plant depends on which output index has the greatest value.
 #  Thus, as an example if ``output_1 > output_2`` then the input force supplied
-# to the plant is 10.  However if ``output1 < output2`` then the input supplied
+# to the plant is 10.  However if ``output_1 < output_2`` then the input supplied
 # to the plant is -10.
 
 @taylorize function cartpole!(du, u, p, t)
