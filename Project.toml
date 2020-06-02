@@ -1,6 +1,6 @@
 name = "NeuralNetworkAnalysis"
 uuid = "73c0b437-a350-4e9b-97ac-9adb151c271b"
-authors = ["SebastianGuadalupe <sebastianguadalupe00@gmail.com>", "mforets <mforets@gmail.com>"]
+authors = ["Sebastian Guadalupe <sebastianguadalupe00@gmail.com>", "Marcelo Forets <mforets@gmail.com>"]
 version = "0.1.0"
 
 [compat]
