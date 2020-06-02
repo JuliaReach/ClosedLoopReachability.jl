@@ -10,7 +10,7 @@ mkpath(GENERATEDDIR)
 for model in MODELS
     for file in model
         if endswith(file, ".jl")
-            input = abspath(joinpath(EXAMPLEDIR, model))
+            input = abspath(joinpath(model, file))
             script = Literate.script(input, GENERATEDDIR)
             code = strip(read(script, String))
             mdpost(str) = replace(str, "@__CODE__" => code)
