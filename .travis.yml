@@ -7,7 +7,6 @@ os:
   - linux
 
 julia:
-  - 1.0
   - 1.4
 
 cache:
@@ -37,4 +36,3 @@ jobs:
                                                Pkg.instantiate();'
         - travis_wait 25 julia --project=docs/ docs/make.jl
       after_success: skip
-      
