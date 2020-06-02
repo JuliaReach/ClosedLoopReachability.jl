@@ -12,6 +12,9 @@ makedocs(
     format = Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true"),
     pages = [
         "Home" => "index.md",
+        "Examples" => Any["3D model with sliding controller" => "models/Sherlock-Benchmark-7.md",
+                          "TORA" => "models/Sherlock-Benchmark-9.md"
+                         ],
         "About" => "about.md"
     ],
     strict = false
