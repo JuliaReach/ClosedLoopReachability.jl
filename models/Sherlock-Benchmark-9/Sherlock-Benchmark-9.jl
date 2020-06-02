@@ -18,7 +18,7 @@
 # \end{aligned}
 # ```
 
-using ReachabilityAnalysis
+using NeuralNetworkAnalysis
 
 @taylorize function benchmark9!(dx, x, p, t)
     u = one(x[4])
