@@ -3,6 +3,7 @@ import Literate
 
 MODELS = [
     joinpath(@__DIR__, "..", "models", "Non-Linear Cart-Pole"),
+    joinpath(@__DIR__, "..", "models", "ACC"),
     joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-7"),
     joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-9")
 ]
