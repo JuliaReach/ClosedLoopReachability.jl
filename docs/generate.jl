@@ -8,7 +8,7 @@ MODELS = [
 GENERATEDDIR = joinpath(@__DIR__, "src", "models")
 mkpath(GENERATEDDIR)
 for model in MODELS
-    for file in model
+    for file in readdir(model)
         if endswith(file, ".jl")
             input = abspath(joinpath(model, file))
             script = Literate.script(input, GENERATEDDIR)
