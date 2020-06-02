@@ -1,6 +1,6 @@
 # # Non-linear Cart-Pole
 #
-# The model was a version of the cart-pole introduced by Barto, Sutton, and Anderson in [xxx].
+# The model is a version of the cart-pole introduced by Barto, Sutton, and Anderson in [xxx].
 
 # ## Model
 #
