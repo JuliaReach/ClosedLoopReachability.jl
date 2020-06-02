@@ -19,9 +19,9 @@
 # or right, ``g = 9.8`` is gravity, ``m = 0.1`` is the pole’s mass, ``l = 0.5``
 # is half the pole’s length , ``mt = 1.1`` is the total mass, ``x`` is the
 # position of the cart, θ is the angle of the pendulum with respect to the
-# positive y-axis, ``v = ̇x`` is the linear velocity of the cart, and
+# positive y-axis, ``v = dot{x}`` is the linear velocity of the cart, and
 # ``ω = ̇θ`` is the angular velocity of the pendulum. The controller has four
-# inputs ``(x, ̇x, θ, ̇θ)``, four layers with ``[24,48,12,2]`` neurons
+# inputs ``(x, dot{x}, θ, ̇θ)``, four layers with ``[24,48,12,2]`` neurons
 # respectively, and two outputs. The two outputs are then compared, and the
 # input sent to the plant depends on which output index has the greatest value.
 #  Thus, as an example if ``output_1 > output_2`` then the input force supplied
@@ -56,10 +56,12 @@ prob = @ivp(x' = cartpole!(x), dim: 4, x(0) ∈ X₀)
 
 # ## Specifications
 #
-# The verification problem here is that of reachability. For an initial set of
-# ``x1 ∈ [9.5,9.55], x2 ∈ [−4.5,−4.45], x3 ∈ [2.1,2.11], x4 ∈ [1.5,1.51]``, it
-# is required to prove that the system reaches the set ``x1 ∈ [−0.6,0.6], x2 ∈``
-# [−0.2,0.2], x3 ∈ [−0.06,0.06], x4 ∈ [−0.3,0.3]`` within a time window of 10s.
+# For this benchmark, the verification objective is to demonstrate that the
+# pole will eventually reach the upward position and that it will remain there.
+#  In other words, the goal is to achieve a value of ``θ = 0`` and stay there.
+#  Some other specifications to be met are, for at least 12 seconds,
+# ``x ∈ [-2.4,2.4]`` and ``θ ∈ [-15,15]`` degrees. The initial conditions for
+# all state variables were chosen uniformly at random between ``[-0.05, 0.05]``.
 
 # ## Results
 
