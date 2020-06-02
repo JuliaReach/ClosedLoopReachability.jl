@@ -28,6 +28,8 @@
 # to the plant is 10.  However if ``output_1 < output_2`` then the input supplied
 # to the plant is -10.
 
+using ReachabilityAnalysis
+
 @taylorize function cartpole!(du, u, p, t)
     local f, m, l, mt, g = 10, 0.1, 0.5, 1.1, 9.8
     sinθ = sin(u[3])
@@ -52,7 +54,7 @@ X₀ = Hyperrectangle(low=[-0.05, -0.05, -0.05, -0.05], high=[0.05, 0.05, 0.05, 
 prob = @ivp(x' = cartpole!(x), dim: 4, x(0) ∈ X₀)
 
 # solve it
-@time sol = solve(prob, T=1.0, alg=TMJets(max_steps=20_000, abs_tol=1e-10));
+## sol = solve(prob, T=1.0, alg=TMJets(max_steps=20_000, abs_tol=1e-10));
 
 # ## Specifications
 #

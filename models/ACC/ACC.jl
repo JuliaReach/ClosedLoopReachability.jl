@@ -52,7 +52,7 @@ X₀ = Hyperrectangle(low=[90., 32, 0, 10, 30, 0], high=[110, 32.2, 0, 11, 30.2,
 prob = @ivp(x' = ACC!(x), dim: 6, x(0) ∈ X₀)
 
 # solve it
-sol = solve(prob, T=0.1);
+##sol = solve(prob, T=0.1);
 
 # ## Specifications
 #

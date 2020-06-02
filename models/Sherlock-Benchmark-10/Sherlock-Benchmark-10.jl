@@ -40,7 +40,7 @@ X₀ = Hyperrectangle(low=[9.5, -4.5, 2.1, 1.5, -1e-4], high=[9.55, -4.45, 2.11,
 prob = @ivp(x' = benchmark10!(x), dim: 5, x(0) ∈ X₀)
 
 # solve it
-sol = solve(prob, T=10.0);
+##sol = solve(prob, T=10.0);
 
 # ## Specifications
 #
