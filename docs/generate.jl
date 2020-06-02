@@ -14,11 +14,11 @@ for model in MODELS
     for file in readdir(model)
         if endswith(file, ".jl")
             input = abspath(joinpath(model, file))
-            script = Literate.script(input, GENERATEDDIR)
+            script = Literate.script(input, GENERATEDDIR, credit = false)
             code = strip(read(script, String))
             mdpost(str) = replace(str, "@__CODE__" => code)
             Literate.markdown(input, GENERATEDDIR, postprocess = mdpost, credit = false)
-            Literate.notebook(input, GENERATEDDIR, execute = true)
+            Literate.notebook(input, GENERATEDDIR, execute = true, credit = false)
         elseif any(endswith.(file, [".png", ".jpg", ".gif"]))
             cp(joinpath(model, file), joinpath(GENERATEDDIR, file); force=true)
         else
