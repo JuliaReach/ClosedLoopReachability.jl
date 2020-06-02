@@ -56,7 +56,7 @@ prob = @ivp(x' = cartpole!(x), dim: 4, x(0) ∈ X₀)
 
 # ## Specifications
 #
-# The verification problem here is that of reachability. For an initial set of,
+# The verification problem here is that of reachability. For an initial set of
 # ``x1 ∈ [9.5,9.55], x2 ∈ [−4.5,−4.45], x3 ∈ [2.1,2.11], x4 ∈ [1.5,1.51]``, it
 # is required to prove that the system reaches the set ``x1 ∈ [−0.6,0.6], x2 ∈``
 # [−0.2,0.2], x3 ∈ [−0.06,0.06], x4 ∈ [−0.3,0.3]`` within a time window of 10s.
