@@ -1,7 +1,7 @@
 # # Unicycle Car Model
 #
 # This benchmark is that of a unicycle model of a car [xxx]. It models the
-# dynamics of a car involving 4 variables, specifically the x and y
+# dynamics of a car involving 4 variables, specifically the ``x`` and ``y``
 # coordinates on a 2 dimensional plane, as well as velocity magnitude (speed)
 # and steering angle.
 
@@ -17,7 +17,7 @@
 # \dot{x}_4 &= u_1 + w
 # \end{aligned}
 # ```
-# where w is a bounded error in the range ``[−1e−4, 1e−4]``. A neural network
+# where ``w`` is a bounded error in the range ``[−1e−4, 1e−4]``. A neural network
 # controller was trained for this system, using a model predictive controller
 # as a ”demonstrator” or ”teacher”. The trained network has 1 hidden layer,
 # with 500 neurons. The sampling time for this controller was 0.2s.

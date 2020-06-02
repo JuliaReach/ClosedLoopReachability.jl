@@ -8,10 +8,10 @@
 #
 # ```math
 # \begin{aligned}
-# \ddot{x} &= \dfrac{u + mlω^2*sin(θ)}{mt} - \dfrac{ml(g sin(θ)- cos(θ))
-#             (\dfrac{u + mlω^2*sin(θ)}{mt})}{l(\dfrac{4}{3} - \dfrac{m cos(θ)^2}{mt})}
+# \ddot{x} &= \dfrac{u + mlω^2sin(θ)}{mt} - \dfrac{ml(g sin(θ)- cos(θ))
+#             (\dfrac{u + mlω^2sin(θ)}{mt})}{l(\dfrac{4}{3} - \dfrac{m cos(θ)^2}{mt})}
 #             \dfrac{cos(θ)}{mt}    \\
-# \ddot{θ} &= \dfrac{(g sin(θ)- cos(θ))(\dfrac{u + mlω^2*sin(θ)}{mt})}{l(\dfrac{4}{3}
+# \ddot{θ} &= \dfrac{(g sin(θ)- cos(θ))(\dfrac{u + mlω^2sin(θ)}{mt})}{l(\dfrac{4}{3}
 #             - \dfrac{m cos(θ)^2}{mt})} \dfrac{cos(θ)}{mt}
 # \end{aligned}
 # ```
@@ -19,9 +19,9 @@
 # or right, ``g = 9.8`` is gravity, ``m = 0.1`` is the pole’s mass, ``l = 0.5``
 # is half the pole’s length , ``mt = 1.1`` is the total mass, ``x`` is the
 # position of the cart, θ is the angle of the pendulum with respect to the
-# positive y-axis, ``v = dot{x}`` is the linear velocity of the cart, and
+# positive y-axis, ``v = \dot{x}`` is the linear velocity of the cart, and
 # ``ω = ̇θ`` is the angular velocity of the pendulum. The controller has four
-# inputs ``(x, dot{x}, θ, ̇θ)``, four layers with ``[24,48,12,2]`` neurons
+# inputs ``(x, \dot{x}, θ, ̇θ)``, four layers with ``[24,48,12,2]`` neurons
 # respectively, and two outputs. The two outputs are then compared, and the
 # input sent to the plant depends on which output index has the greatest value.
 #  Thus, as an example if ``output_1 > output_2`` then the input force supplied

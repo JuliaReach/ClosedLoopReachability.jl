@@ -25,8 +25,8 @@
 # ```
 # where ``x_i`` is the position, ``v_i`` is the velocity, ``γ_i`` is the
 # acceleration of the car, ``a_i`` is the acceleration control input applied
-# to the car, and ``u = 0.0001``` is the friction control where 
-# ``i ∈ {ego, lead}. For this benchmark we have developed four neural network
+# to the car, and ``u = 0.0001`` is the friction control where 
+# ``i ∈ {ego, lead}``. For this benchmark we have developed four neural network
 # controllers with 3, 5, 7, and 10 hidden layers of 20 neurons each. All of
 # them have the same number of inputs ``(v_{set},T_{gap},v_{ego},D_{rel},v_{rel})``,
 # and one output (``a_ego``).
