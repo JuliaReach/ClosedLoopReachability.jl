@@ -3,6 +3,9 @@ using Documenter, NeuralNetworkAnalysis
 DocMeta.setdocmeta!(NeuralNetworkAnalysis, :DocTestSetup,
                     :(using NeuralNetworkAnalysis); recursive=true)
 
+# Generate models
+include("generate.jl")
+
 makedocs(
     sitename = "NeuralNetworkAnalysis.jl",
     modules = [NeuralNetworkAnalysis],
