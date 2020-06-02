@@ -24,7 +24,7 @@
 # inputs ``(x, ̇x, θ, ̇θ)``, four layers with ``[24,48,12,2]`` neurons
 # respectively, and two outputs. The two outputs are then compared, and the
 # input sent to the plant depends on which output index has the greatest value.
-#  Thus, as an example if ``output1 > output2`` then the input force supplied
+#  Thus, as an example if ``output_1 > output_2`` then the input force supplied
 # to the plant is 10.  However if ``output1 < output2`` then the input supplied
 # to the plant is -10.
 
