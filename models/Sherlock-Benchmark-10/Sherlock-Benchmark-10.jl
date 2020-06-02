@@ -22,7 +22,7 @@
 # as a ”demonstrator” or ”teacher”. The trained network has 1 hidden layer,
 # with 500 neurons. The sampling time for this controller was 0.2s.
 
-using ReachabilityAnalysis
+using NeuralNetworkAnalysis
 
 @taylorize function benchmark10!(dx, x, p, t)
     u1, u2 = one(x[5]), one(x[5])
