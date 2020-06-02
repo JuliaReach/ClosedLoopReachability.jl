@@ -18,8 +18,3 @@ for example in readdir(EXAMPLEDIR)
         @warn "ignoring $example"
     end
 end
-
-# remove any .vtu files in the generated dir (should not be deployed)
-cd(GENERATEDDIR) do
-    foreach(file -> endswith(file, ".vtu") && rm(file), readdir())
-end
