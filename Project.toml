@@ -6,13 +6,16 @@ version = "0.1.0"
 [compat]
 julia = "1"
 ReachabilityAnalysis = "0.5, 0.6"
+Reexport = "0.2"
 
 [deps]
 ReachabilityAnalysis = "1e97bd63-91d1-579d-8e8d-501d2b57c93f"
+Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+
 
 [targets]
 test = ["Test", "Plots"]
