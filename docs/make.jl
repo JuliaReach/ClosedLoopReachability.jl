@@ -14,6 +14,7 @@ makedocs(
         "Home" => "index.md",
         "Examples" => Any["3D model with sliding controller" => "models/Sherlock-Benchmark-7.md",
                           "TORA" => "models/Sherlock-Benchmark-9.md"
+                          "Non-Linear Cart-Pole" => "models/Cart-Pole.md"
                          ],
         "About" => "about.md"
     ],
