@@ -11,7 +11,7 @@
 # \ddot{x} &= \dfrac{u + mlω^2*sin(θ)}{mt} - \dfrac{ml(g sin(θ)- cos(θ))
 #             (\dfrac{u + mlω^2*sin(θ)}{mt})}{l(\dfrac{4}{3} - \dfrac{m cos(θ)^2}{mt})}
 #             \dfrac{cos(θ)}{mt}    \\
-# \ddot{θ} &= \dfrac{g sin(θ)- cos(θ)(\dfrac{u + mlω^2*sin(θ)}{mt})}{l(\dfrac{4}{3}
+# \ddot{θ} &= \dfrac{(g sin(θ)- cos(θ))(\dfrac{u + mlω^2*sin(θ)}{mt})}{l(\dfrac{4}{3}
 #             - \dfrac{m cos(θ)^2}{mt})} \dfrac{cos(θ)}{mt}
 # \end{aligned}
 # ```
