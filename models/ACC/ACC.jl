@@ -5,7 +5,7 @@
 # the longitudinal acceleration of an ego vehicle.
 # The neural network computes optimal control actions while satisfying safe
 # distance, velocity, and acceleration constraints using model predictive
-# control (MPC) [xxx].
+# control (MPC) [1].
 
 # ## Model
 #
@@ -70,5 +70,8 @@ prob = @ivp(x' = ACC!(x), dim: 6, x(0) ∈ X₀)
 
 # ## References
 
-#
+# [1]  S. Joe Qin and Thomas A. Badgwell. An overview of nonlinear model
+# predictive control appli-cations. In Frank Allg ̈ower and Alex Zheng,
+# editors, Nonlinear  Model  Predictive  Control, pages 369–392,
+# Basel, 2000. Birkh ̈auser Basel.
 #
