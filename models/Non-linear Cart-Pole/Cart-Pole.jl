@@ -6,7 +6,7 @@
 #md #     [`Cart-Pole.ipynb`](__NBVIEWER_ROOT_URL__/../Cart-Pole.ipynb)
 #
 #
-# The model is a version of the cart-pole introduced by Barto, Sutton, and Anderson in [xxx].
+# The model is a version of the cart-pole introduced by Barto, Sutton, and Anderson in [1].
 
 # ## Model
 #
@@ -75,5 +75,8 @@ prob = @ivp(x' = cartpole!(x), dim: 4, x(0) ∈ X₀)
 
 # ## References
 
-#
+# [1] [A. G. Barto, R. S. Sutton, and C. W. Anderson. Neuronlike adaptive
+# elements that can solve difficult learning control problems.
+# IEEE Transactions on Systems, Man, and Cybernetics, SMC-13(5):834–846,
+# Sep. 1983](https://ieeexplore.ieee.org/abstract/document/6313077).
 #
