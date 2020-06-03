@@ -1,5 +1,11 @@
 # # Non-linear Cart-Pole
 #
+#
+#md # !!! tip
+#md #     This example is also available as a Jupyter notebook:
+#md #     [`Cart-Pole.ipynb`](__NBVIEWER_ROOT_URL__/../Cart-Pole.ipynb)
+#
+#
 # The model is a version of the cart-pole introduced by Barto, Sutton, and Anderson in [1].
 
 # ## Model

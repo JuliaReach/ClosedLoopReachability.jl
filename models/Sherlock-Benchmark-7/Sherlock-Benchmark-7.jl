@@ -1,5 +1,11 @@
 # # 3D system with sliding mode controller
 #
+#
+#md # !!! tip
+#md #     This example is also available as a Jupyter notebook:
+#md #     [`Sherlock-Benchmark-7.ipynb`](__NBVIEWER_ROOT_URL__/../Sherlock-Benchmark-7.ipynb)
+#
+#
 # The model was first proposed in [1], where the authors originally designed a
 # discontinuous sliding mode controller for this system.
 

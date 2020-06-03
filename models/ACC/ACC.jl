@@ -1,5 +1,11 @@
 # # Adaptive Cruise Controller
 #
+#
+#md # !!! tip
+#md #     This example is also available as a Jupyter notebook:
+#md #     [`ACC.ipynb`](__NBVIEWER_ROOT_URL__/../ACC.ipynb)
+#
+#
 # The Adaptive Cruise Control (ACC) System simulates a system that tracks a
 # set velocity and maintains a safe distance from a lead vehicle by adjusting
 # the longitudinal acceleration of an ego vehicle.
@@ -62,9 +68,9 @@ prob = @ivp(x' = ACC!(x), dim: 6, x(0) ∈ X₀)
 # Formally, this safety specification ofthe system can be expressed as
 # ``D_{rel} = x_{lead} - x_{ego} ≥ D_{safe}``, where
 # ``D_{safe} = D_{default} + T_{gap} × v_{ego}``, and
-# ``T_{gap} = 1.4 seconds and D_{default} = 10``. The initial conditions are:
-# ``x_{lead}(0) ∈ [90,110], v_{lead}(0) ∈ [32,32.2],γ_{lead}(0) = γ_{ego}(0) = 0``,
-# v_{ego}(0)∈[30, 30.2], x_{ego} ∈ [10,11].
+# ``T_{gap} = 1.4`` seconds and ``D_{default} = 10``. The initial conditions are:
+# ``x_{lead}(0) ∈ [90,110], v_{lead}(0) ∈ [32,32.2], γ_{lead}(0) = γ_{ego}(0) = 0``,
+# ``v_{ego}(0) ∈ [30, 30.2], x_{ego} ∈ [10,11]``.
 
 # ## Results
 
