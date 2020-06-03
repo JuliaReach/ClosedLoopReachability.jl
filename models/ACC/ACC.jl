@@ -63,7 +63,7 @@ prob = @ivp(x' = ACC!(x), dim: 6, x(0) ∈ X₀)
 # ``D_{rel} = x_{lead} - x_{ego} ≥ D_{safe}``, where
 # ``D_{safe} = D_{default} + T_{gap} × v_{ego}``, and
 # ``T_{gap} = 1.4`` seconds and ``D_{default} = 10``. The initial conditions are:
-# ``x_{lead}(0) ∈ [90,110], v_{lead}(0) ∈ [32,32.2], sγ_{lead}(0) = γ_{ego}(0) = 0``,
+# ``x_{lead}(0) ∈ [90,110], v_{lead}(0) ∈ [32,32.2], γ_{lead}(0) = γ_{ego}(0) = 0``,
 # ``v_{ego}(0) ∈ [30, 30.2], x_{ego} ∈ [10,11]``.
 
 # ## Results
