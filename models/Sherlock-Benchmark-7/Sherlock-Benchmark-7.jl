@@ -52,7 +52,7 @@ prob = @ivp(x' = f!(x), dim: 5, x(0) ∈ X₀ × W₀ × U₀);
 
 # ## References
 
-# [1] Dong-Hae Yeom and Young Hoon Joo. Control lyapunov function design by
+# [1] [Dong-Hae Yeom and Young Hoon Joo. Control lyapunov function design by
 # cancelling input singularity. International Journal of Fuzzy Logic and
-# Intelligent Systems, 12, 06 2012.
+# Intelligent Systems, 12, 06 2012](http://www.koreascience.or.kr/article/JAKO201220962918909.page).
 #

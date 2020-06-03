@@ -70,8 +70,8 @@ prob = @ivp(x' = ACC!(x), dim: 6, x(0) ∈ X₀)
 
 # ## References
 
-# [1]  S. Joe Qin and Thomas A. Badgwell. An overview of nonlinear model
+# [1]  [S. Joe Qin and Thomas A. Badgwell. An overview of nonlinear model
 # predictive control appli-cations. In Frank Allg ̈ower and Alex Zheng,
 # editors, Nonlinear  Model  Predictive  Control, pages 369–392,
-# Basel, 2000. Birkh ̈auser Basel.
+# Basel, 2000. Birkh ̈auser Basel](https://link.springer.com/chapter/10.1007/978-3-0348-8407-5_21).
 #
