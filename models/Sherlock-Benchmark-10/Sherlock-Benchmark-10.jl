@@ -1,5 +1,11 @@
 # # Unicycle Car Model
 #
+#
+#md # !!! tip
+#md #     This example is also available as a Jupyter notebook:
+#md #     [`Sherlock-Benchmark-10.ipynb`](__NBVIEWER_ROOT_URL__/../Sherlock-Benchmark-10.ipynb)
+#
+#
 # This benchmark is that of a unicycle model of a car [xxx]. It models the
 # dynamics of a car involving 4 variables, specifically the ``x`` and ``y``
 # coordinates on a 2 dimensional plane, as well as velocity magnitude (speed)

@@ -1,5 +1,11 @@
 # # Translational Oscillations by a Rotational Actuator
 #
+#
+#md # !!! tip
+#md #     This example is also available as a Jupyter notebook:
+#md #     [`Sherlock-Benchmark-9.ipynb`](__NBVIEWER_ROOT_URL__/../Sherlock-Benchmark-9.ipynb)
+#
+#
 # This model consists of a cart attached to a wall with a spring, and is free
 # to move a friction-less surface. The car itself has a weight attached to an arm
 # inside it, which is free to rotate about an axis as described in the figure below.
