@@ -1,5 +1,11 @@
 # # Adaptive Cruise Controller
 #
+#
+#md # !!! tip
+#md #     This example is also available as a Jupyter notebook:
+#md #     [`ACC.ipynb`](__NBVIEWER_ROOT_URL__/../ACC.ipynb)
+#
+#
 # The Adaptive Cruise Control (ACC) System simulates a system that tracks a
 # set velocity and maintains a safe distance from a lead vehicle by adjusting
 # the longitudinal acceleration of an ego vehicle.
