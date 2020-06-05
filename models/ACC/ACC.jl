@@ -32,10 +32,10 @@
 # where ``x_i`` is the position, ``v_i`` is the velocity, ``γ_i`` is the
 # acceleration of the car, ``a_i`` is the acceleration control input applied
 # to the car, and ``u = 0.0001`` is the friction control where
-# ``i ∈ {ego, lead}``. For this benchmark we have developed four neural network
+# ``i ∈ \{ego, lead\}``. For this benchmark we have developed four neural network
 # controllers with 3, 5, 7, and 10 hidden layers of 20 neurons each. All of
 # them have the same number of inputs ``(v_{set},T_{gap},v_{ego},D_{rel},v_{rel})``,
-# and one output (``a_ego``).
+# and one output (``a_{ego}``).
 
 using NeuralNetworkAnalysis
 
@@ -63,8 +63,8 @@ prob = @ivp(x' = ACC!(x), dim: 6, x(0) ∈ X₀)
 # ## Specifications
 #
 # The verification objective of this system is that given a scenario where both
-# cars are driving safely, the lead car suddenly slows down with a ``lead = -2``.
-#  We want to checkwhether there is a collision  in  the  following  5 seconds.
+# cars are driving safely, the lead car suddenly slows down with``a_{lead} = -2``.
+# We want to checkwhether there is a collision  in  the  following  5 seconds.
 # Formally, this safety specification ofthe system can be expressed as
 # ``D_{rel} = x_{lead} - x_{ego} ≥ D_{safe}``, where
 # ``D_{safe} = D_{default} + T_{gap} × v_{ego}``, and
@@ -76,8 +76,7 @@ prob = @ivp(x' = ACC!(x), dim: 6, x(0) ∈ X₀)
 
 # ## References
 
-# [1]  [S. Joe Qin and Thomas A. Badgwell. An overview of nonlinear model
-# predictive control appli-cations. In Frank Allg ̈ower and Alex Zheng,
-# editors, Nonlinear  Model  Predictive  Control, pages 369–392,
+# [1] S. Joe Qin and Thomas A. Badgwell. *An overview of nonlinear model
+# predictive control appli-cations.* In [Nonlinear  Model  Predictive  Control, pages 369–392,
 # Basel, 2000. Birkh ̈auser Basel](https://link.springer.com/chapter/10.1007/978-3-0348-8407-5_21).
 #
