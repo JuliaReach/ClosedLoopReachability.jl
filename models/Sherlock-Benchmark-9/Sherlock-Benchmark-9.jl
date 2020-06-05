@@ -40,10 +40,10 @@ prob = @ivp(x' = benchmark9!(x), dim: 4, x(0) ∈ X₀)
 
 # ## Specifications
 #
-# The verification problem here is that of safety. For an initial set of, 
-# ``x\_1 ∈ [0.6, 0.7], x\_2 ∈ [−0.7,−0.6], x\_3 ∈ [−0.4,−0.3], x\_4 ∈ [0.5,0.6]``,
-# it is required to prove that thesystem stays within the box ``x ∈ [−1,1]^3``,
-# for a time window of 20s
+# The verification problem here is that of safety. For an initial set of 
+# ``x_1 ∈ [0.6, 0.7], x_2 ∈ [−0.7,−0.6], x_3 ∈ [−0.4,−0.3], x_4 ∈ [0.5,0.6]``,
+# it is required to prove that thesystem stays within the box ``x ∈ [−1, 1]^3``,
+# for a time window of 20s.
 
 # ## Results
 
