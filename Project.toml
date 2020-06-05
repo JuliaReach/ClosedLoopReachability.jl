@@ -11,6 +11,8 @@ Reexport = "0.2"
 [deps]
 ReachabilityAnalysis = "1e97bd63-91d1-579d-8e8d-501d2b57c93f"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
+NeuralVerification = "146f25fa-00e7-11e9-3ae5-fdbac6e12fa7"
+MathematicalSystems = "d14a8603-c872-5ed3-9ece-53e0e82e39da"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
