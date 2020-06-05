@@ -1,8 +1,10 @@
 using MathematicalSystems
 
 using ReachabilityAnalysis: _check_dim, _get_tspan, _get_cpost, _default_cpost,
-                            ReachSolution, InitialValueProblem
-using NeuralVerification: Network
+                            ReachSolution, InitialValueProblem, numtype,
+                            AbstractContinuousPost, TimeInterval,
+                            AbstractLazyReachSet, AbstractTaylorModelReachSet
+using NeuralVerification: Network, AbstractSolver
 
 import ReachabilityAnalysis: solve
 
@@ -132,4 +134,81 @@ function _get_alg_nn(args...; kwargs...)
         throw(ArgumentError("the solver for the neural network `alg_nn` should be specified, but was not found"))
     end
     return solver
+end
+
+function _solve(plant::ControlledPlant,
+                cpost::AbstractContinuousPost,
+                solver::AbstractSolver,
+                time_span::TimeInterval,
+                sampling_time::N,
+                apply_initial_control::Bool
+                ) where {N}
+
+    ivp = plant(plant)
+    S = system(ivp)
+    network = controller(plant)
+    st_vars = state_vars(plant)
+    in_vars = input_vars(plant)
+    ctrl_vars = control_vars(plant)
+
+    Q₀ = initial_state(ivp) # TODO initial_state(plant)
+    n = length(st_vars)
+    m = length(in_vars)
+    q = length(ctrl_vars)
+    dim(Q₀) == n + m + q || throw(ArgumentError("dimension mismatch; expect the dimension of the initial states " *
+         "of the initial-value problem to be $(n + m + q), but it is $(dim(Q₀))"))
+    
+    X₀ = LazySets.Projection(Q₀, st_vars)
+
+    if !isempty(in_vars)
+        W₀ = LazySets.Projection(Q₀, in_vars)
+        P₀ = X₀ × W₀
+    else
+        P₀ = X₀
+    end
+
+    if apply_initial_control
+        X₀h = overapproximate(X₀, Hyperrectangle)
+        U₀ = forward_network(solver, network, X₀h)
+    else 
+        U₀ = LazySets.Projection(Q₀, ctrl_vars)
+    end
+    println("U0: ", U₀)
+    
+    ti = tstart(time_span)
+    NSAMPLES = ceil(Int, diam(time_span) / sampling_time)
+
+    # preallocate output flowpipe
+    NT = numtype(cpost)
+    RT = rsetrep(cpost)
+    FT = Flowpipe{NT, RT, Vector{RT}}
+    out = Vector{FT}(undef, NSAMPLES)
+
+    for i = 1:NSAMPLES
+        Q₀ = P₀ × U₀
+        dt = ti .. (ti + sampling_time)
+        sol = ReachabilityAnalysis.post(cpost, IVP(S, Q₀), dt)
+        out[i] = sol
+
+        ti += sampling_time
+        
+        X = sol[end] # reach-set
+        X₀ = _Projection(X, st_vars) |> set # lazy set
+        P₀ = isempty(in_vars) ? X₀ : X₀ × W₀
+
+        X₀h = overapproximate(X₀, Hyperrectangle)
+        U₀ = forward_network(solver, network, X₀h)
+        println("U0: ", U₀)
+    end
+
+    return MixedFlowpipe(out)
+end
+
+function _Projection(X::AbstractLazyReachSet, st_vars)
+    ReachabilityAnalysis.Projection(X, st_vars)
+end
+
+function _Projection(X::AbstractTaylorModelReachSet, st_vars)
+    Z = overapproximate(X, Zonotope)
+    ReachabilityAnalysis.Projection(Z, st_vars)
 end
