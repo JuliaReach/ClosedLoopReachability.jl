@@ -15,7 +15,7 @@
 #
 # ```math
 # \begin{aligned}
-# \dot{x}_1 &= x_3^2 - x_2 + w \\
+# \dot{x}_1 &= x_3^3 - x_2 + w \\
 # \dot{x}_2 &= x_3 \\
 # \dot{x}_3 &= u
 # \end{aligned}
