@@ -27,7 +27,7 @@
 # position of the cart, θ is the angle of the pendulum with respect to the
 # positive y-axis, ``v = \dot{x}`` is the linear velocity of the cart, and
 # ``ω = \dot{θ}`` is the angular velocity of the pendulum. The controller has four
-# inputs ``(x, \dot{x}, θ, ̇\dot{θ})``, four layers with ``[24, 48, 12, 2]`` neurons
+# inputs ``(x, \dot{x}, \theta, ̇\dot{\theta})``, four layers with ``[24, 48, 12, 2]`` neurons
 # respectively, and two outputs. The two outputs are then compared, and the
 # input sent to the plant depends on which output index has the greatest value.
 #  Thus, as an example if ``\textrm{output}_1 > \textrm{output}_2`` then the input force supplied
