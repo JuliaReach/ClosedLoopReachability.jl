@@ -6,7 +6,7 @@
 #md #     [`Sherlock-Benchmark-7.ipynb`](__NBVIEWER_ROOT_URL__/../Sherlock-Benchmark-7.ipynb)
 #
 #
-# The model was first proposed in [[xxx]], where the authors originally designed a
+# The model was first proposed in [1], where the authors originally designed a
 # discontinuous sliding mode controller for this system.
 
 # ## Model
@@ -15,7 +15,7 @@
 #
 # ```math
 # \begin{aligned}
-# \dot{x}_1 &= x_3^2 - x_2 + w \\
+# \dot{x}_1 &= x_3^3 - x_2 + w \\
 # \dot{x}_2 &= x_3 \\
 # \dot{x}_3 &= u
 # \end{aligned}
@@ -58,5 +58,7 @@ prob = @ivp(x' = f!(x), dim: 5, x(0) ∈ X₀ × W₀ × U₀);
 
 # ## References
 
-#
+# [1] [Dong-Hae Yeom and Young Hoon Joo. Control lyapunov function design by
+# cancelling input singularity. International Journal of Fuzzy Logic and
+# Intelligent Systems, 12, 06 2012](http://www.koreascience.or.kr/article/JAKO201220962918909.page).
 #

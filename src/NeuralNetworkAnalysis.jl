@@ -1,8 +1,9 @@
 module NeuralNetworkAnalysis
 
-include("solve.jl")
-
 using Reexport
 @reexport using ReachabilityAnalysis
+
+include("utils.jl")
+include("solve.jl")
 
 end

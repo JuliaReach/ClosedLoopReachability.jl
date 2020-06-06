@@ -9,12 +9,14 @@ ReachabilityAnalysis = "0.5, 0.6"
 Reexport = "0.2"
 NeuralVerification = "0.1"
 MathematicalSystems = "0.11"
+MAT = "0.8"
 
 [deps]
 ReachabilityAnalysis = "1e97bd63-91d1-579d-8e8d-501d2b57c93f"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 NeuralVerification = "146f25fa-00e7-11e9-3ae5-fdbac6e12fa7"
-MathematicalSystems = "d14a8603-c872-5ed3-9ece-53e0e82e39da"
+MathematicalSystems = "d14a8603-c872-5ed3-9ece-53e0e82e39da
+MAT = "23992714-dd62-5051-b70f-ba57cb901cac"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
