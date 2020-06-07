@@ -1,13 +1,3 @@
-using MathematicalSystems
-
-using ReachabilityAnalysis: _check_dim, _get_tspan, _get_cpost, _default_cpost,
-                            ReachSolution, InitialValueProblem, numtype,
-                            AbstractContinuousPost, TimeInterval,
-                            AbstractLazyReachSet, AbstractTaylorModelReachSet
-using NeuralVerification: Network, AbstractSolver
-
-import ReachabilityAnalysis: solve
-
 abstract type AbstractNeuralNetworkControlProblem end
 
 # ST: type of system
@@ -18,29 +8,29 @@ struct ControlledPlant{ST, XT, IV<:InitialValueProblem{ST, XT}, DT} <: AbstractN
     vars::Dict{Symbol, DT}
 end
 
-plant(plant::ControlledPlant) = plant.ivp
-controller(plant::ControlledPlant) = plant.controller
+plant(cp::ControlledPlant) = cp.ivp
+system(cp::ControlledPlant) = cp.ivp.s
+controller(cp::ControlledPlant) = cp.controller
 
-
-function state_vars(plant::ControlledPlant)
+function state_vars(cp::ControlledPlant)
     try
-        plant.vars[:state_vars]
+        cp.vars[:state_vars]
     catch error
         isa(error, KeyError) && println("key `:state_vars` not found")
     end
 end
 
-function input_vars(plant::ControlledPlant)
+function input_vars(cp::ControlledPlant)
     try
-        plant.vars[:input_vars]
+        cp.vars[:input_vars]
     catch error
         isa(error, KeyError) && println("key `:input_vars` not found")
     end
 end
 
-function control_vars(plant::ControlledPlant)
+function control_vars(cp::ControlledPlant)
     try
-        plant.vars[:control_vars]
+        cp.vars[:control_vars]
     catch error
         isa(error, KeyError) && println("key `:control_vars` not found")
     end
@@ -77,7 +67,7 @@ The solution of a reachability problem controlled by a neural network.
 
 - Use the `T` keyword argument to specify the time horizon; the initial time is
   then assumed to be zero.
-  
+
 - Use the `Tsample` or `sampling_time` keyword argument to specify the sampling
 time for the model.
 
@@ -98,12 +88,12 @@ function solve(prob::AbstractNeuralNetworkControlProblem, args...; kwargs...)
     if cpost == nothing
         cpost = _default_cpost(ivp, tspan; kwargs...)
     end
-    
-    # extract the sampling time 
+
+    # extract the sampling time
     Tsample = _get_Tsample(; kwargs...)
-    
+
     solver = _get_alg_nn(args...; kwargs...)
-    
+
     if haskey(kwargs, :apply_initial_control)
         init_ctrl = kwargs[:apply_initial_control]
     else
@@ -111,7 +101,7 @@ function solve(prob::AbstractNeuralNetworkControlProblem, args...; kwargs...)
     end
 
     sol = _solve(prob, cpost, solver, tspan, Tsample, init_ctrl)
-    
+
     d = Dict{Symbol, Any}(:solver=>solver)
     return ReachSolution(sol, cpost, d)
 end
@@ -136,7 +126,7 @@ function _get_alg_nn(args...; kwargs...)
     return solver
 end
 
-function _solve(plant::ControlledPlant,
+function _solve(cp::ControlledPlant,
                 cpost::AbstractContinuousPost,
                 solver::AbstractSolver,
                 time_span::TimeInterval,
@@ -144,12 +134,12 @@ function _solve(plant::ControlledPlant,
                 apply_initial_control::Bool
                 ) where {N}
 
-    ivp = plant(plant)
-    S = system(ivp)
-    network = controller(plant)
-    st_vars = state_vars(plant)
-    in_vars = input_vars(plant)
-    ctrl_vars = control_vars(plant)
+    ivp = plant(cp)
+    S = system(cp)
+    network = controller(cp)
+    st_vars = state_vars(cp)
+    in_vars = input_vars(cp)
+    ctrl_vars = control_vars(cp)
 
     Q₀ = initial_state(ivp) # TODO initial_state(plant)
     n = length(st_vars)
@@ -157,7 +147,7 @@ function _solve(plant::ControlledPlant,
     q = length(ctrl_vars)
     dim(Q₀) == n + m + q || throw(ArgumentError("dimension mismatch; expect the dimension of the initial states " *
          "of the initial-value problem to be $(n + m + q), but it is $(dim(Q₀))"))
-    
+
     X₀ = LazySets.Projection(Q₀, st_vars)
 
     if !isempty(in_vars)
@@ -169,12 +159,12 @@ function _solve(plant::ControlledPlant,
 
     if apply_initial_control
         X₀h = overapproximate(X₀, Hyperrectangle)
-        U₀ = forward_network(solver, network, X₀h)
-    else 
+        U₀ = _forward_network(solver, network, X₀h)
+    else
         U₀ = LazySets.Projection(Q₀, ctrl_vars)
     end
-    println("U0: ", U₀)
-    
+    #println("U0: ", U₀)
+
     ti = tstart(time_span)
     NSAMPLES = ceil(Int, diam(time_span) / sampling_time)
 
@@ -191,24 +181,15 @@ function _solve(plant::ControlledPlant,
         out[i] = sol
 
         ti += sampling_time
-        
+
         X = sol[end] # reach-set
         X₀ = _Projection(X, st_vars) |> set # lazy set
         P₀ = isempty(in_vars) ? X₀ : X₀ × W₀
 
         X₀h = overapproximate(X₀, Hyperrectangle)
-        U₀ = forward_network(solver, network, X₀h)
-        println("U0: ", U₀)
+        U₀ = _forward_network(solver, network, X₀h)
+        #println("U0: ", U₀)
     end
 
     return MixedFlowpipe(out)
-end
-
-function _Projection(X::AbstractLazyReachSet, st_vars)
-    ReachabilityAnalysis.Projection(X, st_vars)
-end
-
-function _Projection(X::AbstractTaylorModelReachSet, st_vars)
-    Z = overapproximate(X, Zonotope)
-    ReachabilityAnalysis.Projection(Z, st_vars)
 end

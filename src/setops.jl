@@ -1,4 +1,6 @@
-using LazySets: _leq, _geq, isapproxzero
+# ===========================================
+# Activation functions on sets or reach-sets
+# ===========================================
 
 @inline _bounds(H, i) = (H.center[i] - H.radius[i], H.center[i] + H.radius[i])
 
@@ -30,21 +32,19 @@ function relu!(Z::Zonotope{N}) where {N}
             Gnew[i, i] = μ
         end
     end
-    return Zonotope(c, hcat(G, Gnew))
-end
-
-function _forward_layer_zono(W::AbstractMatrix, b::AbstractVector, ::ReLU, X::Zonotope)
-    Y = affine_map(W, Z, b)
-    return relu(Y)
-end
-
-function _forward_network(network::Network, X::Zonotope)
-    nlayers = length(network.layers) # TODO getter function ?
-    Z = copy(X)
-    @inbounds for i in 1:nlayers
-        W = network.layers[i].weights
-        b = network.layers[i].bias
-        Z = _forward_layer_zono(W, b, activation, Z)
-    end
+    Z = Zonotope(c, hcat(G, Gnew))
     return remove_zero_generators(Z)
+end
+
+# ========================================
+# Projection operations
+# ========================================
+
+function _Projection(X::AbstractLazyReachSet, st_vars)
+    ReachabilityAnalysis.Projection(X, st_vars)
+end
+
+function _Projection(X::AbstractTaylorModelReachSet, st_vars)
+    Z = overapproximate(X, Zonotope)
+    ReachabilityAnalysis.Projection(Z, st_vars)
 end
