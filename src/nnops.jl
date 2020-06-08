@@ -47,5 +47,5 @@ function _forward_layer_zono(W::AbstractMatrix, b::AbstractVector, ::ReLU, Z::Zo
 end
 
 function _forward_layer_zono(W::AbstractMatrix, b::AbstractVector, ::Id, Z::Zonotope)
-    return Z
+    return affine_map(W, Z, b)
 end
