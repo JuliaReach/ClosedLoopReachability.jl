@@ -163,7 +163,6 @@ function _solve(cp::ControlledPlant,
     else
         U₀ = LazySets.Projection(Q₀, ctrl_vars)
     end
-    #println("U0: ", U₀)
 
     ti = tstart(time_span)
     NSAMPLES = ceil(Int, diam(time_span) / sampling_time)
@@ -188,7 +187,6 @@ function _solve(cp::ControlledPlant,
 
         X₀h = overapproximate(X₀, Hyperrectangle)
         U₀ = _forward_network(solver, network, X₀h)
-        #println("U0: ", U₀)
     end
 
     return MixedFlowpipe(out)
