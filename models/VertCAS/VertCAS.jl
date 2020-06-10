@@ -6,7 +6,7 @@
 #md #     [`VertCAS.ipynb`](__NBVIEWER_ROOT_URL__/../VertCAS.ipynb)
 #
 #
-# This example [1] considers commercial aircraft, which are required to operate
+# This example [1, 2] considers commercial aircraft, which are required to operate
 # with a collision avoidance system that gives vertical climbrate advisories to
 # pilots to prevent near midair collisions (NMACs). An NMAC occurs when the
 # aircraft are separated by less than 100 ft vertically and 500 ft horizontally.
@@ -86,4 +86,8 @@ end
 # [1] [Julian, K. D., & Kochenderfer, M. J. (2019). A reachability method for
 # verifying dynamical systems with deep neural network controllers.
 # arXiv preprint arXiv:1903.00520.](https://arxiv.org/pdf/1903.00520.pdf).
+# [2] Akintunde, M. E., Botoeva, E., Kouvaros, P., & Lomuscio, A. (2020, May).
+# [Formal Verification of Neural Agents in Non-deterministic Environments.
+# In Proceedings of the 19th International Conference on Autonomous Agents and
+# MultiAgent Systems (pp. 25-33).](http://ifaamas.org/Proceedings/aamas2020/pdfs/p25.pdf)
 #
