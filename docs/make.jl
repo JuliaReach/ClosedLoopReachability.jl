@@ -17,6 +17,7 @@ makedocs(
                           "Unicycle Car Model" => "models/Sherlock-Benchmark-10.md",
                           "Non-Linear Cart-Pole" => "models/Cart-Pole.md",
                           "Adaptive Cruise Controller" => "models/ACC.md",
+                          "Double Pendulum" => "models/DoublePendulum.md",
                           "Vertical CAS" => "models/VertCAS.md"
                          ],
         "About" => "about.md"
