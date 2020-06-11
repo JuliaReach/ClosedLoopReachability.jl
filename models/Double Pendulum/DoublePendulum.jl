@@ -32,7 +32,7 @@
 # ```
 # The angular velocity and acceleration of links are donoted with
 # ``\dot \theta_1``, ``\dot \theta_2``, ``\ddot \theta_1`` and ``\ddot \theta_2``
-# and ``g``` is the gravitational acceleration.
+# and ``g`` is the gravitational acceleration.
 
 
 using NeuralNetworkAnalysis
