@@ -16,7 +16,8 @@ makedocs(
                           "TORA" => "models/Sherlock-Benchmark-9.md",
                           "Unicycle Car Model" => "models/Sherlock-Benchmark-10.md",
                           "Non-Linear Cart-Pole" => "models/Cart-Pole.md",
-                          "Adaptive Cruise Controller" => "models/ACC.md"
+                          "Adaptive Cruise Controller" => "models/ACC.md",
+                          "Double Pendulum" => "models/DoublePendulum.md"
                          ],
         "About" => "about.md"
     ],

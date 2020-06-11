@@ -6,7 +6,8 @@ MODELS = [
     joinpath(@__DIR__, "..", "models", "ACC"),
     joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-7"),
     joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-9"),
-    joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-10")
+    joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-10"),
+    joinpath(@__DIR__, "..", "models", "Double Pendulum")
 ]
 GENERATEDDIR = joinpath(@__DIR__, "src", "models")
 mkpath(GENERATEDDIR)

@@ -19,20 +19,20 @@
 #
 # ```math
 # \begin{aligned}
-# 2\ddot{\theta}_1 + \ddot{\theta}_2 cos(\theta_2 - \theta_1) - \ddot{\theta}^2_2 sin(\theta_2 - \theta_1) - 2 \frac{g}{L}sin\theta_1 + \frac{c}{mL^2}\dot\theta_1 &= \frac{1}{mL^2}T_1 \\
-# \ddot{\theta}_1 cos(\theta_2 - \theta_1) + \ddot\theta_2 + \ddot{\theta}^2_1 sin(\theta_2 - \theta_1) - \frac{g}{L}sin\theta_2 + \frac{c}{mL^2}\dot\theta_2 &= \frac{1}{mL^2}T_2
+# 2\ddot \theta_1 + \ddot \theta_2 cos(\theta_2 - \theta_1) - \ddot \theta^2_2 sin(\theta_2 - \theta_1) - 2 \frac{g}{L}sin\theta_1 + \frac{c}{mL^2}\dot\theta_1 &= \frac{1}{mL^2}T_1 \\
+# \ddot \theta_1 cos(\theta_2 - \theta_1) + \ddot \theta_2 + \ddot \theta^2_1 sin(\theta_2 - \theta_1) - \frac{g}{L}sin\theta_2 + \frac{c}{mL^2}\dot\theta_2 &= \frac{1}{mL^2}T_2
 # \end{aligned}
 # ```
 # where ``\theta_1`` and ``\theta_2`` are the angles that links make with the
 # upward vertical axis. The state is:
 # ```math
 # \begin{aligned}
-# [\theta_1, \theta_2, \dot\theta_1, \dot\theta_2]
+# [\theta_1, \theta_2, \dot \theta_1, \dot \theta_2]
 # \end{aligned}
 # ```
 # The angular velocity and acceleration of links are donoted with
-# ``\dot\theta_1``, ``\dot\theta_2``, ``\ddot\theta_1`` and ``\ddot\theta_2``
-# and g is the gravitational acceleration.
+# ``\dot \theta_1``, ``\dot \theta_2``, ``\ddot \theta_1`` and ``\ddot \theta_2``
+# and ``g``` is the gravitational acceleration.
 
 
 using NeuralNetworkAnalysis
