@@ -7,6 +7,7 @@ MODELS = [
     joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-7"),
     joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-9"),
     joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-10"),
+    joinpath(@__DIR__, "..", "models", "Airplane"),
     joinpath(@__DIR__, "..", "models", "Double Pendulum"),
     joinpath(@__DIR__, "..", "models", "VertCAS")
 ]
