@@ -13,25 +13,25 @@
 
 # ## Model
 #
-# The model considers two aircraft: an ownship aircraft equipped with
-# VerticalCAS, and an intruder aircraft. In this formulation, the intruder is
-# assumed to maintain level flight. The system uses four variables to describe
-# the encounter with the intruder aircraft:
+# This benchmark is a closed-loop variant of aircraft collision avoidance
+# system ACAS X. The scenario involves two aircraft, the ownship and the
+# intruder, where the ownship is equipped with a collision avoidance system
+# referred to as VerticalCAS [3]. VerticalCAS once every second issues vertical
+# climbrate advisories to the ownship pilot to avoid a near mid-air collision
+# (NMAC), a region where the ownship and intruder are separated by less than
+# 100ft vertically and 500ft horizontally. The ownship (black) is assumed
+# to have a constant horizontal speed, and the intruder (red) is assumed to
+# follow a constant horizontal trajectory towards ownship, see Figure 1.
+# The current geometry of the system is described by
 #
-# 1) ``h(ft)``: Intruder altitude relative to ownship ``[−3000,3000]``
-# 2) ``\dot h_0 (ft/min)``: Ownship vertical climbrate ``[−2500,2500]``
-# 3) ``τ(s)``: Time to loss of horizontal separation ``[0,40]``
-# 4) ``s\{adv}``: Previous advisory from VerticalCAS
+# 1) ``h(ft)``: Intruder altitude relative to ownship
+# 2) ``\dot h_0 (ft/min)``: Ownship vertical climbrate
+# 3) ``τ(s)``: the seconds until the ownship (black) and intruder (red) are no longer horizontally separated
 #
-# The first two state variables describe the encounter geometry vertically.
-# The ``τ`` variable condenses the horizontal geometry into a single variable
-# by providing a countdown until the intruder will no longer be separated
-# horizontally, at whichpoint the ownship must be vertically separated to avoid
-# an NMAC. 
-# The ``s_{adv}`` variable is categorical and can be any one of the nine
-# possible advisories given by the system, and conditioning the next advisory
-# on the current advisory allows the system to maintain consistency when
-# alerting pilots. The nine possible advisories are:
+# We can, therefore, assume that the intruder is static and the horizontal
+# separation ``\tau`` decreases by one each second.
+# There are 9 advisories and each of them instructs the pilot to accelerate
+# until the vertical climbrate of the ownship complies with the advisory:
 #
 # 1) COC: Clear of Conflic
 # 2) DNC: Do Not Climb
@@ -43,20 +43,46 @@
 # 8) SDES2500: Strengthen Descent to at least 2500 ft/min
 # 9) SCL2500: Strengthen Climb to at least 2500 ft/min
 #
-# Each advisory instructs the pilot to accelerate until comply-ing with the
-# specified climb or descent rate, except for COC, which allows the pilot
-# freedom to choose any acceleration ``\ddot h_0 ∈ [−g/8, g/8]``, where ``g``
-# is the sea-level gravitational acceleration constant.
-# For advisories DNC, DND, DES1500, and CL1500, the pilot is assumed to
-# accelerate in the range ``|a| ∈ [g/4,g/3]`` with the sign of ``\ddot h_0``
-# determined by the specific advisory. If the pilot is already compliant with
-# the given advisory, then the pilot is assumed to continue at the current
-# climbrate. For advisories SDES1500, SCL1500, SDES2500, and SCL2500, the pilot
-# as assumed to accelerate at ``±g/3`` until compliance. For example, a pilot
-# receiving the CL1500 advisory while descending at −500 ft/min is assumed to
-# begin accelerating upwards with some acceleration between ``g/4`` and ``g/3``
-# and then maintaining a constant climbrate upon reaching the 1500 ft/min
-# climbrate. New advisories ``s_{adv}`` are given once each second ``(∆t= 1)``
+# In addition to the parameters describing the geometry of the encounter, the
+# current state of the system stores the advisory ``adv`` issued to the ownship
+# at the previous time step. VerticalCAS is implemented as nine ReLU networks
+# ``N_i``, one for each (previous) advisory, with three inputs
+# ``(h,\dot{h}_0,\tau)``, five fully-connected hidden layers of 20 units each,
+# and nine outputs representing the score of each possible advisory. Therefore,
+# given a current state ``(h,\dot{h}_0,\tau,\text{adv})``, the new advisory
+# ``adv`` is obtained by computing the argmax of the output of ``N_{\text{adv}}``
+# on ``(h,\dot{h}_0,\tau)``.
+# Given the new advisory, if the current climbrate does not comply with it, the
+# pilot can choose acceleration ``\ddot{h}_0`` from the given set:
+#
+# 1) COC: ``\{-\frac{g}{8}, 0, \frac{g}{8}\}``
+# 2) DNC: ``\{-\frac{g}{3}, -\frac{7g}{24}, -\frac{g}{4}\}``
+# 3) DND: ``\{\frac{g}{4}, \frac{7g}{24}, \frac{g}{3}\}``
+# 4) DES1500: ``\{-\frac{g}{3}, -\frac{7g}{24}, -\frac{g}{4}\}``
+# 5) CL1500: ``\{\frac{g}{4}, \frac{7g}{24}, \frac{g}{3}\}``
+# 6) SDES1500: ``\{-\frac{g}{3}\}``
+# 7) SCL1500: ``\{\frac{g}{3}\}``
+# 8) SDES2500: ``\{-\frac{g}{3}\}``
+# 9) SCL2500: ``\{\frac{g}{3}\}``
+#
+# where $g$ represents the gravitational constant ``32.2 \ \text{ft/s}^2``. When
+# the current climbrate complies with the new advisory, the acceleration
+# ``\ddot{h}_0`` is 0.
+#
+# Given the current system state ``(h,\dot{h}_0,\tau,\text{adv})``, the new
+# advisory ``\text{adv}'`` and the acceleration ``\ddot{h}_0``, the new state
+# of the system ``(h(t+1),\dot{h}_0(t+1),\tau(t+1),\text{adv}(t+1))`` can
+# be computed as follows: 
+#
+# ```math
+# \begin{aligned}
+# h(t+1) =& h - \dot{h}_0 \Delta\tau - 0.5 \ddot{h}_0 \Delta\tau^2 \\
+# \dot{h}_0(t+1) =& \dot{h}_0 + \ddot{h}_0 \Delta\tau \\
+# \tau(t+1) =& \tau - \Delta\tau \\
+# \text{adv}(t+1) =& \text{adv}'
+# \end{aligned}
+# ```
+# where ``\Delta\tau=1``.
 #
 
 using NeuralNetworkAnalysis
@@ -78,7 +104,12 @@ end
 
 # ## Specifications
 #
-# The verification objective of this system is that the ownship prevents an NMAC
+# For this benchmark the aim is to verify that the ownship avoids entering the
+# NMAC zone after ``k\in\{1,\dots,8\}`` time steps, i.e., ``h(k) > 100`` or
+# ``h(k) < -100``, for all possible choices of acceleration by the pilot. The
+# set of initial states considered is as follows: ``h(0) \in [-133, -129]``,
+# ``\dot{h}_0(0) \in \{-19.5, -22.5, -25.5, -28.5\}``, ``\tau(0) = 25`` and
+# ``\text{adv}(0) = \text{COC}``.
 
 # ## Results
 
@@ -92,4 +123,6 @@ end
 # [Formal Verification of Neural Agents in Non-deterministic Environments.
 # In Proceedings of the 19th International Conference on Autonomous Agents and
 # MultiAgent Systems (pp. 25-33).](http://ifaamas.org/Proceedings/aamas2020/pdfs/p25.pdf)
+# [3]  K. D. Julian and M. J. Kochenderfer. A reachability method for verifying dynamical
+# systems withdeep neural network controllers.CoRR, abs/1903.00520, 2019
 #
