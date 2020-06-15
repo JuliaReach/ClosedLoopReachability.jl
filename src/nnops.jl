@@ -43,7 +43,7 @@ end
 
 function _forward_layer_zono(W::AbstractMatrix, b::AbstractVector, ::ReLU, Z::Zonotope)
     Y = affine_map(W, Z, b)
-    return relu(Y)
+    return overapproximate(Rectification(Y), Zonotope)
 end
 
 function _forward_layer_zono(W::AbstractMatrix, b::AbstractVector, ::Id, Z::Zonotope)
