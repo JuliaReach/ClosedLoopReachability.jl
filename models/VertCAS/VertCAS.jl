@@ -88,19 +88,11 @@
 using NeuralNetworkAnalysis
 
 @taylorize function VCAS!(dx, x, p, t)
-    x₁, x₂, x₃ = x
+    tau, adv = x
     dx[1] = x₁
     dx[2] = x₂
     dx[3] = x₃
 end
-
-# define the initial-value problem
-##X₀ = Hyperrectangle(low=[...], high=[...])
-
-##prob = @ivp(x' = VCAS!(x), dim: ?, x(0) ∈ X₀)
-
-# solve it
-##sol = solve(prob, T=0.1);
 
 # ## Specifications
 #
@@ -113,6 +105,14 @@ end
 
 # ## Results
 
+# define the initial-value problem
+##X₀ = Hyperrectangle(low=[...], high=[...])
+
+##prob = @ivp(x' = VCAS!(x), dim: ?, x(0) ∈ X₀)
+
+# solve it
+##sol = solve(prob, T=0.1);
+
 # ## References
 
 # [1] [Julian, K. D., & Kochenderfer, M. J. (2019). A reachability method for
@@ -122,7 +122,5 @@ end
 # [2] Akintunde, M. E., Botoeva, E., Kouvaros, P., & Lomuscio, A. (2020, May).
 # [Formal Verification of Neural Agents in Non-deterministic Environments.
 # In Proceedings of the 19th International Conference on Autonomous Agents and
-# MultiAgent Systems (pp. 25-33).](http://ifaamas.org/Proceedings/aamas2020/pdfs/p25.pdf)
-# [3]  K. D. Julian and M. J. Kochenderfer. A reachability method for verifying dynamical
-# systems withdeep neural network controllers.CoRR, abs/1903.00520, 2019
+# MultiAgent Systems (pp. 25-33).](http://ifaamas.org/Proceedings/aamas2020/pdfs/p25.pdf).
 #
