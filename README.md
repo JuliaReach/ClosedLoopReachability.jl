@@ -11,6 +11,6 @@ Methods to verify neural network control systems using reachability analysis
 
 ## External links
 
+- https://github.com/verivital/ARCH-COMP2020 <<< for 2020
 - [ARCH-COMP 2019 AI-NNCS](https://easychair.org/publications/open/BFKs)
 - https://github.com/verivital/ARCH-COMP19-AINNCS
-- https://github.com/verivital/ARCH-COMP2020 <<< updated
