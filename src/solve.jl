@@ -159,7 +159,7 @@ function _solve(cp::ControlledPlant,
 
     if apply_initial_control
         X₀h = overapproximate(X₀, Hyperrectangle)
-        U₀ = _forward_network(solver, network, X₀h)
+        U₀ = forward_network(solver, network, X₀h)
     else
         U₀ = LazySets.Projection(Q₀, ctrl_vars)
     end
@@ -174,7 +174,7 @@ function _solve(cp::ControlledPlant,
     out = Vector{FT}(undef, NSAMPLES)
 
     for i = 1:NSAMPLES
-        Q₀ = P₀ × U₀
+        Q₀ = P₀ × U₀[1]
         dt = ti .. (ti + sampling_time)
         sol = ReachabilityAnalysis.post(cpost, IVP(S, Q₀), dt)
         out[i] = sol
@@ -186,7 +186,7 @@ function _solve(cp::ControlledPlant,
         P₀ = isempty(in_vars) ? X₀ : X₀ × W₀
 
         X₀h = overapproximate(X₀, Hyperrectangle)
-        U₀ = _forward_network(solver, network, X₀h)
+        U₀ = forward_network(solver, network, X₀h)
     end
 
     return MixedFlowpipe(out)
