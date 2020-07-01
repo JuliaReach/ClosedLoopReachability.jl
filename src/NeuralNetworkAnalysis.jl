@@ -6,7 +6,6 @@ include("setops.jl")
 #include("nnops.jl")
 include("solve.jl")
 
-export ZonotopeBounder,
-       ControlledPlant
+export ControlledPlant
 
 end
