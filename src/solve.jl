@@ -1,3 +1,5 @@
+using ReachabilityAnalysis: post
+
 abstract type AbstractNeuralNetworkControlProblem end
 
 # ST: type of system
@@ -140,6 +142,7 @@ function _solve(cp::ControlledPlant,
     st_vars = state_vars(cp)
     in_vars = input_vars(cp)
     ctrl_vars = control_vars(cp)
+    controls = Dict()
 
     Q₀ = initial_state(ivp) # TODO initial_state(plant)
     n = length(st_vars)
@@ -174,9 +177,16 @@ function _solve(cp::ControlledPlant,
     out = Vector{FT}(undef, NSAMPLES)
 
     for i = 1:NSAMPLES
-        Q₀ = P₀ × U₀[1]
+        if isa(U₀, LazySet)
+            Q₀ = P₀ × U₀
+        else
+            # TODO should take eg. convex hull if the network retuns > 1 set
+            Q₀ = P₀ × first(U₀)
+        end
+
+        controls[i] = U₀
         dt = ti .. (ti + sampling_time)
-        sol = ReachabilityAnalysis.post(cpost, IVP(S, Q₀), dt)
+        sol = post(cpost, IVP(S, Q₀), dt)
         out[i] = sol
 
         ti += sampling_time
@@ -189,5 +199,5 @@ function _solve(cp::ControlledPlant,
         U₀ = forward_network(solver, network, X₀h)
     end
 
-    return MixedFlowpipe(out)
+    return MixedFlowpipe(out, Dict{Symbol,Any}(:controls=>controls))
 end
