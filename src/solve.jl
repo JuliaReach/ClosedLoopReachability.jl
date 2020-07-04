@@ -102,7 +102,13 @@ function solve(prob::AbstractNeuralNetworkControlProblem, args...; kwargs...)
         init_ctrl = true
     end
 
-    sol = _solve(prob, cpost, solver, tspan, Tsample, init_ctrl)
+    if haskey(kwargs, :preprocess)
+        preprocess = kwargs[:preprocess]
+    else
+        preprocess = X -> overapproximate(X, Hyperrectangle)
+    end
+
+    sol = _solve(prob, cpost, solver, tspan, Tsample, init_ctrl, preprocess)
 
     d = Dict{Symbol, Any}(:solver=>solver)
     return ReachSolution(sol, cpost, d)
@@ -133,7 +139,8 @@ function _solve(cp::ControlledPlant,
                 solver::AbstractSolver,
                 time_span::TimeInterval,
                 sampling_time::N,
-                apply_initial_control::Bool
+                apply_initial_control::Bool,
+                preprocess::Function # function that is applied before passing the set to the neural network controller
                 ) where {N}
 
     ivp = plant(cp)
@@ -161,8 +168,8 @@ function _solve(cp::ControlledPlant,
     end
 
     if apply_initial_control
-        X₀h = overapproximate(X₀, Hyperrectangle)
-        U₀ = forward_network(solver, network, X₀h)
+        X0aux = preprocess(X₀)
+        U₀ = forward_network(solver, network, X0aux)
     else
         U₀ = LazySets.Projection(Q₀, ctrl_vars)
     end
@@ -195,8 +202,7 @@ function _solve(cp::ControlledPlant,
         X₀ = _Projection(X, st_vars) |> set # lazy set
         P₀ = isempty(in_vars) ? X₀ : X₀ × W₀
 
-        X₀h = overapproximate(X₀, Hyperrectangle)
-        U₀ = forward_network(solver, network, X₀h)
+        U₀ = forward_network(solver, network, preprocess(X₀))
     end
 
     return MixedFlowpipe(out, Dict{Symbol,Any}(:controls=>controls))
