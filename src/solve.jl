@@ -168,12 +168,8 @@ function _solve(cp::ControlledPlant,
     end
 
     if apply_initial_control
-        println("applying initial control")
-        println(X₀)
         X0aux = preprocess(X₀)
-        println(X0aux)
         U₀ = forward_network(solver, network, X0aux)
-        println(U₀)
     else
         U₀ = LazySets.Projection(Q₀, ctrl_vars)
     end
