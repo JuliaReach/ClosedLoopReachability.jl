@@ -136,7 +136,7 @@ end
 
 function _solve(cp::ControlledPlant,
                 cpost::AbstractContinuousPost,
-                solver::AbstractSolver,
+                solver::Solver,
                 time_span::TimeInterval,
                 sampling_time::N,
                 apply_initial_control::Bool,
