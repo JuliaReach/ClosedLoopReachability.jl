@@ -1,6 +1,7 @@
 name = "NeuralNetworkAnalysis"
 uuid = "73c0b437-a350-4e9b-97ac-9adb151c271b"
-authors = ["Sebastian Guadalupe <sebastianguadalupe00@gmail.com>", "Marcelo Forets <mforets@gmail.com>"]
+authors = ["Sebastian Guadalupe <sebastianguadalupe00@gmail.com>",
+           "Marcelo Forets <mforets@gmail.com>"]
 version = "0.1.0"
 
 [deps]
@@ -12,10 +13,10 @@ ReachabilityAnalysis = "1e97bd63-91d1-579d-8e8d-501d2b57c93f"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 
 [compat]
-LazySets = "1.36"
+LazySets = "1.37"
 MAT = "0.8"
 MathematicalSystems = "0.11"
-#  NeuralVerification = "0.0"
+NeuralVerification = "0"
 ReachabilityAnalysis = "0.7, 0.8"
 Reexport = "0.2"
 julia = "1"

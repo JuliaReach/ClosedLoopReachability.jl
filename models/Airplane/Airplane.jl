@@ -82,6 +82,8 @@
 # have some nominal dimensionless values:
 # ``m = 1``, ``I_x = I_y = I_z = 1``, ``I_{xz} = 0`` and ``g = 1``.
 
+using NeuralNetworkAnalysis
+
 @taylorize function airplane!(dx, x, p, t)
     _x, y, z, u, v, w, ϕ, θ, ψ, r, _p, q, Fx, Fy, Fz, Mx, My, Mz = x
 
@@ -160,6 +162,7 @@ U₀ = rand(Hyperrectangle, dim=6) # ignored
 prob = @ivp(x' = airplane!(x), dim: 18, x(0) ∈ X₀ × U₀);
 vars_idx = Dict(:state_vars=>1:12, :input_vars=>[], :control_vars=>13:18);
 
+#=
 plant = ControlledPlant(prob, controller, vars_idx);
 alg = TMJets(abs_tol=1e-15, orderT=7, orderQ=1)
 solver = Ai2z()
@@ -175,6 +178,7 @@ solz = overapproximate(sol, Zonotope);
 
 radius(overapproximate(solz.F.ext[:controls][3][1], Hyperrectangle))
 
+=#
 
 # ## References
 
