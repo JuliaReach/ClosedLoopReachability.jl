@@ -1,6 +1,8 @@
 # ================================================
-# Intrenal forward network functions
+# Internal forward network functions
 # ================================================
+
+#=
 
 # fallback to NV
 function _forward_network(solver::AbstractSolver, network::Network, X::LazySet)
@@ -50,4 +52,47 @@ end
 
 function _forward_layer_zono(W::AbstractMatrix, b::AbstractVector, ::Id, Z::Zonotope)
     return affine_map(W, Z, b)
+end
+=#
+
+# ================================================
+# Extension of NeuralVerification structs
+# ================================================
+
+using NeuralVerification: ActivationFunction
+
+"""
+    Sigmoid <: ActivationFunction
+    (Sigmoid())(x) -> 1 ./ (1 .+ exp.(-x))
+"""
+struct Sigmoid <: ActivationFunction end
+
+"""
+    Tanh <: ActivationFunction
+    (Tanh())(x) -> tanh.(x)
+"""
+struct Tanh <: ActivationFunction end
+
+(f::Sigmoid)(x) = @. 1 / (1 + exp(-x))
+(f::Tanh)(x) = tanh.(x)
+
+# ================================================
+# Reading a network in YAML format
+# (load the data with YAML.jl)
+# ================================================
+
+const ACT_YAML = Dict("Sigmoid"=>Sigmoid(), "Tanh"=>Tanh(), "Id"=>Id(), "ReLU"=>ReLU())
+
+function read_yaml(data::Dict)
+    NLAYERS = length(data["offsets"])
+    layers = []
+    for k in 1:NLAYERS
+        weights = data["weights"][k]
+        W = copy(reduce(hcat, weights)')
+        b = data["offsets"][k]
+        a = ACT_YAML[data["activations"][k]]
+        L = Layer(W, b, a)
+        push!(layers, L)
+    end
+    return Network(layers)
 end
