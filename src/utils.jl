@@ -45,3 +45,34 @@ function readnn(file; key="controller")
 
     return Network(layers)
 end
+
+function scalar_quadratic!(du, u, p, t)
+    xᴶ, xᴾ = u
+    du[1] = zero(xᴶ)
+    du[2] = xᴶ *(xᴾ - xᴾ^2)
+end
+
+function dnn2hybrid(nn::Network, xᴾ₀, u₀)
+    I1 = IntervalArithmetic.Interval(1., 1.)
+    xᴾ = [I1, I1] * 0.5
+    h = []
+    for layer in nn.layers
+        n = length(layer.bias)
+        xᴶ = layer.weights * xᴾ₀ + layer.bias
+        if layer.activation == NV.Sigmoid()
+            for i=1:n
+                X0 = xᴾ[i] × xᴶ[i]
+                ivp = @ivp(x' = scalar_quadratic!(x), dim=2, x(0) ∈ X0)
+                sol = RA.solve(ivp, tspan=(0., 1.),
+                             alg=TMJets(abs_tol=1e-14, orderQ=2, orderT=6));
+                push!(h, sol.F.ext[:xv][end][2])
+            end
+        else
+            push!(h, xᴶ)
+        end
+        println(h)
+        xᴾ = h
+        h = []
+    end
+    return xᴾ
+end
