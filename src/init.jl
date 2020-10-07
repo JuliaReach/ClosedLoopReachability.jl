@@ -9,7 +9,18 @@ const RA = ReachabilityAnalysis
 import ReachabilityAnalysis: solve
 
 @reexport using NeuralVerification
-using NeuralVerification: Network, output_bound, Solver
+using NeuralVerification: Network, output_bound, Solver, Id, ReLU
+
 const NV = NeuralVerification
+const IA = IntervalArithmetic
 
 using LazySets: _leq, _geq, isapproxzero, remove_zero_generators
+
+# see https://github.com/PerezHz/TaylorIntegration.jl/issues/106
+macro _taylorize(ex)
+    nex = TaylorIntegration._make_parsed_jetcoeffs(ex)
+    return quote
+        $(esc(ex))
+        $(esc(nex))
+    end
+end
