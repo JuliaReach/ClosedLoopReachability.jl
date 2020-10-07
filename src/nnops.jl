@@ -81,7 +81,10 @@ struct Tanh <: ActivationFunction end
 # (load the data with YAML.jl)
 # ================================================
 
-const ACT_YAML = Dict("Sigmoid"=>Sigmoid(), "Tanh"=>Tanh(), "Id"=>Id(), "ReLU"=>ReLU())
+const ACT_YAML = Dict("Id"=>Id(),
+                      "ReLU"=>ReLU(),
+                      "Sigmoid"=>Sigmoid(),
+                      "Tanh"=>Tanh())
 
 function read_yaml(data::Dict)
     NLAYERS = length(data["offsets"])
