@@ -20,7 +20,7 @@ using LazySets.Arrays: SingleEntryVector
 
 function _decompose_1D(X0::LazySet{N}) where {N}
     n = dim(X0)
-    out = Vector{Interval{Float64}}(undef, n)
+    out = Vector{Interval{Float64, IA.Interval{Float64}}}(undef, n)
 
     @inbounds for i in 1:n
         eᵢ = SingleEntryVector(i, n, one(N))

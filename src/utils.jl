@@ -67,14 +67,17 @@ end
 end
 
 const HALFINT = IA.Interval(0.5, 0.5)
-const ACTFUN = Dict(Tanh => tanh!, Sigmoid => sigmoid!)
+const ACTFUN = Dict(Tanh() => tanh!, Sigmoid() => sigmoid!)
 
 # Method: Cartesian decomposition (intervals for each one-dimensional subspace)
-function forward(nnet::Network, X0::LazySet, U::LazySet;
+# Only Tanh, Sigmoid and Id functions are supported
+function forward(nnet::Network, X0::LazySet;
                  alg=TMJets(abs_tol=1e-14, orderQ=2, orderT=6))
 
     # initial states
-    xᴾ₀ = _decompose_1D(X0) |> array
+    xᴾ₀ = _decompose_1D(X0)
+    xᴾ₀ = LazySets.array(xᴾ₀)  # see https://github.com/JuliaReach/ReachabilityAnalysis.jl/issues/254
+    xᴾ₀ = [x.dat for x in xᴾ₀] # use concrete inteval matrix-vector operations
 
     for layer in nnet.layers  # loop over layers
         W = layer.weights
@@ -85,7 +88,7 @@ function forward(nnet::Network, X0::LazySet, U::LazySet;
         xᴶ′ = W * xᴾ₀ + b  # (scalar matrix) * (interval vector) + (scalar vector)
         xᴾ′ = fill(HALFINT, m)
 
-        if act == Id
+        if act == Id()
             xᴾ₀ = copy(xᴶ′)
             continue
         end
@@ -102,5 +105,5 @@ function forward(nnet::Network, X0::LazySet, U::LazySet;
         end
         xᴾ₀ = copy(xᴾ′)
     end
-    return xᴾ₀
+    return CartesianProductArray([Interval(x) for x in xᴾ₀])
 end

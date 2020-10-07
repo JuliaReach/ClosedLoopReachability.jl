@@ -6,6 +6,7 @@ include("setops.jl")
 include("utils.jl")
 include("solve.jl")
 
-export ControlledPlant
+export ControlledPlant,
+       forward
 
 end
