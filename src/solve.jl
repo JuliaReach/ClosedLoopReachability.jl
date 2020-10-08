@@ -136,7 +136,7 @@ end
 
 function _solve(cp::ControlledPlant,
                 cpost::AbstractContinuousPost,
-                solver::Solver,
+                solver,#::Solver,
                 time_span::TimeInterval,
                 sampling_time::N,
                 apply_initial_control::Bool,
@@ -169,7 +169,11 @@ function _solve(cp::ControlledPlant,
 
     if apply_initial_control
         X0aux = preprocess(X₀)
-        U₀ = forward_network(solver, network, X0aux)
+        if solver == "hybrid"
+            U₀ = forward(network, X0aux)
+        else
+            U₀ = forward_network(solver, network, X0aux)
+        end
     else
         U₀ = LazySets.Projection(Q₀, ctrl_vars)
     end
@@ -202,7 +206,11 @@ function _solve(cp::ControlledPlant,
         X₀ = _Projection(X, st_vars) |> set # lazy set
         P₀ = isempty(in_vars) ? X₀ : X₀ × W₀
 
-        U₀ = forward_network(solver, network, preprocess(X₀))
+        if solver == "hybrid"
+            U₀ = forward(network, preprocess(X₀))
+        else
+            U₀ = forward_network(solver, network, preprocess(X₀))
+        end
     end
 
     return MixedFlowpipe(out, Dict{Symbol,Any}(:controls=>controls))
