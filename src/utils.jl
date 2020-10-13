@@ -67,7 +67,8 @@ end
 end
 
 const HALFINT = IA.Interval(0.5, 0.5)
-const ACTFUN = Dict(Tanh() => tanh!, Sigmoid() => sigmoid!)
+const ZEROINT = IA.Interval(0.0, 0.0)
+const ACTFUN = Dict(Tanh() => (tanh!, ZEROINT), Sigmoid() => (sigmoid!, HALFINT))
 
 # Method: Cartesian decomposition (intervals for each one-dimensional subspace)
 # Only Tanh, Sigmoid and Id functions are supported
@@ -86,18 +87,20 @@ function forward(nnet::Network, X0::LazySet;
         act = layer.activation
 
         xᴶ′ = W * xᴾ₀ + b  # (scalar matrix) * (interval vector) + (scalar vector)
-        xᴾ′ = fill(HALFINT, m)
-
+        
         if act == Id()
             xᴾ₀ = copy(xᴶ′)
             continue
         end
-        activation! = ACTFUN[act]
+
+        activation!, ival = ACTFUN[act]
+        xᴾ′ = fill(ival, m)
 
         for i = 1:m  # loop over coordinates
             X0i = xᴶ′[i] × xᴾ′[i]
             ivp = @ivp(x' = activation!(x), dim=2, x(0) ∈ X0i)
             sol = RA.solve(ivp, tspan=(0., 1.), alg=alg)
+
             # interval overapproximation of the final reach-set along
             # dimension 2, which corresponds to xᴾ
             xᴾ_end = sol.F.ext[:xv][end][2]
