@@ -37,7 +37,7 @@ g = 1.0
 gL = g/L
 mL = 1/m/L^2
 
-function SinglePendulum!(dx, x, params, t)
+function single_pendulum!(dx, x, params, t)
     dx[1] = x[2]
     dx[2] = gL * sin(x[1]) + mL*(x[3] - c*x[2])
     dx[3] = zero(x[1]) # T = x[3]
