@@ -49,7 +49,7 @@ X0 = Hyperrectangle([1.1, 0.1], [0.1, 0.1]);
 U0 = Universe(1)
 
 U0 = Universe(1)
-prob = @ivp(x' = eqs_single_pendulum!(x), dim: 3, x(0) ∈ X0 × U0);
+prob = @ivp(x' = single_pendulum!(x), dim: 3, x(0) ∈ X0 × U0);
 vars_idx = Dict(:state_vars=>1:2, :input_vars=>[], :control_vars=>3);
 
 plant = ControlledPlant(prob, controller, vars_idx);
