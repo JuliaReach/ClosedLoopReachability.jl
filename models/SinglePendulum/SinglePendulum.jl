@@ -6,7 +6,7 @@
 #md #     [`singlePendulum.ipynb`](__NBVIEWER_ROOT_URL__/../SinglePendulum.ipynb)
 #
 # This is the classical inverted pendulum environment.  A ball of mass ``m`` is
-# attached to a masslessbeam of lengthL.  The beam is actuated with a
+# attached to a massless beam of length ``L``.  The beam is actuated with a
 # torque ``T`` and we assume viscous friction exists with a coefficient of
 # ``c``.  [1]
 
