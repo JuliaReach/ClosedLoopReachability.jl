@@ -21,7 +21,7 @@
 # ```
 # where ``\theta`` is the angle that link makes with the upward vertical axis.
 # The state vector is ``[\theta, ̇\dot\theta]``.
-# Controllers are trained usingbehavior  cloning. Here, a neural network is
+# Controllers are trained using behavior cloning. Here, a neural network is
 # trained to replicate expert demonstrations.
 
 using NeuralNetworkAnalysis
