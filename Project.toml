@@ -13,7 +13,7 @@ Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 
 [compat]
 LazySets = "1.37"
-MAT = "0.8, 0.9"
+MAT = "0.8, 0.9, 0.10"
 MathematicalSystems = "0.11"
 NeuralVerification = "0"
 ReachabilityAnalysis = "0.7, 0.8, 0.9"
