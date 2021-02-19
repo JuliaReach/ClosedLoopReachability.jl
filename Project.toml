@@ -12,11 +12,11 @@ ReachabilityAnalysis = "1e97bd63-91d1-579d-8e8d-501d2b57c93f"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 
 [compat]
-LazySets = "1.37"
+LazySets = "1.40"
 MAT = "0.8, 0.9"
 MathematicalSystems = "0.11"
 NeuralVerification = "0"
-ReachabilityAnalysis = "0.7, 0.8, 0.9, 0.10"
+ReachabilityAnalysis = "0.10"
 Reexport = "0.2, 1.0"
 julia = "1"
 
