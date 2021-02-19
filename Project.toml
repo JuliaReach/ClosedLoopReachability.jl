@@ -16,7 +16,7 @@ LazySets = "1.37"
 MAT = "0.8, 0.9"
 MathematicalSystems = "0.11"
 NeuralVerification = "0"
-ReachabilityAnalysis = "0.7, 0.8, 0.9"
+ReachabilityAnalysis = "0.7, 0.8, 0.9, 0.10"
 Reexport = "0.2, 1.0"
 julia = "1"
 
