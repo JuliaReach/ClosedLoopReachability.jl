@@ -7,14 +7,21 @@ MODELS = [
     joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-7"),
     joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-9"),
     joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-10"),
-    joinpath(@__DIR__, "..", "models", "Airplane"),
-    joinpath(@__DIR__, "..", "models", "SinglePendulum"),
+#     joinpath(@__DIR__, "..", "models", "Airplane"),
+#     joinpath(@__DIR__, "..", "models", "SinglePendulum"),
     joinpath(@__DIR__, "..", "models", "Double Pendulum"),
     joinpath(@__DIR__, "..", "models", "VertCAS")
 ]
 GENERATEDDIR = joinpath(@__DIR__, "src", "models")
 mkpath(GENERATEDDIR)
 for model in MODELS
+    # copy over .nnet files
+    for file in readdir(model)
+        if any(endswith.(file, [".nnet"]))
+            cp(joinpath(model, file), joinpath(GENERATEDDIR, file); force=true)
+        end
+    end
+
     for file in readdir(model)
         if endswith(file, ".jl")
             input = abspath(joinpath(model, file))
