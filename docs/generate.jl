@@ -15,6 +15,13 @@ MODELS = [
 GENERATEDDIR = joinpath(@__DIR__, "src", "models")
 mkpath(GENERATEDDIR)
 for model in MODELS
+    # copy over .nnet files
+    for file in readdir(model)
+        if any(endswith.(file, [".nnet"]))
+            cp(joinpath(model, file), joinpath(GENERATEDDIR, file); force=true)
+        end
+    end
+
     for file in readdir(model)
         if endswith(file, ".jl")
             input = abspath(joinpath(model, file))
