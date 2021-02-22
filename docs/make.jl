@@ -18,7 +18,7 @@ makedocs(
                           "Non-Linear Cart-Pole" => "models/Cart-Pole.md",
                           "Adaptive Cruise Controller" => "models/ACC.md",
 #                           "Airplane" => "models/Airplane.md",
-                          "Single Pendulum" => "models/SinglePendulum.md",
+#                           "Single Pendulum" => "models/SinglePendulum.md",
                           "Double Pendulum" => "models/DoublePendulum.md",
                           "Vertical CAS" => "models/VertCAS.md",
                          ],
