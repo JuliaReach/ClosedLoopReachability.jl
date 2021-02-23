@@ -24,17 +24,17 @@ function simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
     # sample initial states
     states = sample(X₀, trajectories)
 
-    for i in 1:iterations
+    @inbounds for i in 1:iterations
         # compute control inputs
         controls = Vector{Vector{Float64}}(undef, trajectories)
-        @inbounds for j in 1:trajectories
+        for j in 1:trajectories
             x₀ = states[j]
             controls[j] = forward(network, x₀)
         end
         all_controls[i] = controls
 
         # extend system state with inputs
-        @inbounds for j in 1:trajectories
+        for j in 1:trajectories
             extended[j] = vcat(states[j], controls[j])
         end
 
@@ -43,7 +43,7 @@ function simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
                                          inplace=inplace)
 
         # project to state variables
-        @inbounds for j in 1:trajectories
+        for j in 1:trajectories
             ode_solution = simulations[i][j]
             final_extended = ode_solution.u[end]
             states[j] = final_extended[st_vars]
