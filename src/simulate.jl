@@ -8,13 +8,13 @@ function simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
     n = length(st_vars)
     X₀ = Projection(initial_state(ivp), st_vars)
     ctrl_vars = control_vars(cp)
-    δ = period(cp)
+    τ = period(cp)
     time_span = _get_tspan(args...; kwargs...)
     trajectories = get(kwargs, :trajectories, 10)
     inplace = get(kwargs, :inplace, true)
 
     t = tstart(time_span)
-    iterations = ceil(Int, diam(time_span) / δ)
+    iterations = ceil(Int, diam(time_span) / τ)
 
     # preallocate
     extended = Vector{Vector{Float64}}(undef, trajectories)
@@ -39,7 +39,7 @@ function simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
         end
 
         # simulate system for the next period
-        simulations[i] = _solve_ensemble(ivp, extended, (t, t + δ);
+        simulations[i] = _solve_ensemble(ivp, extended, (t, t + τ);
                                          inplace=inplace)
 
         # project to state variables
@@ -50,7 +50,7 @@ function simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
         end
 
         # advance time
-        t += δ
+        t += τ
     end
 
     return simulations, all_controls
