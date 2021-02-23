@@ -24,3 +24,5 @@ Artificial Intelligence and Neural Network Control Systems
 
 - [ReachNNStar](https://github.com/JmfanBU/ReachNNStar) -- Reachability Analysis Tool of Neural Network Controlled Systems (NNCSs)
 
+- [NeuralOptimization.jl
+](https://github.com/castrong/NeuralOptimization.jl) -- A compilation of ReLU network optimization algorithms.
