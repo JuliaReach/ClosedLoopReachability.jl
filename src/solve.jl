@@ -58,17 +58,9 @@ function solve(prob::AbstractNeuralNetworkControlProblem, args...; kwargs...)
 
     solver = _get_alg_nn(args...; kwargs...)
 
-    if haskey(kwargs, :apply_initial_control)
-        init_ctrl = kwargs[:apply_initial_control]
-    else
-        init_ctrl = true
-    end
+    init_ctrl = get(kwargs, :apply_initial_control, true)
 
-    if haskey(kwargs, :preprocess)
-        preprocess = kwargs[:preprocess]
-    else
-        preprocess = X -> overapproximate(X, Hyperrectangle)
-    end
+    preprocess = get(kwargs, :preprocess, box_approximation)
 
     sol = _solve(prob, cpost, solver, tspan, Tsample, init_ctrl, preprocess)
 
