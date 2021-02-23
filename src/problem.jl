@@ -2,15 +2,19 @@ abstract type AbstractNeuralNetworkControlProblem end
 
 # ST: type of system
 # XT: type of initial condition
-struct ControlledPlant{ST, XT, IV<:InitialValueProblem{ST, XT}, DT} <: AbstractNeuralNetworkControlProblem
-    ivp::IV
+# DT: type of variables
+# PT: type of period
+struct ControlledPlant{ST, XT, DT, PT} <: AbstractNeuralNetworkControlProblem
+    ivp::InitialValueProblem{ST, XT}
     controller::Network
     vars::Dict{Symbol, DT}
+    period::PT
 end
 
 plant(cp::ControlledPlant) = cp.ivp
 system(cp::ControlledPlant) = cp.ivp.s
 controller(cp::ControlledPlant) = cp.controller
+period(cp::ControlledPlant) = cp.period
 
 function state_vars(cp::ControlledPlant)
     try
