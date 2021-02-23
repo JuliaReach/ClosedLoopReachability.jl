@@ -18,7 +18,9 @@ Artificial Intelligence and Neural Network Control Systems
 - [Proceedings of ARCH-COMP 2019 AI-NNCS](https://easychair.org/publications/open/BFKs)
 - [Repo with benchmark models (2019)](https://github.com/verivital/ARCH-COMP19-AINNCS)
 
-## Related packages
+## Related tools
 
 - [NeuralVerification.jl](https://github.com/sisl/NeuralVerification.jl) -- Methods to soundly verify deep neural networks
+
+- [ReachNNStar](https://github.com/JmfanBU/ReachNNStar) -- Reachability Analysis Tool of Neural Network Controlled Systems (NNCSs)
 
