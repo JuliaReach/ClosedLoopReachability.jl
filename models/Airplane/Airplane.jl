@@ -161,12 +161,13 @@ X₀ = overapproximate(X₀, Hyperrectangle)
 U₀ = rand(Hyperrectangle, dim=6) # ignored
 prob = @ivp(x' = airplane!(x), dim: 18, x(0) ∈ X₀ × U₀);
 vars_idx = Dict(:state_vars=>1:12, :input_vars=>[], :control_vars=>13:18);
+period = 0.1
 
 #=
-plant = ControlledPlant(prob, controller, vars_idx);
+plant = ControlledPlant(prob, controller, vars_idx, period);
 alg = TMJets(abs_tol=1e-15, orderT=7, orderQ=1)
 solver = Ai2z()
-@time sol = solve(plant, T=0.1, Tsample=0.1, alg_nn=solver, alg=alg)
+@time sol = solve(plant, T=2.0, Tsample=0.1, alg_nn=solver, alg=alg)
 solz = overapproximate(sol, Zonotope);
 
 
