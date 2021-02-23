@@ -48,15 +48,16 @@ end
 X0 = Hyperrectangle([1.1, 0.1], [0.1, 0.1]);
 U0 = Universe(1)
 
-prob = @ivp(x' = single_pendulum!(x), dim: 3, x(0) ∈ X0 × U0);
+ivp = @ivp(x' = single_pendulum!(x), dim: 3, x(0) ∈ X0 × U0);
 vars_idx = Dict(:state_vars=>1:2, :input_vars=>[], :control_vars=>3);
+period = 0.05
 
-plant = ControlledPlant(prob, controller, vars_idx);
+prob = ControlledPlant(ivp, controller, vars_idx, period);
 alg = TMJets(abs_tol=1e-12, orderT=5, orderQ=2)
-solver = Ai2()
+alg_nn = Ai2()
 
 # solve it
-@time sol = solve(plant, T=1.0, Tsample=0.05, alg_nn=solver, alg=alg)
+@time sol = solve(prob, T=1.0, Tsample=0.05, alg_nn=alg_nn, alg=alg)
 solz = overapproximate(sol, Zonotope);
 
 # ## Specifications
