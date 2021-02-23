@@ -1,16 +1,13 @@
 # # Single Pendulum
 #
-#
 #md # !!! tip
 #md #     This example is also available as a Jupyter notebook:
 #md #     [`singlePendulum.ipynb`](__NBVIEWER_ROOT_URL__/../SinglePendulum.ipynb)
 #
-# This is the classical inverted pendulum environment.  A ball of mass ``m`` is
+# This is a classical inverted pendulum. A ball of mass ``m`` is
 # attached to a massless beam of length ``L``.  The beam is actuated with a
 # torque ``T`` and we assume viscous friction exists with a coefficient of
-# ``c``.  [1]
-
-#
+# ``c``.
 
 # ## Model
 #
@@ -20,15 +17,17 @@
 # \ddot\theta = \dfrac{g}{L} \sin\theta + \dfrac{1}{m L^2} (T - c\dot\theta)
 # ```
 # where ``\theta`` is the angle that link makes with the upward vertical axis.
-# The state vector is ``[\theta, ̇\dot\theta]``.
+# The state vector is ``[θ, ̇θ̇]``.
 # Controllers are trained using behavior cloning. Here, a neural network is
-# trained to replicate expert demonstrations.
+# trained to replicate expert demonstrations [^1].
 
 using NeuralNetworkAnalysis
 
-controller = read_nnet("./controller_single_pendulum.nnet");
+models_dir = normpath(@__DIR__, "..", "..", "..", "models")
+path = joinpath(models_dir, "SinglePendulum", "controller_single_pendulum.nnet")
+controller = read_nnet(path);
 
-# Variables:
+# model constants
 m = 0.5
 L = 0.5
 c = 0.
@@ -52,25 +51,23 @@ prob = @ivp(x' = single_pendulum!(x), dim: 3, x(0) ∈ X0 × U0);
 vars_idx = Dict(:state_vars=>1:2, :input_vars=>[], :control_vars=>3);
 
 plant = ControlledPlant(prob, controller, vars_idx);
-alg = TMJets(abs_tol=1e-12, orderT=5, orderQ=2)
-solver = Ai2()
-
-# solve it
-@time sol = solve(plant, T=1.0, Tsample=0.05, alg_nn=solver, alg=alg)
-solz = overapproximate(sol, Zonotope);
 
 # ## Specifications
-# SpecificationThe discrete-time safety specification is: ``\forall n_t``:
-# ``10\le n_t \le 20``, ``\theta\in [0.0, 1.0]``. The continuous-time safety
-# specification is ``10\le t \le 20``, ``\theta\in[0,1]``.
 #
+# The (continuous-time) safety specification is: ``10 ≤ t ≤ 20``, ``θ ∈ [0,1]``.
 
 # ## Results
 
+alg = TMJets(abs_tol=1e-10, orderT=8, orderQ=2)
+solver = Ai2()
+
+# solve it
+sol = solve(plant, T=0.1, Tsample=0.05, alg_nn=solver, alg=alg);
+
 # ## References
 
-# [1] Johnson, T. T., Manzanas Lopez, D., Musau, P., Tran, H. D., Botoeva, E.,
-# Leofante, F., ... & Huang, C. (2020). ARCH-COMP20 Category Report: Artificial
-# Intelligence and Neural Network Control Systems (AINNCS) for Continuous and
-# Hybrid Systems Plants. EPiC Series in Computing, 74.
-# (https://easychair.org/publications/open/Jvwg)
+# [^1]: Johnson, T. T., Manzanas Lopez, D., Musau, P., Tran, H. D., Botoeva, E.,
+#       Leofante, F., ... & Huang, C. (2020). ARCH-COMP20 Category Report: Artificial
+#       Intelligence and Neural Network Control Systems (AINNCS) for Continuous and
+#       Hybrid Systems Plants. EPiC Series in Computing, 74.
+#       (https://easychair.org/publications/open/Jvwg)

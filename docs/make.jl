@@ -9,7 +9,9 @@ include("generate.jl")
 makedocs(
     sitename = "NeuralNetworkAnalysis.jl",
     modules = [NeuralNetworkAnalysis],
-    format = Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true"),
+    format = Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true",
+                             collapselevel = 1,
+                             assets = ["assets/juliareach-light.css"]),
     pages = [
         "Home" => "index.md",
         "Examples" => Any["3D model with sliding controller" => "models/Sherlock-Benchmark-7.md",

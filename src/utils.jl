@@ -50,7 +50,7 @@ end
 # d(σ(x))/dx = σ(x)*(1-σ(x))
 # g(t, x) = σ(tx) = 1 / (1 + exp(-tx))
 # dg(t, x)/dt = g'(t, x) = x * g(t, x) * (1 - g(t, x))
-@_taylorize function sigmoid!(dx, x, p, t)
+@taylorize function sigmoid!(dx, x, p, t)
     xᴶ, xᴾ = x
     dx[1] = zero(xᴶ)
     dx[2] = xᴶ *(xᴾ - xᴾ^2)
@@ -60,7 +60,7 @@ end
 # d(tanh(x))/dx = 1 - tanh(x)^2
 # g(t, x) = tanh(tx)
 # dg(t, x)/dt = g'(t, x) = x * (1 - g(t, x)^2)
-@_taylorize function tanh!(dx, x, p, t)
+@taylorize function tanh!(dx, x, p, t)
     xᴶ, xᴾ = x
     dx[1] = zero(xᴶ)
     dx[2] = xᴶ *(1 - xᴾ^2)
@@ -87,7 +87,7 @@ function forward(nnet::Network, X0::LazySet;
         act = layer.activation
 
         xᴶ′ = W * xᴾ₀ + b  # (scalar matrix) * (interval vector) + (scalar vector)
-        
+
         if act == Id()
             xᴾ₀ = copy(xᴶ′)
             continue

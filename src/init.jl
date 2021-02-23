@@ -4,7 +4,9 @@ using Reexport
 using ReachabilityAnalysis: _check_dim, _get_tspan, _get_cpost, _default_cpost,
                             ReachSolution, InitialValueProblem, numtype,
                             AbstractContinuousPost, TimeInterval,
-                            AbstractLazyReachSet, AbstractTaylorModelReachSet
+                            AbstractLazyReachSet, AbstractTaylorModelReachSet,
+                            complement # conflict with NeuralVerification.jl
+
 const RA = ReachabilityAnalysis
 import ReachabilityAnalysis: solve
 
@@ -15,12 +17,3 @@ const NV = NeuralVerification
 const IA = IntervalArithmetic
 
 using LazySets: _leq, _geq, isapproxzero, remove_zero_generators
-
-# see https://github.com/PerezHz/TaylorIntegration.jl/issues/106
-macro _taylorize(ex)
-    nex = TaylorIntegration._make_parsed_jetcoeffs(ex)
-    return quote
-        $(esc(ex))
-        $(esc(nex))
-    end
-end
