@@ -30,6 +30,11 @@ jobs:
         with:
           version: ${{ matrix.julia-version }}
           arch: ${{ matrix.julia-arch }}
+      - run: |
+          julia --project=docs -e '
+            using Pkg
+            Pkg.develop(PackageSpec(name="NeuralVerification", url="https://github.com/sisl/NeuralVerification.jl"))
+            Pkg.instantiate()'
       - uses: actions/cache@v1
         env:
           cache-name: cache-artifacts
