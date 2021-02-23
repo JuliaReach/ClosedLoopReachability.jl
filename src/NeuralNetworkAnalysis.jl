@@ -1,5 +1,7 @@
 module NeuralNetworkAnalysis
 
+using Requires
+
 include("init.jl")
 include("problem.jl")
 include("nnops.jl")
