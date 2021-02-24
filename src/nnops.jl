@@ -2,6 +2,19 @@
 # Internal forward network functions
 # ================================================
 
+# output of neural network for a single input
+function forward(network::Network, x0::Vector{<:Number})
+    layers = network.layers
+    x = x0
+    @inbounds for i in 1:length(layers)
+        layer = network.layers[i]
+        W = layer.weights
+        b = layer.bias
+        x = layer.activation(W * x + b)
+    end
+    return x
+end
+
 #=
 
 # fallback to NV
