@@ -167,7 +167,7 @@ period = 0.1
 plant = ControlledPlant(prob, controller, vars_idx, period);
 alg = TMJets(abs_tol=1e-15, orderT=7, orderQ=1)
 solver = Ai2z()
-@time sol = solve(plant, T=2.0, Tsample=0.1, alg_nn=solver, alg=alg)
+@time sol = solve(plant, T=2.0, alg_nn=solver, alg=alg)
 solz = overapproximate(sol, Zonotope);
 
 

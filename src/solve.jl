@@ -32,9 +32,6 @@ The solution of a reachability problem controlled by a neural network.
 - Use the `T` keyword argument to specify the time horizon; the initial time is
   then assumed to be zero.
 
-- Use the `Tsample` or `sampling_time` keyword argument to specify the sampling
-time for the model.
-
 - Use the `alg_nn` keyword argument to specify the the neural network solver.
 
 """
@@ -53,8 +50,7 @@ function solve(prob::AbstractNeuralNetworkControlProblem, args...; kwargs...)
         cpost = _default_cpost(ivp, tspan; kwargs...)
     end
 
-    # extract the sampling time
-    Tsample = _get_Tsample(; kwargs...)
+    τ = period(prob)
 
     solver = _get_alg_nn(args...; kwargs...)
 
@@ -62,21 +58,10 @@ function solve(prob::AbstractNeuralNetworkControlProblem, args...; kwargs...)
 
     preprocess = get(kwargs, :preprocess, box_approximation)
 
-    sol = _solve(prob, cpost, solver, tspan, Tsample, init_ctrl, preprocess)
+    sol = _solve(prob, cpost, solver, tspan, τ, init_ctrl, preprocess)
 
     d = Dict{Symbol, Any}(:solver=>solver)
     return ReachSolution(sol, cpost, d)
-end
-
-function _get_Tsample(; kwargs...)
-    if haskey(kwargs, :sampling_time)
-        Tsample = kwargs[:sampling_time]
-    elseif haskey(kwargs, :Tsample)
-        Tsample = kwargs[:Tsample]
-    else
-        throw(ArgumentError("the sampling time `Tsample` should be specified, but was not found"))
-    end
-    return Tsample
 end
 
 function _get_alg_nn(args...; kwargs...)

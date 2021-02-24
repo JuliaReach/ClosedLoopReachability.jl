@@ -57,7 +57,7 @@ alg = TMJets(abs_tol=1e-12, orderT=5, orderQ=2)
 alg_nn = Ai2()
 
 # solve it
-@time sol = solve(prob, T=1.0, Tsample=0.05, alg_nn=alg_nn, alg=alg)
+@time sol = solve(prob, T=1.0, alg_nn=alg_nn, alg=alg)
 solz = overapproximate(sol, Zonotope);
 
 # ## Specifications
