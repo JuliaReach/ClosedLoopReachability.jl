@@ -25,8 +25,10 @@ function simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
     ivp = plant(cp)
     network = controller(cp)
     st_vars = state_vars(cp)
+    inpt_vars = input_vars(cp)
     n = length(st_vars)
     X₀ = Projection(initial_state(ivp), st_vars)
+    W₀ = Projection(initial_state(ivp), inpt_vars) |> overapproximate
     ctrl_vars = control_vars(cp)
     τ = period(cp)
     time_span = _get_tspan(args...; kwargs...)
@@ -41,6 +43,7 @@ function simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
     extended = Vector{Vector{Float64}}(undef, trajectories)
     simulations = Vector{EnsembleSolution}(undef, iterations)
     all_controls = Vector{Vector{Vector{Float64}}}(undef, iterations)
+    all_inputs = Vector{Vector{Vector{Float64}}}(undef, iterations)
 
     # sample initial states
     states = sample(X₀, trajectories)
@@ -55,9 +58,13 @@ function simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
         end
         all_controls[i] = controls
 
+        # compute  inputs
+        inputs = sample(W₀, trajectories)
+        all_inputs[i] = inputs
+
         # extend system state with inputs
         for j in 1:trajectories
-            extended[j] = vcat(states[j], controls[j])
+            extended[j] = vcat(states[j], inputs[j], controls[j])
         end
 
         # simulate system for the next period
@@ -75,5 +82,5 @@ function simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
         t += τ
     end
 
-    return simulations, all_controls
+    return simulations, all_controls, all_inputs
 end
