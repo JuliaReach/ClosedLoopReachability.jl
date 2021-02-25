@@ -92,8 +92,7 @@ ivp = @ivp(x' = ACC!(x), dim: 7, x(0) ∈ X₀×U₀);
 
 # We will evaluate the controller which has 5 hidden layers.
 using MAT
-MODEL_PATH = "ACC"
-path = joinpath(@relpath "controller_5_20.mat")
+path = joinpath(@modelpath("ACC", "controller_5_20.mat"))
 controller = read_nnet_mat(path, act_key="act_fcns")
 
 period = 0.1

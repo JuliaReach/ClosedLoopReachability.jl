@@ -1,5 +1,6 @@
 # generate examples
 import Literate
+import NeuralNetworkAnalysis: @modelpath
 
 MODELS = [
     joinpath(@__DIR__, "..", "models", "ACC"),
@@ -13,10 +14,11 @@ MODELS = [
     joinpath(@__DIR__, "..", "models", "Cart-Pole")
 ]
 GENERATEDDIR = joinpath(@__DIR__, "src", "models")
+MODELDIR = joinpath(@__DIR__, "..", "models")
 mkpath(GENERATEDDIR)
 
-macro relpath(name::String)
-    return joinpath(GENERATEDDIR, MODEL_PATH, name)
+macro modelpath(model_path::String, name::String)
+    return joinpath(MODELDIR, model_path, name)
 end
 
 for model in MODELS

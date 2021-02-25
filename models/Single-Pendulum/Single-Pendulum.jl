@@ -23,8 +23,7 @@
 
 using NeuralNetworkAnalysis
 
-MODEL_PATH = "Single-Pendulum"
-controller = read_nnet(@relpath "controller_single_pendulum.nnet")
+controller = read_nnet(@modelpath("Single-Pendulum", "controller_single_pendulum.nnet"))
 
 # model constants
 const m = 0.5

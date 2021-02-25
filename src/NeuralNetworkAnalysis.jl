@@ -15,6 +15,6 @@ export ControlledPlant
 export solve, forward, simulation
 
 # utility functions
-export @relpath, read_nnet_mat, read_nnet_yaml
+export @modelpath, read_nnet_mat, read_nnet_yaml
 
 end
