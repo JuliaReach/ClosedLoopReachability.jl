@@ -141,11 +141,11 @@ function _solve(cp::ControlledPlant,
 
         ti += sampling_time
 
-        X = sol[end] # reach-set
-        X₀ = _Projection(X, st_vars) |> set # lazy set
+        X = sol(ti)
+        X₀ = _project_oa(X, st_vars) |> set
         P₀ = isempty(in_vars) ? X₀ : X₀ × W₀
 
-        U₀ = forward_network(solver, network, preprocess(X₀))
+        U₀ = forward_network(solver, network, X₀)
         U₀ = apply(normalization, U₀)
     end
 
