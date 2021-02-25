@@ -1,21 +1,13 @@
 # # Double Inverted Pendulum
 #
+#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/Double-Pendulum.ipynb)
 #
-#md # !!! tip
-#md #     This example is also available as a Jupyter notebook:
-#md #     [`DoublePendulum.ipynb`](__NBVIEWER_ROOT_URL__/../Double-Pendulum.ipynb)
-#
-#
-# This example includes a double-link pendulum with equal point masses ``m``
-# at the end of connected mass-less links of length ``L``. Both links are
+# This example consists of a double-link pendulum with equal point masses ``m``
+# at the end of connected mass-less links of length ``L`` [^MS20]. Both links are
 # actuated with torques ``T_1`` and ``T_2`` and we assume viscous friction
-# exists with a coefficient of ``c``. [^1].
+# exists with a coefficient of ``c`.
 
 # ## Model
-#
-# For this casestudy, the ego car is set to travel at a set speed ``V_{set} = 30``
-# and maintains a safe distance ``D_{safe}`` from the lead car.  The car’s
-# dynamics are described as follows:
 #
 # ```math
 # \begin{aligned}
@@ -58,6 +50,4 @@ end
 
 # ## References
 
-# [^1] Amir Maleki, Chelsea Sidrane, May 16, 2020, [Benchmark Examples for
-# AINNCS-2020](https://github.com/amaleki2/benchmark_closedloop_verification/blob/master/AINNC_benchmark.pdf).
-#
+# [^MS20]: Amir Maleki, Chelsea Sidrane, May 16, 2020, [Benchmark Examples for AINNCS-2020](https://github.com/amaleki2/benchmark_closedloop_verification/blob/master/AINNC_benchmark.pdf).

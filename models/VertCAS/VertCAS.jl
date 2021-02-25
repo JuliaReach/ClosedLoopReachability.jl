@@ -1,10 +1,6 @@
 # # Vertical Collision Avoidance (VCAS)
 #
-#
-#md # !!! tip
-#md #     This example is also available as a Jupyter notebook:
-#md #     [`VertCAS.ipynb`](__NBVIEWER_ROOT_URL__/../VertCAS.ipynb)
-#
+#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/VertCAS.ipynb)
 #
 # This example [1, 2] considers commercial aircraft, which are required to operate
 # with a collision avoidance system that gives vertical climbrate advisories to

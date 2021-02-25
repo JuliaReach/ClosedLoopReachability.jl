@@ -1,8 +1,6 @@
 # # Single Inverted Pendulum
 #
-#md # !!! tip
-#md #     This example is also available as a Jupyter notebook:
-#md #     [`singlePendulum.ipynb`](__NBVIEWER_ROOT_URL__/../Single-Pendulum.ipynb)
+#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/Single-Pendulum.ipynb)
 #
 # This is a classical inverted pendulum. A ball of mass ``m`` is
 # attached to a massless beam of length ``L``.  The beam is actuated with a
