@@ -11,14 +11,14 @@
 #
 # The model is four dimensional, given by the following equations:
 #
-#```math
-#    \left\{ \begin{array}{lcl}
+# ```math
+# \left\{ \begin{array}{lcl}
 #       \dot{x}_1 &=& x_2 \\
 #       \dot{x}_2 &=& -x_1 + 0.1 \sin x_3 \\
 #       \dot{x}_3 &=& x_4  \\
 #       \dot{x}_4 &=& u
-#    \end{array} \right.
-#```
+# \end{array} \right.
+# ```
 #
 # A neural network controller was trained for this system, using data-driven model predictive
 # controller proposed in [^DJST18]. The trained network had 3 hidden layers, with 100 neurons in each
@@ -29,13 +29,14 @@
 using NeuralNetworkAnalysis
 
 @taylorize function benchmark9!(dx, x, p, t)
-    u = one(x[4])
-    aux = 0.1 * sin(x[3])
-    dx[1] = x[2]
-    dx[2] = -x[1] + aux
-    dx[3] = x[4]
+    x₁, x₂, x₃, x₄, u = x
+
+    aux = 0.1 * sin(x₃)
+    dx[1] = x₂
+    dx[2] = -x₁ + aux
+    dx[3] = x₄
     dx[4] = u
-    return dx
+    dx[5] = zero(u)
 end
 
 # ## Requirements
