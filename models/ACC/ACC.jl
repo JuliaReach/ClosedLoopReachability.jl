@@ -17,12 +17,12 @@
 #
 # ```math
 # \left\{ \begin{array}{lcl}
-# \dot{x}_{lead}(t) &= v_{lead}(t) \\
-# \dot{v}_{lead}(t) &= γ_{lead}(t) \\
-# \dot{γ}_{lead}(t) &= -2γ_{lead}(t) + 2a_{lead}(t) - μv_{lead}^2(t)  \\
-# \dot{x}_{ego}(t) &= v_{ego}(t) \\
-# \dot{v}_{ego}(t) &= γ_{ego}(t) \\
-# \dot{γ}_{ego}(t) &= -2γ_{ego}(t) + 2a_{ego}(t) - μv_{ego}^2(t)
+# \dot{x}_{lead}(t) &=& v_{lead}(t) \\
+# \dot{v}_{lead}(t) &=& γ_{lead}(t) \\
+# \dot{γ}_{lead}(t) &=& -2γ_{lead}(t) + 2a_{lead}(t) - μv_{lead}^2(t)  \\
+# \dot{x}_{ego}(t) &=& v_{ego}(t) \\
+# \dot{v}_{ego}(t) &=& γ_{ego}(t) \\
+# \dot{γ}_{ego}(t) &=& -2γ_{ego}(t) + 2a_{ego}(t) - μv_{ego}^2(t)
 # \end{array} \right.
 # ```
 # where ``x_i`` is the position, ``v_i`` is the velocity, ``γ_i`` is the
@@ -69,8 +69,11 @@ end
 # A control period of 0.1 seconds is used.
 #
 # Formally, the safety specification can be expressed as:
-# ``D_{rel} = x_{lead} - x_{ego} ≥ D_{safe}``, where ``D_{safe} = D_{default} + T_{gap} × v_{ego}``,
-# ``T_{gap} = 1.4`` seconds and ``D_{default} = 10``.
+# ```math
+#     D_{rel} = x_{lead} - x_{ego} ≥ D_{safe},
+# ```
+# where ``D_{safe} = D_{default} + T_{gap} × v_{ego}``,
+# ``T_{gap} = 1.4`` sec and ``D_{default} = 10``.
 
 # The uncertain initial conditions are chosen to be:
 #
@@ -81,7 +84,7 @@ end
 
 # The initial states according to the specification are:
 X₀ = Hyperrectangle(low=[90, 32, 0, 10, 30, 0], high=[110, 32.2, 0, 11, 30.2, 0])
-U₀ = Singleton([-1.0])
+U₀ = Singleton([-1.0]); # gets overwritten
 
 # The system has 6 state variables and 1 control variable:
 vars_idx = Dict(:state_vars=>1:6, :input_vars=>[], :control_vars=>7)
