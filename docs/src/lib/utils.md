@@ -5,6 +5,12 @@ CurrentModule = NeuralNetworkAnalysis
 
 # Utility functions
 
+## Locating files
+
+```@docs
+@relpath
+```
+
 ## Reading networks
 
 ```@docs

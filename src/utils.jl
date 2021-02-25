@@ -5,57 +5,6 @@ _vec(A::AbstractMatrix) = vec(A)
 _vec(A::Number) = [A]
 _vec(A::AbstractVector) = A
 
-# ================================================
-# Reading a network in MAT format
-# ================================================
-
-"""
-    read_nnet_mat(file; key="controller")
-
-Read a neural network stored in a `.mat` file and return the corresponding network
-in the format of `NeuralVerification.jl`.
-
-### Input
-
-- `file` -- string indicating the location of the `.mat` file containing the neural network
-- `key`  -- (optional, default: `"controller"`) key used to search the dictionary
-
-### Output
-
-A `Network` struct.
-
-### Notes
-
-The following activation functions are supported:
-
-- RELU: "relu" (`ReLU`)
-- Identity: "linear" (`Id`)
-"""
-function read_nnet_mat(file; key="controller")
-    vars = matread(file)
-    !haskey(vars, key) && throw(ArgumentError("didn't find key $key"))
-    dic = vars[key]
-
-    nLayers = Int(dic["number_of_layers"])
-    layers = Vector{Layer}(undef, nLayers)
-    aF = dic["activation_fcns"]
-
-    for n = 1:nLayers
-        W = dic["W"][n]
-        b = dic["b"][n]
-        if aF[n] == "relu"
-            act = ReLU()
-        elseif aF[n] == "linear"
-            act = Id()
-        else
-            error("error, aF = $(aF[n]), nLayer = $n")
-        end
-        layers[n] = Layer(W, _vec(b), act)
-    end
-
-    return Network(layers)
-end
-
 """
    @relpath(name)
 
@@ -97,6 +46,56 @@ macro relpath(name::String)
     _dirname = dirname(String(__source__.file))
     dir = isempty(_dirname) ? pwd() : abspath(_dirname)
     return joinpath(dir, name)
+end
+
+# ================================================
+# Reading a network in MAT format
+# ================================================
+
+"""
+    read_nnet_mat(file; key="controller")
+
+Read a neural network stored in a `.mat` file and return the corresponding network
+in the format of `NeuralVerification.jl`.
+
+### Input
+
+- `file` -- string indicating the location of the `.mat` file containing the neural network
+- `key`  -- (optional, default: `"controller"`) key used to search the dictionary
+
+### Output
+
+A `Network` struct.
+
+### Notes
+
+The following activation functions are supported:
+
+- RELU: "relu" (`ReLU`)
+- Identity: "linear" (`Id`)
+"""
+function read_nnet_mat(file::String; key="controller")
+    !haskey(vars, key) && throw(ArgumentError("didn't find key $key"))
+    dic = vars[key]
+
+    nLayers = Int(dic["number_of_layers"])
+    layers = Vector{Layer}(undef, nLayers)
+    aF = dic["activation_fcns"]
+
+    for n = 1:nLayers
+        W = dic["W"][n]
+        b = dic["b"][n]
+        if aF[n] == "relu"
+            act = ReLU()
+        elseif aF[n] == "linear"
+            act = Id()
+        else
+            error("error, aF = $(aF[n]), nLayer = $n")
+        end
+        layers[n] = Layer(W, _vec(b), act)
+    end
+
+    return Network(layers)
 end
 
 # ================================================

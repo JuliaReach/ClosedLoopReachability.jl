@@ -88,10 +88,11 @@ vars_idx = Dict(:state_vars=>1:6, :input_vars=>[], :control_vars=>7)
 prob = @ivp(x' = ACC!(x), dim: 7, x(0) ∈ X₀×U₀);
 
 # We will evaluate the controller which has 5 hidden layers.
-using MAT
-controller = @relpath "controller_5_20.mat" |> read_nnet_mat
+#using MAT
 
-#-
+models_dir = normpath(@__DIR__, "..", "..", "..", "models")
+path = joinpath(models_dir, "ACC", "controller_5_20.mat")
+controller = read_nnet_mat(path)
 
 period = 0.1
 prob = ControlledPlant(ivp, controller, vars_idx, period);
@@ -104,6 +105,7 @@ alg_nn = Ai2()
 
 # We now solve the controlled system:
 sol = solve(plant, T=0.2, alg_nn=solver, alg=alg);
+=#
 
 # ## References
 
