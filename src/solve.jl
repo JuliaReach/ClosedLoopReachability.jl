@@ -91,6 +91,7 @@ function _solve(cp::ControlledPlant,
     in_vars = input_vars(cp)
     ctrl_vars = control_vars(cp)
     controls = Dict()
+    normalization = control_normalization(cp)
 
     Q₀ = initial_state(ivp) # TODO initial_state(plant)
     n = length(st_vars)
@@ -111,6 +112,7 @@ function _solve(cp::ControlledPlant,
     if apply_initial_control
         X0aux = preprocess(X₀)
         U₀ = forward_network(solver, network, X0aux)
+        U₀ = apply(normalization, U₀)
     else
         U₀ = LazySets.Projection(Q₀, ctrl_vars)
     end
@@ -144,6 +146,7 @@ function _solve(cp::ControlledPlant,
         P₀ = isempty(in_vars) ? X₀ : X₀ × W₀
 
         U₀ = forward_network(solver, network, preprocess(X₀))
+        U₀ = apply(normalization, U₀)
     end
 
     ext = Dict{Symbol, Any}(:controls=>controls)

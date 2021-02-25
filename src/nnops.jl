@@ -89,3 +89,7 @@ function forward(nnet::Network, X0::LazySet;
     end
     return CartesianProductArray([Interval(x) for x in xᴾ₀])
 end
+
+function apply(normalization::UniformAdditiveNormalization, X::LazySet)
+    return translate(X, fill(normalization.shift, dim(X)))
+end
