@@ -29,3 +29,8 @@ Artificial Intelligence and Neural Network Control Systems
 
 - [sherlock](https://github.com/souradeep-111/sherlock) -- Sherlock is a tool for output range anaylsis of Deep Neural Networks with ReLU activation units.
 
+- [NeuralVerifier.jl](https://github.com/jaypmorgan/NeuralVerifier.jl) -- Formal Verification of Deep Neural Networks in Julia
+
+- [Adversarial.jl](https://github.com/jaypmorgan/Adversarial.jl) -- Adversarial attacks for Neural Networks written with FluxML
+
+
