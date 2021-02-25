@@ -1,4 +1,5 @@
 using ReachabilityAnalysis: post
+import ReachabilityAnalysis: solve
 
 #=
 NOTES:
@@ -6,6 +7,7 @@ NOTES:
 - Add default neural network solver.
 
 =#
+
 """
     solve(prob::AbstractNeuralNetworkControlProblem, args...; kwargs...)
 

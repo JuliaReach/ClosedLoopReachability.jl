@@ -165,7 +165,7 @@ X₀ = 0.2 * X₀
 X₀ = overapproximate(X₀, Hyperrectangle)
 
 U₀ = rand(Hyperrectangle, dim=6) # ignored
-prob = @ivp(x' = airplane!(x), dim: 18, x(0) ∈ X₀ × U₀);
+#prob = @ivp(x' = airplane!(x), dim: 18, x(0) ∈ X₀ × U₀);
 vars_idx = Dict(:state_vars=>1:12, :input_vars=>[], :control_vars=>13:18);
 period = 0.1
 

@@ -2,20 +2,21 @@
 import Literate
 
 MODELS = [
-    joinpath(@__DIR__, "..", "models", "Non-linear Cart-Pole"),
     joinpath(@__DIR__, "..", "models", "ACC"),
-    joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-7"),
-    joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-9"),
-    joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-10"),
+    joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-9-TORA"),
+    joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-10-Unicycle"),
+    joinpath(@__DIR__, "..", "models", "VertCAS"),
+    joinpath(@__DIR__, "..", "models", "Single-Pendulum"),
+    joinpath(@__DIR__, "..", "models", "Double-Pendulum"),
     joinpath(@__DIR__, "..", "models", "Airplane"),
-    joinpath(@__DIR__, "..", "models", "SinglePendulum"),
-    joinpath(@__DIR__, "..", "models", "Double Pendulum"),
-    joinpath(@__DIR__, "..", "models", "VertCAS")
+    joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-7"),
+    joinpath(@__DIR__, "..", "models", "Cart-Pole")
 ]
 GENERATEDDIR = joinpath(@__DIR__, "src", "models")
 mkpath(GENERATEDDIR)
+
 for model in MODELS
-    # copy over .nnet files
+    # copy over .nnet files << TODO still needed?
     for file in readdir(model)
         if any(endswith.(file, [".nnet"]))
             cp(joinpath(model, file), joinpath(GENERATEDDIR, file); force=true)

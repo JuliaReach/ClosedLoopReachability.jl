@@ -1,7 +1,5 @@
 module NeuralNetworkAnalysis
 
-using Requires
-
 include("init.jl")
 include("problem.jl")
 include("nnops.jl")
@@ -13,5 +11,7 @@ include("solve.jl")
 export ControlledPlant,
        forward,
        simulate
+
+export @relpath
 
 end

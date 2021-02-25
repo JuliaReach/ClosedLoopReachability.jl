@@ -1,4 +1,4 @@
-# # Non-linear Cart-Pole
+# # Nonlinear Cart-Pole
 #
 #
 #md # !!! tip

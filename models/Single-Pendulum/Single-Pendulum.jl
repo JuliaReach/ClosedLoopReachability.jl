@@ -1,8 +1,8 @@
-# # Single Pendulum
+# # Single Inverted Pendulum
 #
 #md # !!! tip
 #md #     This example is also available as a Jupyter notebook:
-#md #     [`singlePendulum.ipynb`](__NBVIEWER_ROOT_URL__/../SinglePendulum.ipynb)
+#md #     [`singlePendulum.ipynb`](__NBVIEWER_ROOT_URL__/../Single-Pendulum.ipynb)
 #
 # This is a classical inverted pendulum. A ball of mass ``m`` is
 # attached to a massless beam of length ``L``.  The beam is actuated with a
@@ -16,16 +16,16 @@
 # ```math
 # \ddot\theta = \dfrac{g}{L} \sin\theta + \dfrac{1}{m L^2} (T - c\dot\theta)
 # ```
-# where ``\theta`` is the angle that link makes with the upward vertical axis.
-# The state vector is ``[θ, ̇θ̇]``.
+# where ``θ`` is the angle that link makes with the upward vertical axis.
+# The state vector is ``[θ, θ']``.
 # Controllers are trained using behavior cloning. Here, a neural network is
 # trained to replicate expert demonstrations [^1].
 
 using NeuralNetworkAnalysis
 
-models_dir = normpath(@__DIR__, "..", "..", "..", "models")
-path = joinpath(models_dir, "SinglePendulum", "controller_single_pendulum.nnet")
-controller = read_nnet(path);
+#models_dir = normpath(@__DIR__, "..", "..", "..", "models")
+#path = joinpath(models_dir, "SinglePendulum", )
+controller = read_nnet(@relpath "controller_single_pendulum.nnet")
 
 # model constants
 m = 0.5
@@ -56,8 +56,8 @@ alg = TMJets(abs_tol=1e-12, orderT=5, orderQ=2)
 alg_nn = Ai2()
 
 # solve it
-@time sol = solve(prob, T=1.0, alg_nn=alg_nn, alg=alg)
-solz = overapproximate(sol, Zonotope);
+#@time sol = solve(prob, T=1.0, alg_nn=alg_nn, alg=alg)
+#solz = overapproximate(sol, Zonotope);
 
 # ## Specifications
 #
@@ -65,11 +65,11 @@ solz = overapproximate(sol, Zonotope);
 
 # ## Results
 
-alg = TMJets(abs_tol=1e-10, orderT=8, orderQ=2)
-solver = Ai2()
+#alg = TMJets(abs_tol=1e-10, orderT=8, orderQ=2)
+#solver = Ai2()
 
 # solve it
-sol = solve(plant, T=0.1, Tsample=0.05, alg_nn=solver, alg=alg);
+#sol = solve(plant, T=0.1, Tsample=0.05, alg_nn=solver, alg=alg);
 
 # ## References
 

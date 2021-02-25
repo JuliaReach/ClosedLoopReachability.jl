@@ -1,9 +1,9 @@
-# # Translational Oscillations by a Rotational Actuator
+# # Translational Oscillations by a Rotational Actuator (TORA)
 #
 #
 #md # !!! tip
 #md #     This example is also available as a Jupyter notebook:
-#md #     [`Sherlock-Benchmark-9.ipynb`](__NBVIEWER_ROOT_URL__/../Sherlock-Benchmark-9.ipynb)
+#md #     [`Sherlock-Benchmark-9.ipynb`](__NBVIEWER_ROOT_URL__/../Sherlock-Benchmark-9-TORA.ipynb)
 #
 #
 # This model consists of a cart attached to a wall with a spring, and is free
@@ -46,7 +46,7 @@ prob = @ivp(x' = benchmark9!(x), dim: 4, x(0) ∈ X₀)
 
 # ## Specifications
 #
-# The verification problem here is that of safety. For an initial set of 
+# The verification problem here is that of safety. For an initial set of
 # ``x_1 ∈ [0.6, 0.7], x_2 ∈ [−0.7,−0.6], x_3 ∈ [−0.4,−0.3], x_4 ∈ [0.5,0.6]``,
 # it is required to prove that thesystem stays within the box ``x ∈ [−1, 1]^3``,
 # for a time window of 20s.
