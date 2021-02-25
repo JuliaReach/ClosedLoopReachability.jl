@@ -15,6 +15,10 @@ MODELS = [
 GENERATEDDIR = joinpath(@__DIR__, "src", "models")
 mkpath(GENERATEDDIR)
 
+macro relpath(name::String)
+    return joinpath(GENERATEDDIR, MODEL_PATH, name)
+end
+
 for model in MODELS
     for file in readdir(model)
         if endswith(file, ".jl")

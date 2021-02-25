@@ -23,9 +23,8 @@
 
 using NeuralNetworkAnalysis
 
-models_dir = normpath(@__DIR__, "..", "..", "..", "models")
-path = joinpath(models_dir, "Single-Pendulum", "controller_single_pendulum.nnet")
-controller = read_nnet(path)
+MODEL_PATH = "Single-Pendulum"
+controller = read_nnet(@relpath "controller_single_pendulum.nnet")
 
 # model constants
 const m = 0.5
