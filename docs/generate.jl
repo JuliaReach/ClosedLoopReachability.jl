@@ -1,5 +1,6 @@
 # generate examples
 import Literate
+import NeuralNetworkAnalysis: @modelpath
 
 MODELS = [
     joinpath(@__DIR__, "..", "models", "ACC"),
@@ -13,16 +14,14 @@ MODELS = [
     joinpath(@__DIR__, "..", "models", "Cart-Pole")
 ]
 GENERATEDDIR = joinpath(@__DIR__, "src", "models")
+MODELDIR = joinpath(@__DIR__, "..", "models")
 mkpath(GENERATEDDIR)
 
-for model in MODELS
-    # copy over .nnet files << TODO still needed?
-    for file in readdir(model)
-        if any(endswith.(file, [".nnet"]))
-            cp(joinpath(model, file), joinpath(GENERATEDDIR, file); force=true)
-        end
-    end
+macro modelpath(model_path::String, name::String)
+    return joinpath(MODELDIR, model_path, name)
+end
 
+for model in MODELS
     for file in readdir(model)
         if endswith(file, ".jl")
             input = abspath(joinpath(model, file))

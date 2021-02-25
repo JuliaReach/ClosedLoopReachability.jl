@@ -99,7 +99,7 @@ function _solve(cp::ControlledPlant,
     dim(Q₀) == n + m + q || throw(ArgumentError("dimension mismatch; expect the dimension of the initial states " *
          "of the initial-value problem to be $(n + m + q), but it is $(dim(Q₀))"))
 
-    X₀ = LazySets.Projection(Q₀, st_vars)
+    X₀ = Projection(Q₀, st_vars)
 
     if !isempty(in_vars)
         W₀ = LazySets.Projection(Q₀, in_vars)
@@ -146,5 +146,6 @@ function _solve(cp::ControlledPlant,
         U₀ = forward_network(solver, network, preprocess(X₀))
     end
 
-    return MixedFlowpipe(out, Dict{Symbol,Any}(:controls=>controls))
+    ext = Dict{Symbol, Any}(:controls=>controls)
+    return MixedFlowpipe(out, ext)
 end

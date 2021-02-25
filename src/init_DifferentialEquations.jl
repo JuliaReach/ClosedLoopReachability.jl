@@ -2,6 +2,7 @@ using .DifferentialEquations
 const DE = DifferentialEquations
 
 # simulation of multiple trajectories for an ODE system and a time span
+# currently we can't use this method from RA because the sampling should be made from outside the function
 function _solve_ensemble(ivp, X0_samples, tspan;
                          trajectories_alg=DE.Tsit5(),
                          ensemble_alg=DE.EnsembleThreads(),

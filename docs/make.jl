@@ -23,6 +23,9 @@ makedocs(
                           "Airplane" => "models/Airplane.md",
                           "Sliding controller" => "models/Sherlock-Benchmark-7.md",
                           "Nonlinear Cart-Pole" => "models/Cart-Pole.md"],
+        "API Reference" => Any["Problem types"=>"lib/problems.md",
+                               "Solvers"=>"lib/solvers.md",
+                               "Utilities"=>"lib/utils.md"],
         "About" => "about.md"
     ],
     strict = false

@@ -1,9 +1,24 @@
 abstract type AbstractNeuralNetworkControlProblem end
 
-# ST: type of system
-# XT: type of initial condition
-# DT: type of variables
-# PT: type of period
+"""
+    ControlledPlant{ST, XT, DT, PT} <: AbstractNeuralNetworkControlProblem
+
+Struct representing a closed-loop neural-network controlled system.
+
+### Fields
+
+- `ivp`        -- initial-value problem
+- `controller` -- neural-network controller
+- `vars`       -- dictionary storing state variables, input variables and control variables
+- `period`     -- control period
+
+### Parameters
+
+- `ST`: type of system
+- `XT`: type of initial condition
+- `DT`: type of variables
+- `PT`: type of period
+"""
 struct ControlledPlant{ST, XT, DT, PT} <: AbstractNeuralNetworkControlProblem
     ivp::InitialValueProblem{ST, XT}
     controller::Network
@@ -16,38 +31,6 @@ system(cp::ControlledPlant) = cp.ivp.s
 controller(cp::ControlledPlant) = cp.controller
 period(cp::ControlledPlant) = cp.period
 
-function state_vars(cp::ControlledPlant)
-    try
-        cp.vars[:state_vars]
-    catch error
-        if isa(error, KeyError)
-            println("key `:state_vars` not found")
-        else
-            println(error)
-        end
-    end
-end
-
-function input_vars(cp::ControlledPlant)
-    try
-        cp.vars[:input_vars]
-    catch error
-        if isa(error, KeyError)
-            println("key `:input_vars` not found")
-        else
-            println(error)
-        end
-    end
-end
-
-function control_vars(cp::ControlledPlant)
-    try
-        cp.vars[:control_vars]
-    catch error
-        if isa(error, KeyError)
-            println("key `:control_vars` not found")
-        else
-            println(error)
-        end
-    end
-end
+state_vars(cp::ControlledPlant) = get(cp.vars, :state_vars, nothing)
+input_vars(cp::ControlledPlant) = get(cp.vars, :input_vars, nothing)
+control_vars(cp::ControlledPlant) = get(cp.vars, :control_vars, nothing)
