@@ -1,10 +1,6 @@
 # # Unicycle Car Model
 #
-#
-#md # !!! tip
-#md #     This example is also available as a Jupyter notebook:
-#md #     [`Sherlock-Benchmark-10.ipynb`](__NBVIEWER_ROOT_URL__/../Sherlock-Benchmark-10-Unicycle.ipynb)
-#
+#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/Sherlock-Benchmark-10-Unicycle.ipynb)
 #
 # This benchmark is that of a unicycle model of a car [^1]. It models the
 # dynamics of a car involving 4 variables, specifically the ``x`` and ``y``
@@ -16,12 +12,12 @@
 # The model is a four-dimensional system given by the following equations:
 #
 # ```math
-# \begin{aligned}
-# \dot{x}_1 &= x_4 cos(x_3) \\
-# \dot{x}_2 &= x_4 sin(x_3) \\
-# \dot{x}_3 &= u_2 \\
-# \dot{x}_4 &= u_1 + w
-# \end{aligned}
+# \left\{ \begin{array}{lcl}
+# \dot{x}_1 &=& x_4 cos(x_3) \\
+# \dot{x}_2 &=& x_4 sin(x_3) \\
+# \dot{x}_3 &=& u_2 \\
+# \dot{x}_4 &=& u_1 + w
+# \end{array} \right.
 # ```
 # where ``w`` is a bounded error in the range ``[−1e−4, 1e−4]``. A neural network
 # controller was trained for this system, using a model predictive controller

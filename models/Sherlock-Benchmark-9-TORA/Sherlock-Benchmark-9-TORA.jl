@@ -1,9 +1,6 @@
 # # Translational Oscillations by a Rotational Actuator (TORA)
 #
-#
-#md # !!! tip
-#md #     This example is also available as a Jupyter notebook:
-#md #     [`Sherlock-Benchmark-9.ipynb`](__NBVIEWER_ROOT_URL__/../Sherlock-Benchmark-9-TORA.ipynb)
+#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/Sherlock-Benchmark-9-TORA.ipynb)
 #
 #
 # This model consists of a cart attached to a wall with a spring, and is free

@@ -1,10 +1,6 @@
 # # Nonlinear Cart-Pole
 #
-#
-#md # !!! tip
-#md #     This example is also available as a Jupyter notebook:
-#md #     [`Cart-Pole.ipynb`](__NBVIEWER_ROOT_URL__/../Cart-Pole.ipynb)
-#
+#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/Cart-Pole.ipynb)
 #
 # The model is a version of the cart-pole introduced by Barto, Sutton, and Anderson in [1].
 
@@ -73,10 +69,14 @@ prob = @ivp(x' = cartpole!(x), dim: 4, x(0) ∈ X₀)
 
 # ## Results
 
+using MAT
+path = joinpath(@modelpath("Cart-Pole", "CartPole_Controller.mat"))
+controller = read_nnet_mat(path, key="controller")
+
 # ## References
 
-# [1] A. G. Barto, R. S. Sutton, and C. W. Anderson. *Neuronlike adaptive
-# elements that can solve difficult learning control problems.*
-# [IEEE Transactions on Systems, Man, and Cybernetics, SMC-13(5):834–846,
-# Sep. 1983](https://ieeexplore.ieee.org/abstract/document/6313077).
+# [^BSA83]: A. G. Barto, R. S. Sutton, and C. W. Anderson. *Neuronlike adaptive
+#           elements that can solve difficult learning control problems.*
+#           [IEEE Transactions on Systems, Man, and Cybernetics, SMC-13(5):834–846,
+#           Sep. 1983](https://ieeexplore.ieee.org/abstract/document/6313077).
 #

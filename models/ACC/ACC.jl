@@ -1,6 +1,6 @@
 # # Adaptive Cruise Controller (ACC)
 #
-#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/../ACC.ipynb)
+#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/ACC.ipynb)
 #
 # The Adaptive Cruise Control (ACC) benchmark is a system that tracks a set
 # velocity and maintains a safe distance from a lead vehicle by adjusting
