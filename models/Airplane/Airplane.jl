@@ -7,7 +7,7 @@
 #
 #
 # This example consists of a dynamical system that is a simple model of
-# a flying airplane. The state is:
+# a flying airplane [^1]. The state is:
 #
 # ```math
 # \begin{aligned}
@@ -84,26 +84,31 @@
 
 using NeuralNetworkAnalysis
 
-@taylorize function airplane!(dx, x, p, t)
-    _x, y, z, u, v, w, ϕ, θ, ψ, r, _p, q, Fx, Fy, Fz, Mx, My, Mz = x
-
-    T_ψ = [cos(ψ)   -sin(ψ)   0.;
+Tψ = ψ -> [cos(ψ)   -sin(ψ)   0.;
            sin(ψ)   cos(ψ)    0.;
            0.       0.        1.]
 
-    T_θ = [cos(θ)   0.    sin(θ);
+Tθ = θ -> [cos(θ)   0.    sin(θ);
            0.       1.    0.;
-           -sin(θ)  0.    cos(θ)]
+          -sin(θ)   0.    cos(θ)]
 
-    T_ϕ = [1.    0.      0.   ;
+Tϕ = ϕ -> [1.    0.      0.   ;
            0.  cos(ϕ)  -sin(ϕ);
            0.  sin(ϕ)   cos(ϕ)]
 
-    mat_1 = T_ψ * T_θ * T_ϕ
+Rθϕ = (θ, ϕ) -> [cos(θ)  sin(θ) * sin(ϕ)       sin(θ) * cos(ϕ);
+                 0.      cos(θ) * cos(ϕ)      -cos(θ) * sin(ϕ);
+                 0.          sin(ϕ)               cos(ϕ)      ]
+#=
+@taylorize function airplane!(dx, x, p, t)
+    _x, y, z, u, v, w, ϕ, θ, ψ, r, _p, q, Fx, Fy, Fz, Mx, My, Mz = x
 
-    mat_2 = [cos(θ)  sin(θ) * sin(ϕ)       sin(θ) * cos(ϕ);
-             0.          cos(θ) * cos(ϕ)  -cos(θ) * sin(ϕ);
-             0.          sin(ϕ)               cos(ϕ)     ]
+    T_ψ = Tψ(ψ)
+    T_θ = Tθ(θ)
+    T_ϕ = Tϕ(ϕ)
+
+    mat_1 = T_ψ * T_θ * T_ϕ
+    mat_2 = Rθϕ(θ, ϕ)
     mat_2 = 1 / cos(θ) * mat_2
 
     a1 = [u; v; w]
@@ -147,6 +152,7 @@ using NeuralNetworkAnalysis
     dx[17] = zero(My)
     dx[18] = zero(Mz)
 end
+=#
 
 # ## Specifications
 #
@@ -159,7 +165,7 @@ X₀ = 0.2 * X₀
 X₀ = overapproximate(X₀, Hyperrectangle)
 
 U₀ = rand(Hyperrectangle, dim=6) # ignored
-prob = @ivp(x' = airplane!(x), dim: 18, x(0) ∈ X₀ × U₀);
+#prob = @ivp(x' = airplane!(x), dim: 18, x(0) ∈ X₀ × U₀);
 vars_idx = Dict(:state_vars=>1:12, :input_vars=>[], :control_vars=>13:18);
 period = 0.1
 
@@ -183,6 +189,6 @@ radius(overapproximate(solz.F.ext[:controls][3][1], Hyperrectangle))
 
 # ## References
 
-# [1] Amir Maleki, Chelsea Sidrane, May 16, 2020, [Benchmark Examples for
+# [^1]: Amir Maleki, Chelsea Sidrane, May 16, 2020, [Benchmark Examples for
 # AINNCS-2020](https://github.com/amaleki2/benchmark_closedloop_verification/blob/master/AINNC_benchmark.pdf).
 #

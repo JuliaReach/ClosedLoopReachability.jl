@@ -1,4 +1,4 @@
-# # Vertical Collision Avoidance System
+# # Vertical Collision Avoidance (VCAS)
 #
 #
 #md # !!! tip
@@ -72,7 +72,7 @@
 # Given the current system state ``(h,\dot{h}_0,\tau,\text{adv})``, the new
 # advisory ``\text{adv}'`` and the acceleration ``\ddot{h}_0``, the new state
 # of the system ``(h(t+1),\dot{h}_0(t+1),\tau(t+1),\text{adv}(t+1))`` can
-# be computed as follows: 
+# be computed as follows:
 #
 # ```math
 # \begin{aligned}

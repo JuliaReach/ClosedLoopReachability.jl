@@ -1,4 +1,4 @@
-# # Adaptive Cruise Controller
+# # Adaptive Cruise Controller (ACC)
 #
 #
 #md # !!! tip

@@ -1,15 +1,15 @@
-# # Double Pendulum
+# # Double Inverted Pendulum
 #
 #
 #md # !!! tip
 #md #     This example is also available as a Jupyter notebook:
-#md #     [`DoublePendulum.ipynb`](__NBVIEWER_ROOT_URL__/../DoublePendulum.ipynb)
+#md #     [`DoublePendulum.ipynb`](__NBVIEWER_ROOT_URL__/../Double-Pendulum.ipynb)
 #
 #
 # This example includes a double-link pendulum with equal point masses ``m``
 # at the end of connected mass-less links of length ``L``. Both links are
 # actuated with torques ``T_1`` and ``T_2`` and we assume viscous friction
-# exists with a coefficient of ``c``. [1].
+# exists with a coefficient of ``c``. [^1].
 
 # ## Model
 #
@@ -33,7 +33,6 @@
 # The angular velocity and acceleration of links are donoted with
 # ``\dot \theta_1``, ``\dot \theta_2``, ``\ddot \theta_1`` and ``\ddot \theta_2``
 # and ``g`` is the gravitational acceleration.
-
 
 using NeuralNetworkAnalysis
 
@@ -59,6 +58,6 @@ end
 
 # ## References
 
-# [1] Amir Maleki, Chelsea Sidrane, May 16, 2020, [Benchmark Examples for
+# [^1] Amir Maleki, Chelsea Sidrane, May 16, 2020, [Benchmark Examples for
 # AINNCS-2020](https://github.com/amaleki2/benchmark_closedloop_verification/blob/master/AINNC_benchmark.pdf).
 #

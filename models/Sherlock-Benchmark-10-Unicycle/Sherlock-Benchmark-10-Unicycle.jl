@@ -3,10 +3,10 @@
 #
 #md # !!! tip
 #md #     This example is also available as a Jupyter notebook:
-#md #     [`Sherlock-Benchmark-10.ipynb`](__NBVIEWER_ROOT_URL__/../Sherlock-Benchmark-10.ipynb)
+#md #     [`Sherlock-Benchmark-10.ipynb`](__NBVIEWER_ROOT_URL__/../Sherlock-Benchmark-10-Unicycle.ipynb)
 #
 #
-# This benchmark is that of a unicycle model of a car [1]. It models the
+# This benchmark is that of a unicycle model of a car [^1]. It models the
 # dynamics of a car involving 4 variables, specifically the ``x`` and ``y``
 # coordinates on a 2 dimensional plane, as well as velocity magnitude (speed)
 # and steering angle.
@@ -60,7 +60,7 @@ prob = @ivp(x' = benchmark10!(x), dim: 5, x(0) ∈ X₀)
 
 # ## References
 
-# [1] Souradeep Dutta, Xin Chen, and Sriram Sankaranarayanan. *Reachability
+# [^1] Souradeep Dutta, Xin Chen, and Sriram Sankaranarayanan. *Reachability
 # analysis for neural feedback systems using regressive polynomial rule
 # inference.* In [Proceedings of the 22nd ACMInternational Conference on Hybrid
 # Systems: Computation and Control, HSCC 2019, Montreal,QC, Canada,
