@@ -32,6 +32,7 @@ function simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
     time_span = _get_tspan(args...; kwargs...)
     trajectories = get(kwargs, :trajectories, 10)
     inplace = get(kwargs, :inplace, true)
+    normalization = control_normalization(cp)
 
     t = tstart(time_span)
     iterations = ceil(Int, diam(time_span) / τ)
@@ -49,7 +50,8 @@ function simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
         controls = Vector{Vector{Float64}}(undef, trajectories)
         for j in 1:trajectories
             x₀ = states[j]
-            controls[j] = forward(network, x₀)
+            network_output = forward(network, x₀)
+            controls[j] = apply(normalization, network_output)
         end
         all_controls[i] = controls
 
