@@ -53,15 +53,18 @@ end
 # ================================================
 
 """
-    read_nnet_mat(file; key="controller")
+    read_nnet_mat(file; key=nothing, act_key="activation_fcns")
 
 Read a neural network stored in a `.mat` file and return the corresponding network
 in the format of `NeuralVerification.jl`.
 
 ### Input
 
-- `file` -- string indicating the location of the `.mat` file containing the neural network
-- `key`  -- (optional, default: `"controller"`) key used to search the dictionary
+- `file`    -- string indicating the location of the `.mat` file containing the neural network
+- `key`     -- (optional, default: `nothing`) key used to search the dictionary containing the controller;
+               by default we search the top-level dictionary; a typical value is `"controller"`
+- `act_key` -- (optional, default: `"activation_fcns"`) key used to search the activation
+               functions; typical values are `"activation_fcns"` or `"act_fcns"`
 
 ### Output
 
@@ -74,15 +77,28 @@ The following activation functions are supported:
 - RELU: "relu" (`ReLU`)
 - Identity: "linear" (`Id`)
 """
-function read_nnet_mat(file::String; key="controller")
-    !haskey(vars, key) && throw(ArgumentError("didn't find key $key"))
-    dic = vars[key]
+function read_nnet_mat(file::String; key=nothing, act_key="activation_fcns")
+    isdefined(@__MODULE__, :MAT) || error("package 'MAT' is required")
+    vars = matread(file)
 
-    nLayers = Int(dic["number_of_layers"])
-    layers = Vector{Layer}(undef, nLayers)
-    aF = dic["activation_fcns"]
+    # some models store the controller under a specified key
+    if !isnothing(key)
+        !haskey(vars, key) && throw(ArgumentError("didn't find key $key, existing keys are $(keys(vars))"))
+        dic = vars[key]
+    else
+        dic = vars
+    end
 
-    for n = 1:nLayers
+    # get number of layers either from a dictionary entry or from the length of the weights array
+    if haskey(dic, "number_of_layers")
+        m = Int(dic["number_of_layers"])
+    else
+        m = length(dic["W"])
+    end
+    layers = Vector{Layer}(undef, m)
+    aF = dic[act_key]
+
+    for n = 1:m
         W = dic["W"][n]
         b = dic["b"][n]
         if aF[n] == "relu"

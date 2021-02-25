@@ -88,24 +88,22 @@ vars_idx = Dict(:state_vars=>1:6, :input_vars=>[], :control_vars=>7)
 prob = @ivp(x' = ACC!(x), dim: 7, x(0) ∈ X₀×U₀);
 
 # We will evaluate the controller which has 5 hidden layers.
-#using MAT
-
+using MAT
 models_dir = normpath(@__DIR__, "..", "..", "..", "models")
 path = joinpath(models_dir, "ACC", "controller_5_20.mat")
-controller = read_nnet_mat(path)
+controller = read_nnet_mat(path, act_key="act_fcns")
 
 period = 0.1
 prob = ControlledPlant(ivp, controller, vars_idx, period);
 
 # To integrate the ODE we use the Taylor model based algorithm:
-alg = TMJets(abs_tol=1e-12, orderT=8, orderQ=2)
+alg = TMJets(abs_tol=1e-12, orderT=8, orderQ=2);
 
 # To propagate sets over the neural network we use the `Ai2` algorithm:
-alg_nn = Ai2()
+alg_nn = Ai2();
 
 # We now solve the controlled system:
-sol = solve(plant, T=0.2, alg_nn=solver, alg=alg);
-=#
+#sol = solve(plant, T=0.2, alg_nn=solver, alg=alg);
 
 # ## References
 
