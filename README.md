@@ -20,6 +20,8 @@ Artificial Intelligence and Neural Network Control Systems
 
 ## Related tools
 
+- see also the [wiki entry](https://github.com/JuliaReach/NeuralNetworkAnalysis.jl/wiki#related-tools) on related tools
+ 
 - [NeuralVerification.jl](https://github.com/sisl/NeuralVerification.jl) -- Methods to soundly verify deep neural networks
 
 - [ReachNNStar](https://github.com/JmfanBU/ReachNNStar) -- Reachability Analysis Tool of Neural Network Controlled Systems (NNCSs)
