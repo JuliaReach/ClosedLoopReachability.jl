@@ -26,3 +26,6 @@ Artificial Intelligence and Neural Network Control Systems
 
 - [NeuralOptimization.jl
 ](https://github.com/castrong/NeuralOptimization.jl) -- A compilation of ReLU network optimization algorithms.
+
+- [sherlock](https://github.com/souradeep-111/sherlock) -- Sherlock is a tool for output range anaylsis of Deep Neural Networks with ReLU activation units.
+
