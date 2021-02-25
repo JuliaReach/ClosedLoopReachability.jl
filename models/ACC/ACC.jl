@@ -107,6 +107,4 @@ alg_nn = Ai2();
 
 # ## References
 
-# [^QB00] S. Joe Qin and Thomas A. Badgwell. *An overview of nonlinear model
-#         predictive control applications.* In [Nonlinear  Model  Predictive  Control, pages 369–392,
-#         Basel, 2000. Birkh ̈auser Basel](https://link.springer.com/chapter/10.1007/978-3-0348-8407-5_21).
+# [^QB00]: S. Joe Qin and Thomas A. Badgwell. *An overview of nonlinear model predictive control applications.* In [Nonlinear  Model  Predictive  Control, pages 369–392, Basel, 2000. Birkh ̈auser Basel](https://link.springer.com/chapter/10.1007/978-3-0348-8407-5_21).
