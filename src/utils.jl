@@ -100,8 +100,24 @@ function read_nnet_mat(file::String; key=nothing, act_key="activation_fcns")
     aF = dic[act_key]
 
     for n = 1:m
+
+        # weights matrix
         W = dic["W"][n]
+        s = size(W)
+        if length(s) == 4
+            # models sometimes are stored as a multi-dim array
+            # with two dimensions which are flat
+            if s[3] == 1 && s[4] == 1
+                W = reshape(W, s[1], s[2])
+            else
+                throw(ArgumentError("unexpected dimension of the weights matrix: $s"))
+            end
+        end
+
+        # bias
         b = dic["b"][n]
+
+        # activation function
         if aF[n] == "relu"
             act = ReLU()
         elseif aF[n] == "linear"
