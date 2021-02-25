@@ -40,7 +40,7 @@ end
 
 # define the initial-value problem
 X0 = Hyperrectangle([1.1, 0.1], [0.1, 0.1]);
-U0 = Universe(1)
+U0 = ZeroSet(1)
 
 ivp = @ivp(x' = single_pendulum!(x), dim: 3, x(0) ∈ X0 × U0);
 vars_idx = Dict(:state_vars=>1:2, :control_vars=>3);
