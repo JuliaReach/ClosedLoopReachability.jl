@@ -1,6 +1,6 @@
 # NeuralNetworkAnalysis.jl
 
-[![Build Status](https://travis-ci.org/JuliaReach/NeuralNetworkAnalysis.jl.svg?branch=master)](https://travis-ci.org/JuliaReach/NeuralNetworkAnalysis.jl)
+[![Build Status](https://github.com/JuliaReach/NeuralNetworkAnalysis.jl/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/JuliaReach/NeuralNetworkAnalysis.jl/actions/workflows/ci.yml?query=branch%3Amaster)
 [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://juliareach.github.io/NeuralNetworkAnalysis.jl/dev/)
 [![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/juliareach/NeuralNetworkAnalysis.jl/blob/master/LICENSE)
 [![Join the chat at https://gitter.im/JuliaReach/Lobby](https://badges.gitter.im/JuliaReach/Lobby.svg)](https://gitter.im/JuliaReach/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -26,3 +26,6 @@ Artificial Intelligence and Neural Network Control Systems
 
 - [NeuralOptimization.jl
 ](https://github.com/castrong/NeuralOptimization.jl) -- A compilation of ReLU network optimization algorithms.
+
+- [sherlock](https://github.com/souradeep-111/sherlock) -- Sherlock is a tool for output range anaylsis of Deep Neural Networks with ReLU activation units.
+
