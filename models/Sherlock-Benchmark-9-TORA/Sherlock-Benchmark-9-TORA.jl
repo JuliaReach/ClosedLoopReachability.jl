@@ -44,7 +44,7 @@ end
 # For an initial set of $x_1 ∈ [0.6, 0.7]$, $x_2 ∈ [−0.7, −0.6]$, $x_3 ∈ [−0.4, −0.3]$,
 # and $x_4 ∈ [0.5, 0.6]$, the system states stay within the box $x ∈ [−2, 2]^4$ for a time window of 20s.
 
-# ## Results
+# ## Initial-value problem
 
 X₀ = Hyperrectangle(low=[0.6, -0.7, -0.4, 0.5], high=[0.7, -0.6, -0.3, 0.6])
 U = ZeroSet(1)
@@ -53,23 +53,22 @@ ivp = @ivp(x' = benchmark9!(x), dim: 5, x(0) ∈ X₀×U);
 vars_idx = Dict(:state_vars=>1:4, :input_vars=>[], :control_vars=>[5]);
 
 using MAT
+path = joinpath(@modelpath("Sherlock-Benchmark-9-TORA", "controllerTora.mat"))
+controller = read_nnet_mat(path, act_key="act_fcns");
 
-path = "controllerTora.mat"
-controller = _read_nnet_mat(path, act_key="act_fcns");
-
-τ = 1.0
 using NeuralNetworkAnalysis: UniformAdditiveNormalization
 
+τ = 1.0 # control period
 N = UniformAdditiveNormalization(-10.0)
 plant = ControlledPlant(ivp, controller, vars_idx, τ, N);
 
 safe_states = BallInf(zeros(2), 2.0);
 
-# ### Simulations
+# ## Simulations
 
 using DifferentialEquations, Plots
 
-simulations, controls = simulate(plant, T=20.0, trajectories=20)
+simulations, controls = simulate(plant, T=20.0, trajectories=20);
 
 #-
 
@@ -106,6 +105,8 @@ tdom = range(0, 20, length=length(first(controls)))
 fig = plot(xlab="time", ylab="u")
 [plot!(fig, tdom, [c[1] for c in controls[i]], lab="") for i in eachindex(controls)]
 fig
+
+# ## Flowpipe computation
 
 # ## References
 
