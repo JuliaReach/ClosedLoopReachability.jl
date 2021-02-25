@@ -69,7 +69,7 @@ safe_states = BallInf(zeros(2), 2.0);
 
 using DifferentialEquations, Plots
 
-simulations, controls = simulate(plant, T=20.0, trajectories=20);
+simulations, controls, inputs = simulate(plant, T=20.0, trajectories=20);
 
 #-
 

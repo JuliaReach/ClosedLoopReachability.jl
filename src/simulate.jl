@@ -28,7 +28,9 @@ function simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
     inpt_vars = input_vars(cp)
     n = length(st_vars)
     X₀ = Projection(initial_state(ivp), st_vars)
-    W₀ = Projection(initial_state(ivp), inpt_vars) |> overapproximate
+    if !isempty(inpt_vars)
+        W₀ = Projection(initial_state(ivp), inpt_vars) |> overapproximate
+    end
     ctrl_vars = control_vars(cp)
     τ = period(cp)
     time_span = _get_tspan(args...; kwargs...)
@@ -59,12 +61,20 @@ function simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
         all_controls[i] = controls
 
         # compute  inputs
-        inputs = sample(W₀, trajectories)
-        all_inputs[i] = inputs
+        if !isempty(inpt_vars)
+            inputs = sample(W₀, trajectories)
+            all_inputs[i] = inputs
+        else
+            inputs = nothing
+        end
 
         # extend system state with inputs
         for j in 1:trajectories
-            extended[j] = vcat(states[j], inputs[j], controls[j])
+            if inputs == nothing
+                extended[j] = vcat(states[j], controls[j])
+            else
+                extended[j] = vcat(states[j], inputs[j], controls[j])
+            end
         end
 
         # simulate system for the next period
