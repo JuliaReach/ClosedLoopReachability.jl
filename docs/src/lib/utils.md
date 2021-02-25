@@ -8,7 +8,7 @@ CurrentModule = NeuralNetworkAnalysis
 ## Locating files
 
 ```@docs
-@relpath
+@modelpath
 ```
 
 ## Reading networks
