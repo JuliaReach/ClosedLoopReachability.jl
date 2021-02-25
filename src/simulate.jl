@@ -37,18 +37,20 @@ function simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
     trajectories = get(kwargs, :trajectories, 10)
     inplace = get(kwargs, :inplace, true)
     normalization = control_normalization(cp)
+    include_vertices = get(kwargs, :include_vertices, false)
 
     t = tstart(time_span)
     iterations = ceil(Int, diam(time_span) / τ)
+
+    # sample initial states
+    states = sample(X₀, trajectories; include_vertices=include_vertices)
+    trajectories = length(states)
 
     # preallocate
     extended = Vector{Vector{Float64}}(undef, trajectories)
     simulations = Vector{EnsembleSolution}(undef, iterations)
     all_controls = Vector{Vector{Vector{Float64}}}(undef, iterations)
     all_inputs = Vector{Vector{Vector{Float64}}}(undef, iterations)
-
-    # sample initial states
-    states = sample(X₀, trajectories)
 
     @inbounds for i in 1:iterations
         # compute control inputs
