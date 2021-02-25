@@ -15,100 +15,77 @@ function forward(network::Network, x0::Vector{<:Number})
     return x
 end
 
-#=
-
-# fallback to NV
-function _forward_network(solver::AbstractSolver, network::Network, X::LazySet)
-    NV.forward_network(solver, network, X)
-end
-
-function _forward_network(solver::BaB, network::Network, X::AbstractPolytope)
-    sol = NV.solve(solver, NV.Problem(network, X, Interval(-Inf, Inf)))
-    first(sol.reachable)
-end
-
-function _forward_network(solver::Sherlock, network::Network, X::AbstractPolytope)
-    sol = NV.solve(solver, NV.Problem(network, X, Interval(-Inf, Inf)))
-    first(sol.reachable)
-end
-
-# ================================================
-# Zonotope-based bounding
-# ================================================
-
-# This is now Ai2z
-struct ZonotopeBounder <: NV.AbstractSolver
+# ==============================================================================
+# Methods to handle networks with sigmoid activation functions from [VER19]
 #
+# [VER19]: Ivanov, Radoslav, et al. "Verisig: verifying safety properties of
+# hybrid systems with neural network controllers." Proceedings of the 22nd ACM
+# International Conference on Hybrid Systems: Computation and Control. 2019.
+# ==============================================================================
+
+using NeuralVerification: ActivationFunction, Sigmoid, Tanh
+
+# ref. Eq (6) in [VER19]
+# d(σ(x))/dx = σ(x)*(1-σ(x))
+# g(t, x) = σ(tx) = 1 / (1 + exp(-tx))
+# dg(t, x)/dt = g'(t, x) = x * g(t, x) * (1 - g(t, x))
+@taylorize function sigmoid!(dx, x, p, t)
+    xᴶ, xᴾ = x
+    dx[1] = zero(xᴶ)
+    dx[2] = xᴶ *(xᴾ - xᴾ^2)
 end
 
-function _forward_network(solver::ZonotopeBounder, network::Network, X::LazySet)
-    Z = ReachabilityAnalysis._convert_or_overapproximate(Zonotope, X)
-    _forward_network_zono(network, Z)
+# footnote (3) in [VER19]
+# d(tanh(x))/dx = 1 - tanh(x)^2
+# g(t, x) = tanh(tx)
+# dg(t, x)/dt = g'(t, x) = x * (1 - g(t, x)^2)
+@taylorize function tanh!(dx, x, p, t)
+    xᴶ, xᴾ = x
+    dx[1] = zero(xᴶ)
+    dx[2] = xᴶ *(1 - xᴾ^2)
 end
 
-function _forward_network_zono(network::Network, X::Zonotope)
-    nlayers = length(network.layers) # TODO getter function ?
-    Z = copy(X)
-    @inbounds for i in 1:nlayers
-        layer = network.layers[i]
+const HALFINT = IA.Interval(0.5, 0.5)
+const ZEROINT = IA.Interval(0.0, 0.0)
+const ACTFUN = Dict(Tanh() => (tanh!, ZEROINT), Sigmoid() => (sigmoid!, HALFINT))
+
+# Method: Cartesian decomposition (intervals for each one-dimensional subspace)
+# Only Tanh, Sigmoid and Id functions are supported
+function forward(nnet::Network, X0::LazySet;
+                 alg=TMJets(abs_tol=1e-14, orderQ=2, orderT=6))
+
+    # initial states
+    xᴾ₀ = _decompose_1D(X0)
+    xᴾ₀ = LazySets.array(xᴾ₀)  # see https://github.com/JuliaReach/ReachabilityAnalysis.jl/issues/254
+    xᴾ₀ = [x.dat for x in xᴾ₀] # use concrete inteval matrix-vector operations
+
+    for layer in nnet.layers  # loop over layers
         W = layer.weights
+        m, n = size(W)
         b = layer.bias
-        Z = _forward_layer_zono(W, b, layer.activation, Z)
+        act = layer.activation
+
+        xᴶ′ = W * xᴾ₀ + b  # (scalar matrix) * (interval vector) + (scalar vector)
+
+        if act == Id()
+            xᴾ₀ = copy(xᴶ′)
+            continue
+        end
+
+        activation!, ival = ACTFUN[act]
+        xᴾ′ = fill(ival, m)
+
+        for i = 1:m  # loop over coordinates
+            X0i = xᴶ′[i] × xᴾ′[i]
+            ivp = @ivp(x' = activation!(x), dim=2, x(0) ∈ X0i)
+            sol = RA.solve(ivp, tspan=(0., 1.), alg=alg)
+
+            # interval overapproximation of the final reach-set along
+            # dimension 2, which corresponds to xᴾ
+            xᴾ_end = sol.F.ext[:xv][end][2]
+            xᴾ′[i] = xᴾ_end
+        end
+        xᴾ₀ = copy(xᴾ′)
     end
-    return remove_zero_generators(Z)
-end
-
-function _forward_layer_zono(W::AbstractMatrix, b::AbstractVector, ::ReLU, Z::Zonotope)
-    Y = affine_map(W, Z, b)
-    return overapproximate(Rectification(Y), Zonotope)
-end
-
-function _forward_layer_zono(W::AbstractMatrix, b::AbstractVector, ::Id, Z::Zonotope)
-    return affine_map(W, Z, b)
-end
-=#
-
-# ================================================
-# Extension of NeuralVerification structs
-# ================================================
-
-using NeuralVerification: ActivationFunction
-
-"""
-    Sigmoid <: ActivationFunction
-    (Sigmoid())(x) -> 1 ./ (1 .+ exp.(-x))
-"""
-struct Sigmoid <: ActivationFunction end
-
-"""
-    Tanh <: ActivationFunction
-    (Tanh())(x) -> tanh.(x)
-"""
-struct Tanh <: ActivationFunction end
-
-(f::Sigmoid)(x) = @. 1 / (1 + exp(-x))
-(f::Tanh)(x) = tanh.(x)
-
-# ================================================
-# Reading a network in YAML format
-# (load the data with YAML.jl)
-# ================================================
-
-const ACT_YAML = Dict("Id"=>Id(),
-                      "ReLU"=>ReLU(),
-                      "Sigmoid"=>Sigmoid(),
-                      "Tanh"=>Tanh())
-
-function read_yaml(data::Dict)
-    NLAYERS = length(data["offsets"])
-    layers = []
-    for k in 1:NLAYERS
-        weights = data["weights"][k]
-        W = copy(reduce(hcat, weights)')
-        b = data["offsets"][k]
-        a = ACT_YAML[data["activations"][k]]
-        L = Layer(W, b, a)
-        push!(layers, L)
-    end
-    return Network(layers)
+    return CartesianProductArray([Interval(x) for x in xᴾ₀])
 end

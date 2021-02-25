@@ -5,23 +5,33 @@ _vec(A::AbstractMatrix) = vec(A)
 _vec(A::Number) = [A]
 _vec(A::AbstractVector) = A
 
+# ================================================
+# Reading a network in MAT format
+# ================================================
 
 """
-    readnn(file; key="controller")
+    read_nnet_mat(file; key="controller")
 
-Return the neural network using the internal format of NeuralVerification.jl.
+Read a neural network stored in a `.mat` file and return the corresponding network
+in the format of `NeuralVerification.jl`.
 
 ### Input
 
-- `file` -- string indicating the location of the file containing the neural network
-- `key` -- (optional, default: `"controller"`) key used to search the dictionary
+- `file` -- string indicating the location of the `.mat` file containing the neural network
+- `key`  -- (optional, default: `"controller"`) key used to search the dictionary
 
 ### Output
 
-A Neural Network using the internal format of NeuralVerification.jl
+A `Network` struct.
 
+### Notes
+
+The following activation functions are supported:
+
+- RELU: "relu" (`ReLU`)
+- Identity: "linear" (`Id`)
 """
-function readnn(file; key="controller")
+function read_nnet_mat(file; key="controller")
     vars = matread(file)
     !haskey(vars, key) && throw(ArgumentError("didn't find key $key"))
     dic = vars[key]
@@ -46,93 +56,27 @@ function readnn(file; key="controller")
     return Network(layers)
 end
 
-# ref. Eq (6) in [VER19]
-# d(σ(x))/dx = σ(x)*(1-σ(x))
-# g(t, x) = σ(tx) = 1 / (1 + exp(-tx))
-# dg(t, x)/dt = g'(t, x) = x * g(t, x) * (1 - g(t, x))
-@taylorize function sigmoid!(dx, x, p, t)
-    xᴶ, xᴾ = x
-    dx[1] = zero(xᴶ)
-    dx[2] = xᴶ *(xᴾ - xᴾ^2)
-end
-
-# footnote (3) in [VER19]
-# d(tanh(x))/dx = 1 - tanh(x)^2
-# g(t, x) = tanh(tx)
-# dg(t, x)/dt = g'(t, x) = x * (1 - g(t, x)^2)
-@taylorize function tanh!(dx, x, p, t)
-    xᴶ, xᴾ = x
-    dx[1] = zero(xᴶ)
-    dx[2] = xᴶ *(1 - xᴾ^2)
-end
-
-const HALFINT = IA.Interval(0.5, 0.5)
-const ZEROINT = IA.Interval(0.0, 0.0)
-const ACTFUN = Dict(Tanh() => (tanh!, ZEROINT), Sigmoid() => (sigmoid!, HALFINT))
-
-# Method: Cartesian decomposition (intervals for each one-dimensional subspace)
-# Only Tanh, Sigmoid and Id functions are supported
-function forward(nnet::Network, X0::LazySet;
-                 alg=TMJets(abs_tol=1e-14, orderQ=2, orderT=6))
-
-    # initial states
-    xᴾ₀ = _decompose_1D(X0)
-    xᴾ₀ = LazySets.array(xᴾ₀)  # see https://github.com/JuliaReach/ReachabilityAnalysis.jl/issues/254
-    xᴾ₀ = [x.dat for x in xᴾ₀] # use concrete inteval matrix-vector operations
-
-    for layer in nnet.layers  # loop over layers
-        W = layer.weights
-        m, n = size(W)
-        b = layer.bias
-        act = layer.activation
-
-        xᴶ′ = W * xᴾ₀ + b  # (scalar matrix) * (interval vector) + (scalar vector)
-
-        if act == Id()
-            xᴾ₀ = copy(xᴶ′)
-            continue
-        end
-
-        activation!, ival = ACTFUN[act]
-        xᴾ′ = fill(ival, m)
-
-        for i = 1:m  # loop over coordinates
-            X0i = xᴶ′[i] × xᴾ′[i]
-            ivp = @ivp(x' = activation!(x), dim=2, x(0) ∈ X0i)
-            sol = RA.solve(ivp, tspan=(0., 1.), alg=alg)
-
-            # interval overapproximation of the final reach-set along
-            # dimension 2, which corresponds to xᴾ
-            xᴾ_end = sol.F.ext[:xv][end][2]
-            xᴾ′[i] = xᴾ_end
-        end
-        xᴾ₀ = copy(xᴾ′)
-    end
-    return CartesianProductArray([Interval(x) for x in xᴾ₀])
-end
-
 """
    @relpath(name)
 
 Return the absolute path to file `name` relative to the executing script.
 
-## Input
+### Input
 
 - `name` -- filename
 
-## Output
+### Output
 
 A string.
 
-## Notes
+### Notes
 
 This macro is equivalent to `joinpath(@__DIR__, name)`.
 The `@relpath` macro is used in model scripts to load data files relative to the
 location of the model, without having to change the directory of the Julia session.
 For instance, suppose that the folder `/home/projects/models` contains the script
 `my_model.jl`, and suppose that the data file `my_data.dat` located in the same
-directory is required to be loaded by `my_model.jl`.
-Then,
+directory is required to be loaded by `my_model.jl`. Then,
 
 ```julia
 # suppose the working directory is /home/julia/ and so we ran the script as
@@ -153,4 +97,50 @@ macro relpath(name::String)
     _dirname = dirname(String(__source__.file))
     dir = isempty(_dirname) ? pwd() : abspath(_dirname)
     return joinpath(dir, name)
+end
+
+# ================================================
+# Reading a network in YAML format
+# (load the data with YAML.jl)
+# ================================================
+
+const ACT_YAML = Dict("Id"=>Id(),
+                      "ReLU"=>ReLU(),
+                      "Sigmoid"=>Sigmoid(),
+                      "Tanh"=>Tanh())
+
+"""
+    read_nnet_yaml(data::Dict)
+
+Read a neural network from a file in YAML format (see `YAML.jl`) and convert it
+
+Read a neural network stored in a `.mat` file and return the corresponding network
+in the format of `NeuralVerification.jl`.
+
+### Input
+
+- `file` -- string indicating the location of the `.mat` file containing the neural network
+- `key`  -- (optional, default: `"controller"`) key used to search the dictionary
+
+### Output
+
+A `Network` struct.
+
+### Notes
+
+The following activation functions are supported: identity, relu, sigmoid and tanh;
+see `NeuralNetworkAnalysis.ACT_YAML`.
+"""
+function read_nnet_yaml(data::Dict)
+    NLAYERS = length(data["offsets"])
+    layers = []
+    for k in 1:NLAYERS
+        weights = data["weights"][k]
+        W = copy(reduce(hcat, weights)')
+        b = data["offsets"][k]
+        a = ACT_YAML[data["activations"][k]]
+        L = Layer(W, b, a)
+        push!(layers, L)
+    end
+    return Network(layers)
 end

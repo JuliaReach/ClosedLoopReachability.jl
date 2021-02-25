@@ -23,18 +23,15 @@
 
 using NeuralNetworkAnalysis
 
-#models_dir = normpath(@__DIR__, "..", "..", "..", "models")
-#path = joinpath(models_dir, "SinglePendulum", )
 controller = read_nnet(@relpath "controller_single_pendulum.nnet")
 
 # model constants
-m = 0.5
-L = 0.5
-c = 0.
-g = 1.0
-
-gL = g/L
-mL = 1/m/L^2
+const m = 0.5
+const L = 0.5
+const c = 0.
+const g = 1.0
+const gL = g/L
+const mL = 1/(m*L^2)
 
 function single_pendulum!(dx, x, params, t)
     dx[1] = x[2]

@@ -8,10 +8,13 @@ include("utils.jl")
 include("simulate.jl")
 include("solve.jl")
 
-export ControlledPlant,
-       forward,
-       simulate
+# problem types
+export ControlledPlant
 
-export @relpath
+# solvers
+export solve, forward, simulation
+
+# utility functions
+export @relpath, read_nnet_mat, read_nnet_yaml
 
 end
