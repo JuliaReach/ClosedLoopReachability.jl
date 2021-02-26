@@ -75,6 +75,6 @@ controller(cp::ControlledPlant) = cp.controller
 period(cp::ControlledPlant) = cp.period
 control_normalization(cp::ControlledPlant) = cp.normalization
 
-state_vars(cp::ControlledPlant) = get(cp.vars, :state_vars, nothing)
-input_vars(cp::ControlledPlant) = get(cp.vars, :input_vars, nothing)
-control_vars(cp::ControlledPlant) = get(cp.vars, :control_vars, nothing)
+state_vars(cp::ControlledPlant) = get(cp.vars, :state_vars, Int[])
+input_vars(cp::ControlledPlant) = get(cp.vars, :input_vars, Int[])
+control_vars(cp::ControlledPlant) = get(cp.vars, :control_vars, Int[])

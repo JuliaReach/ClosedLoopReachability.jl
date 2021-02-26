@@ -87,7 +87,7 @@ X₀ = Hyperrectangle(low=[90, 32, 0, 10, 30, 0], high=[110, 32.2, 0, 11, 30.2, 
 U₀ = Singleton([-1.0]); # gets overwritten
 
 # The system has 6 state variables and 1 control variable:
-vars_idx = Dict(:state_vars=>1:6, :input_vars=>[], :control_vars=>7)
+vars_idx = Dict(:state_vars=>1:6, :control_vars=>7)
 ivp = @ivp(x' = ACC!(x), dim: 7, x(0) ∈ X₀×U₀);
 
 # We will evaluate the controller which has 5 hidden layers.

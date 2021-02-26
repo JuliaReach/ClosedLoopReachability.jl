@@ -28,25 +28,29 @@ function simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
     inpt_vars = input_vars(cp)
     n = length(st_vars)
     X₀ = Projection(initial_state(ivp), st_vars)
-    W₀ = Projection(initial_state(ivp), inpt_vars) |> overapproximate
+    if !isempty(inpt_vars)
+        W₀ = Projection(initial_state(ivp), inpt_vars) |> overapproximate
+    end
     ctrl_vars = control_vars(cp)
     τ = period(cp)
     time_span = _get_tspan(args...; kwargs...)
     trajectories = get(kwargs, :trajectories, 10)
     inplace = get(kwargs, :inplace, true)
     normalization = control_normalization(cp)
+    include_vertices = get(kwargs, :include_vertices, false)
 
     t = tstart(time_span)
     iterations = ceil(Int, diam(time_span) / τ)
+
+    # sample initial states
+    states = sample(X₀, trajectories; include_vertices=include_vertices)
+    trajectories = length(states)
 
     # preallocate
     extended = Vector{Vector{Float64}}(undef, trajectories)
     simulations = Vector{EnsembleSolution}(undef, iterations)
     all_controls = Vector{Vector{Vector{Float64}}}(undef, iterations)
     all_inputs = Vector{Vector{Vector{Float64}}}(undef, iterations)
-
-    # sample initial states
-    states = sample(X₀, trajectories)
 
     @inbounds for i in 1:iterations
         # compute control inputs
@@ -59,12 +63,20 @@ function simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
         all_controls[i] = controls
 
         # compute  inputs
-        inputs = sample(W₀, trajectories)
-        all_inputs[i] = inputs
+        if !isempty(inpt_vars)
+            inputs = sample(W₀, trajectories)
+            all_inputs[i] = inputs
+        else
+            inputs = nothing
+        end
 
         # extend system state with inputs
         for j in 1:trajectories
-            extended[j] = vcat(states[j], inputs[j], controls[j])
+            if inputs == nothing
+                extended[j] = vcat(states[j], controls[j])
+            else
+                extended[j] = vcat(states[j], inputs[j], controls[j])
+            end
         end
 
         # simulate system for the next period
