@@ -100,10 +100,10 @@ function _solve(cp::ControlledPlant,
     dim(Q₀) == n + m + q || throw(ArgumentError("dimension mismatch; expect the dimension of the initial states " *
          "of the initial-value problem to be $(n + m + q), but it is $(dim(Q₀))"))
 
-    X₀ = Projection(Q₀, st_vars)
+    X₀ = project(Q₀, st_vars)
 
     if !isempty(in_vars)
-        W₀ = LazySets.Projection(Q₀, in_vars)
+        W₀ = project(Q₀, in_vars)
         P₀ = X₀ × W₀
     else
         P₀ = X₀
@@ -114,7 +114,7 @@ function _solve(cp::ControlledPlant,
         U₀ = forward_network(solver, network, X0aux)
         U₀ = apply(normalization, U₀)
     else
-        U₀ = LazySets.Projection(Q₀, ctrl_vars)
+        U₀ = project(Q₀, ctrl_vars)
     end
 
     ti = tstart(time_span)

@@ -27,9 +27,9 @@ function simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
     st_vars = state_vars(cp)
     inpt_vars = input_vars(cp)
     n = length(st_vars)
-    X₀ = Projection(initial_state(ivp), st_vars)
+    X₀ = project(initial_state(ivp), st_vars)
     if !isempty(inpt_vars)
-        W₀ = Projection(initial_state(ivp), inpt_vars) |> overapproximate
+        W₀ = project(initial_state(ivp), inpt_vars)
     end
     ctrl_vars = control_vars(cp)
     τ = period(cp)
