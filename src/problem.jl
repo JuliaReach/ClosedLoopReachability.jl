@@ -25,6 +25,29 @@ function apply(normalization::UniformAdditiveNormalization, x)
     return x .+ normalization.shift
 end
 
+# =====================
+# Control preprocessing
+# =====================
+
+abstract type ControlPreprocessing end
+
+struct NoPreprocessing <: ControlPreprocessing
+end
+
+apply(normalization::NoPreprocessing, x) = x
+
+struct FunctionPreprocessing{F<:Function} <: ControlPreprocessing
+    f::F
+
+    function FunctionPreprocessing(f::F) where {F<:Function}
+        return new{F}(f)
+    end
+end
+
+function apply(funct::FunctionPreprocessing, x)
+    return funct.f(x)
+end
+
 # ================
 # Control problems
 # ================
@@ -53,19 +76,21 @@ Struct representing a closed-loop neural-network controlled system.
 - `PT`:  type of period
 - `CNT`: type of control normalization
 """
-struct ControlledPlant{ST, XT, DT, PT, CNT} <: AbstractNeuralNetworkControlProblem
+struct ControlledPlant{ST, XT, DT, PT, CNT, CPP} <: AbstractNeuralNetworkControlProblem
     ivp::InitialValueProblem{ST, XT}
     controller::Network
     vars::Dict{Symbol, DT}
     period::PT
     normalization::CNT
+    preprocessing::CPP
 
     function ControlledPlant(ivp::InitialValueProblem{ST, XT},
                              controller::Network,
                              vars::Dict{Symbol, DT},
                              period::PT,
-                             normalization::CNT=NoNormalization()) where {ST, XT, DT, PT, CNT}
-        return new{ST, XT, DT, PT, CNT}(ivp, controller, vars, period, normalization)
+                             normalization::CNT=NoNormalization(),
+                             preprocessing::CPP=NoPreprocessing()) where {ST, XT, DT, PT, CNT, CPP}
+        return new{ST, XT, DT, PT, CNT, CPP}(ivp, controller, vars, period, normalization, preprocessing)
     end
 end
 
@@ -74,6 +99,7 @@ system(cp::ControlledPlant) = cp.ivp.s
 controller(cp::ControlledPlant) = cp.controller
 period(cp::ControlledPlant) = cp.period
 control_normalization(cp::ControlledPlant) = cp.normalization
+control_preprocessing(cp::ControlledPlant) = cp.preprocessing
 
 state_vars(cp::ControlledPlant) = get(cp.vars, :state_vars, Int[])
 input_vars(cp::ControlledPlant) = get(cp.vars, :input_vars, Int[])
