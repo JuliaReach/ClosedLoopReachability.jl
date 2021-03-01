@@ -50,7 +50,7 @@ const ZEROINT = IA.Interval(0.0, 0.0)
 const ACTFUN = Dict(Tanh() => (tanh!, ZEROINT), Sigmoid() => (sigmoid!, HALFINT))
 
 # Method: Cartesian decomposition (intervals for each one-dimensional subspace)
-# Only Tanh, Sigmoid, ReLU and Id functions are supported
+# Only Tanh, Sigmoid and Id functions are supported
 function forward(nnet::Network, X0::LazySet;
                  alg=TMJets(abs_tol=1e-14, orderQ=2, orderT=6))
 
@@ -69,10 +69,6 @@ function forward(nnet::Network, X0::LazySet;
 
         if act == Id()
             xᴾ₀ = copy(xᴶ′)
-            continue
-        end
-        if act == ReLU()
-            xᴾ₀ = rectify(xᴶ′)
             continue
         end
 
