@@ -69,13 +69,13 @@ safe_states = BallInf(zeros(2), 2.0);
 
 using DifferentialEquations, Plots
 
-simulations, controls, inputs = simulate(plant, T=20.0, trajectories=20);
+sim = simulate(plant, T=20.0, trajectories=20);
 
 #-
 
 fig = plot(xlab="x₁", ylab="x₂")
 plot!(fig, safe_states, color=:white, linecolor=:black, lw=5.0)
-for simulation in simulations
+for simulation in trajectories(sim)
     plot!(fig, simulation, vars=(1, 2))
 end
 plot!(fig, project(X₀, 1:2), lab="X₀")
@@ -84,7 +84,7 @@ plot!(fig, project(X₀, 1:2), lab="X₀")
 
 fig = plot(xlab="x₂", ylab="x₄")
 plot!(fig, safe_states, color=:white, linecolor=:black, lw=5.0)
-for simulation in simulations
+for simulation in trajectories(sim)
     plot!(fig, simulation, vars=(2, 4))
 end
 plot!(fig, project(X₀, [2, 4]), lab="X₀")
@@ -93,7 +93,7 @@ plot!(fig, project(X₀, [2, 4]), lab="X₀")
 
 fig = plot(xlab="x₂", ylab="x₃")
 plot!(fig, safe_states, color=:white, linecolor=:black, lw=5.0)
-for simulation in simulations
+for simulation in trajectories(sim)
     plot!(fig, simulation, vars=(2, 3))
 end
 plot!(fig, project(X₀, [2, 3]), lab="X₀")
@@ -102,9 +102,9 @@ plot!(fig, project(X₀, [2, 3]), lab="X₀")
 
 # Here we plot the control functions for each run:
 
-tdom = range(0, 20, length=length(first(controls)))
+tdom = range(0, 20, length=length(controls(sim, 1)))
 fig = plot(xlab="time", ylab="u")
-[plot!(fig, tdom, [c[1] for c in controls[i]], lab="") for i in eachindex(controls)]
+[plot!(fig, tdom, [c[1] for c in controls(sim, i)], lab="") for i in 1:length(sim)]
 fig
 
 # ## Flowpipe computation
