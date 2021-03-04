@@ -25,6 +25,29 @@ function apply(normalization::UniformAdditiveNormalization, x)
     return x .+ normalization.shift
 end
 
+# =====================
+# Control preprocessing
+# =====================
+
+abstract type ControlPreprocessing end
+
+struct NoPreprocessing <: ControlPreprocessing
+end
+
+apply(normalization::NoPreprocessing, x) = x
+
+struct FunctionPreprocessing{F<:Function} <: ControlPreprocessing
+    f::F
+
+    function FunctionPreprocessing(f::F) where {F<:Function}
+        return new{F}(f)
+    end
+end
+
+function apply(funct::FunctionPreprocessing, x)
+    return funct.f(x)
+end
+
 # ================
 # Control problems
 # ================
@@ -44,6 +67,7 @@ Struct representing a closed-loop neural-network controlled system.
 - `vars`          -- dictionary storing state variables, input variables and control variables
 - `period`        -- control period
 - `normalization` -- normalization of the controller output
+- `preprocessing` -- preprocessing of the controller input
 
 ### Parameters
 
@@ -52,20 +76,23 @@ Struct representing a closed-loop neural-network controlled system.
 - `DT`:  type of variables
 - `PT`:  type of period
 - `CNT`: type of control normalization
+- `CPT`: type of control preprocessing
 """
-struct ControlledPlant{ST, XT, DT, PT, CNT} <: AbstractNeuralNetworkControlProblem
+struct ControlledPlant{ST, XT, DT, PT, CNT, CPT} <: AbstractNeuralNetworkControlProblem
     ivp::InitialValueProblem{ST, XT}
     controller::Network
     vars::Dict{Symbol, DT}
     period::PT
     normalization::CNT
+    preprocessing::CPT
 
     function ControlledPlant(ivp::InitialValueProblem{ST, XT},
                              controller::Network,
                              vars::Dict{Symbol, DT},
                              period::PT,
-                             normalization::CNT=NoNormalization()) where {ST, XT, DT, PT, CNT}
-        return new{ST, XT, DT, PT, CNT}(ivp, controller, vars, period, normalization)
+                             normalization::CNT=NoNormalization(),
+                             preprocessing::CPT=NoPreprocessing()) where {ST, XT, DT, PT, CNT, CPT}
+        return new{ST, XT, DT, PT, CNT, CPT}(ivp, controller, vars, period, normalization, preprocessing)
     end
 end
 
@@ -74,6 +101,7 @@ system(cp::ControlledPlant) = cp.ivp.s
 controller(cp::ControlledPlant) = cp.controller
 period(cp::ControlledPlant) = cp.period
 control_normalization(cp::ControlledPlant) = cp.normalization
+control_preprocessing(cp::ControlledPlant) = cp.preprocessing
 
 state_vars(cp::ControlledPlant) = get(cp.vars, :state_vars, Int[])
 input_vars(cp::ControlledPlant) = get(cp.vars, :input_vars, Int[])

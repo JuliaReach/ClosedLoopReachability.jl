@@ -58,9 +58,7 @@ function solve(prob::AbstractNeuralNetworkControlProblem, args...; kwargs...)
 
     init_ctrl = get(kwargs, :apply_initial_control, true)
 
-    preprocess = get(kwargs, :preprocess, box_approximation)
-
-    sol = _solve(prob, cpost, solver, tspan, τ, init_ctrl, preprocess)
+    sol = _solve(prob, cpost, solver, tspan, τ, init_ctrl)
 
     d = Dict{Symbol, Any}(:solver=>solver)
     return ReachSolution(sol, cpost, d)
@@ -81,7 +79,6 @@ function _solve(cp::ControlledPlant,
                 time_span::TimeInterval,
                 sampling_time::N,
                 apply_initial_control::Bool,
-                preprocess::Function # function that is applied before passing the set to the neural network controller
                 ) where {N}
 
     ivp = plant(cp)
@@ -92,6 +89,7 @@ function _solve(cp::ControlledPlant,
     ctrl_vars = control_vars(cp)
     controls = Dict()
     normalization = control_normalization(cp)
+    preprocessing = control_preprocessing(cp)
 
     Q₀ = initial_state(ivp) # TODO initial_state(plant)
     n = length(st_vars)
@@ -110,7 +108,7 @@ function _solve(cp::ControlledPlant,
     end
 
     if apply_initial_control
-        X0aux = preprocess(X₀)
+        X0aux = apply(preprocessing, X₀)
         U₀ = forward_network(solver, network, X0aux)
         U₀ = apply(normalization, U₀)
     else
