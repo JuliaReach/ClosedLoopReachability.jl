@@ -67,6 +67,7 @@ Struct representing a closed-loop neural-network controlled system.
 - `vars`          -- dictionary storing state variables, input variables and control variables
 - `period`        -- control period
 - `normalization` -- normalization of the controller output
+- `preprocessing` -- preprocessing of the controller input
 
 ### Parameters
 
@@ -75,22 +76,23 @@ Struct representing a closed-loop neural-network controlled system.
 - `DT`:  type of variables
 - `PT`:  type of period
 - `CNT`: type of control normalization
+- `CPT`: type of control preprocessing
 """
-struct ControlledPlant{ST, XT, DT, PT, CNT, CPP} <: AbstractNeuralNetworkControlProblem
+struct ControlledPlant{ST, XT, DT, PT, CNT, CPT} <: AbstractNeuralNetworkControlProblem
     ivp::InitialValueProblem{ST, XT}
     controller::Network
     vars::Dict{Symbol, DT}
     period::PT
     normalization::CNT
-    preprocessing::CPP
+    preprocessing::CPT
 
     function ControlledPlant(ivp::InitialValueProblem{ST, XT},
                              controller::Network,
                              vars::Dict{Symbol, DT},
                              period::PT,
                              normalization::CNT=NoNormalization(),
-                             preprocessing::CPP=NoPreprocessing()) where {ST, XT, DT, PT, CNT, CPP}
-        return new{ST, XT, DT, PT, CNT, CPP}(ivp, controller, vars, period, normalization, preprocessing)
+                             preprocessing::CPT=NoPreprocessing()) where {ST, XT, DT, PT, CNT, CPT}
+        return new{ST, XT, DT, PT, CNT, CPT}(ivp, controller, vars, period, normalization, preprocessing)
     end
 end
 
