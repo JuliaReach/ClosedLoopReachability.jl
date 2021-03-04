@@ -10,8 +10,7 @@ Simulate a neural-network controlled system for a family of random trajectories.
 
 ### Output
 
-The tuple `(simulations, all_controls)` which contains the vector with each simulation
-and the vector of controls used.
+An object of type [`EnsembleSimulationSolution`](@ref).
 
 ### Notes
 
@@ -94,5 +93,5 @@ function simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
         t += τ
     end
 
-    return simulations, all_controls, all_inputs
+    return EnsembleSimulationSolution(simulations, all_controls, all_inputs)
 end
