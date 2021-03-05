@@ -140,7 +140,7 @@ function _solve(cp::ControlledPlant,
         ti += sampling_time
 
         X = sol(ti)
-        X₀ = _project_oa(X, st_vars) |> set
+        X₀ = _project_oa(X, st_vars, ti) |> set
         P₀ = isempty(in_vars) ? X₀ : X₀ × W₀
 
         U₀ = forward_network(solver, network, X₀)
