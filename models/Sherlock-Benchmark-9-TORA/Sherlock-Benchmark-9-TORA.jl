@@ -75,28 +75,46 @@ sim = simulate(plant, T=20.0, trajectories=20);
 
 fig = plot(xlab="x₁", ylab="x₂")
 plot!(fig, safe_states, color=:white, linecolor=:black, lw=5.0)
+xl = xlims()
+yl = ylims()
 for simulation in trajectories(sim)
-    plot!(fig, simulation, vars=(1, 2))
+    for piece in simulation
+        plot!(fig, piece, vars=(1, 2), lab="")
+    end
 end
 plot!(fig, project(X₀, 1:2), lab="X₀")
+xlims!(xl)
+ylims!(yl)
 
 #-
 
 fig = plot(xlab="x₂", ylab="x₄")
 plot!(fig, safe_states, color=:white, linecolor=:black, lw=5.0)
+xl = xlims()
+yl = ylims()
 for simulation in trajectories(sim)
-    plot!(fig, simulation, vars=(2, 4))
+    for piece in simulation
+        plot!(fig, piece, vars=(2, 4), lab="")
+    end
 end
 plot!(fig, project(X₀, [2, 4]), lab="X₀")
+xlims!(xl)
+ylims!(yl)
 
 #-
 
 fig = plot(xlab="x₂", ylab="x₃")
 plot!(fig, safe_states, color=:white, linecolor=:black, lw=5.0)
+xl = xlims()
+yl = ylims()
 for simulation in trajectories(sim)
-    plot!(fig, simulation, vars=(2, 3))
+    for piece in simulation
+        plot!(fig, piece, vars=(2, 3), lab="")
+    end
 end
 plot!(fig, project(X₀, [2, 3]), lab="X₀")
+xlims!(xl)
+ylims!(yl)
 
 #-
 
