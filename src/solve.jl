@@ -128,9 +128,17 @@ function _solve(cp::ControlledPlant,
         if isa(U₀, LazySet)
             Q₀ = P₀ × U₀
         else
-            # TODO should take eg. convex hull if the network retuns > 1 set
+            # TODO should take eg. convex hull if the network returns > 1 set
             Q₀ = P₀ × first(U₀)
         end
+
+        # simplification for intervals
+        if dim(U₀) == 1
+            U₀ = overapproximate(U₀, Interval)
+        end
+
+        # TEMP ad-hoc conversion to zonotope
+        Q₀ = convert(Zonotope, Q₀)
 
         controls[i] = U₀
         dt = ti .. (ti + sampling_time)
