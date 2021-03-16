@@ -13,8 +13,8 @@
 #
 # ```math
 # \left\{ \begin{array}{lcl}
-# \dot{x}_1 &=& x_4 cos(x_3) \\
-# \dot{x}_2 &=& x_4 sin(x_3) \\
+# \dot{x}_1 &=& x_4 \cos(x_3) \\
+# \dot{x}_2 &=& x_4 \sin(x_3) \\
 # \dot{x}_3 &=& u_2 \\
 # \dot{x}_4 &=& u_1 + w
 # \end{array} \right.
