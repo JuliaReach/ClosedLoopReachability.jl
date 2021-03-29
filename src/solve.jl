@@ -138,9 +138,6 @@ function _solve(cp::ControlledPlant,
             Q₀ = P₀ × first(U₀)
         end
 
-        # TEMP ad-hoc conversion to zonotope
-        Q₀ = convert(Zonotope, Q₀)
-
         controls[i] = U₀
         dt = ti .. (ti + sampling_time)
         sol = post(cpost, IVP(S, Q₀), dt)
