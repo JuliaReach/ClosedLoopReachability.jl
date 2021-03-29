@@ -96,7 +96,7 @@ end
 
 #### Solver using the CH of the sampled outputs as an inner approx of the real output
 @with_kw struct SampledApprox <: Solver
-    nsamples::Int64 = 10000
+    nsamples::Int = 10000
 end
 
 function NeuralVerification.forward_network(solver::SampledApprox, nnet, input)
