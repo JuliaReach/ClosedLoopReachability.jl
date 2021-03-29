@@ -23,7 +23,7 @@ end
 # International Conference on Hybrid Systems: Computation and Control. 2019.
 # ==============================================================================
 
-using NeuralVerification: ActivationFunction, Sigmoid, Tanh
+using NeuralVerification: ActivationFunction, Sigmoid, Tanh, Solver, @with_kw
 
 # ref. Eq (6) in [VER19]
 # d(σ(x))/dx = σ(x)*(1-σ(x))
@@ -92,4 +92,18 @@ end
 
 function apply(normalization::UniformAdditiveNormalization, X::LazySet)
     return translate(X, fill(normalization.shift, dim(X)))
+end
+
+#### Solver using the CH of the sampled outputs as an inner approx of the real output
+@with_kw struct SampledApprox <: Solver
+    nsamples::Int64 = 10000
+end
+
+function NeuralVerification.forward_network(solver::SampledApprox, nnet, input)
+    samples = sample(input, solver.nsamples)
+    outputs = Vector()
+    for i in samples
+        push!(outputs, NV.compute_output(nnet, i))
+    end
+    return Interval(first.(convex_hull(UnionSetArray(Singleton.(outputs)))))
 end

@@ -266,3 +266,11 @@ function random_control_problems(n::Integer, m::Integer; ivp=nothing, period=0.1
 
     return problems
 end
+
+include("nnops.jl")
+# relative size between the set-based output and the (CH of) sampled output
+function relative_size_nnsol(X0, nsamples, solver, controller)
+    o = overapproximate(forward_network(solver, controller, X0), Interval)
+    u = forward_network(SampledApprox(nsamples), controller, X0)
+    return diameter(o)/diameter(u)
+end
