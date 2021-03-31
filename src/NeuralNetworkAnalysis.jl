@@ -12,7 +12,8 @@ include("solve.jl")
 export ControlledPlant
 
 # solvers
-export solve, forward, simulate
+export solve, forward, simulate,
+       VertexSolver
 
 # utility functions
 export @modelpath, read_nnet_mat, read_nnet_yaml

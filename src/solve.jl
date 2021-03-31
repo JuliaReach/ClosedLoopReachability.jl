@@ -125,10 +125,16 @@ function _solve(cp::ControlledPlant,
     out = Vector{FT}(undef, NSAMPLES)
 
     for i = 1:NSAMPLES
+
+        # simplify the control input for intervals
+        if dim(U₀) == 1
+            U₀ = overapproximate(U₀, Interval)
+        end
+
         if isa(U₀, LazySet)
             Q₀ = P₀ × U₀
         else
-            # TODO should take eg. convex hull if the network retuns > 1 set
+            # TODO should take eg. convex hull if the network returns > 1 set
             Q₀ = P₀ × first(U₀)
         end
 

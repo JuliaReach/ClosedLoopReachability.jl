@@ -1,3 +1,9 @@
+using NeuralVerification: @with_kw,
+                          ActivationFunction,
+                          Solver,
+                          Sigmoid,
+                          Tanh
+
 # ================================================
 # Internal forward network functions
 # ================================================
@@ -15,6 +21,26 @@ function forward(network::Network, x0::Vector{<:Number})
     return x
 end
 
+# ==========================================================
+# Methods to handle networks with ReLU activation functions
+# ==========================================================
+
+# solver that propagates the vertices, computes their convex hull, and applies
+# some postprocessing to the result
+@with_kw struct VertexSolver{T} <: Solver
+    postprocessing::T = x -> x  # default: identity (= no postprocessing)
+end
+
+function NeuralVerification.forward_network(solver::VertexSolver, nnet::Network, X0)
+    P = VPolytope()
+    vlist = vertices_list(P)
+    for v in vertices(X0)
+        push!(vlist, forward(nnet, v))
+    end
+    Q = solver.postprocessing(P)
+    return Q
+end
+
 # ==============================================================================
 # Methods to handle networks with sigmoid activation functions from [VER19]
 #
@@ -22,8 +48,6 @@ end
 # hybrid systems with neural network controllers." Proceedings of the 22nd ACM
 # International Conference on Hybrid Systems: Computation and Control. 2019.
 # ==============================================================================
-
-using NeuralVerification: ActivationFunction, Sigmoid, Tanh, Solver, @with_kw
 
 # ref. Eq (6) in [VER19]
 # d(σ(x))/dx = σ(x)*(1-σ(x))
@@ -47,7 +71,8 @@ end
 
 const HALFINT = IA.Interval(0.5, 0.5)
 const ZEROINT = IA.Interval(0.0, 0.0)
-const ACTFUN = Dict(Tanh() => (tanh!, ZEROINT), Sigmoid() => (sigmoid!, HALFINT))
+const ACTFUN = Dict(Tanh() => (tanh!, ZEROINT),
+                    Sigmoid() => (sigmoid!, HALFINT))
 
 # Method: Cartesian decomposition (intervals for each one-dimensional subspace)
 # Only Tanh, Sigmoid and Id functions are supported
@@ -94,7 +119,7 @@ function apply(normalization::UniformAdditiveNormalization, X::LazySet)
     return translate(X, fill(normalization.shift, dim(X)))
 end
 
-#### Solver using the CH of the sampled outputs as an inner approx of the real output
+# solver using the CH of the sampled outputs as an inner approx of the real output
 @with_kw struct SampledApprox <: Solver
     nsamples::Int = 10000
 end
