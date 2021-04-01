@@ -126,9 +126,9 @@ end
 
 function NeuralVerification.forward_network(solver::SampledApprox, nnet, input)
     samples = sample(input, solver.nsamples)
-    outputs = Vector()
-    for i in samples
-        push!(outputs, NV.compute_output(nnet, i))
+    outputs = Vector{Vector{Float64}}(undef, solver.nsamples)
+    for (i, sample) in enumerate(samples)
+        outputs[i] = NV.compute_output(nnet, sample)
     end
-    return Interval(first.(convex_hull(UnionSetArray(Singleton.(outputs)))))
+    return Interval(extrema(vcat(outputs...))...)
 end
