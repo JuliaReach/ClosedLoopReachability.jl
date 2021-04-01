@@ -126,9 +126,12 @@ end
 
 function NeuralVerification.forward_network(solver::SampledApprox, nnet, input)
     samples = sample(input, solver.nsamples)
-    outputs = Vector{Vector{Float64}}(undef, solver.nsamples)
-    for (i, sample) in enumerate(samples)
-        outputs[i] = NV.compute_output(nnet, sample)
+    MIN = first(NV.compute_output(nnet, sample(input)))
+    MAX = MIN
+    for sample in samples
+        output = first(NV.compute_output(nnet, sample))
+        MIN = min(MIN, output)
+        MAX = max(MAX, output)
     end
-    return Interval(extrema(vcat(outputs...))...)
+    return Interval(MIN, MAX)
 end
