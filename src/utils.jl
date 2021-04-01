@@ -266,3 +266,13 @@ function random_control_problems(n::Integer, m::Integer; ivp=nothing, period=0.1
 
     return problems
 end
+
+output_dim(controller::Network) = size(controller.layers[end].weights, 1)
+
+# relative size between the set-based output and the (CH of) sampled output
+function relative_size(X0, nsamples, controller, solver=Ai2())
+    @assert output_dim(controller) == 1 "the dimension of the output of the network needs to be 1, but is $output_dim(controller)"
+    o = overapproximate(forward_network(solver, controller, X0), Interval)
+    u = forward_network(SampledApprox(nsamples), controller, X0)
+    return diameter(o)/diameter(u)
+end

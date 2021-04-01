@@ -1,5 +1,8 @@
-using NeuralVerification: Solver, @with_kw,
-                          Sigmoid, Tanh
+using NeuralVerification: @with_kw,
+                          ActivationFunction,
+                          Solver,
+                          Sigmoid,
+                          Tanh
 
 # ================================================
 # Internal forward network functions
@@ -114,4 +117,22 @@ end
 
 function apply(normalization::UniformAdditiveNormalization, X::LazySet)
     return translate(X, fill(normalization.shift, dim(X)))
+end
+
+# solver using the CH of the sampled outputs as an inner approx of the real output
+@with_kw struct SampledApprox <: Solver
+    nsamples::Int = 10000
+end
+
+function NeuralVerification.forward_network(solver::SampledApprox, nnet, input)
+    @assert output_dim(nnet) == 1 "the dimension of the output of the network needs to be 1, but is $output_dim(nnet)"
+    samples = sample(input, solver.nsamples)
+    MIN = Inf
+    MAX = -Inf
+    for sample in samples
+        output = first(NV.compute_output(nnet, sample))
+        MIN = min(MIN, output)
+        MAX = max(MAX, output)
+    end
+    return Interval(MIN, MAX)
 end
