@@ -154,8 +154,9 @@ function reach_relu(Θ::Star{N, VN, MN, PT}) where {N, VN, MN, PT}
 
     # processing list
     #HT = HPolyhedron{Float64, Vector{Float64}}
-    #ST = Star{N, VN, MN, Union{PT, HT}}
-    out = Vector{Vector{Star}}(undef, n+1)
+    #Star{N, VN, MN, Union{PT, HT}
+    #ST = Union{typeof(Θ), STP}}
+    out = Vector{Vector{<:Star}}(undef, n+1)
     out[1] = [Θ]
 
     for k in 1:n  # loop over directions
@@ -173,7 +174,8 @@ function reach_relu(Θ::Star{N, VN, MN, PT}) where {N, VN, MN, PT}
         out[k+1] = step_relu(out[k], k, lb, ub)
     end
 
-    return UnionSetArray(out[end])
+    #return UnionSetArray(out[end])
+    return out[end]
 end
 
 # identity matrix but the k-th column is zero
@@ -225,7 +227,7 @@ function step_relu(Θ::ST, k, lb, ub) where {ST<:Star}
 end
 
 function step_relu(Θ::Vector{ST}, k, lb, ub) where {ST<:Star}
-    out = Vector{ST}()
+    out = Vector{Star}()
     for Θi in Θ
         Θnew = step_relu(Θi, k, lb, ub)
         append!(out, Θnew)
