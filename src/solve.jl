@@ -87,6 +87,9 @@ function _solve(cp::ControlledPlant,
     in_vars = input_vars(cp)
     ctrl_vars = control_vars(cp)
     controls = Dict()
+    Xs = Dict()
+    XXs = Dict()
+    Qs = Dict()
     normalization = control_normalization(cp)
     preprocessing = control_preprocessing(cp)
 
@@ -138,9 +141,10 @@ function _solve(cp::ControlledPlant,
         end
 
         Ti = i < NSAMPLES ? (ti + sampling_time) : tend(time_span)
-
+        println("U₀1: ", U₀)
         controls[i] = U₀
         dt = ti .. Ti
+        Qs[i] = Q₀
         sol = post(cpost, IVP(S, Q₀), dt)
         out[i] = sol
 
@@ -152,14 +156,18 @@ function _solve(cp::ControlledPlant,
         ti = Ti
 
         X = sol(ti)
+        XXs[i] = X
         X₀ = _project_oa(X, st_vars, ti) |> set
+        println("X₀: ", X₀)
         P₀ = isempty(in_vars) ? X₀ : X₀ × W₀
 
+        Xs[i] = X₀
         X0aux = apply(preprocessing, X₀)
         U₀ = forward_network(solver, network, X0aux)
+        println("U₀2: ", U₀)
         U₀ = apply(normalization, U₀)
     end
 
-    ext = Dict{Symbol, Any}(:controls=>controls)
+    ext = Dict{Symbol, Any}(:controls=>controls, :Xs=>Xs, :Qs=>Qs, :XXs=>XXs)
     return MixedFlowpipe(out, ext)
 end
