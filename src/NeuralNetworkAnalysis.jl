@@ -13,7 +13,7 @@ export ControlledPlant
 
 # solvers
 export solve, forward, simulate,
-       VertexSolver
+       SampledApprox, VertexSolver, BoxSolver
 
 # utility functions
 export @modelpath, read_nnet_mat, read_nnet_yaml
