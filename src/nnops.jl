@@ -19,6 +19,35 @@ function forward(nnet::Network, x0::Vector{<:Number})
     return x
 end
 
+# ================================================
+# Composite methods to compute the network output
+# ================================================
+
+@with_kw struct SplitSolver{S<:Solver, FS, FM} <: Solver
+    solver::S
+    split_fun::FS
+    merge_fun::FM
+end
+
+function SplitSolver(solver)
+    # default: box approximation and split in two sets per dimension
+    split_fun = X -> split(box_approximation(X), 2 * ones(Int, dim(X)))
+    # default: box approximation of the union
+    merge_fun = X -> box_approximation(X)
+    return SplitSolver(solver, split_fun, merge_fun)
+end
+
+function NeuralVerification.forward_network(solver::SplitSolver, nnet::Network, X0)
+    X0_split = solver.split_fun(X0)
+    Y_union = UnionSetArray()
+    for X in X0_split
+        Y = forward_network(solver.solver, nnet, X)
+        push!(array(Y_union), Y)
+    end
+    Y_merged = solver.merge_fun(Y_union)
+    return Y_merged
+end
+
 # ============================================================================
 # Methods to approximate the network output (without mathematical guarantees)
 # ============================================================================
