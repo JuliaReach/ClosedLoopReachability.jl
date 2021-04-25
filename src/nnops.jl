@@ -57,6 +57,34 @@ function NeuralVerification.forward_network(solver::SampledApprox, nnet, input)
     return Interval(MIN, MAX)
 end
 
+# ==========================================================
+# Methods to handle networks with ReLU activation functions
+# ==========================================================
+
+# solver that computes the box approximation in each layer
+# it exploits that box(relu(X)) == relu(box(X))
+struct BoxSolver <: Solver end
+
+function NeuralVerification.forward_network(solver::BoxSolver, nnet::Network, X0)
+    X = X0
+    for layer in nnet.layers
+        # affine map and box approximation
+        W = layer.weights
+        b = layer.bias
+        X_am = AffineMap(W, X, b)
+        X_box = box_approximation(X_am)
+
+        # activation function
+        if layer.activation isa Id
+            X = X_box
+            continue
+        end
+        @assert layer.activation isa ReLU "unsupported activation function"
+        X = rectify(X_box)
+    end
+    return X
+end
+
 # ==============================================================================
 # Methods to handle networks with sigmoid activation functions from [VER19]
 #
