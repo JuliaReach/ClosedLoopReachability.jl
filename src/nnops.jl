@@ -9,11 +9,9 @@ using NeuralVerification: @with_kw,
 # ================================================
 
 # output of neural network for a single input
-function forward(network::Network, x0::Vector{<:Number})
-    layers = network.layers
+function forward(nnet::Network, x0::Vector{<:Number})
     x = x0
-    @inbounds for i in 1:length(layers)
-        layer = network.layers[i]
+    @inbounds for layer in nnet.layers
         W = layer.weights
         b = layer.bias
         x = layer.activation(W * x + b)
@@ -21,9 +19,9 @@ function forward(network::Network, x0::Vector{<:Number})
     return x
 end
 
-# ==========================================================
-# Methods to handle networks with ReLU activation functions
-# ==========================================================
+# ============================================================================
+# Methods to approximate the network output (without mathematical guarantees)
+# ============================================================================
 
 # solver that propagates the vertices, computes their convex hull, and applies
 # some postprocessing to the result
