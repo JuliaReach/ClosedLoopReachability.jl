@@ -9,11 +9,9 @@ using NeuralVerification: @with_kw,
 # ================================================
 
 # output of neural network for a single input
-function forward(network::Network, x0::Vector{<:Number})
-    layers = network.layers
+function forward(nnet::Network, x0::Vector{<:Number})
     x = x0
-    @inbounds for i in 1:length(layers)
-        layer = network.layers[i]
+    @inbounds for layer in nnet.layers
         W = layer.weights
         b = layer.bias
         x = layer.activation(W * x + b)
@@ -21,9 +19,38 @@ function forward(network::Network, x0::Vector{<:Number})
     return x
 end
 
-# ==========================================================
-# Methods to handle networks with ReLU activation functions
-# ==========================================================
+# ================================================
+# Composite methods to compute the network output
+# ================================================
+
+@with_kw struct SplitSolver{S<:Solver, FS, FM} <: Solver
+    solver::S
+    split_fun::FS
+    merge_fun::FM
+end
+
+function SplitSolver(solver)
+    # default: box approximation and split in two sets per dimension
+    split_fun = X -> split(box_approximation(X), 2 * ones(Int, dim(X)))
+    # default: box approximation of the union
+    merge_fun = X -> box_approximation(X)
+    return SplitSolver(solver, split_fun, merge_fun)
+end
+
+function NeuralVerification.forward_network(solver::SplitSolver, nnet::Network, X0)
+    X0_split = solver.split_fun(X0)
+    Y_union = UnionSetArray()
+    for X in X0_split
+        Y = forward_network(solver.solver, nnet, X)
+        push!(array(Y_union), Y)
+    end
+    Y_merged = solver.merge_fun(Y_union)
+    return Y_merged
+end
+
+# ============================================================================
+# Methods to approximate the network output (without mathematical guarantees)
+# ============================================================================
 
 # solver that propagates the vertices, computes their convex hull, and applies
 # some postprocessing to the result
@@ -57,6 +84,34 @@ function NeuralVerification.forward_network(solver::SampledApprox, nnet, input)
         MAX = max(MAX, output)
     end
     return Interval(MIN, MAX)
+end
+
+# ==========================================================
+# Methods to handle networks with ReLU activation functions
+# ==========================================================
+
+# solver that computes the box approximation in each layer
+# it exploits that box(relu(X)) == relu(box(X))
+struct BoxSolver <: Solver end
+
+function NeuralVerification.forward_network(solver::BoxSolver, nnet::Network, X0)
+    X = X0
+    for layer in nnet.layers
+        # affine map and box approximation
+        W = layer.weights
+        b = layer.bias
+        X_am = AffineMap(W, X, b)
+        X_box = box_approximation(X_am)
+
+        # activation function
+        if layer.activation isa Id
+            X = X_box
+            continue
+        end
+        @assert layer.activation isa ReLU "unsupported activation function"
+        X = rectify(X_box)
+    end
+    return X
 end
 
 @with_kw struct ConcreteReLU <: Solver
