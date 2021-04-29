@@ -114,6 +114,23 @@ function NeuralVerification.forward_network(solver::BoxSolver, nnet::Network, X0
     return X
 end
 
+@with_kw struct ConcreteReLU <: Solver
+    concrete_intersection::Bool = false
+end
+
+function NeuralVerification.forward_network(solver::ConcreteReLU, nnet::Network, X0)
+    X = [X0]
+    for layer in nnet.layers
+        if typeof(X[1]) <: UnionSetArray
+            X = [x.array for x in X]
+            X = reduce(vcat, X)
+        end
+        X = affine_map.(Ref(layer.weights), X, Ref(layer.bias))
+        X = rectify.(X, solver.concrete_intersection)
+    end
+    return X
+end
+
 # ==============================================================================
 # Methods to handle networks with sigmoid activation functions from [VER19]
 #
