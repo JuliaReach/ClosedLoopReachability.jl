@@ -127,10 +127,8 @@ function _solve(cp::ControlledPlant,
     for i = 1:NSAMPLES
 
         # simplify the control input for intervals
-        if length(U₀) == 1 && dim(U₀) == 1
+        if dim(U₀) == 1
             U₀ = overapproximate(U₀, Interval)
-        elseif dim(U₀[1]) == 1
-            U₀ = overapproximate.(U₀, Interval)
         end
 
         if isa(U₀, LazySet)
