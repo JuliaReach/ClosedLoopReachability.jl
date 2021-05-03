@@ -72,61 +72,65 @@ using DifferentialEquations
 sim = simulate(plant, T=20.0, trajectories=20);
 
 
-# ## Plots
+## Plots
 
-# using Plots
-# 
-# fig = plot(xlab="x₁", ylab="x₂")
-# plot!(fig, safe_states, color=:white, linecolor=:black, lw=5.0)
-# xl = xlims()
-# yl = ylims()
-# for simulation in trajectories(sim)
-#     for piece in simulation
-#         plot!(fig, piece, vars=(1, 2), lab="")
-#     end
-# end
-# plot!(fig, project(X₀, 1:2), lab="X₀")
-# xlims!(xl)
-# ylims!(yl)
-# 
-# #-
-# 
-# fig = plot(xlab="x₂", ylab="x₄")
-# plot!(fig, safe_states, color=:white, linecolor=:black, lw=5.0)
-# xl = xlims()
-# yl = ylims()
-# for simulation in trajectories(sim)
-#     for piece in simulation
-#         plot!(fig, piece, vars=(2, 4), lab="")
-#     end
-# end
-# plot!(fig, project(X₀, [2, 4]), lab="X₀")
-# xlims!(xl)
-# ylims!(yl)
-# 
-# #-
-# 
-# fig = plot(xlab="x₂", ylab="x₃")
-# plot!(fig, safe_states, color=:white, linecolor=:black, lw=5.0)
-# xl = xlims()
-# yl = ylims()
-# for simulation in trajectories(sim)
-#     for piece in simulation
-#         plot!(fig, piece, vars=(2, 3), lab="")
-#     end
-# end
-# plot!(fig, project(X₀, [2, 3]), lab="X₀")
-# xlims!(xl)
-# ylims!(yl)
-# 
-# #-
-# 
-# # Here we plot the control functions for each run:
-# 
-# tdom = range(0, 20, length=length(controls(sim, 1)))
-# fig = plot(xlab="time", ylab="u")
-# [plot!(fig, tdom, [c[1] for c in controls(sim, i)], lab="") for i in 1:length(sim)]
-# fig
+using Plots
+import DisplayAs
+
+fig = plot(xlab="x₁", ylab="x₂")
+plot!(fig, safe_states, color=:white, linecolor=:black, lw=5.0)
+xl = xlims()
+yl = ylims()
+for simulation in trajectories(sim)
+    for piece in simulation
+        plot!(fig, piece, vars=(1, 2), lab="")
+    end
+end
+plot!(fig, project(X₀, 1:2), lab="X₀")
+xlims!(xl)
+ylims!(yl)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+
+#-
+
+fig = plot(xlab="x₂", ylab="x₄")
+plot!(fig, safe_states, color=:white, linecolor=:black, lw=5.0)
+xl = xlims()
+yl = ylims()
+for simulation in trajectories(sim)
+    for piece in simulation
+        plot!(fig, piece, vars=(2, 4), lab="")
+    end
+end
+plot!(fig, project(X₀, [2, 4]), lab="X₀")
+xlims!(xl)
+ylims!(yl)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+
+#-
+
+fig = plot(xlab="x₂", ylab="x₃")
+plot!(fig, safe_states, color=:white, linecolor=:black, lw=5.0)
+xl = xlims()
+yl = ylims()
+for simulation in trajectories(sim)
+    for piece in simulation
+        plot!(fig, piece, vars=(2, 3), lab="")
+    end
+end
+plot!(fig, project(X₀, [2, 3]), lab="X₀")
+xlims!(xl)
+ylims!(yl)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+
+#-
+
+# Here we plot the control functions for each run:
+
+tdom = range(0, 20, length=length(controls(sim, 1)))
+fig = plot(xlab="time", ylab="u")
+[plot!(fig, tdom, [c[1] for c in controls(sim, i)], lab="") for i in 1:length(sim)]
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 # ## Flowpipe computation
 
