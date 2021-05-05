@@ -137,12 +137,19 @@ function _solve(cp::ControlledPlant,
             Q₀ = P₀ × first(U₀)
         end
 
+        Ti = i < NSAMPLES ? (ti + sampling_time) : tend(time_span)
+
         controls[i] = U₀
-        dt = ti .. (ti + sampling_time)
+        dt = ti .. Ti
         sol = post(cpost, IVP(S, Q₀), dt)
         out[i] = sol
 
-        ti += sampling_time
+        if i == NSAMPLES
+            # no need to ask the network again
+            break
+        end
+
+        ti = Ti
 
         X = sol(ti)
         X₀ = _project_oa(X, st_vars, ti) |> set
