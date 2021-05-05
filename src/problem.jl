@@ -97,6 +97,7 @@ struct ControlledPlant{ST, XT, DT, PT, CNT, CPT} <: AbstractNeuralNetworkControl
 end
 
 plant(cp::ControlledPlant) = cp.ivp
+MathematicalSystems.initial_state(cp::ControlledPlant) = initial_state(cp.ivp)
 system(cp::ControlledPlant) = cp.ivp.s
 controller(cp::ControlledPlant) = cp.controller
 period(cp::ControlledPlant) = cp.period

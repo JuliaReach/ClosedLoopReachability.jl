@@ -81,7 +81,6 @@ function _solve(cp::ControlledPlant,
                 apply_initial_control::Bool,
                 ) where {N}
 
-    ivp = plant(cp)
     S = system(cp)
     network = controller(cp)
     st_vars = state_vars(cp)
@@ -91,7 +90,7 @@ function _solve(cp::ControlledPlant,
     normalization = control_normalization(cp)
     preprocessing = control_preprocessing(cp)
 
-    Q₀ = initial_state(ivp) # TODO initial_state(plant)
+    Q₀ = initial_state(cp)
     n = length(st_vars)
     m = length(in_vars)
     q = length(ctrl_vars)
