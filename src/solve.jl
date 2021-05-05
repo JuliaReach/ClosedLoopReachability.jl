@@ -149,7 +149,8 @@ function _solve(cp::ControlledPlant,
         X₀ = _project_oa(X, st_vars, ti) |> set
         P₀ = isempty(in_vars) ? X₀ : X₀ × W₀
 
-        U₀ = forward_network(solver, network, X₀)
+        X0aux = apply(preprocessing, X₀)
+        U₀ = forward_network(solver, network, X0aux)
         U₀ = apply(normalization, U₀)
     end
 
