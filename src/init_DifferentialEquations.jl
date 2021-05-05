@@ -6,8 +6,7 @@ import .DifferentialEquations: controls
 export trajectory,
        trajectories,
        inputs,
-       solution,
-       plot_simulation!
+       solution
 
 struct SimulationSolution{TT, CT, IT}
     trajectory::TT  # trajectory pieces for each control cycle
@@ -66,27 +65,4 @@ function _solve_ensemble(ivp, X0_samples, tspan;
                                     prob_func=_prob_func)
     return DE.solve(ensemble_prob, trajectories_alg, ensemble_alg;
                     trajectories=length(X0_samples))
-end
-
-# convenience function for plotting simulation results
-function plot_simulation!(fig, sim::EnsembleSimulationSolution; vars, kwargs...)
-    # The main problem is that plotting trajectories one by one changes the plot
-    # limits. Hence we store the plot limits from an existing figure and restore
-    # them after plotting all trajectories.
-
-    # obtain x and y limits
-    xl = xlims(fig)
-    yl = ylims(fig)
-
-    for simulation in trajectories(sim)
-        for piece in simulation
-            plot!(fig, piece, vars=vars, color=:red, lab="")
-        end
-    end
-
-    # restore x and y limits
-    xlims!(fig, xl)
-    ylims!(fig, yl)
-
-    return fig
 end
