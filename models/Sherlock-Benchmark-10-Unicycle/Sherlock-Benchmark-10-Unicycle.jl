@@ -19,34 +19,33 @@
 # \dot{x}_4 &=& u_1 + w
 # \end{array} \right.
 # ```
-# where ``w`` is a bounded error in the range ``[−1e−4, 1e−4]``. A neural network
-# controller was trained for this system, using a model predictive controller
-# as a "demonstrator" or "teacher". The trained network has 1 hidden layer,
-# with 500 neurons. The sampling time for this controller was 0.2s.
+# where ``w`` is a bounded error in the range ``[−1e−4, 1e−4]``. A neural
+# network controller was trained for this system. The trained network has 1
+# hidden layer with 500 neurons. Note that the output of the neural network
+# ``f(x)`` needs to be normalized in order to obtain ``(u_1, u_2)``, namely
+# ``u_i = f(x)_i − 20``. The sampling time for this controller is 0.2s.
 
 using NeuralNetworkAnalysis
+using NeuralNetworkAnalysis: UniformAdditiveNormalization
 
-@taylorize function benchmark10!(dx, x, p, t)
-    u1, u2 = one(x[5]), one(x[5])
-    dx[1] = x[4] * cos(x[3])
-    dx[2] = x[4] * sin(x[3])
-    dx[3] = u2
-    dx[4] = u1 + x[5]
-    dx[5] = zero(x[5]) # w
+# We model the error ``w`` as a nondeterministically assigned constant.
+@taylorize function unicycle!(dx, x, p, t)
+    x₁, x₂, x₃, x₄, w, u₁, u₂ = x
+
+    dx[1] = x₄ * cos(x₃)
+    dx[2] = x₄ * sin(x₃)
+    dx[3] = u₂
+    dx[4] = u₁ + w
+    dx[5] = zero(x[5])
+    dx[6] = zero(x[6])
+    dx[7] = zero(x[7])
     return dx
-end
+end;
 
-# define the initial-value problem
-X₀ = Hyperrectangle(low=[9.5, -4.5, 2.1, 1.5, -1e-4], high=[9.55, -4.45, 2.11, 1.51, 1e-1])
+controller = read_nnet_mat(@modelpath("Sherlock-Benchmark-10-Unicycle", "controllerB_nnv.mat");
+                           act_key="act_fcns");
 
-prob = @ivp(x' = benchmark10!(x), dim: 5, x(0) ∈ X₀)
-
-# TODO add normalization of control inputs to u = NN(x) .- 20
-
-# solve it
-##sol = solve(prob, T=10.0);
-
-# ## Specifications
+# ## Specification
 #
 # The verification problem here is that of reachability. For an initial set of,
 # ``x_1 ∈ [9.5,9.55], x_2 ∈ [−4.5,−4.45], x_3 ∈ [2.1,2.11], x_4 ∈ [1.5,1.51]``,
@@ -54,7 +53,41 @@ prob = @ivp(x' = benchmark10!(x), dim: 5, x(0) ∈ X₀)
 # ``x_1 ∈ [−0.6,0.6], x_2 ∈ [−0.2,0.2], x_3 ∈ [−0.06,0.06], x_4 ∈ [−0.3,0.3]``
 # within a time window of 10s.
 
+X₀ = Hyperrectangle(low=[9.5, -4.5, 2.1, 1.5, -1e-4], high=[9.55, -4.45, 2.11, 1.51, 1e-1]);
+U₀ = ZeroSet(2);
+vars_idx = Dict(:state_vars=>1:4, :input_vars=>[5], :control_vars=>6:7);
+ivp = @ivp(x' = unicycle!(x), dim: 7, x(0) ∈ X₀ × U₀);
+
+period = 0.2;  # control period
+T = 10.0;  # time horizon
+
+control_normalization = UniformAdditiveNormalization(-20.0);
+prob = ControlledPlant(ivp, controller, vars_idx, period, control_normalization);
+
+target_set = Hyperrectangle(zeros(4), [0.6, 0.2, 0.06, 0.3]);
+# TODO spec: [x[1], x[2], x[3], x[4]] ∈ target_set for some 0 ≤ t ≤ T
+
 # ## Results
+
+alg = TMJets(abs_tol=1e-12, orderT=12, orderQ=2);
+alg_nn = Ai2();
+
+# @time sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg);  # TODO uncomment once the analysis works
+
+# We also compute some simulations:
+using DifferentialEquations
+@time sim = simulate(prob, T=T; trajectories=10, include_vertices=true);
+
+# Finally we plot the results
+using Plots
+import DisplayAs
+vars = (0, 1);
+fig = plot();
+# plot!(fig, sol, vars=vars, lab="");  # TODO uncomment once the analysis works
+xlims!(0, T)
+ylims!(0, 10)
+plot_simulation!(fig, sim; vars=vars, color=:red, lab="");
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 # ## References
 
@@ -63,4 +96,3 @@ prob = @ivp(x' = benchmark10!(x), dim: 5, x(0) ∈ X₀)
 # inference.* In [Proceedings of the 22nd ACMInternational Conference on Hybrid
 # Systems: Computation and Control, HSCC 2019, Montreal,QC, Canada,
 # April 16-18, 2019., pages 157–168, 2019](https://dl.acm.org/doi/abs/10.1145/3302504.3311807).
-#

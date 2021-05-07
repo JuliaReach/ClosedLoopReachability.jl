@@ -1,4 +1,5 @@
-# Unicycle Car Model
+# Sherlock Benchmark 10 Unicycle Car
 
 Controller obtained from:
-- https://github.com/verivital/ARCH-COMP19-AINNCS/tree/master/Benchmark%2010 commit: dd92850f36dc22c1b76596e655b576a7c15199ae
+
+- https://github.com/verivital/ARCH-COMP2020/tree/master/benchmarks/Benchmark10-Unicycle (commit hash: `5cd7696f0758c6bf147935d88ea96dfe30c56286`)
