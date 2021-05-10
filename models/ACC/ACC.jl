@@ -95,6 +95,8 @@ period = 0.1;  # control period
 T = 5.0;  # time horizon
 
 # The controller input is $(v_{set}, T_{gap}, x[5], x[1] - x[4], x[2] - x[5])$.
+# To extract from the current state the last three inputs to the network we define a projection matrix $M$.
+
 M = zeros(3, 6);
 M[1, 5] = 1.0;
 M[2, 1] = 1.0;
