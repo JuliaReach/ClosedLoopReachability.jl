@@ -147,6 +147,10 @@ vars = (0, 1);
 fig = plot();
 # plot!(fig, sol, vars=vars, lab="");  # TODO uncomment once the analysis works
 xlims!(0, T)
-ylims!(90, 250)
-plot_simulation!(fig, sim; vars=vars, color=:red, lab="");
+ylims!(40, 105)
+xlabel!(fig, "time")
+output_map = [1, 0, 0, -1., 0, 0, 0]
+plot_simulation!(fig, sim; output_map=output_map, color=:red, lab="Drel");
+output_map = [D_default, 0, 0, 0, 0, T_gap, 0, 0]
+plot_simulation!(fig, sim; output_map=output_map, color=:blue, lab="Dsafe");
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
