@@ -94,7 +94,7 @@ ivp = @ivp(x' = ACC!(x), dim: 7, x(0) ∈ X₀ × U₀);
 period = 0.1;  # control period
 T = 5.0;  # time horizon
 
-# controller input: (v_set, T_gap, x[5], x[1] - x[4], x[2] - x[5])
+# The controller input is $(v_{set}, T_{gap}, x[5], x[1] - x[4], x[2] - x[5])$.
 M = zeros(3, 6);
 M[1, 5] = 1.0;
 M[2, 1] = 1.0;
