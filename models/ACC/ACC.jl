@@ -123,7 +123,7 @@ prob = ControlledPlant(ivp, controller, vars_idx, period, control_normalization,
 # property parameters
 T_gap = 1.4;
 D_default = 10.0;
-# TODO spec: x[1] - x[4] - 1/T_gap * x[5] ≥ D_default
+# The specification can be interpreted as a half-space constraint: $x[1] - x[4] - T_{gap} * x[5] ≥ D_{default}$.
 
 # ## Results
 
