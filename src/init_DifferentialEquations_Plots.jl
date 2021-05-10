@@ -10,6 +10,7 @@ function plot_simulation!(fig, sim::EnsembleSimulationSolution; vars=nothing, ou
     # argument checking
     got_vars = !isnothing(vars)
     got_output_map = !isnothing(output_map)
+    color = get(kwargs, :color, :red)
 
     if !got_vars && !got_output_map
         throw(ArgumentError("either `vars` or `output_map` should be specified"))
@@ -25,7 +26,7 @@ function plot_simulation!(fig, sim::EnsembleSimulationSolution; vars=nothing, ou
     xl = Plots.xlims(fig)
     yl = Plots.ylims(fig)
 
-    _plot_function(fig, sim, opts)
+    _plot_function(fig, sim, opts, color)
 
     # restore x and y limits
     Plots.xlims!(fig, xl)
@@ -34,15 +35,15 @@ function plot_simulation!(fig, sim::EnsembleSimulationSolution; vars=nothing, ou
     return fig
 end
 
-function _plot_simulation_vars!(fig, sim, vars)
+function _plot_simulation_vars!(fig, sim, vars, color)
     for simulation in trajectories(sim)
         for piece in simulation
-            Plots.plot!(fig, piece, vars=vars, color=:red, lab="")
+            Plots.plot!(fig, piece, vars=vars, color=color, lab="")
         end
     end
 end
 
-function _plot_simulation_output_map!(fig, sim, output_map::Vector{<:Real})
+function _plot_simulation_output_map!(fig, sim, output_map::Vector{<:Real}, color)
 
     # dimension check
     numvars = length(output_map)
@@ -64,7 +65,7 @@ function _plot_simulation_output_map!(fig, sim, output_map::Vector{<:Real})
         for piece in simulation
             dt = piece.t
             trange = range(dt[1], dt[end], length=length(dt))
-            Plots.plot!(fig, trange, f.(trange, Ref(piece)), color=:red, lab="")
+            Plots.plot!(fig, trange, f.(trange, Ref(piece)), color=color, lab="")
         end
     end
     return fig
