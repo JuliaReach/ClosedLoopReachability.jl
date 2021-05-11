@@ -80,8 +80,10 @@ function simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
             end
         end
 
+        T = i < iterations ? (t + τ) : tend(time_span)
+
         # simulate system for the next period
-        simulations[i] = _solve_ensemble(ivp, extended, (t, t + τ);
+        simulations[i] = _solve_ensemble(ivp, extended, (t, T);
                                          inplace=inplace)
 
         # project to state variables
@@ -92,7 +94,7 @@ function simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
         end
 
         # advance time
-        t += τ
+        t = T
     end
 
     return EnsembleSimulationSolution(simulations, all_controls, all_inputs)
