@@ -29,9 +29,9 @@
 # There are 9 advisories and each of them instructs the pilot to accelerate
 # until the vertical climbrate of the ownship complies with the advisory:
 #
-# 1) COC: Clear of Conflic
+# 1) COC: Clear of Conflict
 # 2) DNC: Do Not Climb
-# 3) DND: Do Not Descent
+# 3) DND: Do Not Descend
 # 4) DES1500: Descend at least 1500 ft/min
 # 5) CL1500: Climb at least 1500 ft/min
 # 6) SDES1500: Strengthen Descent to at least 1500 ft/min
@@ -93,7 +93,7 @@ end
 # ## Specifications
 #
 # For this benchmark the aim is to verify that the ownship avoids entering the
-# NMAC zone after ``k\in\{1,\dots,8\}`` time steps, i.e., ``h(k) > 100`` or
+# NMAC zone after ``k \in \{1, \dots, 10\}`` time steps, i.e., ``h(k) > 100`` or
 # ``h(k) < -100``, for all possible choices of acceleration by the pilot. The
 # set of initial states considered is as follows: ``h(0) \in [-133, -129]``,
 # ``\dot{h}_0(0) \in \{-19.5, -22.5, -25.5, -28.5\}``, ``\tau(0) = 25`` and
