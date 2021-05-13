@@ -72,10 +72,10 @@
 #
 # ```math
 # \begin{aligned}
-# h(t+1) =& h - \dot{h}_0 \Delta\tau - 0.5 \ddot{h}_0 \Delta\tau^2 \\
-# \dot{h}_0(t+1) =& \dot{h}_0 + \ddot{h}_0 \Delta\tau \\
-# \tau(t+1) =& \tau - \Delta\tau \\
-# \text{adv}(t+1) =& \text{adv}'
+# h(t+1) &=& h - \dot{h}_0 \Delta\tau - 0.5 \ddot{h}_0 \Delta\tau^2 \\
+# \dot{h}_0(t+1) &=& \dot{h}_0 + \ddot{h}_0 \Delta\tau \\
+# \tau(t+1) &=& \tau - \Delta\tau \\
+# \text{adv}(t+1) &=& \text{adv}'
 # \end{aligned}
 # ```
 # where ``\Delta\tau=1``.
