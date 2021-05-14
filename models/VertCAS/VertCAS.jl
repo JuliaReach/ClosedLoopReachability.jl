@@ -61,9 +61,11 @@
 # 8) SDES2500: ``\{-\frac{g}{3}\}``
 # 9) SCL2500: ``\{\frac{g}{3}\}``
 #
-# where $g$ represents the gravitational constant ``32.2 \ \text{ft/s}^2``. When
-# the current climbrate complies with the new advisory, the acceleration
-# ``\ddot{h}_0`` is 0.
+# where $g$ represents the gravitational constant ``32.2 \ \text{ft/s}^2``.
+# If the new advisory is COC(1), then it can be any acceleration from the set ``{−g/8, 0, g/8}``.
+# For all remaining advisories, if the previous advisory coincides with the new one and the
+# current climb rate complies with the new advisory (e.g., ``\dot{h}0`` is non-positive for DNC and
+# ``\dot{h}0`` ≥ 1500 for CL1500) the acceleration `\ddot{h}0`` is ``0``
 #
 # Given the current system state ``(h,\dot{h}_0,\tau,\text{adv})``, the new
 # advisory ``\text{adv}'`` and the acceleration ``\ddot{h}_0``, the new state
