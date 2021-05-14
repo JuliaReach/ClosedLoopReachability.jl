@@ -11,6 +11,7 @@ function plot_simulation!(fig, sim::EnsembleSimulationSolution; vars=nothing, ou
     got_vars = !isnothing(vars)
     got_output_map = !isnothing(output_map)
     color = get(kwargs, :color, :red)
+    label = get(kwargs, :lab, "")
 
     if !got_vars && !got_output_map
         throw(ArgumentError("either `vars` or `output_map` should be specified"))
@@ -26,7 +27,7 @@ function plot_simulation!(fig, sim::EnsembleSimulationSolution; vars=nothing, ou
     xl = Plots.xlims(fig)
     yl = Plots.ylims(fig)
 
-    _plot_function(fig, sim, opts, color)
+    _plot_function(fig, sim, opts, color=color, label=label)
 
     # restore x and y limits
     Plots.xlims!(fig, xl)
@@ -35,15 +36,16 @@ function plot_simulation!(fig, sim::EnsembleSimulationSolution; vars=nothing, ou
     return fig
 end
 
-function _plot_simulation_vars!(fig, sim, vars, color)
+function _plot_simulation_vars!(fig, sim, vars; color, label)
     for simulation in trajectories(sim)
         for piece in simulation
-            Plots.plot!(fig, piece, vars=vars, color=color, lab="")
+            Plots.plot!(fig, piece, vars=vars, color=color, lab=label)
+            label = ""  # overwrite to have exactly one label
         end
     end
 end
 
-function _plot_simulation_output_map!(fig, sim, output_map::Vector{<:Real}, color)
+function _plot_simulation_output_map!(fig, sim, output_map::Vector{<:Real}; color, label)
 
     # dimension check
     numvars = length(output_map)
@@ -60,11 +62,19 @@ function _plot_simulation_output_map!(fig, sim, output_map::Vector{<:Real}, colo
     end
 
     f(t, P) = t -> c0 + sum(coeffs[i] * P(t)[i] for i in 1:n)
+    isfirst = true
 
     for simulation in trajectories(sim)
         for piece in simulation
             dt = piece.t
             trange = range(dt[1], dt[end], length=length(dt))
+            if isfirst
+                # plot first point only for the legend entry
+                trange1 = trange[1]:trange[1]
+                Plots.plot!(fig, trange1, f.(trange1, Ref(piece)), color=color, lab=label)
+                label = ""  # overwrite to have exactly one label
+                isfirst = false
+            end
             Plots.plot!(fig, trange, f.(trange, Ref(piece)), color=color, lab="")
         end
     end
