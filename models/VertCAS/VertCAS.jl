@@ -266,7 +266,7 @@ for o in out
 end
 fig
 
-# ### Flowpipe resut for all choices of velocity
+# ### Flowpipe result for all choices of velocity
 
 h0 = Interval(-133, -129)
 hdot0 = [-19.5,-22.5, -25.5, -28.5]
