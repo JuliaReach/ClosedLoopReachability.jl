@@ -94,7 +94,7 @@ const ACC_MIDDLE = Dict(:COC => 0.0, :DNC => -7g/24, :DND => 7g/24,
 const Δτ = 1.0
 const A = [1  -Δτ; 0  1.]
 
-# We load the controllers in a dictionary with the keys beign the advisories.
+# We load the controllers in a dictionary with the keys being the advisories.
 
 CONTROLLERS = Dict{Symbol, Any}()
 
