@@ -83,6 +83,8 @@
 # where ``\Delta\tau=1``.
 #
 
+using NeuralNetworkAnalysis
+
 g = 32.2 # gravitational constant
 
 ## accelerations (middle)
@@ -94,7 +96,7 @@ const ACC_MIDDLE = Dict(:COC => 0.0, :DNC => -7g/24, :DND => 7g/24,
 const Δτ = 1.0
 const A = [1  -Δτ; 0  1.]
 
-# We load the controllers in a dictionary with the keys being the advisories.
+# We load the controllers in a dictionary with the keys beign the advisories.
 
 CONTROLLERS = Dict{Symbol, Any}()
 
@@ -266,7 +268,7 @@ for o in out
 end
 fig
 
-# ### Flowpipe result for all choices of velocity
+# ### Flowpipe resut for all choices of velocity
 
 h0 = Interval(-133, -129)
 hdot0 = [-19.5,-22.5, -25.5, -28.5]
