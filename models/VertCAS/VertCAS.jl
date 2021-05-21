@@ -96,7 +96,7 @@ const ACC_MIDDLE = Dict(:COC => 0.0, :DNC => -7g/24, :DND => 7g/24,
 const Δτ = 1.0
 const A = [1  -Δτ; 0  1.]
 
-# We load the controllers in a dictionary with the keys beign the advisories.
+# We load the controllers in a dictionary with the keys being the advisories.
 
 CONTROLLERS = Dict{Symbol, Any}()
 
@@ -104,7 +104,7 @@ CTRL_IDX = [:COC, :DNC, :DND, :DES1500,
             :CL1500, :SDES1500, :SCL1500,
             :SDES2500, :SCL2500]
 
-path = read_nnet_mat(@modelpath("VertCAS");
+path = @modelpath("VertCAS", "");
 for i = 1:9
     file = joinpath(path, "VertCAS_noResp_pra0$(i)_v9_20HU_200.nnet")
     adv = CTRL_IDX[i]
@@ -261,14 +261,16 @@ out = _project.(ensemble)
 
 bad_states = HalfSpace([1.0, 0.0], 100.) ∩ HalfSpace([-1.0, 0.0], 100.)
 
+using Plots
+import DisplayAs
 fig = plot(ylab="τ (time to reach horizontally)", xlab="h (vertical distance)")
 plot!(fig, bad_states, xlims=(-200, 200), ylims=(14, 26), alpha=0.3, c=:red)
 for o in out
     plot!(fig, o, alpha=1.)
 end
-fig
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
-# ### Flowpipe resut for all choices of velocity
+# ### Flowpipe result for all choices of velocity
 
 h0 = Interval(-133, -129)
 hdot0 = [-19.5,-22.5, -25.5, -28.5]
@@ -291,7 +293,7 @@ plot!(fig, bad_states, xlims=(-200, 200), ylims=(14, 26), alpha=0.2, c=:red)
 [plot!(fig, o, lw=2.0, alpha=1., markershape=:none, seriestype=:shape, c=:orange) for o in out[2]]
 [plot!(fig, o, lw=2.0, alpha=1., markershape=:none, seriestype=:shape, c=:green) for o in out[3]]
 [plot!(fig, o, lw=2.0, alpha=1., markershape=:none, seriestype=:shape, c=:cyan) for o in out[4]]
-fig
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 # ## References
 
