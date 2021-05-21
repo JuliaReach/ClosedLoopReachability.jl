@@ -101,15 +101,15 @@ function NeuralVerification.forward_network(solver::BoxSolver, nnet::Network, X0
         W = layer.weights
         b = layer.bias
         X_am = AffineMap(W, X, b)
-        X_box = box_approximation(X_am)
 
         # activation function
         if layer.activation isa Id
-            X = X_box
+            X = X_am
             continue
         end
+
         @assert layer.activation isa ReLU "unsupported activation function"
-        X = rectify(X_box)
+        X = rectify(box_approximation(X_am))
     end
     return X
 end
@@ -126,6 +126,12 @@ function NeuralVerification.forward_network(solver::ConcreteReLU, nnet::Network,
             X = reduce(vcat, X)
         end
         X = affine_map.(Ref(layer.weights), X, Ref(layer.bias))
+
+        # activation function
+        if layer.activation isa Id
+            continue
+        end
+        @assert layer.activation isa ReLU "unsupported activation function"
         X = rectify.(X, solver.concrete_intersection)
     end
     return X
