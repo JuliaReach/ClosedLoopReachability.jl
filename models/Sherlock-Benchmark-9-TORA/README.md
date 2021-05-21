@@ -1,4 +1,4 @@
-# Sherlock Benchmark 9 TORA
+# TORA
 
 Controller obtained from:
 

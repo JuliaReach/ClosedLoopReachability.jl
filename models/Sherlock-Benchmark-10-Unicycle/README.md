@@ -1,4 +1,4 @@
-# Sherlock Benchmark 10 Unicycle Car
+# Unicycle Car
 
 Controller obtained from:
 

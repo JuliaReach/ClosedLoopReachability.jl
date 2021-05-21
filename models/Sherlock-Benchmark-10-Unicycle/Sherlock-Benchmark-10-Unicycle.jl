@@ -2,10 +2,10 @@
 #
 #md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/Sherlock-Benchmark-10-Unicycle.ipynb)
 #
-# This benchmark is that of a unicycle model of a car [^1]. It models the
-# dynamics of a car involving 4 variables, specifically the ``x`` and ``y``
-# coordinates on a 2 dimensional plane, as well as velocity magnitude (speed)
-# and steering angle.
+# This benchmark is that of a unicycle model of a car [^1] taken from Benchmark
+# 10 of the Sherlock tool. It models the dynamics of a car involving 4
+# variables, specifically the ``x`` and ``y`` coordinates on a 2 dimensional
+# plane, as well as velocity magnitude (speed) and steering angle.
 
 # ## Model
 #
