@@ -84,7 +84,7 @@ safe_states = use_less_robust_controller ?
 
 # ## Results
 
-alg = TMJets(abs_tol=1e-8, orderT=4, orderQ=2);
+alg = TMJets(abstol=1e-8, orderT=4, orderQ=2);
 alg_nn = Ai2();
 
 @time sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg);

@@ -128,7 +128,7 @@ D_default = 10.0;
 # ## Results
 
 # To integrate the ODE, we use the Taylor-model-based algorithm:
-alg = TMJets(abs_tol=1e-12, orderT=12, orderQ=2);
+alg = TMJets(abstol=1e-12, orderT=12, orderQ=2);
 
 # To propagate sets over the neural network, we use the `Ai2` algorithm:
 alg_nn = Ai2();
