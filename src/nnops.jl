@@ -116,6 +116,7 @@ end
 
 @with_kw struct ConcreteReLU <: Solver
     concrete_intersection::Bool = false
+    convexify::Bool = false
 end
 
 function NeuralVerification.forward_network(solver::ConcreteReLU, nnet::Network, X0)
@@ -134,7 +135,7 @@ function NeuralVerification.forward_network(solver::ConcreteReLU, nnet::Network,
         @assert layer.activation isa ReLU "unsupported activation function"
         X = rectify.(X, solver.concrete_intersection)
     end
-    return X
+    return solver.convexify ? ConvexHullArray(X) : X
 end
 
 # ==============================================================================
