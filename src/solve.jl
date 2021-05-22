@@ -151,6 +151,16 @@ function _solve(cp::ControlledPlant,
 
         ti = Ti
 
+        if ti ∈ tspan(sol)
+            X = sol(ti)
+        else
+            tint = interval(ti) ∩ tspan(sol)
+            if diam(tint) < LazySet._rtol(N)
+                X = sol(mid(tint))
+            else
+                X = sol(tint)
+            end
+        end
         X = sol(ti)
         X₀ = _project_oa(X, st_vars, ti) |> set
         P₀ = isempty(in_vars) ? X₀ : X₀ × W₀
