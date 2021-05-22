@@ -66,7 +66,7 @@ safe_states = BallInf(zeros(4), 2.0);
 
 # ## Results
 
-alg = TMJets(abs_tol=1e-10, orderT=8, orderQ=3);
+alg = TMJets(abstol=1e-10, orderT=8, orderQ=3);
 alg_nn = Ai2();
 ## @time sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg);  # TODO uncomment once the analysis works
 

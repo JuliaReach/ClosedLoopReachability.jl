@@ -167,7 +167,7 @@ prob = ControlledPlant(ivp, controller, vars_idx, period);
 
 # ## Results
 
-alg = TMJets(abs_tol=1e-15, orderT=7, orderQ=1);
+alg = TMJets(abstol=1e-15, orderT=7, orderQ=1);
 alg_nn = Ai2();
 
 # @time sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg);

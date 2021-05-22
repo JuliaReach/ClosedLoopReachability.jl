@@ -69,7 +69,7 @@ target_set = Hyperrectangle(zeros(4), [0.6, 0.2, 0.06, 0.3]);
 
 # ## Results
 
-alg = TMJets(abs_tol=1e-12, orderT=12, orderQ=2);
+alg = TMJets(abstol=1e-12, orderT=12, orderQ=2);
 alg_nn = Ai2();
 
 # @time sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg);  # TODO uncomment once the analysis works
