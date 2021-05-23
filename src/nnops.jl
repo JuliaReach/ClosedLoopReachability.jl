@@ -59,7 +59,7 @@ end
 end
 
 function NeuralVerification.forward_network(solver::SampledApprox, nnet, input)
-    @assert output_dim(nnet) == 1 "the dimension of the output of the network needs to be 1, but is $output_dim(nnet)"
+    @assert output_dim(nnet) == 1 "the dimension of the output of the network needs to be 1, but is $(output_dim(nnet))"
     samples = sample(input, solver.nsamples;
                      include_vertices=solver.include_vertices)
     MIN = Inf
