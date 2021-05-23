@@ -56,7 +56,7 @@ end
 @with_kw struct SampledApprox <: Solver
     nsamples::Int = 10000
     include_vertices::Bool = true
-    directions::AbstractDirections = OctDirections
+    directions = OctDirections
 end
 
 function NeuralVerification.forward_network(solver::SampledApprox, nnet, input)
@@ -78,6 +78,7 @@ function NeuralVerification.forward_network(solver::SampledApprox, nnet, input)
         @inbounds for (i, sample) in enumerate(samples)
             vlist[i] = NV.compute_output(nnet, sample)
         end
+        convex_hull!(vlist)
         P = VPolytope(vlist)
         Z = overapproximate(P, Zonotope, solver.directions)
         return Z
