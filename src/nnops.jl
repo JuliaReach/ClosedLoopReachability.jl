@@ -226,7 +226,7 @@ const ACTFUN = Dict(Tanh() => (tanh!, ZEROINT),
 # Method: Cartesian decomposition (intervals for each one-dimensional subspace)
 # Only Tanh, Sigmoid and Id functions are supported
 function forward(nnet::Network, X0::LazySet;
-                 alg=TMJets(abs_tol=1e-14, orderQ=2, orderT=6))
+                 alg=TMJets(abstol=1e-14, orderQ=2, orderT=6))
 
     # initial states
     xᴾ₀ = _decompose_1D(X0)
