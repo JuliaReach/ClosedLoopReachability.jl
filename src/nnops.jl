@@ -56,20 +56,33 @@ end
 @with_kw struct SampledApprox <: Solver
     nsamples::Int = 10000
     include_vertices::Bool = true
+    directions = OctDirections
 end
 
 function NeuralVerification.forward_network(solver::SampledApprox, nnet, input)
-    @assert output_dim(nnet) == 1 "the dimension of the output of the network needs to be 1, but is $(output_dim(nnet))"
     samples = sample(input, solver.nsamples;
                      include_vertices=solver.include_vertices)
-    MIN = Inf
-    MAX = -Inf
-    for sample in samples
-        output = first(NV.compute_output(nnet, sample))
-        MIN = min(MIN, output)
-        MAX = max(MAX, output)
+
+    m = output_dim(nnet)
+    if m == 1
+        MIN = Inf
+        MAX = -Inf
+        for sample in samples
+            output = first(NV.compute_output(nnet, sample))
+            MIN = min(MIN, output)
+            MAX = max(MAX, output)
+        end
+        return Interval(MIN, MAX)
+    else
+        vlist = Vector{Vector{eltype(samples[1])}}(undef, length(samples))
+        @inbounds for (i, sample) in enumerate(samples)
+            vlist[i] = NV.compute_output(nnet, sample)
+        end
+        convex_hull!(vlist)
+        P = VPolytope(vlist)
+        Z = overapproximate(P, Zonotope, solver.directions)
+        return Z
     end
-    return Interval(MIN, MAX)
 end
 
 # ==========================================================
