@@ -8,10 +8,10 @@ on:
   pull_request:
 
 jobs:
-  env:
-    JULIA_PKG_SERVER: ''
   build:
     runs-on: ubuntu-latest
+    env:
+      JULIA_PKG_SERVER: ''
     steps:
       - uses: actions/checkout@v2
       - uses: julia-actions/setup-julia@latest

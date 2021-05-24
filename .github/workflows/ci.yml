@@ -13,8 +13,6 @@ on:
     tags: '*'
 
 jobs:
-  env:
-    JULIA_PKG_SERVER: ''
   test:
     runs-on: ${{ matrix.os }}
     if: "!contains(github.event.head_commit.message, 'skip ci')"
@@ -24,7 +22,8 @@ jobs:
         julia-version: ['1.6']
         julia-arch: [x64]
         os: [ubuntu-latest, macOS-latest]
-
+    env:
+      JULIA_PKG_SERVER: ''
     steps:
       - uses: actions/checkout@v2
       - name: "Set up Julia"
