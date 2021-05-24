@@ -141,7 +141,7 @@ function _solve(cp::ControlledPlant,
 
         controls[i] = U₀
         dt = ti .. Ti
-        sol = post(cpost, IVP(S, Q₀), dt, external=true, solver_name=ReachabilityAnalysis.TaylorModels.validated_integ2)
+        sol = post(cpost, IVP(S, Q₀), dt)
         out[i] = sol
 
         if i == NSAMPLES
