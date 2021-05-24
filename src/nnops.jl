@@ -52,38 +52,37 @@ end
 # Methods to approximate the network output (without mathematical guarantees)
 # ============================================================================
 
-# solver that propagates the vertices, computes their convex hull, and applies
-# some postprocessing to the result
-@with_kw struct VertexSolver{T} <: Solver
-    postprocessing::T = x -> x  # default: identity (= no postprocessing)
-end
-
-function NeuralVerification.forward_network(solver::VertexSolver, nnet::Network, X0)
-    P = VPolytope()
-    vlist = vertices_list(P)
-    for v in vertices(X0)
-        push!(vlist, forward(nnet, v))
-    end
-    Q = solver.postprocessing(P)
-    return Q
-end
-
 # solver using the CH of the sampled outputs as an inner approx of the real output
 @with_kw struct SampledApprox <: Solver
     nsamples::Int = 10000
+    include_vertices::Bool = true
+    directions = OctDirections
 end
 
 function NeuralVerification.forward_network(solver::SampledApprox, nnet, input)
-    @assert output_dim(nnet) == 1 "the dimension of the output of the network needs to be 1, but is $output_dim(nnet)"
-    samples = sample(input, solver.nsamples)
-    MIN = Inf
-    MAX = -Inf
-    for sample in samples
-        output = first(NV.compute_output(nnet, sample))
-        MIN = min(MIN, output)
-        MAX = max(MAX, output)
+    samples = sample(input, solver.nsamples;
+                     include_vertices=solver.include_vertices)
+
+    m = output_dim(nnet)
+    if m == 1
+        MIN = Inf
+        MAX = -Inf
+        for sample in samples
+            output = first(NV.compute_output(nnet, sample))
+            MIN = min(MIN, output)
+            MAX = max(MAX, output)
+        end
+        return Interval(MIN, MAX)
+    else
+        vlist = Vector{Vector{eltype(samples[1])}}(undef, length(samples))
+        @inbounds for (i, sample) in enumerate(samples)
+            vlist[i] = NV.compute_output(nnet, sample)
+        end
+        convex_hull!(vlist)
+        P = VPolytope(vlist)
+        Z = overapproximate(P, Zonotope, solver.directions)
+        return Z
     end
-    return Interval(MIN, MAX)
 end
 
 # ==========================================================
@@ -101,21 +100,22 @@ function NeuralVerification.forward_network(solver::BoxSolver, nnet::Network, X0
         W = layer.weights
         b = layer.bias
         X_am = AffineMap(W, X, b)
-        X_box = box_approximation(X_am)
 
         # activation function
         if layer.activation isa Id
-            X = X_box
+            X = X_am
             continue
         end
+
         @assert layer.activation isa ReLU "unsupported activation function"
-        X = rectify(X_box)
+        X = rectify(box_approximation(X_am))
     end
     return X
 end
 
 @with_kw struct ConcreteReLU <: Solver
     concrete_intersection::Bool = false
+    convexify::Bool = false
 end
 
 function NeuralVerification.forward_network(solver::ConcreteReLU, nnet::Network, X0)
@@ -126,9 +126,68 @@ function NeuralVerification.forward_network(solver::ConcreteReLU, nnet::Network,
             X = reduce(vcat, X)
         end
         X = affine_map.(Ref(layer.weights), X, Ref(layer.bias))
+
+        # activation function
+        if layer.activation isa Id
+            continue
+        end
+        @assert layer.activation isa ReLU "unsupported activation function"
         X = rectify.(X, solver.concrete_intersection)
     end
-    return X
+    return solver.convexify ? ConvexHullArray(X) : X
+end
+
+# solver that propagates the vertices, computes their convex hull, and applies
+# some postprocessing to the result
+@with_kw struct VertexSolver{T} <: Solver
+    postprocessing::T = x -> x  # default: identity (= no postprocessing)
+    apply_convex_hull::Bool = false
+end
+
+function NeuralVerification.forward_network(solver::VertexSolver, nnet::Network, X0)
+    N = eltype(X0)
+    P = X0
+
+    for layer in nnet.layers
+        # apply affine map
+        W = layer.weights
+        b = layer.bias
+        P = convert(VPolytope, P)
+        Q_am = affine_map(W, P, b)
+
+        # activation function
+        if layer.activation isa Id
+            P = Q_am
+            continue
+        end
+
+        @assert layer.activation isa ReLU "unsupported activation function"
+
+        # compute Q_chull = convex_hull(Q_am, rectify(Q_am))
+        vlist = Vector{Vector{N}}()
+        vlist_rect = Vector{Vector{N}}()
+        for v in vertices(Q_am)
+            push!(vlist, v)
+            v_rect = rectify(v)
+            push!(vlist_rect, v_rect)
+            if v != v_rect
+                push!(vlist, v_rect)
+            end
+        end
+        if solver.apply_convex_hull || true
+            convex_hull!(vlist)
+        end
+        Q_chull = VPolytope(vlist)
+
+        # filter out negative part
+#         Q_pos = box_approximation(VPolytope(vlist_rect))  # alternative
+        n = dim(Q_am)
+        Q_pos = HPolyhedron(
+            [HalfSpace(SingleEntryVector(i, n, -one(N)), zero(N)) for i in 1:n])
+        P = intersection(Q_chull, Q_pos)
+    end
+    Q = solver.postprocessing(P)
+    return Q
 end
 
 # ==============================================================================
@@ -167,7 +226,7 @@ const ACTFUN = Dict(Tanh() => (tanh!, ZEROINT),
 # Method: Cartesian decomposition (intervals for each one-dimensional subspace)
 # Only Tanh, Sigmoid and Id functions are supported
 function forward(nnet::Network, X0::LazySet;
-                 alg=TMJets(abs_tol=1e-14, orderQ=2, orderT=6))
+                 alg=TMJets(abstol=1e-14, orderQ=2, orderT=6))
 
     # initial states
     xᴾ₀ = _decompose_1D(X0)

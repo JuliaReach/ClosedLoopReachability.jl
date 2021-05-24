@@ -141,7 +141,7 @@ function _solve(cp::ControlledPlant,
 
         controls[i] = U₀
         dt = ti .. Ti
-        sol = post(cpost, IVP(S, Q₀), dt)
+        sol = post(cpost, IVP(S, Q₀), dt, external=true, solver_name=ReachabilityAnalysis.TaylorModels.validated_integ2)
         out[i] = sol
 
         if i == NSAMPLES
@@ -149,7 +149,8 @@ function _solve(cp::ControlledPlant,
             break
         end
 
-        ti = Ti
+        ti = min(Ti, tend(sol))
+        @assert LazySets._isapprox(Ti, tend(sol))
 
         X = sol(ti)
         X₀ = _project_oa(X, st_vars, ti) |> set

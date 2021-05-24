@@ -56,7 +56,7 @@ X₀ = Hyperrectangle(low=[-0.05, -0.05, -0.05, -0.05], high=[0.05, 0.05, 0.05, 
 prob = @ivp(x' = cartpole!(x), dim: 4, x(0) ∈ X₀)
 
 # solve it
-## sol = solve(prob, T=1.0, alg=TMJets(max_steps=20_000, abs_tol=1e-10));
+## sol = solve(prob, T=1.0, alg=TMJets(maxsteps=20_000, abstol=1e-10));
 
 # ## Specifications
 #
