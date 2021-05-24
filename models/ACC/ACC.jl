@@ -120,10 +120,13 @@ control_normalization = NoNormalization();
 prob = ControlledPlant(ivp, controller, vars_idx, period, control_normalization,
                        control_preprocessing);
 
-# property parameters
+# The specification can be interpreted as a half-space constraint:
+# $x[1] - x[4] - T_{gap} * x[5] ≥ D_{default}$.
 T_gap = 1.4;
 D_default = 10.0;
-# The specification can be interpreted as a half-space constraint: $x[1] - x[4] - T_{gap} * x[5] ≥ D_{default}$.
+d_rel = [1.0, 0, 0, -1, 0, 0, 0];
+d_safe = [0, 0, 0, 0, T_gap, 0, 0];
+d_prop = d_rel - d_safe;
 
 # ## Results
 
@@ -134,23 +137,40 @@ alg = TMJets(abstol=1e-12, orderT=12, orderQ=2);
 alg_nn = Ai2();
 
 # We now solve the controlled system:
-# @time sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg);  # TODO uncomment once the analysis works
+@time sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg);
+
+# Next we check the property for an overapproximated flowpipe.
+# This is equivalent to minimizing the gap in direction `d_prop` and comparing
+# to $D_{default}$:
+solz = overapproximate(sol, Zonotope);
+if -ρ(-d_prop, solz) ≥ D_default
+    println("The safety property is satisfied.")
+else
+    println("The safety property may be violated.")
+end
 
 # We also compute some simulations:
 using DifferentialEquations
 @time sim = simulate(prob, T=T; trajectories=10, include_vertices=true);
 
 # Finally we plot the results
+
+using NeuralNetworkAnalysis: _linear_map, _affine_map  # TODO temporary solution
 using Plots
 import DisplayAs
-vars = (0, 1);
-fig = plot();
-# plot!(fig, sol, vars=vars, lab="");  # TODO uncomment once the analysis works
-xlims!(0, T)
-ylims!(40, 105)
-xlabel!(fig, "time")
-output_map = [1, 0, 0, -1., 0, 0, 0]
-plot_simulation!(fig, sim; output_map=output_map, color=:red, lab="Drel");
-output_map = [D_default, 0, 0, 0, 0, T_gap, 0, 0]
-plot_simulation!(fig, sim; output_map=output_map, color=:blue, lab="Dsafe");
+fig = plot(leg=(0.4, 0.3));
+xlabel!(fig, "time");
+
+fp_rel = _linear_map(Matrix(d_rel'), solz);
+output_map_rel = d_rel
+
+fp_safe = _affine_map(Matrix(d_safe'), [D_default], solz);
+output_map_safe = vcat([D_default], d_safe)
+
+plot!(fig, fp_rel, vars=(0, 1), c=:red, alpha=.4);
+plot!(fig, fp_safe, vars=(0, 1), c=:blue, alpha=.4);
+
+plot_simulation!(fig, sim; output_map=output_map_rel, color=:red, lab="Drel");
+plot_simulation!(fig, sim; output_map=output_map_safe, color=:blue, lab="Dsafe");
+
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
