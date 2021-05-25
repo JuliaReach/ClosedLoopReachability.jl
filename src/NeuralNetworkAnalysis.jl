@@ -13,7 +13,7 @@ include("solve.jl")
 export ControlledPlant
 
 # splitters
-export BoxSplitter
+export BoxSplitter, ZonotopeSplitter
 
 # solvers
 export solve, forward, simulate,
