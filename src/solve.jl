@@ -1,28 +1,21 @@
 using ReachabilityAnalysis: post
 import ReachabilityAnalysis: solve
 
-#=
-NOTES:
-
-- Add default neural network solver.
-
-=#
-
 """
-    solve(prob::AbstractNeuralNetworkControlProblem, args...; kwargs...)
+    solve(prob::AbstractControlProblem, args...; kwargs...)
 
-Solves the neural network controlled problem defined by `prob`
+Solves the controlled problem defined by `prob`
 
 ### Input
 
-- `prob`   -- neural network controlled problem
+- `prob`   -- controlled problem
 
 Additional options are passed as arguments or keyword arguments; see the notes
 below for details. See the online documentation for examples.
 
 ### Output
 
-The solution of a reachability problem controlled by a neural network.
+The solution of a reachability problem controlled by a periodic controller.
 
 ### Notes
 
@@ -34,10 +27,13 @@ The solution of a reachability problem controlled by a neural network.
 - Use the `T` keyword argument to specify the time horizon; the initial time is
   then assumed to be zero.
 
-- Use the `alg_nn` keyword argument to specify the the neural network solver.
+- Use the `alg_nn` keyword argument to specify the solver for the controller.
 
+- While this function is written with a neural-network controlled systems in
+mind, the type of the controller is arbitrary, as long as a function
+`forward_network` to analyze it is available.
 """
-function solve(prob::AbstractNeuralNetworkControlProblem, args...; kwargs...)
+function solve(prob::AbstractControlProblem, args...; kwargs...)
     ivp = plant(prob)
 
     # check that the dimension of the system and the initial condition match
@@ -70,7 +66,7 @@ function _get_alg_nn(args...; kwargs...)
     if haskey(kwargs, :alg_nn)
         solver = kwargs[:alg_nn]
     else
-        throw(ArgumentError("the solver for the neural network `alg_nn` should be specified, but was not found"))
+        throw(ArgumentError("the solver for the controller `alg_nn` should be specified, but was not found"))
     end
     return solver
 end

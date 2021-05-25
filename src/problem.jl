@@ -53,17 +53,17 @@ end
 # ================
 
 
-abstract type AbstractNeuralNetworkControlProblem end
+abstract type AbstractControlProblem end
 
 """
-    ControlledPlant{ST, XT, DT, PT} <: AbstractNeuralNetworkControlProblem
+    ControlledPlant{ST, CT, XT, DT, PT} <: AbstractControlProblem
 
-Struct representing a closed-loop neural-network controlled system.
+Struct representing a closed-loop controlled system.
 
 ### Fields
 
 - `ivp`           -- initial-value problem
-- `controller`    -- neural-network controller
+- `controller`    -- controller
 - `vars`          -- dictionary storing state variables, input variables and control variables
 - `period`        -- control period
 - `normalization` -- normalization of the controller output
@@ -72,27 +72,33 @@ Struct representing a closed-loop neural-network controlled system.
 ### Parameters
 
 - `ST`:  type of system
+- `CT`:  type of controller
 - `XT`:  type of initial condition
 - `DT`:  type of variables
 - `PT`:  type of period
 - `CNT`: type of control normalization
 - `CPT`: type of control preprocessing
+
+### Notes
+
+While typically the `controller` is a neural network, this struct does not
+prescribe the type.
 """
-struct ControlledPlant{ST, XT, DT, PT, CNT, CPT} <: AbstractNeuralNetworkControlProblem
+struct ControlledPlant{ST, CT, XT, DT, PT, CNT, CPT} <: AbstractControlProblem
     ivp::InitialValueProblem{ST, XT}
-    controller::Network
+    controller::CT
     vars::Dict{Symbol, DT}
     period::PT
     normalization::CNT
     preprocessing::CPT
 
     function ControlledPlant(ivp::InitialValueProblem{ST, XT},
-                             controller::Network,
+                             controller::CT,
                              vars::Dict{Symbol, DT},
                              period::PT,
                              normalization::CNT=NoNormalization(),
-                             preprocessing::CPT=NoPreprocessing()) where {ST, XT, DT, PT, CNT, CPT}
-        return new{ST, XT, DT, PT, CNT, CPT}(ivp, controller, vars, period, normalization, preprocessing)
+                             preprocessing::CPT=NoPreprocessing()) where {ST, CT, XT, DT, PT, CNT, CPT}
+        return new{ST, CT, XT, DT, PT, CNT, CPT}(ivp, controller, vars, period, normalization, preprocessing)
     end
 end
 

@@ -1,6 +1,4 @@
 using NeuralNetworkAnalysis
 using Test
 
-@testset "NeuralNetworkAnalysis.jl" begin
-    # Write your tests here.
-end
+@time @testset "Toy model (black-box network)" begin include("black_box_toy_model.jl") end
