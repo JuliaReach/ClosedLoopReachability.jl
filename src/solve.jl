@@ -58,7 +58,9 @@ function solve(prob::AbstractNeuralNetworkControlProblem, args...; kwargs...)
 
     init_ctrl = get(kwargs, :apply_initial_control, true)
 
-    sol = _solve(prob, cpost, solver, tspan, τ, init_ctrl)
+    splitter = get(kwargs, :splitter, NoSplitter())
+
+    sol = _solve(prob, cpost, solver, tspan, τ, init_ctrl, splitter)
 
     d = Dict{Symbol, Any}(:solver=>solver)
     return ReachSolution(sol, cpost, d)
@@ -79,7 +81,8 @@ function _solve(cp::ControlledPlant,
                 time_span::TimeInterval,
                 sampling_time::N,
                 apply_initial_control::Bool,
-                ) where {N}
+                splitter::Splitter
+               ) where {N}
 
     S = system(cp)
     network = controller(cp)
@@ -107,9 +110,14 @@ function _solve(cp::ControlledPlant,
     end
 
     if apply_initial_control
-        X0aux = apply(preprocessing, X₀)
-        U₀ = forward_network(solver, network, X0aux)
-        U₀ = apply(normalization, U₀)
+        Us = Vector{splitter.output_type}()
+        for X₀ in split(splitter, X₀)
+            X0aux = apply(preprocessing, X₀)
+            U₀ = forward_network(solver, network, X0aux)
+            U₀ = apply(normalization, U₀)
+            push!(Us, U₀)
+        end
+        U₀ = merge(splitter, UnionSetArray(Us))
     else
         U₀ = project(Q₀, ctrl_vars)
     end
@@ -156,9 +164,14 @@ function _solve(cp::ControlledPlant,
         X₀ = _project_oa(X, st_vars, ti) |> set
         P₀ = isempty(in_vars) ? X₀ : X₀ × W₀
 
-        X0aux = apply(preprocessing, X₀)
-        U₀ = forward_network(solver, network, X0aux)
-        U₀ = apply(normalization, U₀)
+        Us = Vector{splitter.output_type}()
+        for X₀ in split(splitter, X₀)
+            X0aux = apply(preprocessing, X₀)
+            U₀ = forward_network(solver, network, X0aux)
+            U₀ = apply(normalization, U₀)
+            push!(Us, U₀)
+        end
+        U₀ = merge(splitter, UnionSetArray(Us))
     end
 
     ext = Dict{Symbol, Any}(:controls=>controls)
