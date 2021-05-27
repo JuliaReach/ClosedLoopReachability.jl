@@ -39,7 +39,7 @@ const L = 0.5;
 const c = 0.0;
 const g = 1.0;
 const gL = g/L;
-const mL = 1/(m*L^2);
+const mL = m*L^2;
 
 @taylorize function double_pendulum!(dx, x, p, t)
     x₁, x₂, x₃, x₄, T₁, T₂ = x
