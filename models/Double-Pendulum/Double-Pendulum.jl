@@ -107,10 +107,24 @@ end
 
 vars=(1, 2);
 fig = plot(xlab="x₁", ylab="x₂");
+if use_less_robust_controller
+    xlims!(0.9, 2)
+    ylims!(-0.2, 1.5)
+else
+    xlims!(0.75, 1.5)
+    ylims!(0.5, 1.5)
+end
 plot_helper(fig, vars)
 
 #-
 
 vars=(3, 4);
 fig = plot(xlab="x₃", ylab="x₄");
+if use_less_robust_controller
+    xlims!(-1, 2)
+    ylims!(-3, 1.5)
+else
+    xlims!(-2, 1.5)
+    ylims!(-2, 1.5)
+end
 plot_helper(fig, vars)
