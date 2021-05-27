@@ -87,7 +87,7 @@ safe_states = use_less_robust_controller ?
 alg = TMJets20(abstol=1e-8, orderT=4, orderQ=2);
 alg_nn = Ai2();
 
-@time sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg);
+## @time sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg);  # TODO activate once the analysis works
 
 # We also compute some simulations:
 using DifferentialEquations
@@ -98,7 +98,7 @@ using Plots
 import DisplayAs
 
 function plot_helper(fig, vars)
-    plot!(fig, sol, vars=vars, lab="");
+##    plot!(fig, sol, vars=vars, lab="");  # TODO activate once the analysis works
     plot_simulation!(fig, sim; vars=vars, color=:red, lab="");
     fig = DisplayAs.Text(DisplayAs.PNG(fig))
 ##    infix = use_less_robust_controller ? "less" : "more"  # TODO temporary helper
