@@ -41,6 +41,15 @@ const g = 1.0;
 const gL = g/L;
 const mL = m*L^2;
 
+@taylorize function double_pendulum_nnv!(dx, x, p, t)
+    th1, th2, u1, u2, T1, T2 = x
+
+    dx[1] = x[3];
+    dx[2] = x[4];
+    dx[3] = 4*T1 + 2*sin(th1) - (u2^2*sin(th1 - th2))/2 + (cos(th1 - th2)*(sin(th1 - th2)*u1^2 + 8*T2 + 2*sin(th2) - cos(th1 - th2)*(- (sin(th1 - th2)*u2^2)/2 + 4*T1 + 2*sin(th1))))/(2*(cos(th1 - th2)^2/2 - 1));
+    dx[4] = -(sin(th1 - th2)*u1^2 + 8*T2 + 2*sin(th2) - cos(th1 - th2)*(- (sin(th1 - th2)*u2^2)/2 + 4*T1 + 2*sin(th1)))/(cos(th1 - th2)^2/2 - 1);
+end
+
 @taylorize function double_pendulum!(dx, x, p, t)
     x₁, x₂, x₃, x₄, T₁, T₂ = x
 
@@ -80,7 +89,7 @@ prob = ControlledPlant(ivp, controller, vars_idx, period);
 
 safe_states = use_less_robust_controller ?
     BallInf(fill(0.35, 4), 1.35) : BallInf(fill(0.5, 4), 1.0);
-# TODO spec: [x[1], x[2], x[3], x[4]] ∈ safe_states for all t
+## TODO spec: [x[1], x[2], x[3], x[4]] ∈ safe_states for all t
 
 # ## Results
 
@@ -98,6 +107,7 @@ using Plots
 import DisplayAs
 
 function plot_helper(fig, vars)
+    plot!(fig, project(safe_states, vars), color=:white, linecolor=:black, lw=5.0);
 ##    plot!(fig, sol, vars=vars, lab="");  # TODO activate once the analysis works
     plot_simulation!(fig, sim; vars=vars, color=:red, lab="");
     fig = DisplayAs.Text(DisplayAs.PNG(fig))
@@ -108,11 +118,7 @@ end
 vars=(1, 2);
 fig = plot(xlab="x₁", ylab="x₂");
 if use_less_robust_controller
-    xlims!(0.9, 2)
-    ylims!(-0.2, 1.5)
-else
-    xlims!(0.75, 1.5)
-    ylims!(0.5, 1.5)
+    xlims!(-1, 1.9)
 end
 plot_helper(fig, vars)
 
@@ -121,10 +127,9 @@ plot_helper(fig, vars)
 vars=(3, 4);
 fig = plot(xlab="x₃", ylab="x₄");
 if use_less_robust_controller
-    xlims!(-1, 2)
-    ylims!(-3, 1.5)
+    ylims!(-1.6, 1.7)
 else
-    xlims!(-2, 1.5)
-    ylims!(-2, 1.5)
+    xlims!(-1.8, 1.5)
+    ylims!(-1.6, 1.5)
 end
 plot_helper(fig, vars)
