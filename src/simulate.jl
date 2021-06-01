@@ -1,11 +1,11 @@
 """
-    simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
+    simulate(cp::AbstractControlProblem, args...; kwargs...)
 
-Simulate a neural-network controlled system for a family of random trajectories.
+Simulate a controlled system for a family of random trajectories.
 
 ### Input
 
-- `cp`           -- neural network controlled problem
+- `cp`           -- controlled problem
 - `trajectories` -- (optional, default: `10`) number of simulated trajectories
 
 ### Output
@@ -16,7 +16,7 @@ An object of type [`EnsembleSimulationSolution`](@ref).
 
 This function uses the ensemble simulations feature from `DifferentialEquations.jl`.
 """
-function simulate(cp::AbstractNeuralNetworkControlProblem, args...; kwargs...)
+function simulate(cp::AbstractControlProblem, args...; kwargs...)
     if !isdefined(@__MODULE__, :DifferentialEquations)
         error("package 'DifferentialEquations' is required for simulation")
     end

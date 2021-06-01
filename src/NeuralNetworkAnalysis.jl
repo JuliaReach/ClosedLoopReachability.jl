@@ -17,7 +17,7 @@ export BoxSplitter, ZonotopeSplitter
 
 # solvers
 export solve, forward, simulate,
-       SampledApprox, VertexSolver, BoxSolver, SplitSolver
+       SampledApprox, VertexSolver, BoxSolver, SplitSolver, BlackBoxSolver
 
 # utility functions
 export @modelpath, read_nnet_mat, read_nnet_yaml

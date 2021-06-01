@@ -19,6 +19,10 @@ function forward(nnet::Network, x0::Vector{<:Number})
     return x
 end
 
+function forward(nnet, x0::Vector{<:Number})
+    return nnet(x0)
+end
+
 # ================================================
 # Composite methods to compute the network output
 # ================================================
@@ -266,4 +270,14 @@ end
 
 function apply(normalization::UniformAdditiveNormalization, X::LazySet)
     return translate(X, fill(normalization.shift, dim(X)))
+end
+
+# =====================================
+# Methods to handle arbitrary networks
+# =====================================
+
+struct BlackBoxSolver <: Solver end
+
+function NeuralVerification.forward_network(solver::BlackBoxSolver, nnet, X0)
+    return nnet(X0)
 end
