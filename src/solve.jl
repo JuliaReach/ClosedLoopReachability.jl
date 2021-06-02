@@ -60,7 +60,9 @@ function solve(prob::AbstractNeuralNetworkControlProblem, args...; kwargs...)
 
     splitter = get(kwargs, :splitter, NoSplitter())
 
-    sol = _solve(prob, cpost, solver, tspan, τ, init_ctrl, splitter)
+    rec_method = get(kwargs, :reconstruction_method, ())
+
+    sol = _solve(prob, cpost, solver, tspan, τ, init_ctrl, splitter, rec_method)
 
     d = Dict{Symbol, Any}(:solver=>solver)
     return ReachSolution(sol, cpost, d)
@@ -81,7 +83,8 @@ function _solve(cp::ControlledPlant,
                 time_span::TimeInterval,
                 sampling_time::N,
                 apply_initial_control::Bool,
-                splitter::Splitter
+                splitter::Splitter,
+                rec_method::AbstractReconstructionMethod
                ) where {N}
 
     S = system(cp)
@@ -131,6 +134,8 @@ function _solve(cp::ControlledPlant,
     FT = Flowpipe{NT, RT, Vector{RT}}
     out = Vector{FT}(undef, NSAMPLES)
 
+    X = nothing
+
     for i = 1:NSAMPLES
 
         # simplify the control input for intervals
@@ -138,12 +143,7 @@ function _solve(cp::ControlledPlant,
             U₀ = overapproximate(U₀, Interval)
         end
 
-        if isa(U₀, LazySet)
-            Q₀ = P₀ × U₀
-        else
-            # TODO should take eg. convex hull if the network returns > 1 set
-            Q₀ = P₀ × first(U₀)
-        end
+        Q₀ = _reconstruct(P₀, U₀, X, ti, rec_method)
 
         Ti = i < NSAMPLES ? (ti + sampling_time) : tend(time_span)
 
