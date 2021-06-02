@@ -173,7 +173,7 @@ alg_nn = Ai2();
 # @time sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg);
 
 # We also compute some simulations:
-using DifferentialEquations
+import DifferentialEquations
 @time sim = simulate(prob, T=T; trajectories=10, include_vertices=true);
 
 # Finally we plot the results
