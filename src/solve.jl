@@ -52,13 +52,11 @@ function solve(prob::AbstractControlProblem, args...; kwargs...)
 
     solver = _get_alg_nn(args...; kwargs...)
 
-    init_ctrl = get(kwargs, :apply_initial_control, true)
-
     splitter = get(kwargs, :splitter, NoSplitter())
 
     rec_method = get(kwargs, :reconstruction_method, CartesianProductReconstructor())
 
-    sol = _solve(prob, cpost, solver, tspan, τ, init_ctrl, splitter, rec_method)
+    sol = _solve(prob, cpost, solver, tspan, τ, splitter, rec_method)
 
     d = Dict{Symbol, Any}(:solver=>solver)
     return ReachSolution(sol, cpost, d)
@@ -78,7 +76,6 @@ function _solve(cp::ControlledPlant,
                 solver::Solver,
                 time_span::TimeInterval,
                 sampling_time::N,
-                apply_initial_control::Bool,
                 splitter::Splitter,
                 rec_method::AbstractReconstructionMethod
                ) where {N}
@@ -99,16 +96,31 @@ function _solve(cp::ControlledPlant,
     dim(Q₀) == n + m + q || throw(ArgumentError("dimension mismatch; expect the dimension of the initial states " *
          "of the initial-value problem to be $(n + m + q), but it is $(dim(Q₀))"))
 
-    X₀ = project(Q₀, st_vars)
-
-    if !isempty(in_vars)
+    if m > 0
         W₀ = project(Q₀, in_vars)
-        P₀ = X₀ × W₀
-    else
-        P₀ = X₀
     end
 
-    if apply_initial_control
+    ti = tstart(time_span)
+    NSAMPLES = ceil(Int, diam(time_span) / sampling_time)
+
+    # preallocate output flowpipe
+    sol = nothing
+    NT = numtype(cpost)
+    RT = rsetrep(cpost)
+    FT = Flowpipe{NT, RT, Vector{RT}}
+    out = Vector{FT}(undef, NSAMPLES)
+
+    for i in 1:NSAMPLES
+        if i == 1
+            X = nothing
+            X₀ = project(Q₀, st_vars)
+        else
+            X = sol(ti)
+            X₀ = _project_oa(X, st_vars, ti) |> set
+        end
+        P₀ = m == 0 ? X₀ : X₀ × W₀
+
+        # get new control inputs from the controller
         Us = Vector{splitter.output_type}()
         for X₀ in split(splitter, X₀)
             X0aux = apply(preprocessing, X₀)
@@ -117,22 +129,6 @@ function _solve(cp::ControlledPlant,
             push!(Us, U₀)
         end
         U₀ = merge(splitter, UnionSetArray(Us))
-    else
-        U₀ = project(Q₀, ctrl_vars)
-    end
-
-    ti = tstart(time_span)
-    NSAMPLES = ceil(Int, diam(time_span) / sampling_time)
-
-    # preallocate output flowpipe
-    NT = numtype(cpost)
-    RT = rsetrep(cpost)
-    FT = Flowpipe{NT, RT, Vector{RT}}
-    out = Vector{FT}(undef, NSAMPLES)
-
-    X = nothing
-
-    for i = 1:NSAMPLES
 
         # simplify the control input for intervals
         if dim(U₀) == 1
@@ -148,26 +144,9 @@ function _solve(cp::ControlledPlant,
         sol = post(cpost, IVP(S, Q₀), dt)
         out[i] = sol
 
-        if i == NSAMPLES
-            # no need to ask the network again
-            break
-        end
-
         ti = min(Ti, tend(sol))
-        @assert LazySets._isapprox(Ti, tend(sol))
-
-        X = sol(ti)
-        X₀ = _project_oa(X, st_vars, ti) |> set
-        P₀ = isempty(in_vars) ? X₀ : X₀ × W₀
-
-        Us = Vector{splitter.output_type}()
-        for X₀ in split(splitter, X₀)
-            X0aux = apply(preprocessing, X₀)
-            U₀ = forward_network(solver, network, X0aux)
-            U₀ = apply(normalization, U₀)
-            push!(Us, U₀)
-        end
-        U₀ = merge(splitter, UnionSetArray(Us))
+        @assert LazySets._isapprox(Ti, tend(sol)) "the flowpipe diverged in " *
+            "time (expected $Ti, got $(tend(sol)))"
     end
 
     ext = Dict{Symbol, Any}(:controls=>controls)
