@@ -37,14 +37,14 @@ using ReachabilityAnalysis: TaylorModel1, TaylorModelN, fp_rpa, zeroBox, symBox
 
 abstract type AbstractReconstructionMethod end
 
-struct ZonotopeReconstructor <: AbstractReconstructionMethod end
+struct CartesianProductReconstructor <: AbstractReconstructionMethod end
 
-function _reconstruct(method::ZonotopeReconstructor, P₀::LazySet, U₀::LazySet, X, ti)
+function _reconstruct(method::CartesianProductReconstructor, P₀::LazySet, U₀::LazySet, X, ti)
     Q₀ = P₀ × U₀
     return Q₀
 end
 
-function _reconstruct(method::ZonotopeReconstructor, P₀::LazySet, U₀::Vector{<:LazySet}, X, ti)
+function _reconstruct(method::CartesianProductReconstructor, P₀::LazySet, U₀::Vector{<:LazySet}, X, ti)
     @assert length(U₀) == 1 "expected the length of U₀ to be 1, got $(lenght(U₀))"
     return _reconstruct(method, P₀, first(U₀), X, ti)
 end
@@ -53,7 +53,7 @@ struct TaylorModelReconstructor <: AbstractReconstructionMethod end
 
 # if no Taylor model is available => use the given set P₀
 function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀, X::Nothing, ti) where {N}
-    return _reconstruct(ZonotopeReconstructor(), P₀, U₀, X, ti)
+    return _reconstruct(CartesianProductReconstructor(), P₀, U₀, X, ti)
 end
 
 function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Vector{<:LazySet}, X::TaylorModelReachSet{N}, ti) where {N}
@@ -62,12 +62,9 @@ function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Vec
 end
 
 function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::LazySet, X::TaylorModelReachSet{N}, ti) where {N}
-    println("\n")
-    println("received a TM reachset tspan(X) = $(tspan(X)), ti = $ti")
-
     # evaluate X at the final time of the reach-set
     S = set(X)
-    tn = sup(domain(X))
+    tn = sup(domain(X)) # assume that the reach set spans the whole period (checked outside this method)
     X_Δt = evaluate(S, tn)
 
     n = dim(P₀) # number of state variables
@@ -82,11 +79,11 @@ function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Laz
     zeroI = interval(zero(N), zero(N))
     Δtn = zeroI
     for i in 1:n
-        rem = zeroI
+        rem = remainder(S[i])
         W = TaylorModelN(X_Δt[i], rem, zeroBox(n + m), symBox(n + m))
         Ŵ = fp_rpa(W)
         p = Taylor1(TaylorN(polynomial(Ŵ)), orderT)
-        vTM[i] = TaylorModel1(p, zeroI, zeroI, Δtn) # TODO check remainders
+        vTM[i] = TaylorModel1(p, zeroI, zeroI, Δtn)
     end
 
     # fill the components for the inputs
@@ -99,6 +96,5 @@ function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Laz
     rem = interval(-d, d)
     @inbounds vTM[n+m] = TaylorModel1(Taylor1(pi, orderT), rem, zeroI, Δtn)
 
-    println("Constructed vTM = $vTM")
     return TaylorModelReachSet(vTM, Δtn)
 end

@@ -60,7 +60,7 @@ function solve(prob::AbstractNeuralNetworkControlProblem, args...; kwargs...)
 
     splitter = get(kwargs, :splitter, NoSplitter())
 
-    rec_method = get(kwargs, :reconstruction_method, ZonotopeReconstructor())
+    rec_method = get(kwargs, :reconstruction_method, CartesianProductReconstructor())
 
     sol = _solve(prob, cpost, solver, tspan, τ, init_ctrl, splitter, rec_method)
 
