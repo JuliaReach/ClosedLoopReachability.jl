@@ -150,7 +150,7 @@ else
 end
 
 # We also compute some simulations:
-using DifferentialEquations
+import DifferentialEquations
 @time sim = simulate(prob, T=T; trajectories=10, include_vertices=true);
 
 # Finally we plot the results

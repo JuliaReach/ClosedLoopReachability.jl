@@ -5,6 +5,7 @@ import .DifferentialEquations: controls
 
 export trajectory,
        trajectories,
+       controls,
        inputs,
        solution
 
