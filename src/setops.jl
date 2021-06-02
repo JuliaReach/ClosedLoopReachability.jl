@@ -8,7 +8,12 @@ end
 
 function _project_oa(X::AbstractTaylorModelReachSet, vars, t; remove_zero_generators=true)
     Z = overapproximate(X, Zonotope, t, remove_zero_generators=remove_zero_generators)
-    return project(Z, vars)
+
+    πZ = concretize(Projection(set(Z), vars))
+    if remove_zero_generators
+        πZ = LazySets.remove_zero_generators(πZ)
+    end
+    return ReachSet(πZ, tspan(X))
 end
 
 # ========================================
