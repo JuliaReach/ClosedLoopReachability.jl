@@ -44,11 +44,6 @@ function _reconstruct(method::CartesianProductReconstructor, P₀::LazySet, U₀
     return Q₀
 end
 
-function _reconstruct(method::CartesianProductReconstructor, P₀::LazySet, U₀::Vector{<:LazySet}, X, ti)
-    @assert length(U₀) == 1 "expected the length of U₀ to be 1, got $(lenght(U₀))"
-    return _reconstruct(method, P₀, first(U₀), X, ti)
-end
-
 struct TaylorModelReconstructor <: AbstractReconstructionMethod end
 
 # if no Taylor model is available => use the given set P₀
