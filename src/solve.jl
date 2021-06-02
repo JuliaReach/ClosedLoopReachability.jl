@@ -58,7 +58,9 @@ function solve(prob::AbstractControlProblem, args...; kwargs...)
 
     rec_method = get(kwargs, :reconstruction_method, CartesianProductReconstructor())
 
-    sol = _solve(prob, cpost, solver, tspan, τ, init_ctrl, splitter, rec_method)
+    remove_zero_generators = get(kwargs, :remove_zero_generators, true)
+
+    sol = _solve(prob, cpost, solver, tspan, τ, init_ctrl, splitter, rec_method, remove_zero_generators)
 
     d = Dict{Symbol, Any}(:solver=>solver)
     return ReachSolution(sol, cpost, d)
@@ -80,7 +82,8 @@ function _solve(cp::ControlledPlant,
                 sampling_time::N,
                 apply_initial_control::Bool,
                 splitter::Splitter,
-                rec_method::AbstractReconstructionMethod
+                rec_method::AbstractReconstructionMethod,
+                remove_zero_generators::Bool
                ) where {N}
 
     S = system(cp)
@@ -157,7 +160,7 @@ function _solve(cp::ControlledPlant,
         @assert LazySets._isapprox(Ti, tend(sol))
 
         X = sol(ti)
-        X₀ = _project_oa(X, st_vars, ti) |> set
+        X₀ = _project_oa(X, st_vars, ti, remove_zero_generators=remove_zero_generators) |> set
         P₀ = isempty(in_vars) ? X₀ : X₀ × W₀
 
         Us = Vector{splitter.output_type}()
