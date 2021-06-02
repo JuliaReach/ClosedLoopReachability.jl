@@ -60,7 +60,7 @@ function solve(prob::AbstractNeuralNetworkControlProblem, args...; kwargs...)
 
     splitter = get(kwargs, :splitter, NoSplitter())
 
-    rec_method = get(kwargs, :reconstruction_method, ())
+    rec_method = get(kwargs, :reconstruction_method, ZonotopeReconstructor())
 
     sol = _solve(prob, cpost, solver, tspan, τ, init_ctrl, splitter, rec_method)
 
@@ -143,7 +143,7 @@ function _solve(cp::ControlledPlant,
             U₀ = overapproximate(U₀, Interval)
         end
 
-        Q₀ = _reconstruct(P₀, U₀, X, ti, rec_method)
+        Q₀ = _reconstruct(rec_method, P₀, U₀, X, ti)
 
         Ti = i < NSAMPLES ? (ti + sampling_time) : tend(time_span)
 
