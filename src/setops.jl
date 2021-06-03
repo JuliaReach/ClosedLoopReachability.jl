@@ -2,13 +2,13 @@
 # Projection operations
 # ========================================
 
-function _project_oa(X::AbstractLazyReachSet, vars, t)
+function _project_oa(X::AbstractLazyReachSet, vars, t; remove_zero_generators=true)
     return Project(X, vars)
 end
 
-function _project_oa(X::AbstractTaylorModelReachSet, vars, t)
-    Z = overapproximate(X, Zonotope, t)
-    return project(Z, vars)
+function _project_oa(X::AbstractTaylorModelReachSet, vars, t; remove_zero_generators=true)
+    Z = overapproximate(X, Zonotope, t, remove_zero_generators=remove_zero_generators)
+    return project(set(Z), vars; remove_zero_generators=remove_zero_generators)
 end
 
 # ========================================

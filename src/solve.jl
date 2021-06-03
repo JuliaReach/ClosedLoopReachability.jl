@@ -56,7 +56,9 @@ function solve(prob::AbstractControlProblem, args...; kwargs...)
 
     rec_method = get(kwargs, :reconstruction_method, CartesianProductReconstructor())
 
-    sol = _solve(prob, cpost, solver, tspan, τ, splitter, rec_method)
+    remove_zero_generators = get(kwargs, :remove_zero_generators, true)
+
+    sol = _solve(prob, cpost, solver, tspan, τ, splitter, rec_method, remove_zero_generators)
 
     d = Dict{Symbol, Any}(:solver=>solver)
     return ReachSolution(sol, cpost, d)
@@ -77,7 +79,8 @@ function _solve(cp::ControlledPlant,
                 time_span::TimeInterval,
                 sampling_time::N,
                 splitter::Splitter,
-                rec_method::AbstractReconstructionMethod
+                rec_method::AbstractReconstructionMethod,
+                remove_zero_generators::Bool
                ) where {N}
 
     S = system(cp)
@@ -116,7 +119,7 @@ function _solve(cp::ControlledPlant,
             X₀ = project(Q₀, st_vars)
         else
             X = sol(ti)
-            X₀ = _project_oa(X, st_vars, ti) |> set
+            X₀ = _project_oa(X, st_vars, ti; remove_zero_generators=remove_zero_generators) |> set
         end
         P₀ = m == 0 ? X₀ : X₀ × W₀
 
