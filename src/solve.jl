@@ -105,6 +105,7 @@ function _solve(cp::ControlledPlant,
     end
 
     ti = tstart(time_span)
+    Δti = zero(ti)
     NSAMPLES = ceil(Int, diam(time_span) / sampling_time)
 
     # preallocate output flowpipe
@@ -142,16 +143,17 @@ function _solve(cp::ControlledPlant,
 
         Q₀ = _reconstruct(rec_method, P₀, U₀, X, ti)
 
-        Ti = i < NSAMPLES ? (ti + sampling_time) : tend(time_span)
+        Ti = i < NSAMPLES ? (ti + sampling_time + Δti) : tend(time_span)
 
         controls[i] = U₀
         dt = ti .. Ti
         sol = post(cpost, IVP(S, Q₀), dt)
         out[i] = sol
 
-        ti = min(Ti, tend(sol))
-        @assert LazySets._isapprox(Ti, tend(sol)) "the flowpipe diverged in " *
-            "time (expected $Ti, got $(tend(sol)))"
+        ti = tend(sol)
+        Δti = Ti - ti  # difference of exact and actual control time
+        @assert LazySets.isapproxzero(Δti) "the flowpipe duration differs " *
+            "from the requested duration by $Δti time units"
     end
 
     ext = Dict{Symbol, Any}(:controls=>controls)
