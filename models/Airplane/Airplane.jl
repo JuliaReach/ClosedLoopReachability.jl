@@ -82,6 +82,7 @@
 # ``m = 1``, ``I_x = I_y = I_z = 1``, ``I_{xz} = 0`` and ``g = 1``.
 
 using NeuralNetworkAnalysis
+using NeuralNetworkAnalysis: SingleEntryVector
 
 Tψ = ψ -> [cos(ψ)  -sin(ψ)  0;
            sin(ψ)   cos(ψ)  0;
@@ -151,8 +152,8 @@ controller = read_nnet(@modelpath("Airplane", "controller_airplane.nnet"));
 #
 # ``x_2`` should be in ``[−0.5, 0.5]`` and ``x_7, x_8, x_9`` should be in ``[-1.0,1.0]``.
 
-X₀ = 0.2 * Hyperrectangle(low=[0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                          high=[0.0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0]);
+X₀ = Hyperrectangle(low=[0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    high=[0.0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0]);
 U₀ = ZeroSet(6);
 
 vars_idx = Dict(:state_vars=>1:12, :control_vars=>13:18);
@@ -163,6 +164,16 @@ T = 20 * period;  # time horizon
 
 prob = ControlledPlant(ivp, controller, vars_idx, period);
 
+safe_states = HPolyhedron([
+    HalfSpace(SingleEntryVector(2, 18, 1.0), 0.5),
+    HalfSpace(SingleEntryVector(2, 18, -1.0), 0.5),
+    HalfSpace(SingleEntryVector(7, 18, 1.0), 1.0),
+    HalfSpace(SingleEntryVector(7, 18, -1.0), 1.0),
+    HalfSpace(SingleEntryVector(8, 18, 1.0), 1.0),
+    HalfSpace(SingleEntryVector(8, 18, -1.0), 1.0),
+    HalfSpace(SingleEntryVector(9, 18, 1.0), 1.0),
+    HalfSpace(SingleEntryVector(9, 18, -1.0), 1.0)
+   ]);
 # TODO spec: x[2] ∈ [−0.5, 0.5] and [x[7], x[8], x[9]] ∈ [-1, 1]^3 for all t
 
 # ## Results
@@ -170,22 +181,46 @@ prob = ControlledPlant(ivp, controller, vars_idx, period);
 alg = TMJets(abstol=1e-15, orderT=7, orderQ=1);
 alg_nn = Ai2();
 
-# @time sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg);
+# @time sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg);  # TODO uncomment once the analysis works
 
 # We also compute some simulations:
 import DifferentialEquations
-@time sim = simulate(prob, T=T; trajectories=10, include_vertices=true);
+@time sim = simulate(prob, T=T; trajectories=50, include_vertices=true);
 
 # Finally we plot the results
 using Plots
 import DisplayAs
-vars = (0, 1);
-fig = plot();
-# plot!(fig, sol, vars=vars, lab="");  # TODO uncomment once the analysis works
-xlims!(0, T)
-ylims!(0, 10)
-plot_simulation!(fig, sim; vars=vars, color=:red, lab="");
-fig = DisplayAs.Text(DisplayAs.PNG(fig))
+
+function plot_helper(fig, vars)
+    if vars[1] == 0
+        safe_states_projected = project(safe_states, [vars[2]])
+        time = Interval(0, T)
+        safe_states_projected = cartesian_product(time, safe_states_projected)
+    else
+        safe_states_projected = project(safe_states, vars)
+    end
+    plot!(fig, safe_states_projected, color=:white, linecolor=:black, lw=5.0)
+    if 0 ∉ vars
+        plot!(fig, project(X₀, vars), lab="X₀")
+    end
+##    plot!(fig, sol, vars=vars, color=:orange, lab="");  # TODO uncomment once the analysis works
+    plot_simulation!(fig, sim; vars=vars, color=:red, lab="");
+    fig = DisplayAs.Text(DisplayAs.PNG(fig))
+end
+
+vars = (2, 7);
+fig = plot(xlab="x₂", ylab="x₇");
+xlims!(-1.8, 22.5)
+ylims!(-1.05, 1.05)
+plot_helper(fig, vars)
+
+#-
+
+vars = (8, 9);
+fig = plot(xlab="x₈", ylab="x₉", leg=:bottomleft);
+xlims!(-1.05, 1.2)
+ylims!(-1.05, 1.2)
+plot_helper(fig, vars)
 
 #= TODO old code related to property checking
 solz = overapproximate(sol, Zonotope);
