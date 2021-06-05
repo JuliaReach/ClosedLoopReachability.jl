@@ -74,11 +74,11 @@ function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Laz
     zeroI = interval(zero(N), zero(N))
     Δtn = zeroI
     for i in 1:n
-        rem = remainder(S[i])
-        W = TaylorModelN(X_Δt[i], rem, zeroBox(n + m), symBox(n + m))
+        W = TaylorModelN(X_Δt[i], zeroI, zeroBox(n + m), symBox(n + m))
         Ŵ = fp_rpa(W)
         p = Taylor1(TaylorN(polynomial(Ŵ)), orderT)
-        vTM[i] = TaylorModel1(p, zeroI, zeroI, Δtn)
+        rem = remainder(Ŵ)
+        vTM[i] = TaylorModel1(p, rem, zeroI, Δtn)
     end
 
     # fill the components for the inputs
