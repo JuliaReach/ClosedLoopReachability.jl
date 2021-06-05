@@ -96,8 +96,9 @@ function _solve(cp::ControlledPlant,
     n = length(st_vars)
     m = length(in_vars)
     q = length(ctrl_vars)
-    dim(Q₀) == n + m + q || throw(ArgumentError("dimension mismatch; expect the dimension of the initial states " *
-         "of the initial-value problem to be $(n + m + q), but it is $(dim(Q₀))"))
+    dim(Q₀) == n + m + q || throw(ArgumentError("dimension mismatch; expect " *
+        "the dimension of the initial states of the initial-value problem to " *
+        "be $(n + m + q), but it is $(dim(Q₀))"))
 
     if m > 0
         W₀ = project(Q₀, in_vars)
@@ -119,7 +120,8 @@ function _solve(cp::ControlledPlant,
             X₀ = project(Q₀, st_vars)
         else
             X = sol(ti)
-            X₀ = _project_oa(X, st_vars, ti; remove_zero_generators=remove_zero_generators) |> set
+            X₀ = _project_oa(X, st_vars, ti;
+                             remove_zero_generators=remove_zero_generators) |> set
         end
         P₀ = m == 0 ? X₀ : X₀ × W₀
 
