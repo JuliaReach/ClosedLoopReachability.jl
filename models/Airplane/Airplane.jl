@@ -21,9 +21,9 @@
 #
 # ```math
 # \left\{ \begin{array}{lcl}
-# u̇ &=& − g sin(\theta) + \frac{F_x}{m} - qw + rv \\
-# v̇ &=& g cos(\theta) sin(\phi) + \frac{F_y}{m} - ru + pw \\
-# ẇ &=& g cos(\theta) cos(\phi) + \frac{F_z}{m} - pv + qu \\
+# u̇ &=& − g \sin(\theta) + \frac{F_x}{m} - qw + rv \\
+# v̇ &=& g \cos(\theta) \sin(\phi) + \frac{F_y}{m} - ru + pw \\
+# ẇ &=& g \cos(\theta) \cos(\phi) + \frac{F_z}{m} - pv + qu \\
 # I_x \dot p + I_{xz} \dot r &=& M_x - (I_z - I_y) qr - I_{xz} pq \\
 # I_y \dot q &=& M_y - I_{xz}(r^2 - p^2) - (I_x - I_z) pr \\
 # I_{xz} \dot p + I_z \dot r &=& M_z - (I_y - I_x) qp - I_{xz} rq
@@ -44,19 +44,19 @@
 # \end{bmatrix}
 # =
 # \begin{bmatrix}
-# cos(\psi) & -sin(\psi) & 0 \\
-# sin(\psi) & cos(\psi) & 0 \\
+# \cos(\psi) & -\sin(\psi) & 0 \\
+# \sin(\psi) & \cos(\psi) & 0 \\
 # 0 & 0 & 1
 # \end{bmatrix}
 # \begin{bmatrix}
-# cos(\theta) & 0 & sin(\theta) \\
+# \cos(\theta) & 0 & \sin(\theta) \\
 # 0 & 1 & 0 \\
-# -sin(\theta) & 0 & cos(\theta)
+# -\sin(\theta) & 0 & \cos(\theta)
 # \end{bmatrix}
 # \begin{bmatrix}
 # 1 & 0 & 0 \\
-# 0 & cos(\phi) & -sin(\phi) \\
-# 0 & sin(\phi) & cos(\phi)
+# 0 & \cos(\phi) & -\sin(\phi) \\
+# 0 & \sin(\phi) & \cos(\phi)
 # \end{bmatrix}
 # ```
 #
@@ -68,9 +68,9 @@
 # \end{bmatrix}
 # =
 # \begin{bmatrix}
-# 1 & tan(\theta) sin(\phi) & tan(\theta) cos(\phi) \\
-# 0 & cos(\phi) & -sin(\phi) \\
-# 0 & sec(\theta) sin(\phi) & sec(\theta) cos(\phi)
+# 1 & \tan(\theta) \sin(\phi) & \tan(\theta) \cos(\phi) \\
+# 0 & \cos(\phi) & -\sin(\phi) \\
+# 0 & \sec(\theta) sin(\phi) & \sec(\theta) \cos(\phi)
 # \end{bmatrix}
 # \begin{bmatrix}
 # p \\ q \\ r
