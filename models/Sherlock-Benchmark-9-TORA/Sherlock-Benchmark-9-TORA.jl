@@ -60,7 +60,8 @@ period = 1.0;  # control period
 T = 20.0;  # time horizon
 control_normalization = UniformAdditiveNormalization(-10.0);  # control normalization
 
-prob = ControlledPlant(ivp, controller, vars_idx, period, control_normalization);
+prob = ControlledPlant(ivp, controller, vars_idx, period;
+                       normalization=control_normalization);
 
 safe_states = BallInf(zeros(4), 2.0);
 

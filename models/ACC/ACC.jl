@@ -33,7 +33,7 @@
 # ``(v_{set}, T_{gap}, v_{ego}, D_{rel}, v_{rel})`` and one output (``a_{ego}``).
 
 using NeuralNetworkAnalysis, MAT
-using NeuralNetworkAnalysis: NoNormalization, FunctionPreprocessing
+using NeuralNetworkAnalysis: FunctionPreprocessing
 
 const u = 0.0001  # friction parameter
 const a_lead = -2.0  # acceleration control input applied to the lead vehicle
@@ -115,10 +115,8 @@ function preprocess(X::AbstractVector)  # version for simulations
 end;
 control_preprocessing = FunctionPreprocessing(preprocess);
 
-control_normalization = NoNormalization();
-
-prob = ControlledPlant(ivp, controller, vars_idx, period, control_normalization,
-                       control_preprocessing);
+prob = ControlledPlant(ivp, controller, vars_idx, period;
+                       preprocessing=control_preprocessing);
 
 # The specification can be interpreted as a half-space constraint:
 # $x[1] - x[4] - T_{gap} * x[5] ≥ D_{default}$.

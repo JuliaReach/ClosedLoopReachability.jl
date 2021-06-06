@@ -62,7 +62,9 @@ period = 0.2;  # control period
 T = 10.0;  # time horizon
 
 control_normalization = UniformAdditiveNormalization(-20.0);
-prob = ControlledPlant(ivp, controller, vars_idx, period, control_normalization);
+
+prob = ControlledPlant(ivp, controller, vars_idx, period;
+                       normalization=control_normalization);
 
 target_set = Hyperrectangle(zeros(4), [0.6, 0.2, 0.06, 0.3]);
 # TODO spec: [x[1], x[2], x[3], x[4]] ∈ target_set for some 0 ≤ t ≤ T
