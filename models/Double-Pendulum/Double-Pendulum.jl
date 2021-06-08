@@ -2,10 +2,15 @@
 #
 #md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/Double-Pendulum.ipynb)
 #
-# This example consists of a double-link pendulum with equal point masses ``m``
-# at the end of connected mass-less links of length ``L``. Both links are
-# actuated with torques ``T_1`` and ``T_2`` and we assume viscous friction
-# exists with a coefficient of ``c`.
+# This example consists of a double-link pendulum with equal point masses $m$
+# at the end of connected mass-less links of length $L$. Both links are
+# actuated with torques $T_1$ and $T_2$ and we assume viscous friction
+# exists with a coefficient of $c$.
+
+module DoublePendulum  #jl
+
+using NeuralNetworkAnalysis
+using NeuralNetworkAnalysis: SingleEntryVector, Specification
 
 # ## Model
 #
@@ -15,40 +20,22 @@
 # \ddot \theta_1 cos(\theta_2 - \theta_1) + \ddot \theta_2 + \ddot \theta^2_1 sin(\theta_2 - \theta_1) - \frac{g}{L}sin\theta_2 + \frac{c}{mL^2}\dot\theta_2 &= \frac{1}{mL^2}T_2
 # \end{aligned}
 # ```
-# where ``θ_1`` and ``θ_2`` are the angles that links make with the
+# where $θ_1$ and $θ_2$ are the angles that links make with the
 # upward vertical axis. The state is:
 # ```math
 # \begin{aligned}
 # [\theta_1, \theta_2, \dot \theta_1, \dot \theta_2]
 # \end{aligned}
 # ```
-# The angular velocity and acceleration of the links are denoted with ``θ_1'``,
-# ``θ_2'``, ``θ_1''`` and ``θ_2''`` and ``g`` is the gravitational acceleration.
+# The angular velocity and acceleration of the links are denoted with $θ_1'$,
+# $θ_2'$, $θ_1''$ and $θ_2''$ and $g$ is the gravitational acceleration.
 
-using NeuralNetworkAnalysis
-
-# flag to choose the setting
-# `false`: use a less robust controller
-# `true`: use a more robust controller
-# the choice also influences settings like the period and the specification
-use_less_robust_controller = false;
-
-# model constants
-const m = 0.5;
-const L = 0.5;
-const c = 0.0;
-const g = 1.0;
-const gL = g/L;
+const m = 0.5
+const L = 0.5
+const c = 0.0
+const g = 1.0
+const gL = g/L
 const mL = m*L^2;
-
-@taylorize function double_pendulum_nnv!(dx, x, p, t)
-    th1, th2, u1, u2, T1, T2 = x
-
-    dx[1] = x[3];
-    dx[2] = x[4];
-    dx[3] = 4*T1 + 2*sin(th1) - (u2^2*sin(th1 - th2))/2 + (cos(th1 - th2)*(sin(th1 - th2)*u1^2 + 8*T2 + 2*sin(th2) - cos(th1 - th2)*(- (sin(th1 - th2)*u2^2)/2 + 4*T1 + 2*sin(th1))))/(2*(cos(th1 - th2)^2/2 - 1));
-    dx[4] = -(sin(th1 - th2)*u1^2 + 8*T2 + 2*sin(th2) - cos(th1 - th2)*(- (sin(th1 - th2)*u2^2)/2 + 4*T1 + 2*sin(th1)))/(cos(th1 - th2)^2/2 - 1);
-end
 
 @taylorize function double_pendulum!(dx, x, p, t)
     x₁, x₂, x₃, x₄, T₁, T₂ = x
@@ -71,65 +58,191 @@ end
     dx[4] = - bignum / denom
 end;
 
-net_lr = @modelpath("Double-Pendulum", "controller_double_pendulum_less_robust.nnet")
-net_mr = @modelpath("Double-Pendulum", "controller_double_pendulum_more_robust.nnet")
-controller = read_nnet(use_less_robust_controller ? net_lr : net_mr);
-
 # ## Specification
 
-X₀ = BallInf(fill(1.15, 4), 0.15);
-U₀ = ZeroSet(2);
-vars_idx = Dict(:state_vars=>1:4, :control_vars=>5:6);
-ivp = @ivp(x' = double_pendulum!(x), dim: 6, x(0) ∈ X₀ × U₀);
+function DoublePendulum_model(use_less_robust_controller::Bool;
+                              falsification::Bool=false)
+    net_lr = @modelpath("Double-Pendulum", "controller_double_pendulum_less_robust.nnet")
+    net_mr = @modelpath("Double-Pendulum", "controller_double_pendulum_more_robust.nnet")
+    controller = read_nnet(use_less_robust_controller ? net_lr : net_mr)
 
-period = use_less_robust_controller ? 0.05 : 0.02;  # control period
-T = 20 * period;  # time horizon
+    X₀ = BallInf(fill(1.15, 4), 0.15)
+    if falsification
+        ## choose a single point in the initial states (here: the top-most one)
+        if use_less_robust_controller
+            X₀ = Singleton(high(X₀))
+        else
+            X₀ = Singleton(low(X₀))
+        end
+    end
+    U₀ = ZeroSet(2)
+    vars_idx = Dict(:state_vars=>1:4, :control_vars=>5:6)
+    ivp = @ivp(x' = double_pendulum!(x), dim: 6, x(0) ∈ X₀ × U₀)
 
-prob = ControlledPlant(ivp, controller, vars_idx, period);
+    period = use_less_robust_controller ? 0.05 : 0.02  # control period
 
-safe_states = use_less_robust_controller ?
-    BallInf(fill(0.35, 4), 1.35) : BallInf(fill(0.5, 4), 1.0);
-## TODO spec: [x[1], x[2], x[3], x[4]] ∈ safe_states for all t
+    prob = ControlledPlant(ivp, controller, vars_idx, period)
+
+    ## Safety specification: [x[1], x[2], x[3], x[4]] ∈ safe_states for all t
+    if falsification
+        if use_less_robust_controller
+            k = 8
+        else
+            k = 6
+        end
+    else
+        k = 20
+    end
+    T = k * period  # time horizon
+
+    lb = use_less_robust_controller ? -1.0 : -0.5
+    ub = use_less_robust_controller ? 1.7 : 1.5
+    safe_states = HPolyhedron([HalfSpace(SingleEntryVector(1, 6, 1.0), ub),
+                               HalfSpace(SingleEntryVector(1, 6, -1.0), -lb),
+                               HalfSpace(SingleEntryVector(2, 6, 1.0), ub),
+                               HalfSpace(SingleEntryVector(2, 6, -1.0), -lb),
+                               HalfSpace(SingleEntryVector(3, 6, 1.0), ub),
+                               HalfSpace(SingleEntryVector(3, 6, -1.0), -lb),
+                               HalfSpace(SingleEntryVector(4, 6, 1.0), ub),
+                               HalfSpace(SingleEntryVector(4, 6, -1.0), -lb)])
+    predicate = X -> isdisjoint(X, safe_states)  # property for guaranteed violation
+    predicate_sol = sol -> any(predicate(R) for F in sol for R in F);
+
+    spec = Specification(T, predicate_sol, safe_states)
+
+    return prob, spec
+end;
 
 # ## Results
 
-alg = TMJets20(abstol=1e-8, orderT=4, orderQ=2);
-alg_nn = Ai2();
-
-## @time sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg);  # TODO activate once the analysis works
-
-# We also compute some simulations:
 import DifferentialEquations
-@time sim = simulate(prob, T=T; trajectories=10, include_vertices=true);
 
-# Finally we plot the results
+function run(use_less_robust_controller::Bool; falsification::Bool=false)
+    prob, spec = DoublePendulum_model(use_less_robust_controller;
+                                      falsification=falsification)
+
+    alg = TMJets20(abstol=1e-9, orderT=8, orderQ=1)
+    alg_nn = Ai2()
+
+    function benchmark(; silent::Bool=false)
+        ## We solve the controlled system:
+        silent || println("flowpipe construction")
+        res_sol = @timed solve(prob, T=spec.T, alg_nn=alg_nn, alg=alg)
+        sol = res_sol.value
+        silent || print_timed(res_sol)
+
+        ## Next we check the property for an overapproximated flowpipe:
+        solz = overapproximate(sol, Zonotope)
+        if spec.predicate(solz)
+            silent || println("The property is violated.")
+        else
+            silent || println("The property may be satisfied.")
+        end
+
+        ## We also compute some simulations:
+        silent || println("simulation")
+        trajectories = falsification ? 1 : 10
+        res_sim = @timed simulate(prob, T=spec.T, trajectories=trajectories,
+                                  include_vertices=!falsification)
+        sim = res_sim.value
+        silent || print_timed(res_sim)
+
+        return solz, sim
+    end;
+
+    benchmark(silent=true)  # warm-up
+    if use_less_robust_controller
+        println("Running analysis with less robust controller")
+    else
+        println("Running analysis with more robust controller")
+    end
+    sol, sim = benchmark()  # benchmark
+
+    return sol, sim, prob, spec
+end;
+
+## pass flag to choose the controller
+## `true`: use a less robust controller
+## `false`: use a more robust controller
+## the choice also influences settings like the period and the specification
+res_true = run(true; falsification=true)
+res_false = run(false; falsification=true);
+
+# Finally we plot the results:
+
 using Plots
 import DisplayAs
 
-function plot_helper(fig, vars)
-    plot!(fig, project(safe_states, vars), color=:white, linecolor=:black, lw=5.0);
-##    plot!(fig, sol, vars=vars, lab="");  # TODO activate once the analysis works
-    plot_simulation!(fig, sim; vars=vars, color=:red, lab="");
-    fig = DisplayAs.Text(DisplayAs.PNG(fig))
-##    infix = use_less_robust_controller ? "less" : "more"  # TODO temporary helper
-##    savefig("DoublePendulum-$infix-$(vars[1])-$(vars[2])")
+function plot_helper(fig, vars, sol, sim, prob, spec)
+    safe_states = spec.ext
+    plot!(fig, project(safe_states, vars), color=:lightgreen, linecolor=:black, lw=5.0)
+    if 0 ∉ vars
+        plot!(fig, project(initial_state(prob), vars), lab="X₀")
+    end
+    plot!(fig, sol, vars=vars, color=:yellow, lab="")
+    plot_simulation!(fig, sim; vars=vars, color=:red, lab="")
 end
 
-vars=(1, 2);
-fig = plot(xlab="x₁", ylab="x₂");
-if use_less_robust_controller
-    xlims!(-1, 1.9)
+function plot_helper_12(use_less_robust_controller)
+    vars=(1, 2)
+    fig = plot(xlab="x₁", ylab="x₂")
+    if use_less_robust_controller
+        infix = "less-robust"
+        sol, sim, prob, spec = res_true
+        xlims!(-0.5, 1.9)
+    else
+        infix = "more-robust"
+        sol, sim, prob, spec = res_false
+    end
+    plot_helper(fig, vars, sol, sim, prob, spec)
+    return fig, vars, infix
 end
-plot_helper(fig, vars)
+
+function plot_helper_34(use_less_robust_controller)
+    vars=(3, 4)
+    fig = plot(xlab="x₃", ylab="x₄")
+    if use_less_robust_controller
+        infix = "less-robust"
+        sol, sim, prob, spec = res_true
+        xlims!(-0.7, 1.7)
+        ylims!(-1.6, 1.5)
+    else
+        infix = "more-robust"
+        sol, sim, prob, spec = res_false
+        xlims!(-1.8, 1.5)
+        ylims!(-1.6, 1.5)
+    end
+    plot_helper(fig, vars, sol, sim, prob, spec)
+    return fig, vars, infix
+end
+
+fig, vars, infix = plot_helper_12(true)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+## savefig("DoublePendulum-$infix-x$(vars[1])-x$(vars[2]).pdf")
+fig
 
 #-
 
-vars=(3, 4);
-fig = plot(xlab="x₃", ylab="x₄");
-if use_less_robust_controller
-    ylims!(-1.6, 1.7)
-else
-    xlims!(-1.8, 1.5)
-    ylims!(-1.6, 1.5)
-end
-plot_helper(fig, vars)
+fig, vars, infix = plot_helper_34(true)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+## savefig("DoublePendulum-$infix-x$(vars[1])-x$(vars[2]).pdf")
+fig
+
+#-
+
+fig, vars, infix = plot_helper_12(false)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+## savefig("DoublePendulum-$infix-x$(vars[1])-x$(vars[2]).pdf")
+fig
+
+#-
+
+fig, vars, infix = plot_helper_34(false)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+## savefig("DoublePendulum-$infix-x$(vars[1])-x$(vars[2]).pdf")
+fig
+
+#-
+
+end  #jl
+nothing  #jl
