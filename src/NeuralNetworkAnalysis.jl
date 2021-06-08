@@ -20,6 +20,6 @@ export solve, forward, simulate,
        SampledApprox, VertexSolver, BoxSolver, SplitSolver, BlackBoxSolver
 
 # utility functions
-export @modelpath, read_nnet_mat, read_nnet_yaml
+export @modelpath, read_nnet_mat, read_nnet_yaml, print_timed
 
 end
