@@ -81,8 +81,8 @@ function _get_alg_nn(args...; kwargs...)
     return solver
 end
 
-# flowpipe with corresponding iteration
-struct ControlFlowpipe{FT<:Flowpipe}
+# element of the waiting list: a flowpipe with corresponding iteration
+struct WaitingListElement{FT<:Flowpipe}
     F::FT  # flowpipe
     k::Int  # iteration
 end
@@ -115,16 +115,6 @@ function _solve(cp::ControlledPlant,
 
     W₀ = m > 0 ? project(Q₀, in_vars) : nothing
 
-    function nnet_forward(X)
-        X = apply(preprocessing, X)
-        U = forward_network(solver, network, X)
-        U = apply(normalization, U)
-        if dim(U) == 1  # simplify the control input for intervals
-            U = overapproximate(U, Interval)
-        end
-        return U
-    end
-
     # preallocate output flowpipes
     sol = nothing
     NT = numtype(cpost)
@@ -134,34 +124,39 @@ function _solve(cp::ControlledPlant,
     controls = Vector()
 
     # waiting list
-    waiting_list = Vector{ControlFlowpipe{FT}}()
+    waiting_list = Vector{WaitingListElement{FT}}()
 
-    # iterate
-    first = true
-    while true
-        if first
-            X = nothing
-            X₀ = project(Q₀, st_vars)
-            k = 1
-            first = false
-        elseif isempty(waiting_list)
-            break
-        else
-            prev_part = pop!(waiting_list)
-            k = prev_part.k + 1
-            t = tend(prev_part.F)
-            X = prev_part.F(t)
-            X₀ = _project_oa(X, st_vars, t;
-                             remove_zero_generators=remove_zero_generators) |> set
-        end
+    # first step
+    k = 1
+    X = nothing
+    X₀ = project(Q₀, st_vars)
+    t0 = tvec[k]
+    t1 = tvec[k+1]
+    F, U = _solve_one(X, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method,
+                      solver, network, preprocessing, normalization)
+    push!(flowpipes, F)
+    push!(controls, U)
+    if k < length(tvec) - 1
+        push!(waiting_list, WaitingListElement(F, k))
+    end
+
+    # iteration
+    while !isempty(waiting_list)
+        prev_part = pop!(waiting_list)
+        k = prev_part.k + 1
+        t = tend(prev_part.F)
+        X = prev_part.F(t)
+        X₀ = _project_oa(X, st_vars, t;
+                         remove_zero_generators=remove_zero_generators) |> set
+
         t0 = tvec[k]
         t1 = tvec[k+1]
-        F, U = _solve_one(X, X₀, W₀, S, st_vars, t0, t1, cpost, nnet_forward,
-                            rec_method)
+        F, U = _solve_one(X, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method,
+                          solver, network, preprocessing, normalization)
         push!(flowpipes, F)
         push!(controls, U)
         if k < length(tvec) - 1
-            push!(waiting_list, ControlFlowpipe(F, k))
+            push!(waiting_list, WaitingListElement(F, k))
         end
     end
 
@@ -169,15 +164,26 @@ function _solve(cp::ControlledPlant,
     return MixedFlowpipe(flowpipes, ext)
 end
 
-function _solve_one(X, X₀, W₀, S, st_vars, t0, t1, cpost, nnet_forward, rec_method)
+function nnet_forward(solver, network, X, preprocessing, normalization)
+    X = apply(preprocessing, X)
+    U = forward_network(solver, network, X)
+    U = apply(normalization, U)
+    if dim(U) == 1  # simplify the control input for intervals
+        U = overapproximate(U, Interval)
+    end
+    return U
+end
+
+function _solve_one(X, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method, solver,
+                    network, preprocessing, normalization)
     # add nondeterministic inputs (if any)
     P₀ = isnothing(W₀) ? X₀ : X₀ × W₀
 
     # get new control inputs from the controller
-    U₀ = nnet_forward(X₀)
+    U = nnet_forward(X₀)
 
     # combine states with new control inputs
-    Q₀ = _reconstruct(rec_method, P₀, U₀, X, t0)
+    Q₀ = _reconstruct(rec_method, P₀, U, X, t0)
 
     dt = t0 .. t1
     sol = post(cpost, IVP(S, Q₀), dt)
@@ -186,5 +192,5 @@ function _solve_one(X, X₀, W₀, S, st_vars, t0, t1, cpost, nnet_forward, rec_
     Δt = t1 - t1′  # difference of exact and actual control time
     @assert LazySets.isapproxzero(Δt) "the flowpipe duration differs " *
         "from the requested duration by $Δt time units (stopped at $(t1′))"
-    return sol, U₀
+    return sol, U
 end
