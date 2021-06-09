@@ -153,7 +153,7 @@ function _solve(cp::ControlledPlant,
         ti = tend(sol)
         Δti = Ti - ti  # difference of exact and actual control time
         @assert LazySets.isapproxzero(Δti) "the flowpipe duration differs " *
-            "from the requested duration by $Δti time units"
+            "from the requested duration by $Δti time units (stopped at $ti)"
     end
 
     ext = Dict{Symbol, Any}(:controls=>controls)
