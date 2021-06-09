@@ -281,3 +281,21 @@ struct BlackBoxSolver <: Solver end
 function NeuralVerification.forward_network(solver::BlackBoxSolver, nnet, X0)
     return nnet(X0)
 end
+
+# =============================
+# Handling of singleton inputs
+# =============================
+
+function forward(nnet::Network, X0::AbstractSingleton)
+    x0 = element(X0)
+    x1 = forward(nnet, x0)
+    return Singleton(x1)
+end
+
+for SOLVER in LazySets.subtypes(Solver, true)
+    @eval function NeuralVerification.forward_network(solver::$SOLVER,
+                                                      nnet::Network,
+                                                      X0::AbstractSingleton)
+              return forward(nnet, X0)
+          end
+end
