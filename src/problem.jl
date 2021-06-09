@@ -95,7 +95,7 @@ struct ControlledPlant{ST, CT, XT, DT, PT, CNT, CPT} <: AbstractControlProblem
     function ControlledPlant(ivp::InitialValueProblem{ST, XT},
                              controller::CT,
                              vars::Dict{Symbol, DT},
-                             period::PT,
+                             period::PT;
                              normalization::CNT=NoNormalization(),
                              preprocessing::CPT=NoPreprocessing()) where {ST, CT, XT, DT, PT, CNT, CPT}
         return new{ST, CT, XT, DT, PT, CNT, CPT}(ivp, controller, vars, period, normalization, preprocessing)
