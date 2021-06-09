@@ -276,3 +276,9 @@ function relative_size(X0, nsamples, controller, solver=Ai2())
     u = forward_network(SampledApprox(nsamples), controller, X0)
     return diameter(o)/diameter(u)
 end
+
+# print the result `@timed`
+function print_timed(stats::NamedTuple)
+    Base.time_print(stats.time * 1e9, stats.bytes, stats.gctime * 1e9,
+                    Base.gc_alloc_count(stats.gcstats), 0, true)
+end
