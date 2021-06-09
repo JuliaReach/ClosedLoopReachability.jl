@@ -153,16 +153,15 @@ import DifferentialEquations
 
 # Finally we plot the results
 
-using NeuralNetworkAnalysis: _linear_map, _affine_map  # TODO temporary solution
 using Plots
 import DisplayAs
 fig = plot(leg=(0.4, 0.3));
 xlabel!(fig, "time");
 
-fp_rel = _linear_map(Matrix(d_rel'), solz);
+fp_rel = linear_map(Matrix(d_rel'), solz);
 output_map_rel = d_rel
 
-fp_safe = _affine_map(Matrix(d_safe'), [D_default], solz);
+fp_safe = affine_map(Matrix(d_safe'), [D_default], flowpipe(solz));
 output_map_safe = vcat([D_default], d_safe)
 
 plot!(fig, fp_rel, vars=(0, 1), c=:red, alpha=.4);

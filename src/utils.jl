@@ -276,29 +276,3 @@ function relative_size(X0, nsamples, controller, solver=Ai2())
     u = forward_network(SampledApprox(nsamples), controller, X0)
     return diameter(o)/diameter(u)
 end
-
-# TODO temporary helper functions
-function _linear_map(M, sol)
-    T = typeof(linear_map(M, sol[1][1]))
-    out = Vector{T}()
-    for F in sol
-        for R in F
-            push!(out, linear_map(M, R))
-        end
-    end
-    return Flowpipe(out)
-end
-function _affine_map(M, b, sol)
-    ST = typeof(affine_map(M, set(sol[1][1]), b))
-    N = eltype(M)
-    T = ReachSet{N, ST}
-    out = Vector{T}()
-
-    for F in sol
-        for R in F
-            X = affine_map(M, set(R), b)
-            push!(out, ReachSet(X, tspan(R)))
-        end
-    end
-    return Flowpipe(out)
-end
