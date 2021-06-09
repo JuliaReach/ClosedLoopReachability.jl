@@ -1,9 +1,3 @@
-using NeuralVerification: @with_kw,
-                          ActivationFunction,
-                          Solver,
-                          Sigmoid,
-                          Tanh
-
 # ================================================
 # Internal forward network functions
 # ================================================

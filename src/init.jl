@@ -9,7 +9,9 @@ using ReachabilityAnalysis: _check_dim, _get_tspan, _get_cpost, _default_cpost,
                             AbstractLazyReachSet, AbstractTaylorModelReachSet
 
 @reexport using NeuralVerification
-using NeuralVerification: Network, output_bound, Solver, Id, ReLU
+using NeuralVerification: Network, output_bound, Solver,
+                          ActivationFunction, Id, ReLU, Sigmoid, Tanh,
+                          @with_kw
 
 # aliases
 const RA = ReachabilityAnalysis
