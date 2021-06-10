@@ -180,7 +180,7 @@ function _solve_one(X, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method, solver
     P₀ = isnothing(W₀) ? X₀ : X₀ × W₀
 
     # get new control inputs from the controller
-    U = nnet_forward(X₀)
+    U = nnet_forward(solver, network, X₀, preprocessing, normalization)
 
     # combine states with new control inputs
     Q₀ = _reconstruct(rec_method, P₀, U, X, t0)
