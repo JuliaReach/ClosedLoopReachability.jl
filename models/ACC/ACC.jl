@@ -8,6 +8,11 @@
 # The neural network computes optimal control actions while satisfying safe
 # distance, velocity, and acceleration constraints.
 
+module ACC  #jl
+
+using NeuralNetworkAnalysis, MAT
+using NeuralNetworkAnalysis: FunctionPreprocessing
+
 # ## Model
 #
 # For this case study, the ego car is set to travel at a set speed $v_{set} = 30$
@@ -24,20 +29,16 @@
 # \dot{\gamma}_{ego}(t) &=& -2\gamma_{ego}(t) + 2a_{ego}(t) - uv_{ego}^2(t)
 # \end{array} \right.
 # ```
-# where ``x_i`` is the position, ``v_i`` is the velocity, ``γ_i`` is the
-# acceleration of the car, ``a_i`` is the acceleration control input applied
-# to the car, and ``u = 0.0001`` is the friction parameter, where
-# ``i ∈ \{ego, lead\}``. For this benchmark we are given four neural network
+# where $x_i$ is the position, $v_i$ is the velocity, $γ_i$ is the
+# acceleration of the car, $a_i$ is the acceleration control input applied
+# to the car, and $u = 0.0001$ is the friction parameter, where
+# $i ∈ \{ego, lead\}$. For this benchmark we are given four neural network
 # controllers with 3, 5, 7, and 10 hidden layers of 20 neurons each, but only evaluate
 # the controller with 5 hidden layers. All of them have the same number of inputs
-# ``(v_{set}, T_{gap}, v_{ego}, D_{rel}, v_{rel})`` and one output (``a_{ego}``).
-
-using NeuralNetworkAnalysis, MAT
-using NeuralNetworkAnalysis: FunctionPreprocessing
+# $(v_{set}, T_{gap}, v_{ego}, D_{rel}, v_{rel})$ and one output ($a_{ego}$).
 
 const u = 0.0001  # friction parameter
 const a_lead = -2.0  # acceleration control input applied to the lead vehicle
-const v_set = 30.0  # ego car's set speed
 
 @taylorize function ACC!(dx, x, p, t)
     v_lead = x[2]  # lead car velocity
@@ -59,15 +60,21 @@ const v_set = 30.0  # ego car's set speed
     return dx
 end
 
-# We choose the controller with 5 hidden layers.
-controller = read_nnet_mat(@modelpath("ACC", "controller_5_20.mat");
-                           act_key="act_fcns");
+# ## Specification
 
-# ## Specifications
+# The uncertain initial condition is:
 #
-# The verification objective of this system is that given a scenario where both
-# cars are driving safely, the lead car suddenly slows down with
-# ``a_{lead} = -2``.
+# $x_{lead}(0) ∈ [90, 110], v_{lead}(0) ∈ [32, 32.2]$,
+# $γ_{lead}(0) = γ_{ego}(0) = 0, v_{ego}(0) ∈ [30, 30.2], x_{ego} ∈ [10, 11]$
+#
+# The controller input is
+# $(v_{set}, T_{gap}, v_{ego}, x_{lead} - x_{ego}, v_{lead} - v_{ego})$.
+# To extract from the current state the last three inputs to the network
+# we define a projection matrix $M$.
+#
+# The verification objective of this system is that given a scenario where
+# both cars are driving safely, the lead car suddenly slows down with
+# $a_{lead} = -2$.
 # We want to check whether there is a collision in the following 5 seconds.
 # A control period of 0.1 seconds is used.
 #
@@ -75,99 +82,122 @@ controller = read_nnet_mat(@modelpath("ACC", "controller_5_20.mat");
 # ```math
 #     D_{rel} = x_{lead} - x_{ego} ≥ D_{safe},
 # ```
-# where ``D_{safe} = D_{default} + T_{gap} * v_{ego}``, ``T_{gap} = 1.4`` sec,
-# and ``D_{default} = 10``.
+# where $D_{safe} = D_{default} + T_{gap} * v_{ego}$,
+# $T_{gap} = 1.4$ sec, and $D_{default} = 10$.
+# After substitution, the specification reduces to:
+# $x_{lead} - x_{ego} - T_{gap} * v_{ego} ≥ D_{default}$.
 
-# The uncertain initial conditions are chosen to be:
-#
-# - ``x_{lead}(0) ∈ [90,110], v_{lead}(0) ∈ [32,32.2], γ_{lead}(0) = γ_{ego}(0) = 0``
-# - ``v_{ego}(0) ∈ [30, 30.2], x_{ego} ∈ [10,11]``
+## We choose the controller with 5 hidden layers.
+controller = read_nnet_mat(@modelpath("ACC", "controller_5_20.mat");
+                           act_key="act_fcns");
 
-# The initial states according to the specification are:
-X₀ = Hyperrectangle(low=[90, 32, 0, 10, 30, 0], high=[110, 32.2, 0, 11, 30.2, 0]);
+## The initial states according to the specification are:
+X₀ = Hyperrectangle(low=[90, 32, 0, 10, 30, 0],
+                    high=[110, 32.2, 0, 11, 30.2, 0])
 U₀ = ZeroSet(1);
 
-# The system has 6 state variables and 1 control variable:
-vars_idx = Dict(:state_vars=>1:6, :control_vars=>7);
-ivp = @ivp(x' = ACC!(x), dim: 7, x(0) ∈ X₀ × U₀);
-
+## The system has 6 state variables and 1 control variable:
+vars_idx = Dict(:state_vars=>1:6, :control_vars=>7)
+ivp = @ivp(x' = ACC!(x), dim: 7, x(0) ∈ X₀ × U₀)
 period = 0.1;  # control period
-T = 5.0;  # time horizon
 
-# The controller input is $(v_{set}, T_{gap}, x[5], x[1] - x[4], x[2] - x[5])$.
-# To extract from the current state the last three inputs to the network we define a projection matrix $M$.
-
-M = zeros(3, 6);
-M[1, 5] = 1.0;
-M[2, 1] = 1.0;
-M[2, 4] = -1.0;
-M[3, 2] = 1.0;
-M[3, 5] = -1.0;
+## Preprocessing function for the network input:
+v_set = 30.0  # ego car's set speed
+T_gap = 1.4
+M = zeros(3, 6)
+M[1, 5] = 1.0
+M[2, 1] = 1.0
+M[2, 4] = -1.0
+M[3, 2] = 1.0
+M[3, 5] = -1.0
 function preprocess(X::LazySet)  # version for set computations
     Y1 = Singleton([v_set, T_gap])
     Y2 = linear_map(M, X)
     return cartesian_product(Y1, Y2)
-end;
+end
 function preprocess(X::AbstractVector)  # version for simulations
     Y1 = [v_set, T_gap]
     Y2 = M * X
     return vcat(Y1, Y2)
-end;
-control_preprocessing = FunctionPreprocessing(preprocess);
+end
+control_preprocessing = FunctionPreprocessing(preprocess)
 
 prob = ControlledPlant(ivp, controller, vars_idx, period;
                        preprocessing=control_preprocessing);
 
-# The specification can be interpreted as a half-space constraint:
-# $x[1] - x[4] - T_{gap} * x[5] ≥ D_{default}$.
-T_gap = 1.4;
-D_default = 10.0;
-d_rel = [1.0, 0, 0, -1, 0, 0, 0];
-d_safe = [0, 0, 0, 0, T_gap, 0, 0];
-d_prop = d_rel - d_safe;
+## Safety specification
+T = 5.0  # time horizon
+
+D_default = 10.0
+d_rel = [1.0, 0, 0, -1, 0, 0, 0]
+d_safe = [0, 0, 0, 0, T_gap, 0, 0]
+
+d_prop = d_rel - d_safe
+safe_states = HalfSpace(-d_prop, -D_default)
+predicate = X -> X ⊆ safe_states;
 
 # ## Results
 
 # To integrate the ODE, we use the Taylor-model-based algorithm:
-alg = TMJets(abstol=1e-12, orderT=12, orderQ=2);
+alg = TMJets(abstol=1e-6, orderT=6, orderQ=1);
 
-# To propagate sets over the neural network, we use the `Ai2` algorithm:
-alg_nn = Ai2();
+# To propagate sets through the neural network, we use the `Ai2` algorithm:
+alg_nn = Ai2()
 
-# We now solve the controlled system:
-@time sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg);
+function benchmark(; silent::Bool=false)
+    ## We solve the controlled system:
+    silent || println("flowpipe construction")
+    res_sol = @timed solve(prob, T=T, alg_nn=alg_nn, alg=alg)
+    sol = res_sol.value
+    silent || print_timed(res_sol)
 
-# Next we check the property for an overapproximated flowpipe.
-# This is equivalent to minimizing the gap in direction `d_prop` and comparing
-# to $D_{default}$:
-solz = overapproximate(sol, Zonotope);
-if -ρ(-d_prop, solz) ≥ D_default
-    println("The safety property is satisfied.")
-else
-    println("The safety property may be violated.")
+    ## Next we check the property for an overapproximated flowpipe:
+    silent || println("property checking")
+    solz = overapproximate(sol, Zonotope)
+    res_pred = @timed predicate(solz)
+    silent || print_timed(res_pred)
+    if res_pred.value
+        silent || println("The property is satisfied.")
+    else
+        silent || println("The property may be violated.")
+    end
+    return solz
 end
+
+benchmark(silent=true)  # warm-up
+@time solz = benchmark();  # benchmark
 
 # We also compute some simulations:
 import DifferentialEquations
-@time sim = simulate(prob, T=T; trajectories=10, include_vertices=true);
 
-# Finally we plot the results
+sim = simulate(prob, T=T, trajectories=10, include_vertices=true);
+
+# Finally we plot the results:
 
 using Plots
 import DisplayAs
-fig = plot(leg=(0.4, 0.3));
-xlabel!(fig, "time");
 
-fp_rel = linear_map(Matrix(d_rel'), solz);
+fig = plot(leg=(0.4, 0.3))
+xlabel!(fig, "time")
+F = flowpipe(solz)
+
+fp_rel = linear_map(Matrix(d_rel'), F)
 output_map_rel = d_rel
 
-fp_safe = affine_map(Matrix(d_safe'), [D_default], flowpipe(solz));
+fp_safe = affine_map(Matrix(d_safe'), [D_default], F)
 output_map_safe = vcat([D_default], d_safe)
 
-plot!(fig, fp_rel, vars=(0, 1), c=:red, alpha=.4);
-plot!(fig, fp_safe, vars=(0, 1), c=:blue, alpha=.4);
+plot!(fig, fp_rel, vars=(0, 1), c=:red, alpha=.4)
+plot!(fig, fp_safe, vars=(0, 1), c=:blue, alpha=.4)
 
-plot_simulation!(fig, sim; output_map=output_map_rel, color=:red, lab="Drel");
-plot_simulation!(fig, sim; output_map=output_map_safe, color=:blue, lab="Dsafe");
+plot_simulation!(fig, sim; output_map=output_map_rel, color=:red, lab="Drel")
+plot_simulation!(fig, sim; output_map=output_map_safe, color=:blue, lab="Dsafe")
 
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
+
+## savefig("ACC.pdf")
+
+#-
+
+end  #jl
+nothing  #jl
