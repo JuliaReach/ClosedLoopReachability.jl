@@ -39,8 +39,15 @@ function solve(prob::AbstractControlProblem, args...; kwargs...)
     # check that the dimension of the system and the initial condition match
     _check_dim(ivp)
 
-    # get time span
+    τ = period(prob)
+
+    # get vector of time steps
     tspan = _get_tspan(args...; kwargs...)
+    T = tend(tspan)
+    tvec = range(tstart(tspan), T; step=τ)
+    if !(tvec[end] ≈ T)
+        tvec = vcat(tvec, T)  # last time interval is shorter
+    end
 
     # get the continuous post or find a default one
     cpost = _get_cpost(ivp, args...; kwargs...)
@@ -48,17 +55,17 @@ function solve(prob::AbstractControlProblem, args...; kwargs...)
         cpost = _default_cpost(ivp, tspan; kwargs...)
     end
 
-    τ = period(prob)
-
     solver = _get_alg_nn(args...; kwargs...)
 
     splitter = get(kwargs, :splitter, NoSplitter())
 
-    rec_method = get(kwargs, :reconstruction_method, CartesianProductReconstructor())
+    rec_method = get(kwargs, :reconstruction_method,
+                     CartesianProductReconstructor())
 
     remove_zero_generators = get(kwargs, :remove_zero_generators, true)
 
-    sol = _solve(prob, cpost, solver, tspan, τ, splitter, rec_method, remove_zero_generators)
+    sol = _solve(prob, cpost, solver, tvec, τ, splitter, rec_method,
+                 remove_zero_generators)
 
     d = Dict{Symbol, Any}(:solver=>solver)
     return ReachSolution(sol, cpost, d)
@@ -68,15 +75,22 @@ function _get_alg_nn(args...; kwargs...)
     if haskey(kwargs, :alg_nn)
         solver = kwargs[:alg_nn]
     else
-        throw(ArgumentError("the solver for the controller `alg_nn` should be specified, but was not found"))
+        throw(ArgumentError("the solver for the controller `alg_nn` should be "*
+                            "specified, but was not found"))
     end
     return solver
+end
+
+# element of the waiting list: a flowpipe with corresponding iteration
+struct WaitingListElement{FT<:Flowpipe}
+    F::FT  # flowpipe
+    k::Int  # iteration
 end
 
 function _solve(cp::ControlledPlant,
                 cpost::AbstractContinuousPost,
                 solver::Solver,
-                time_span::TimeInterval,
+                tvec::AbstractVector,
                 sampling_time::N,
                 splitter::Splitter,
                 rec_method::AbstractReconstructionMethod,
@@ -88,7 +102,6 @@ function _solve(cp::ControlledPlant,
     st_vars = state_vars(cp)
     in_vars = input_vars(cp)
     ctrl_vars = control_vars(cp)
-    controls = Dict()
     normalization = control_normalization(cp)
     preprocessing = control_preprocessing(cp)
 
@@ -100,62 +113,84 @@ function _solve(cp::ControlledPlant,
         "the dimension of the initial states of the initial-value problem to " *
         "be $(n + m + q), but it is $(dim(Q₀))"))
 
-    if m > 0
-        W₀ = project(Q₀, in_vars)
-    end
+    W₀ = m > 0 ? project(Q₀, in_vars) : nothing
 
-    ti = tstart(time_span)
-    Δti = zero(ti)
-    NSAMPLES = ceil(Int, diam(time_span) / sampling_time)
-
-    # preallocate output flowpipe
+    # preallocate output flowpipes
     sol = nothing
     NT = numtype(cpost)
     RT = rsetrep(cpost)
     FT = Flowpipe{NT, RT, Vector{RT}}
-    out = Vector{FT}(undef, NSAMPLES)
+    flowpipes = Vector{FT}()
+    controls = Vector()
 
-    for i in 1:NSAMPLES
-        if i == 1
-            X = nothing
-            X₀ = project(Q₀, st_vars)
-        else
-            X = sol(ti)
-            X₀ = _project_oa(X, st_vars, ti;
-                             remove_zero_generators=remove_zero_generators) |> set
+    # waiting list
+    waiting_list = Vector{WaitingListElement{FT}}()
+
+    # first step
+    k = 1
+    X = nothing
+    X₀ = project(Q₀, st_vars)
+    t0 = tvec[k]
+    t1 = tvec[k+1]
+    F, U = _solve_one(X, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method,
+                      solver, network, preprocessing, normalization)
+    push!(flowpipes, F)
+    push!(controls, U)
+    if k < length(tvec) - 1
+        push!(waiting_list, WaitingListElement(F, k))
+    end
+
+    # iteration
+    while !isempty(waiting_list)
+        prev_part = pop!(waiting_list)
+        k = prev_part.k + 1
+        t = tend(prev_part.F)
+        X = prev_part.F(t)
+        X₀ = _project_oa(X, st_vars, t;
+                         remove_zero_generators=remove_zero_generators) |> set
+
+        t0 = tvec[k]
+        t1 = tvec[k+1]
+        F, U = _solve_one(X, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method,
+                          solver, network, preprocessing, normalization)
+        push!(flowpipes, F)
+        push!(controls, U)
+        if k < length(tvec) - 1
+            push!(waiting_list, WaitingListElement(F, k))
         end
-        P₀ = m == 0 ? X₀ : X₀ × W₀
-
-        # get new control inputs from the controller
-        Us = Vector{splitter.output_type}()
-        for X₀ in split(splitter, X₀)
-            X0aux = apply(preprocessing, X₀)
-            U₀ = forward_network(solver, network, X0aux)
-            U₀ = apply(normalization, U₀)
-            push!(Us, U₀)
-        end
-        U₀ = merge(splitter, UnionSetArray(Us))
-
-        # simplify the control input for intervals
-        if dim(U₀) == 1
-            U₀ = overapproximate(U₀, Interval)
-        end
-
-        Q₀ = _reconstruct(rec_method, P₀, U₀, X, ti)
-
-        Ti = i < NSAMPLES ? (ti + sampling_time + Δti) : tend(time_span)
-
-        controls[i] = U₀
-        dt = ti .. Ti
-        sol = post(cpost, IVP(S, Q₀), dt)
-        out[i] = sol
-
-        ti = tend(sol)
-        Δti = Ti - ti  # difference of exact and actual control time
-        @assert LazySets.isapproxzero(Δti) "the flowpipe duration differs " *
-            "from the requested duration by $Δti time units (stopped at $ti)"
     end
 
     ext = Dict{Symbol, Any}(:controls=>controls)
-    return MixedFlowpipe(out, ext)
+    return MixedFlowpipe(flowpipes, ext)
+end
+
+function nnet_forward(solver, network, X, preprocessing, normalization)
+    X = apply(preprocessing, X)
+    U = forward_network(solver, network, X)
+    U = apply(normalization, U)
+    if dim(U) == 1  # simplify the control input for intervals
+        U = overapproximate(U, Interval)
+    end
+    return U
+end
+
+function _solve_one(X, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method, solver,
+                    network, preprocessing, normalization)
+    # add nondeterministic inputs (if any)
+    P₀ = isnothing(W₀) ? X₀ : X₀ × W₀
+
+    # get new control inputs from the controller
+    U = nnet_forward(solver, network, X₀, preprocessing, normalization)
+
+    # combine states with new control inputs
+    Q₀ = _reconstruct(rec_method, P₀, U, X, t0)
+
+    dt = t0 .. t1
+    sol = post(cpost, IVP(S, Q₀), dt)
+
+    t1′ = tend(sol)
+    Δt = t1 - t1′  # difference of exact and actual control time
+    @assert LazySets.isapproxzero(Δt) "the flowpipe duration differs " *
+        "from the requested duration by $Δt time units (stopped at $(t1′))"
+    return sol, U
 end
