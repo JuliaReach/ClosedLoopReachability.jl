@@ -7,6 +7,10 @@
 # pilots to prevent near midair collisions (NMACs). An NMAC occurs when the
 # aircraft are separated by less than 100 ft vertically and 500 ft horizontally.
 
+module VertCAS  #jl
+
+using NeuralNetworkAnalysis
+
 # ## Model
 #
 # This benchmark is a closed-loop variant of aircraft collision avoidance
@@ -20,12 +24,12 @@
 # follow a constant horizontal trajectory towards ownship, see Figure 1.
 # The current geometry of the system is described by
 #
-# 1) ``h(ft)``: Intruder altitude relative to ownship
-# 2) ``\dot h_0 (ft/min)``: Ownship vertical climbrate
-# 3) ``τ(s)``: the seconds until the ownship (black) and intruder (red) are no longer horizontally separated
+# 1) $h(ft)$: Intruder altitude relative to ownship
+# 2) $\dot h_0 (ft/min)$: Ownship vertical climbrate
+# 3) $τ(s)$: the seconds until the ownship (black) and intruder (red) are no longer horizontally separated
 #
 # We can, therefore, assume that the intruder is static and the horizontal
-# separation ``\tau`` decreases by one each second.
+# separation $\tau$ decreases by one each second.
 # There are 9 advisories and each of them instructs the pilot to accelerate
 # until the vertical climbrate of the ownship complies with the advisory:
 #
@@ -40,36 +44,36 @@
 # 9) SCL2500: Strengthen Climb to at least 2500 ft/min
 #
 # In addition to the parameters describing the geometry of the encounter, the
-# current state of the system stores the advisory ``adv`` issued to the ownship
+# current state of the system stores the advisory $adv$ issued to the ownship
 # at the previous time step. VerticalCAS is implemented as nine ReLU networks
-# ``N_i``, one for each (previous) advisory, with three inputs
-# ``(h,\dot{h}_0,\tau)``, five fully-connected hidden layers of 20 units each,
+# $N_i$, one for each (previous) advisory, with three inputs
+# $(h,\dot{h}_0,\tau)$, five fully-connected hidden layers of 20 units each,
 # and nine outputs representing the score of each possible advisory. Therefore,
-# given a current state ``(h,\dot{h}_0,\tau,\text{adv})``, the new advisory
-# ``adv`` is obtained by computing the argmax of the output of ``N_{\text{adv}}``
-# on ``(h,\dot{h}_0,\tau)``.
+# given a current state $(h,\dot{h}_0,\tau,\text{adv})$, the new advisory
+# $adv$ is obtained by computing the argmax of the output of $N_{\text{adv}}$
+# on $(h,\dot{h}_0,\tau)$.
 # Given the new advisory, if the current climbrate does not comply with it, the
-# pilot can choose acceleration ``\ddot{h}_0`` from the given set:
+# pilot can choose acceleration $\ddot{h}_0$ from the given set:
 #
-# 1) COC: ``\{-\frac{g}{8}, 0, \frac{g}{8}\}``
-# 2) DNC: ``\{-\frac{g}{3}, -\frac{7g}{24}, -\frac{g}{4}\}``
-# 3) DND: ``\{\frac{g}{4}, \frac{7g}{24}, \frac{g}{3}\}``
-# 4) DES1500: ``\{-\frac{g}{3}, -\frac{7g}{24}, -\frac{g}{4}\}``
-# 5) CL1500: ``\{\frac{g}{4}, \frac{7g}{24}, \frac{g}{3}\}``
-# 6) SDES1500: ``\{-\frac{g}{3}\}``
-# 7) SCL1500: ``\{\frac{g}{3}\}``
-# 8) SDES2500: ``\{-\frac{g}{3}\}``
-# 9) SCL2500: ``\{\frac{g}{3}\}``
+# 1) COC: $\{-\frac{g}{8}, 0, \frac{g}{8}\}$
+# 2) DNC: $\{-\frac{g}{3}, -\frac{7g}{24}, -\frac{g}{4}\}$
+# 3) DND: $\{\frac{g}{4}, \frac{7g}{24}, \frac{g}{3}\}$
+# 4) DES1500: $\{-\frac{g}{3}, -\frac{7g}{24}, -\frac{g}{4}\}$
+# 5) CL1500: $\{\frac{g}{4}, \frac{7g}{24}, \frac{g}{3}\}$
+# 6) SDES1500: $\{-\frac{g}{3}\}$
+# 7) SCL1500: $\{\frac{g}{3}\}$
+# 8) SDES2500: $\{-\frac{g}{3}\}$
+# 9) SCL2500: $\{\frac{g}{3}\}$
 #
-# where $g$ represents the gravitational constant ``32.2 \ \text{ft/s}^2``.
-# If the new advisory is COC(1), then it can be any acceleration from the set ``{−g/8, 0, g/8}``.
+# where $g$ represents the gravitational constant $32.2 \ \text{ft/s}^2$.
+# If the new advisory is COC(1), then it can be any acceleration from the set ${−g/8, 0, g/8}$.
 # For all remaining advisories, if the previous advisory coincides with the new one and the
-# current climb rate complies with the new advisory (e.g., ``\dot{h}_0`` is non-positive for DNC and
-# ``\dot{h}_0 ≥ 1500`` for CL1500) the acceleration `\ddot{h}_0`` is ``0``.
+# current climb rate complies with the new advisory (e.g., $\dot{h}_0$ is non-positive for DNC and
+# $\dot{h}_0 ≥ 1500$ for CL1500) the acceleration `\ddot{h}_0$ is $0$.
 #
-# Given the current system state ``(h,\dot{h}_0,\tau,\text{adv})``, the new
-# advisory ``\text{adv}'`` and the acceleration ``\ddot{h}_0``, the new state
-# of the system ``(h(t+1),\dot{h}_0(t+1),\tau(t+1),\text{adv}(t+1))`` can
+# Given the current system state $(h,\dot{h}_0,\tau,\text{adv})$, the new
+# advisory $\text{adv}'$ and the acceleration $\ddot{h}_0$, the new state
+# of the system $(h(t+1),\dot{h}_0(t+1),\tau(t+1),\text{adv}(t+1))$ can
 # be computed as follows:
 #
 # ```math
@@ -80,21 +84,18 @@
 # \text{adv}(t+1) &=& \text{adv}'
 # \end{aligned}
 # ```
-# where ``\Delta\tau=1``.
-#
+# where $\Delta\tau=1$.
 
-using NeuralNetworkAnalysis
-
-g = 32.2 # gravitational constant
+const g = 32.2  # gravitational constant
 
 ## accelerations (middle)
 const ACC_MIDDLE = Dict(:COC => 0.0, :DNC => -7g/24, :DND => 7g/24,
                         :DES1500 => -7g/24, :CL1500 => 7g/24, :SDES1500 => -g/3,
                         :SCL1500 => g/3, :SDES2500 => -g/3, :SCL2500 => g/3)
 
-## small (h, hdot0) model
+## continuous dynamics matrix (h, hdot0)
 const Δτ = 1.0
-const A = [1  -Δτ; 0  1.]
+const A = [1  -Δτ; 0  1.];
 
 # We load the controllers in a dictionary with the keys being the advisories.
 
@@ -104,12 +105,12 @@ CTRL_IDX = [:COC, :DNC, :DND, :DES1500,
             :CL1500, :SDES1500, :SCL1500,
             :SDES2500, :SCL2500]
 
-path = @modelpath("VertCAS", "");
+path = @modelpath("VertCAS", "")
 for i = 1:9
     file = joinpath(path, "VertCAS_noResp_pra0$(i)_v9_20HU_200.nnet")
     adv = CTRL_IDX[i]
     CONTROLLERS[adv] = read_nnet(file)
-end;
+end
 
 
 struct State{T, N}
@@ -163,7 +164,7 @@ end
 
 ## scalar case; alg is ignored
 function forward_adv(X::Singleton, τ, adv; alg=nothing)
-    v = vcat(element(X), τ*1.0)
+    v = vcat(element(X), τ)
     u = forward(CONTROLLERS[adv], v)
     imax = argmax(u)
     return CTRL_IDX[imax]
@@ -171,7 +172,7 @@ end
 
 ## set-based case
 function forward_adv(X::AbstractZonotope, τ, adv; alg=Ai2())
-    Y = cartesian_product(X, Singleton([τ*1.0]))
+    Y = cartesian_product(X, Singleton([τ]))
 
     out = forward_network(alg, CONTROLLERS[adv], Y)
 
@@ -211,32 +212,61 @@ function VCAS!(out::Vector{State{T, N}}, KMAX; ACC=ACC_MIDDLE, alg_nn=Ai2()) whe
         adv = adv′
     end
     return out
-end
+end;
 
 # ## Specifications
 #
 # For this benchmark the aim is to verify that the ownship avoids entering the
-# NMAC zone after ``k \in \{1, \dots, 10\}`` time steps, i.e., ``h(k) > 100`` or
-# ``h(k) < -100``, for all possible choices of acceleration by the pilot. The
-# set of initial states considered is as follows: ``h(0) \in [-133, -129]``,
-# ``\dot{h}_0(0) \in \{-19.5, -22.5, -25.5, -28.5\}``, ``\tau(0) = 25`` and
-# ``\text{adv}(0) = \text{COC}``.
+# NMAC zone after $k \in \{1, \dots, 10\}$ time steps, i.e., $h(k) > 100$ or
+# $h(k) < -100$, for all possible choices of acceleration by the pilot. The
+# set of initial states considered is as follows: $h(0) \in [-133, -129]$,
+# $\dot{h}_0(0) \in \{-19.5, -22.5, -25.5, -28.5\}$, $\tau(0) = 25$ and
+# $\text{adv}(0) = \text{COC}$.
+
+bad_states = HalfSpace([1.0, 0.0], 100.) ∩ HalfSpace([-1.0, 0.0], 100.)
+
+## property for guaranteed violation
+predicate = X -> X ⊆ bad_states
+predicate_sol = sol -> any(predicate(R) for F in sol for R in F);
 
 # ## Results
 
 # ### Simulation
 
-function _default_state()
-    h0 = Interval(-133, -129)
-    hdot0 = [-19.5,-22.5, -25.5, -28.5]
-    x = sample(h0)[1]
-    y = hdot0[rand(1:4)]
-    τ0 = 25
-    adv0 = :COC
-    return State(Singleton([x, y]), τ0, adv0)
+const h0 = Interval(-133, -129)
+const hdot0 = [-19.5,-22.5, -25.5, -28.5]
+const τ0 = 25.0
+const adv0 = :COC
+
+function _random_states(k=1, include_vertices::Bool=false, rand_h0::Bool=true)
+    N = Float64
+    T = Singleton{N, Vector{N}}
+    states = Vector{State{T, N}}()
+    xs = sample(h0, k, include_vertices=include_vertices)
+    for x in xs
+        if rand_h0
+            ## use a random value for y
+            y = hdot0[rand(1:4)]
+            S0 = State(Singleton([x[1], y]), τ0, adv0)
+            push!(states, S0)
+            continue
+        end
+        ## use all possible values for y
+        for i in 1:4
+            y = hdot0[i]
+            S0 = State(Singleton([x[1], y]), τ0, adv0)
+            push!(states, S0)
+        end
+    end
+    return states
 end
 
-function simulate_VCAS(X0::State=_default_state(); KMAX=10)
+function _all_states()
+    S0 = [convert(Zonotope, concretize(h0 × Singleton([hdot0[i]]))) for i in 1:4]
+    return [State(S0i, τ0, adv0) for S0i in S0]
+end
+
+function simulate_VCAS(X0::State; KMAX=10)
     out = [X0]
     sizehint!(out, KMAX+1)
 
@@ -246,54 +276,69 @@ end
 
 ## project onto the h variable
 function _project(X::Vector{State{T, N}}) where {T<:Singleton, N}
-    return [Singleton([Xi.state.element[1], Xi.τ*1.0]) for Xi in X]
+    return [Singleton([Xi.state.element[1], Xi.τ]) for Xi in X]
 end
 
 _interval(X::LazySet, i) = overapproximate(Projection(X, (i,)), Interval)
 
 function _project(X::Vector{State{T, N}}) where {T<:Zonotope, N}
-    Xint = [_interval(Xi.state, 1) × Singleton([Xi.τ*1.0]) for Xi in X]
+    Xint = [_interval(Xi.state, 1) × Singleton([Xi.τ]) for Xi in X]
 end
 
-ensemble = [simulate_VCAS() for _ in 1:10];
+function run(X0)
+    ensemble = [simulate_VCAS(X0i) for X0i in X0]
+    res = _project.(ensemble)
+    return res
+end
 
-out = _project.(ensemble)
+function check(sol)
+    println("property checking")
+    res_pred = @timed predicate_sol(sol)
+    print_timed(res_pred)
+    if res_pred.value
+        println("The property is violated.")
+    else
+        println("The property may be satisfied.")
+    end
+end;
 
-bad_states = HalfSpace([1.0, 0.0], 100.) ∩ HalfSpace([-1.0, 0.0], 100.)
+# Simulation result for random choice of velocity:
+
+X0 = _random_states(10, true, false)  # randomly sampled points (incl. vertices)
+println("$(length(X0)) simulations with central advisories")
+@time res1 = run(X0)
+check(res1);
+
+# Simulation result for all choices of velocity:
+
+println("flowpipe construction (unsound) with central advisories")
+@time res2 = run(_all_states())
+check(res1);
+
+# Finally we plot the results:
 
 using Plots
 import DisplayAs
-fig = plot(ylab="τ (time to reach horizontally)", xlab="h (vertical distance)")
-plot!(fig, bad_states, xlims=(-200, 200), ylims=(14, 26), alpha=0.3, c=:red)
-for o in out
-    plot!(fig, o, alpha=1.)
-end
-fig = DisplayAs.Text(DisplayAs.PNG(fig))
-
-# ### Flowpipe result for all choices of velocity
-
-h0 = Interval(-133, -129)
-hdot0 = [-19.5,-22.5, -25.5, -28.5]
-
-S0 = [convert(Zonotope, concretize(h0 × Singleton([hdot0[i]]))) for i in 1:4]
-
-τ0 = 25
-adv0 = :COC
-X0 = [State(S0i, τ0, adv0) for S0i in S0]
-
-result = [simulate_VCAS(X0i) for X0i in X0];
-
-out = _project.(result);
-
-bad_states = HalfSpace([1.0, 0.0], 100.) ∩ HalfSpace([-1.0, 0.0], 100.)
 
 fig = plot(ylab="τ (time to reach horizontally)", xlab="h (vertical distance)")
 plot!(fig, bad_states, xlims=(-200, 200), ylims=(14, 26), alpha=0.2, c=:red)
-[plot!(fig, o, lw=2.0, alpha=1., markershape=:none, seriestype=:shape, c=:blue) for o in out[1]]
-[plot!(fig, o, lw=2.0, alpha=1., markershape=:none, seriestype=:shape, c=:orange) for o in out[2]]
-[plot!(fig, o, lw=2.0, alpha=1., markershape=:none, seriestype=:shape, c=:green) for o in out[3]]
-[plot!(fig, o, lw=2.0, alpha=1., markershape=:none, seriestype=:shape, c=:cyan) for o in out[4]]
+for o in res1
+    plot!(fig, o, alpha=1.0)
+end
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
+
+## savefig("VertCAS-rand.pdf")
+
+#-
+
+fig = plot(ylab="τ (time to reach horizontally)", xlab="h (vertical distance)")
+plot!(fig, bad_states, xlims=(-200, 200), ylims=(14, 26), alpha=0.2, c=:red)
+for (i, c) in [(1, :blue), (2, :orange), (3, :green), (4, :cyan)]
+    [plot!(fig, o, lw=2.0, alpha=1., markershape=:none, seriestype=:shape, c=c) for o in res2[i]]
+end
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+
+## savefig("VertCAS-sets.pdf")
 
 # ## References
 
@@ -304,5 +349,7 @@ fig = DisplayAs.Text(DisplayAs.PNG(fig))
 # [2] Akintunde, M. E., Botoeva, E., Kouvaros, P., & Lomuscio, A. (2020, May).
 # [Formal Verification of Neural Agents in Non-deterministic Environments.
 # In Proceedings of the 19th International Conference on Autonomous Agents and
-# MultiAgent Systems (pp. 25-33).](http://ifaamas.org/Proceedings/aamas2020/pdfs/p25.pdf).
-#
+# Multiagent Systems (pp. 25-33).](http://ifaamas.org/Proceedings/aamas2020/pdfs/p25.pdf)
+
+end  #jl
+nothing  #jl
