@@ -275,6 +275,7 @@ else
     ylims!(-1.05, 1.05)
 end
 ## savefig("Airplane-x2-x7.pdf")
+fig
 
 #-
 
@@ -289,6 +290,7 @@ else
     ylims!(-1.05, 1.2)
 end
 ## savefig("Airplane-x8-x9.pdf")
+fig
 
 #-
 
