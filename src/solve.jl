@@ -92,7 +92,7 @@ function _solve(cp::ControlledPlant,
                 solver::Solver,
                 tvec::AbstractVector,
                 sampling_time::N,
-                splitter::Splitter,
+                splitter::AbstractSplitter,
                 rec_method::AbstractReconstructionMethod,
                 remove_zero_generators::Bool
                ) where {N}
@@ -132,7 +132,8 @@ function _solve(cp::ControlledPlant,
     t0 = tvec[k]
     t1 = tvec[k+1]
     X₀ = project(Q₀, st_vars)
-    for X₀i in split(splitter, X₀)
+    X₀s = haskey(splitter, k) ? split(splitter[k], X₀) : [X₀]
+    for X₀i in X₀s
         F, U = _solve_one(X, X₀i, W₀, S, st_vars, t0, t1, cpost, rec_method,
                           solver, network, preprocessing, normalization)
         push!(flowpipes, F)
@@ -150,15 +151,17 @@ function _solve(cp::ControlledPlant,
         X = prev_part.F(t)
         X₀ = _project_oa(X, st_vars, t;
                          remove_zero_generators=remove_zero_generators) |> set
-
         t0 = tvec[k]
         t1 = tvec[k+1]
-        F, U = _solve_one(X, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method,
-                          solver, network, preprocessing, normalization)
-        push!(flowpipes, F)
-        push!(controls, U)
-        if k < length(tvec) - 1
-            push!(waiting_list, WaitingListElement(F, k))
+        X₀s = haskey(splitter, k) ? split(splitter[k], X₀) : [X₀]
+        for X₀i in X₀s
+            F, U = _solve_one(X, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method,
+                              solver, network, preprocessing, normalization)
+            push!(flowpipes, F)
+            push!(controls, U)
+            if k < length(tvec) - 1
+                push!(waiting_list, WaitingListElement(F, k))
+            end
         end
     end
 

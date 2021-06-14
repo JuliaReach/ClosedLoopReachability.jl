@@ -1,35 +1,35 @@
 import ReachabilityAnalysis: split
 
-struct Splitter{S, M, O}
+abstract type AbstractSplitter end
+
+# ==================
+# standard splitter
+# ==================
+
+struct Splitter{S} <: AbstractSplitter
     split_fun::S
-    merge_fun::M
-    output_type::O
 end
 
 split(s::Splitter, X) = s.split_fun(X)
-merge(s::Splitter, Xs) = s.merge_fun(Xs)
+Base.haskey(s::Splitter, k::Int) = k == 1
+Base.getindex(s::Splitter, k::Int) = k == 1 ? s : error("key $k not found")
 
-function NoSplitter(output_type=LazySet{Float64})
+function NoSplitter()
     split_fun = X0 -> [X0]
-    function merge_fun(Xs)
-        length(array(Xs)) != 1 && error("unexpected input")
-        return first(array(Xs))
-    end
-    return Splitter(split_fun, merge_fun, output_type)
+    return Splitter(split_fun)
 end
 
-function BoxSplitter(partition=nothing, output_type=LazySet{Float64})
+function BoxSplitter(partition=nothing)
     if partition == nothing
         # default: one split per dimension
         split_fun = X -> split(box_approximation(X), 2 * ones(Int, dim(X)))
     else
         split_fun = X -> split(box_approximation(X), partition)
     end
-    merge_fun = Xs -> box_approximation(Xs)
-    return Splitter(split_fun, merge_fun, output_type)
+    return Splitter(split_fun)
 end
 
-function ZonotopeSplitter(generators=nothing, splits=nothing, output_type=AbstractZonotope{Float64})
+function ZonotopeSplitter(generators=nothing, splits=nothing)
     if generators == nothing && splits == nothing
         # default: one split per generator
         function split_fun(Z)
@@ -41,6 +41,16 @@ function ZonotopeSplitter(generators=nothing, splits=nothing, output_type=Abstra
     else
         split_fun = Z -> split(Z, generators, splits)
     end
-    merge_fun = Xs -> box_approximation(Xs)
-    return Splitter(split_fun, merge_fun, output_type)
+    return Splitter(split_fun)
 end
+
+# ==================================
+# splitter for different iterations
+# ==================================
+
+struct IndexedSplitter <: AbstractSplitter
+    index2splitter::Dict{Int, Splitter}
+end
+
+Base.haskey(s::IndexedSplitter, k::Int) = haskey(s.index2splitter, k)
+Base.getindex(s::IndexedSplitter, k::Int) = getindex(s.index2splitter, k)
