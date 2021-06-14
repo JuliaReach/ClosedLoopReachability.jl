@@ -129,15 +129,17 @@ function _solve(cp::ControlledPlant,
     # first step
     k = 1
     X = nothing
-    X₀ = project(Q₀, st_vars)
     t0 = tvec[k]
     t1 = tvec[k+1]
-    F, U = _solve_one(X, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method,
-                      solver, network, preprocessing, normalization)
-    push!(flowpipes, F)
-    push!(controls, U)
-    if k < length(tvec) - 1
-        push!(waiting_list, WaitingListElement(F, k))
+    X₀ = project(Q₀, st_vars)
+    for X₀i in split(splitter, X₀)
+        F, U = _solve_one(X, X₀i, W₀, S, st_vars, t0, t1, cpost, rec_method,
+                          solver, network, preprocessing, normalization)
+        push!(flowpipes, F)
+        push!(controls, U)
+        if k < length(tvec) - 1
+            push!(waiting_list, WaitingListElement(F, k))
+        end
     end
 
     # iteration
