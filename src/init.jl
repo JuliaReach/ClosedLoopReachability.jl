@@ -4,7 +4,7 @@ using Requires, Reexport
 
 # unexported methods
 using ReachabilityAnalysis: _check_dim, _get_tspan, _get_cpost, _default_cpost,
-                            ReachSolution, InitialValueProblem, numtype,
+                            ReachSolution, InitialValueProblem, numtype, post,
                             AbstractContinuousPost, TimeInterval,
                             AbstractLazyReachSet, AbstractTaylorModelReachSet
 
@@ -20,8 +20,7 @@ const IA = IntervalArithmetic
 
 using LazySets: _leq, _geq, isapproxzero, remove_zero_generators
 
-# resolve conflicts
-using ReachabilityAnalysis: solve, complement
+import CommonSolve: solve
 
 # optional dependencies
 function __init__()

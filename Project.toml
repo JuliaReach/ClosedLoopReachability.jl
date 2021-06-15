@@ -6,6 +6,7 @@ authors = ["Marcelo Forets <mforets@gmail.com>",
 version = "0.1.0"
 
 [deps]
+CommonSolve = "38540f10-b2f7-11e9-35d8-d573e4eb0ff2"
 LazySets = "b4f0291d-fe17-52bc-9479-3d1a343d9043"
 MAT = "23992714-dd62-5051-b70f-ba57cb901cac"
 MathematicalSystems = "d14a8603-c872-5ed3-9ece-53e0e82e39da"

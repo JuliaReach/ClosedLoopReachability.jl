@@ -1,6 +1,3 @@
-using ReachabilityAnalysis: post
-import ReachabilityAnalysis: solve
-
 """
     solve(prob::AbstractControlProblem, args...; kwargs...)
 
