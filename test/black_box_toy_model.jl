@@ -27,7 +27,7 @@ function oscillator(x::Vector)
     end
     return res
 end;
-controller = oscillator;
+controller = BlackBoxController(oscillator);
 
 X₀ = Interval(0.95, 0.99);
 U = ZeroSet(1);
