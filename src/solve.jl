@@ -59,13 +59,15 @@ function solve(prob::AbstractControlProblem, args...; kwargs...)
 
     splitter = get(kwargs, :splitter, NoSplitter())
 
+    input_splitter = get(kwargs, :input_splitter, NoSplitter())
+
     rec_method = get(kwargs, :reconstruction_method,
                      CartesianProductReconstructor())
 
     remove_zero_generators = get(kwargs, :remove_zero_generators, true)
 
-    sol = _solve(prob, cpost, solver, tvec, τ, splitter, rec_method,
-                 remove_zero_generators)
+    sol = _solve(prob, cpost, solver, tvec, τ, splitter, input_splitter,
+                 rec_method, remove_zero_generators)
 
     d = Dict{Symbol, Any}(:solver=>solver)
     return ReachSolution(sol, cpost, d)
@@ -93,6 +95,7 @@ function _solve(cp::ControlledPlant,
                 tvec::AbstractVector,
                 sampling_time::N,
                 splitter::AbstractSplitter,
+                input_splitter::AbstractSplitter,
                 rec_method::AbstractReconstructionMethod,
                 remove_zero_generators::Bool
                ) where {N}
@@ -134,12 +137,15 @@ function _solve(cp::ControlledPlant,
     X₀ = project(Q₀, st_vars)
     X₀s = haskey(splitter, k) ? split(splitter[k], X₀) : [X₀]
     for X₀i in X₀s
-        F, U = _solve_one(X, X₀i, W₀, S, st_vars, t0, t1, cpost, rec_method,
-                          solver, network, preprocessing, normalization)
-        push!(flowpipes, F)
-        push!(controls, U)
+        Fs, Us = _solve_one(X, X₀i, W₀, S, st_vars, t0, t1, cpost, rec_method,
+                            solver, network, preprocessing, normalization,
+                            input_splitter)
+        append!(flowpipes, Fs)
+        append!(controls, Us)
         if k < length(tvec) - 1
-            push!(waiting_list, WaitingListElement(F, k))
+            for F in Fs
+                push!(waiting_list, WaitingListElement(F, k))
+            end
         end
     end
 
@@ -155,12 +161,15 @@ function _solve(cp::ControlledPlant,
         t1 = tvec[k+1]
         X₀s = haskey(splitter, k) ? split(splitter[k], X₀) : [X₀]
         for X₀i in X₀s
-            F, U = _solve_one(X, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method,
-                              solver, network, preprocessing, normalization)
-            push!(flowpipes, F)
-            push!(controls, U)
+            Fs, Us = _solve_one(X, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method,
+                                solver, network, preprocessing, normalization,
+                                input_splitter)
+            append!(flowpipes, Fs)
+            append!(controls, Us)
             if k < length(tvec) - 1
-                push!(waiting_list, WaitingListElement(F, k))
+                for F in Fs
+                    push!(waiting_list, WaitingListElement(F, k))
+                end
             end
         end
     end
@@ -180,22 +189,30 @@ function nnet_forward(solver, network, X, preprocessing, normalization)
 end
 
 function _solve_one(X, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method, solver,
-                    network, preprocessing, normalization)
+                    network, preprocessing, normalization, splitter)
     # add nondeterministic inputs (if any)
     P₀ = isnothing(W₀) ? X₀ : X₀ × W₀
 
     # get new control inputs from the controller
     U = nnet_forward(solver, network, X₀, preprocessing, normalization)
 
-    # combine states with new control inputs
-    Q₀ = _reconstruct(rec_method, P₀, U, X, t0)
-
     dt = t0 .. t1
-    sol = post(cpost, IVP(S, Q₀), dt)
 
-    t1′ = tend(sol)
-    Δt = t1 - t1′  # difference of exact and actual control time
-    @assert LazySets.isapproxzero(Δt) "the flowpipe duration differs " *
-        "from the requested duration by $Δt time units (stopped at $(t1′))"
-    return sol, U
+    # split control inputs
+    sols = []
+    Us = []
+    for Ui in split(splitter, U)
+        # combine states with new control inputs
+        Q₀ = _reconstruct(rec_method, P₀, Ui, X, t0)
+
+        sol = post(cpost, IVP(S, Q₀), dt)
+
+        t1′ = tend(sol)
+        Δt = t1 - t1′  # difference of exact and actual control time
+        @assert LazySets.isapproxzero(Δt) "the flowpipe duration differs " *
+            "from the requested duration by $Δt time units (stopped at $(t1′))"
+        push!(sols, sol)
+        push!(Us, Ui)
+    end
+    return sols, Us
 end
