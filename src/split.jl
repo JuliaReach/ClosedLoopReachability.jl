@@ -54,3 +54,20 @@ end
 
 Base.haskey(s::IndexedSplitter, k::Int) = haskey(s.index2splitter, k)
 Base.getindex(s::IndexedSplitter, k::Int) = getindex(s.index2splitter, k)
+
+# ==============================
+# splitter based on state space
+# ==============================
+
+struct SignSplitter  <: AbstractSplitter
+end
+
+function split(s::SignSplitter, X::Interval{N}) where {N}
+    l = low(X, 1)
+    h = high(X, 1)
+    if l < zero(N) && h > zero(N)
+        return [Interval(l, zero(N)), Interval(zero(N), h)]
+    else
+        return [X]
+    end
+end

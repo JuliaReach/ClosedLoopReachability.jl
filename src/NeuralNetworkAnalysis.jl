@@ -14,7 +14,8 @@ export ControlledPlant
 
 # splitters
 export BoxSplitter, ZonotopeSplitter,
-       IndexedSplitter
+       IndexedSplitter,
+       SignSplitter
 
 # solvers
 export solve, forward, simulate,
