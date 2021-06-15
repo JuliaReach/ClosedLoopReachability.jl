@@ -25,6 +25,14 @@ function apply(normalization::UniformAdditiveNormalization, x)
     return x .+ normalization.shift
 end
 
+function apply(normalization::UniformAdditiveNormalization, X::LazySet)
+    return translate(X, fill(normalization.shift, dim(X)))
+end
+
+function apply(normalization::UniformAdditiveNormalization, X::UnionSetArray)
+    return UnionSetArray([apply(normalization, Xi) for Xi in array(X)])
+end
+
 # =====================
 # Control preprocessing
 # =====================
