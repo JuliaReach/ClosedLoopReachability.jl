@@ -113,3 +113,17 @@ control_preprocessing(cp::ControlledPlant) = cp.preprocessing
 state_vars(cp::ControlledPlant) = get(cp.vars, :state_vars, Int[])
 input_vars(cp::ControlledPlant) = get(cp.vars, :input_vars, Int[])
 control_vars(cp::ControlledPlant) = get(cp.vars, :control_vars, Int[])
+
+# =============
+# Specification
+# =============
+
+@with_kw struct Specification{NT, PT, ET}
+    T::NT
+    predicate::PT
+    ext::ET = nothing
+end
+
+predicate(spec::Specification) = spec.predicate
+time_horizon(spec::Specification) = spec.T
+ext(spec::Specification) = spec.ext
