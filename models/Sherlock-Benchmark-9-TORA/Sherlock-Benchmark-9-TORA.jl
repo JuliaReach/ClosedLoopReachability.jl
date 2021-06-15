@@ -5,7 +5,7 @@
 module TORA  #jl
 
 using NeuralNetworkAnalysis, MAT
-using NeuralNetworkAnalysis: UniformAdditiveNormalization, SingleEntryVector,
+using NeuralNetworkAnalysis: UniformAdditivePostprocessing, SingleEntryVector,
                              TaylorModelReconstructor, NoSplitter
 
 # The following option determines whether the verification settings should be
@@ -66,10 +66,10 @@ vars_idx = Dict(:state_vars=>1:4, :control_vars=>5)
 ivp = @ivp(x' = TORA!(x), dim: 5, x(0) ∈ X₀ × U)
 
 period = 1.0  # control period
-control_normalization = UniformAdditiveNormalization(-10.0)  # control normalization
+control_postprocessing = UniformAdditivePostprocessing(-10.0)  # control postprocessing
 
 prob = ControlledPlant(ivp, controller, vars_idx, period;
-                       normalization=control_normalization)
+                       postprocessing=control_postprocessing)
 
 ## Safety specification
 T = 20.0  # time horizon

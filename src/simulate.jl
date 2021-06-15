@@ -35,8 +35,8 @@ function simulate(cp::AbstractControlProblem, args...; kwargs...)
     time_span = _get_tspan(args...; kwargs...)
     trajectories = get(kwargs, :trajectories, 10)
     inplace = get(kwargs, :inplace, true)
-    normalization = control_normalization(cp)
     preprocessing = control_preprocessing(cp)
+    postprocessing = control_postprocessing(cp)
     include_vertices = get(kwargs, :include_vertices, false)
 
     t = tstart(time_span)
@@ -59,7 +59,7 @@ function simulate(cp::AbstractControlProblem, args...; kwargs...)
             x₀ = states[j]
             x₀ = apply(preprocessing, x₀)
             network_output = forward(network, x₀)
-            controls[j] = apply(normalization, network_output)
+            controls[j] = apply(postprocessing, network_output)
         end
         all_controls[i] = controls
 

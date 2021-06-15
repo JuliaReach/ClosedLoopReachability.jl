@@ -5,7 +5,7 @@
 module Unicycle  #jl
 
 using NeuralNetworkAnalysis
-using NeuralNetworkAnalysis: UniformAdditiveNormalization, SingleEntryVector
+using NeuralNetworkAnalysis: UniformAdditivePostprocessing, SingleEntryVector
 
 # This benchmark is that of a unicycle model of a car [^1] taken from Benchmark
 # 10 of the Sherlock tool. It models the dynamics of a car involving 4
@@ -64,10 +64,10 @@ ivp = @ivp(x' = unicycle!(x), dim: 7, x(0) ∈ X₀ × U₀)
 
 period = 0.2  # control period
 
-control_normalization = UniformAdditiveNormalization(-20.0)
+control_postprocessing = UniformAdditivePostprocessing(-20.0)
 
 prob = ControlledPlant(ivp, controller, vars_idx, period;
-                       normalization=control_normalization)
+                       postprocessing=control_postprocessing)
 
 ## Safety specification: [x[1], x[2], x[3], x[4]] ∈ ±[0.6, 0.2, 0.06, 0.3] for some t ≤ T
 T = 10.0

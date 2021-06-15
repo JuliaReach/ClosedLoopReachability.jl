@@ -1,36 +1,36 @@
-# =====================
-# Control normalization
-# =====================
+# ======================
+# Control postprocessing
+# ======================
 
-abstract type ControlNormalization end
+abstract type ControlPostprocessing end
 
-struct NoNormalization <: ControlNormalization
+struct NoPostprocessing <: ControlPostprocessing
 end
 
-apply(normalization::NoNormalization, x) = x
+apply(::NoPostprocessing, x) = x
 
-struct UniformAdditiveNormalization{N<:Number} <: ControlNormalization
+struct UniformAdditivePostprocessing{N<:Number} <: ControlPostprocessing
     shift::N
 
-    function UniformAdditiveNormalization(shift::N) where {N<:Number}
+    function UniformAdditivePostprocessing(shift::N) where {N<:Number}
         if shift == zero(N)
-            @warn("zero additive control normalization is discouraged; " *
-                  "use `NoNormalization` instead")
+            @warn("zero additive control postprocessing is discouraged; " *
+                  "use `NoPostprocessing` instead")
         end
         return new{N}(shift)
     end
 end
 
-function apply(normalization::UniformAdditiveNormalization, x)
-    return x .+ normalization.shift
+function apply(postprocessing::UniformAdditivePostprocessing, x)
+    return x .+ postprocessing.shift
 end
 
-function apply(normalization::UniformAdditiveNormalization, X::LazySet)
-    return translate(X, fill(normalization.shift, dim(X)))
+function apply(postprocessing::UniformAdditivePostprocessing, X::LazySet)
+    return translate(X, fill(postprocessing.shift, dim(X)))
 end
 
-function apply(normalization::UniformAdditiveNormalization, X::UnionSetArray)
-    return UnionSetArray([apply(normalization, Xi) for Xi in array(X)])
+function apply(postprocessing::UniformAdditivePostprocessing, X::UnionSetArray)
+    return UnionSetArray([apply(postprocessing, Xi) for Xi in array(X)])
 end
 
 # =====================
@@ -42,7 +42,7 @@ abstract type ControlPreprocessing end
 struct NoPreprocessing <: ControlPreprocessing
 end
 
-apply(normalization::NoPreprocessing, x) = x
+apply(::NoPreprocessing, x) = x
 
 struct FunctionPreprocessing{F<:Function} <: ControlPreprocessing
     f::F
@@ -64,18 +64,19 @@ end
 abstract type AbstractControlProblem end
 
 """
-    ControlledPlant{ST, CT, XT, DT, PT} <: AbstractControlProblem
+    ControlledPlant{ST, CT, XT, DT, PT, CPRT, CPST} <: AbstractControlProblem
 
 Struct representing a closed-loop controlled system.
 
 ### Fields
 
-- `ivp`           -- initial-value problem
-- `controller`    -- controller
-- `vars`          -- dictionary storing state variables, input variables and control variables
-- `period`        -- control period
-- `normalization` -- normalization of the controller output
-- `preprocessing` -- preprocessing of the controller input
+- `ivp`            -- initial-value problem
+- `controller`     -- controller
+- `vars`           -- dictionary storing state variables, input variables and
+                      control variables
+- `period`         -- control period
+- `postprocessing` -- postprocessing of the controller output
+- `preprocessing`  -- preprocessing of the controller input
 
 ### Parameters
 
@@ -84,29 +85,29 @@ Struct representing a closed-loop controlled system.
 - `XT`:  type of initial condition
 - `DT`:  type of variables
 - `PT`:  type of period
-- `CNT`: type of control normalization
-- `CPT`: type of control preprocessing
+- `CPRT`: type of control preprocessing
+- `CPST`: type of control postprocessing
 
 ### Notes
 
 While typically the `controller` is a neural network, this struct does not
 prescribe the type.
 """
-struct ControlledPlant{ST, CT, XT, DT, PT, CNT, CPT} <: AbstractControlProblem
+struct ControlledPlant{ST, CT, XT, DT, PT, CPRT, CPST} <: AbstractControlProblem
     ivp::InitialValueProblem{ST, XT}
     controller::CT
     vars::Dict{Symbol, DT}
     period::PT
-    normalization::CNT
-    preprocessing::CPT
+    preprocessing::CPRT
+    postprocessing::CPST
 
     function ControlledPlant(ivp::InitialValueProblem{ST, XT},
                              controller::CT,
                              vars::Dict{Symbol, DT},
                              period::PT;
-                             normalization::CNT=NoNormalization(),
-                             preprocessing::CPT=NoPreprocessing()) where {ST, CT, XT, DT, PT, CNT, CPT}
-        return new{ST, CT, XT, DT, PT, CNT, CPT}(ivp, controller, vars, period, normalization, preprocessing)
+                             preprocessing::CPRT=NoPreprocessing(),
+                             postprocessing::CPST=NoPostprocessing()) where {ST, CT, XT, DT, PT, CPRT, CPST}
+        return new{ST, CT, XT, DT, PT, CPRT, CPST}(ivp, controller, vars, period, preprocessing, postprocessing)
     end
 end
 
@@ -115,7 +116,7 @@ MathematicalSystems.initial_state(cp::ControlledPlant) = initial_state(cp.ivp)
 system(cp::ControlledPlant) = cp.ivp.s
 controller(cp::ControlledPlant) = cp.controller
 period(cp::ControlledPlant) = cp.period
-control_normalization(cp::ControlledPlant) = cp.normalization
+control_postprocessing(cp::ControlledPlant) = cp.postprocessing
 control_preprocessing(cp::ControlledPlant) = cp.preprocessing
 
 state_vars(cp::ControlledPlant) = get(cp.vars, :state_vars, Int[])
