@@ -53,7 +53,7 @@ function _reconstruct(method::CartesianProductReconstructor, P₀::LazySet, U₀
 end
 
 @with_kw struct TaylorModelReconstructor <: AbstractReconstructionMethod
-    box::Bool = false
+    box::Bool = true
 end
 
 # if no Taylor model is available => use the given set P₀
@@ -92,7 +92,7 @@ function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Laz
     end
 
     # fill the components for the inputs
-    if method.box
+    if method.box || isa(U₀, AbstractHyperrectangle)
         B₀ = convert(IntervalBox, box_approximation(U₀))
         @inbounds for i in 1:m
             I = B₀[i]
@@ -103,12 +103,12 @@ function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Laz
         end
     else
         Z₀ = ReachabilityAnalysis._convert_or_overapproximate(U₀, Zonotope)
-        Z₀ = ReachabilityAnalysis._reduce_order(Z₀, 2)
-        # TODO use _overapproximate_structured directly?
-        #Utm₀ = set(ReachabilityAnalysis._overapproximate_structured(Z₀, TaylorModelReachSet, orderT=orderT, orderQ=orderQ))
-        #@inbounds for i in 1:m
-        #    vTM[n+i] = Utm₀[i]
-        #end
+        Z₀ = ReachabilityAnalysis._reduce_order(Z₀, 2, force_reduction=true)
+        # NOTE if we used _overapproximate_structured directly :
+        # Utm₀ = set(ReachabilityAnalysis._overapproximate_structured(Z₀, TaylorModelReachSet, orderT=orderT, orderQ=orderQ))
+        # @inbounds for i in 1:m
+        #     vTM[n+i] = Utm₀[i]
+        # end
 
         x = set_variables("x", numvars=n+m, order=orderQ)
         xc = view(x, n+1:n+m)
