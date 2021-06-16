@@ -84,7 +84,7 @@ predicate_sol = sol -> any(predicate(R) for F in sol for R in F);
 
 # ## Results
 
-alg = TMJets(abstol=1e-8, orderT=6, orderQ=1)
+alg = TMJets(abstol=1e-10, orderT=8, orderQ=1)
 alg_nn = Ai2()
 
 function benchmark(; silent::Bool=false)
@@ -107,12 +107,11 @@ function benchmark(; silent::Bool=false)
     return solz
 end;
 
-## TODO uncomment once the analysis works
-## benchmark(silent=true)  # warm-up
-## @time sol = benchmark()  # benchmark
-## sol = res.value
-## println("total analysis time")
-## print_timed(res);
+benchmark(silent=true)  # warm-up
+res = @timed sol = benchmark()  # benchmark
+sol = res.value
+println("total analysis time")
+print_timed(res);
 
 # We also compute some simulations:
 
@@ -136,8 +135,8 @@ function plot_helper(fig, vars)
     else
         target_set_projected = project(target_set, vars)
     end
-    plot!(fig, target_set_projected, color=:cyan, lab="target states")
-##    plot!(fig, sol, vars=vars, color=:yellow, lab="")  ## TODO uncomment once the analysis works
+    plot!(fig, sol, vars=vars, color=:yellow, lab="")
+    plot!(fig, target_set_projected, color=:cyan, alpha=0.5, lab="target states")
     plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
     fig = DisplayAs.Text(DisplayAs.PNG(fig))
 end
