@@ -76,12 +76,12 @@ prob = ControlledPlant(ivp, controller, vars_idx, period)
 unsafe_states = HalfSpace(SingleEntryVector(1, 3, -1.0), -1.0)
 
 predicate = X -> overapproximate(X, Hyperrectangle) ⊆ unsafe_states
-function predicate_sol(sol)
+function predicate_sol(sol; silent::Bool=false)
     for F in sol
         for R in F
             t = tspan(R)
             if t.lo >= 0.5 && t.hi <= 1.0 && predicate(R)
-                println("violation for time range $t")
+                silent || println("violation for time range $t")
                 return true
             end
         end
@@ -108,7 +108,7 @@ function benchmark(; silent::Bool=false)
     ## Next we check the property for an overapproximated flowpipe:
     silent || println("property checking")
     solz = overapproximate(sol, Zonotope)
-    res_pred = @timed predicate_sol(solz)
+    res_pred = @timed predicate_sol(solz; silent=silent)
     silent || print_timed(res_pred)
     if res_pred.value
         silent || println("The property is violated.")
