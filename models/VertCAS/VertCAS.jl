@@ -306,14 +306,22 @@ end;
 
 X0 = _random_states(10, true, false)  # randomly sampled points (incl. vertices)
 println("$(length(X0)) simulations with central advisories")
-@time res1 = run(X0)
-check(res1);
+res = @timed begin
+    res1 = run(X0)
+    check(res1)
+end
+println("total analysis time")
+print_timed(res);
 
 # Simulation result for all choices of velocity:
 
 println("flowpipe construction (unsound) with central advisories")
-@time res2 = run(_all_states())
-check(res1);
+res = @timed begin
+    res2 = run(_all_states())
+    check(res1)
+end
+println("total analysis time")
+print_timed(res);
 
 # Finally we plot the results:
 

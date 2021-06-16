@@ -156,7 +156,10 @@ function run(use_less_robust_controller::Bool; falsification::Bool=false)
     else
         println("Running analysis with more robust controller")
     end
-    sol, sim = benchmark()  # benchmark
+    res = @timed benchmark()  # benchmark
+    sol, sim = res.value
+    println("total analysis time")
+    print_timed(res)
 
     return sol, sim, prob, spec
 end;

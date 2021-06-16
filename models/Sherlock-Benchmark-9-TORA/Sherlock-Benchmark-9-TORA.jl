@@ -120,11 +120,19 @@ function benchmark(; T=T, silent::Bool=false)
 end
 
 benchmark(T=T_warmup, silent=true)  # warm-up
-@time sol = benchmark(T=T_reach);  # benchmark
+res = @timed benchmark(T=T_reach)  # benchmark
+sol = res.value
+println("total analysis time")
+print_timed(res);
 
 # We also compute some simulations:
+
 import DifferentialEquations
-@time sim = simulate(prob, T=T; trajectories=10, include_vertices=true);
+
+println("simulation")
+res = @timed simulate(prob, T=T; trajectories=10, include_vertices=true)
+sim = res.value
+print_timed(res);
 
 # Finally we plot the results
 using Plots

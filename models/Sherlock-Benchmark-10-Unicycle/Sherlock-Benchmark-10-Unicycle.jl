@@ -89,34 +89,39 @@ alg_nn = Ai2()
 
 function benchmark(; silent::Bool=false)
     ## We solve the controlled system:
-    ## TODO uncomment once the analysis works
-##    silent || println("flowpipe construction")
-##    res_sol = @timed sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg)
-##    sol = res_sol.value
-##    silent || print_timed(res_sol)
-##
-##    ## Next we check the property for an overapproximated flowpipe:
-##    silent || println("property checking")
-##    solz = overapproximate(sol, Zonotope)
-##    res_pred = @timed predicate_sol(solz)
-##    silent || print_timed(res_pred)
-##    if res_pred.value
-##        silent || println("The property is satisfied.")
-##    else
-##        silent || println("The property may be violated.")
-##    end
-    solz = nothing
-    return solz
-end
+    silent || println("flowpipe construction")
+    res_sol = @timed sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg)
+    sol = res_sol.value
+    silent || print_timed(res_sol)
 
-benchmark(silent=true)  # warm-up
-@time sol = benchmark();  # benchmark
+    ## Next we check the property for an overapproximated flowpipe:
+    silent || println("property checking")
+    solz = overapproximate(sol, Zonotope)
+    res_pred = @timed predicate_sol(solz)
+    silent || print_timed(res_pred)
+    if res_pred.value
+        silent || println("The property is satisfied.")
+    else
+        silent || println("The property may be violated.")
+    end
+    return solz
+end;
+
+## TODO uncomment once the analysis works
+## benchmark(silent=true)  # warm-up
+## @time sol = benchmark()  # benchmark
+## sol = res.value
+## println("total analysis time")
+## print_timed(res);
 
 # We also compute some simulations:
 
 import DifferentialEquations
 
-@time sim = simulate(prob, T=T; trajectories=10, include_vertices=false);
+println("simulation")
+res = @timed simulate(prob, T=T; trajectories=10, include_vertices=false)
+sim = res.value
+print_timed(res);
 
 # Finally we plot the results:
 

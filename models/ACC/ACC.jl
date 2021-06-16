@@ -168,12 +168,19 @@ function benchmark(; silent::Bool=false)
 end
 
 benchmark(silent=true)  # warm-up
-@time solz = benchmark();  # benchmark
+res = @timed benchmark()  # benchmark
+sol = res.value
+println("total analysis time")
+print_timed(res);
 
 # We also compute some simulations:
+
 import DifferentialEquations
 
-sim = simulate(prob, T=T, trajectories=10, include_vertices=true);
+println("simulation")
+res = @timed simulate(prob, T=T, trajectories=10, include_vertices=true)
+sim = res.value
+print_timed(res);
 
 # Finally we plot the results:
 
@@ -182,7 +189,7 @@ import DisplayAs
 
 fig = plot(leg=(0.4, 0.3))
 xlabel!(fig, "time")
-F = flowpipe(solz)
+F = flowpipe(sol)
 
 fp_rel = linear_map(Matrix(d_rel'), F)
 output_map_rel = d_rel

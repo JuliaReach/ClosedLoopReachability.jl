@@ -237,7 +237,10 @@ function benchmark(; silent::Bool=false)
 end
 
 benchmark(silent=true)  # warm-up
-sol, sim = benchmark();  # benchmark
+res = @timed benchmark()  # benchmark
+sol, sim = res.value
+println("total analysis time")
+print_timed(res);
 
 # Finally we plot the results:
 
