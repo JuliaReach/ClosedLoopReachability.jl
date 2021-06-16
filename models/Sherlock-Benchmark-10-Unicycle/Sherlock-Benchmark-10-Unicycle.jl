@@ -136,9 +136,9 @@ function plot_helper(fig, vars)
     else
         target_set_projected = project(target_set, vars)
     end
-    plot!(fig, target_set_projected, color=:lightgreen, linecolor=:black, lw=5.0)
+    plot!(fig, target_set_projected, color=:cyan, lab="target states")
 ##    plot!(fig, sol, vars=vars, color=:yellow, lab="")  ## TODO uncomment once the analysis works
-    plot_simulation!(fig, sim; vars=vars, color=:red, lab="")
+    plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
     fig = DisplayAs.Text(DisplayAs.PNG(fig))
 end
 

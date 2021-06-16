@@ -143,7 +143,7 @@ fig = plot()
 unsafe_states_projected = project(unsafe_states, [vars[2]])
 time = Interval(0.5, 1.0)
 unsafe_states_projected = cartesian_product(time, unsafe_states_projected)
-plot!(fig, unsafe_states_projected, color=:red, alpha=:0.5, linecolor=:black, lw=5.0)
+plot!(fig, unsafe_states_projected, color=:red, alpha=:0.2, lab="unsafe states")
 time0 = Singleton([0.0])
 if !falsification
     plot!(fig, cartesian_product(time0, project(initial_state(prob), [vars[2]])),
@@ -157,7 +157,8 @@ else
     xlims!(0, T)
     ylims!(0.55, 1.3)
 end
-plot_simulation!(fig, sim; vars=vars, color=:red, lab="")
+lab_sim = falsification ? "simulation" : ""
+plot_simulation!(fig, sim; vars=vars, color=:black, lab=lab_sim)
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
 ## savefig("Single-Pendulum.png")
 fig

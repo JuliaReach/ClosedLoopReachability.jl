@@ -182,14 +182,22 @@ import DisplayAs
 
 function plot_helper(fig, vars, sol, sim, prob, spec, plot_sol)
     safe_states = spec.ext
-    plot!(fig, project(safe_states, vars), color=:lightgreen, linecolor=:black, lw=5.0)
+    if vars[1] == 0
+        safe_states_projected = project(safe_states, [vars[2]])
+        time = Interval(0, T)
+        safe_states_projected = cartesian_product(time, safe_states_projected)
+    else
+        safe_states_projected = project(safe_states, vars)
+    end
+    plot!(fig, safe_states_projected, color=:lightgreen, lab="safe states")
     if !falsification && 0 ∉ vars
         plot!(fig, project(initial_state(prob), vars), lab="X₀")
     end
     if plot_sol
         plot!(fig, sol, vars=vars, color=:yellow, lab="")
     end
-    plot_simulation!(fig, sim; vars=vars, color=:red, lab="")
+    lab_sim = falsification ? "simulation" : ""
+    plot_simulation!(fig, sim; vars=vars, color=:black, lab=lab_sim)
     fig = DisplayAs.Text(DisplayAs.PNG(fig))
 end
 

@@ -146,12 +146,12 @@ function plot_helper(fig, vars)
     else
         safe_states_projected = project(safe_states, vars)
     end
-    plot!(fig, safe_states_projected, color=:lightgreen, linecolor=:black, lw=5.0)
+    plot!(fig, safe_states_projected, color=:lightgreen, lab="safe states")
     if verification && 0 ∉ vars
         plot!(fig, project(X₀, vars), lab="X₀")
     end
     plot!(fig, sol, vars=vars, color=:yellow, lab="")
-    plot_simulation!(fig, sim; vars=vars, color=:red, lab="")
+    plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
     fig = DisplayAs.Text(DisplayAs.PNG(fig))
 end
 
