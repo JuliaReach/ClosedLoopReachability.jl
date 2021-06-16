@@ -12,6 +12,12 @@ module DoublePendulum  #jl
 using NeuralNetworkAnalysis
 using NeuralNetworkAnalysis: SingleEntryVector, Specification
 
+# The following option determines whether the falsification settings should be
+# used or not. The falsification settings are sufficient to show that the safety
+# property is violated. Concretely we start from an initial point and use a
+# smaller time step.
+const falsification = true;
+
 # ## Model
 #
 # ```math
@@ -60,8 +66,7 @@ end;
 
 # ## Specification
 
-function DoublePendulum_model(use_less_robust_controller::Bool;
-                              falsification::Bool=false)
+function DoublePendulum_model(use_less_robust_controller::Bool)
     net_lr = @modelpath("Double-Pendulum", "controller_double_pendulum_less_robust.nnet")
     net_mr = @modelpath("Double-Pendulum", "controller_double_pendulum_more_robust.nnet")
     controller = read_nnet(use_less_robust_controller ? net_lr : net_mr)
@@ -117,9 +122,8 @@ end;
 
 import DifferentialEquations
 
-function run(use_less_robust_controller::Bool; falsification::Bool=false)
-    prob, spec = DoublePendulum_model(use_less_robust_controller;
-                                      falsification=falsification)
+function run(use_less_robust_controller::Bool)
+    prob, spec = DoublePendulum_model(use_less_robust_controller)
 
     alg = TMJets20(abstol=1e-9, orderT=8, orderQ=1)
     alg_nn = Ai2()
@@ -168,8 +172,8 @@ end;
 ## `true`: use a less robust controller
 ## `false`: use a more robust controller
 ## the choice also influences settings like the period and the specification
-res_true = run(true; falsification=true)
-res_false = run(false; falsification=true);
+res_true = run(true)
+res_false = run(false);
 
 # Finally we plot the results:
 
