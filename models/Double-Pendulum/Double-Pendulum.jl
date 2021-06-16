@@ -183,7 +183,7 @@ import DisplayAs
 function plot_helper(fig, vars, sol, sim, prob, spec, plot_sol)
     safe_states = spec.ext
     plot!(fig, project(safe_states, vars), color=:lightgreen, linecolor=:black, lw=5.0)
-    if 0 ∉ vars
+    if !falsification && 0 ∉ vars
         plot!(fig, project(initial_state(prob), vars), lab="X₀")
     end
     if plot_sol

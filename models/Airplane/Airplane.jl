@@ -259,7 +259,7 @@ function plot_helper(fig, vars)
         safe_states_projected = project(safe_states, vars)
     end
     plot!(fig, safe_states_projected, color=:lightgreen, linecolor=:black, lw=5.0)
-    if 0 ∉ vars
+    if !falsification && 0 ∉ vars
         plot!(fig, project(initial_state(prob), vars), lab="X₀")
     end
     plot!(fig, sol, vars=vars, color=:orange, lab="")

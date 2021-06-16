@@ -137,9 +137,6 @@ function plot_helper(fig, vars)
         target_set_projected = project(target_set, vars)
     end
     plot!(fig, target_set_projected, color=:lightgreen, linecolor=:black, lw=5.0)
-    if 0 ∉ vars
-        plot!(fig, project(X₀, vars), lab="X₀")
-    end
 ##    plot!(fig, sol, vars=vars, color=:yellow, lab="")  ## TODO uncomment once the analysis works
     plot_simulation!(fig, sim; vars=vars, color=:red, lab="")
     fig = DisplayAs.Text(DisplayAs.PNG(fig))
@@ -147,6 +144,8 @@ end
 
 vars = (1, 2)
 fig = plot(xlab="x₁", ylab="x₂")
+xlims!(-0.65, 9.6)
+ylims!(-4.55, 0.25)
 plot_helper(fig, vars)
 ## savefig("Unicycle-x1-x2.png")
 fig

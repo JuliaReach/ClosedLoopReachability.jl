@@ -145,8 +145,10 @@ time = Interval(0.5, 1.0)
 unsafe_states_projected = cartesian_product(time, unsafe_states_projected)
 plot!(fig, unsafe_states_projected, color=:red, alpha=:0.5, linecolor=:black, lw=5.0)
 time0 = Singleton([0.0])
-plot!(fig, cartesian_product(time0, project(initial_state(prob), [vars[2]])),
-      lab="X₀")
+if !falsification
+    plot!(fig, cartesian_product(time0, project(initial_state(prob), [vars[2]])),
+          lab="X₀")
+end
 plot!(fig, sol, vars=vars, color=:yellow, lab="")
 if falsification
     xlims!(0, T)
