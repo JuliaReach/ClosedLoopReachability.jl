@@ -11,7 +11,7 @@
 module ACC  #jl
 
 using NeuralNetworkAnalysis, MAT
-using NeuralNetworkAnalysis: FunctionPreprocessing, TaylorModelReconstructor
+using NeuralNetworkAnalysis: FunctionPreprocessing
 
 # ## Model
 #
@@ -144,13 +144,11 @@ alg = TMJets(abstol=1e-6, orderT=6, orderQ=1);
 # To propagate sets through the neural network, we use the `Ai2` algorithm:
 alg_nn = Ai2()
 
-reconstruction_method = TaylorModelReconstructor()
 
 function benchmark(; silent::Bool=false)
     ## We solve the controlled system:
     silent || println("flowpipe construction")
-    res_sol = @timed solve(prob, T=T, alg_nn=alg_nn, alg=alg,
-                           reconstruction_method=reconstruction_method)
+    res_sol = @timed solve(prob, T=T, alg_nn=alg_nn, alg=alg)
     sol = res_sol.value
     silent || print_timed(res_sol)
 

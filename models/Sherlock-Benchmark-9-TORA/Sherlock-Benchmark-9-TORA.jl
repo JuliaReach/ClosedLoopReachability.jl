@@ -6,7 +6,7 @@ module TORA  #jl
 
 using NeuralNetworkAnalysis, MAT
 using NeuralNetworkAnalysis: UniformAdditivePostprocessing, SingleEntryVector,
-                             TaylorModelReconstructor, NoSplitter
+                             NoSplitter
 
 # The following option determines whether the verification settings should be
 # used or not. The verification settings are chosen to show that the safety
@@ -90,7 +90,6 @@ predicate = X -> X ⊆ safe_states;
 
 alg = TMJets(abstol=1e-10, orderT=8, orderQ=3)
 alg_nn = Ai2()
-reconstruction_method = TaylorModelReconstructor()
 if verification
     splitter = BoxSplitter([4, 4, 3, 5])
 else
@@ -101,7 +100,6 @@ function benchmark(; T=T, silent::Bool=false)
     ## We solve the controlled system:
     silent || println("flowpipe construction")
     res_sol = @timed sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg,
-                                 reconstruction_method=reconstruction_method,
                                  splitter=splitter)
     sol = res_sol.value
     silent || print_timed(res_sol)
