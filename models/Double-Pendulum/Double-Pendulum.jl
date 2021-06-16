@@ -202,7 +202,7 @@ function plot_helper(fig, vars, sol, sim, prob, spec, plot_sol)
 end
 
 vars=(1, 2)
-fig = plot(xlab="x₁", ylab="x₂")
+fig = plot(xlab="θ₁", ylab="θ₂")
 sol, sim, prob, spec = res_true
 xlims!(-0.5, 1.9)
 plot_helper(fig, vars, sol, sim, prob, spec, true)
@@ -212,7 +212,7 @@ fig
 #-
 
 vars=(3, 4)
-fig = plot(xlab="x₃", ylab="x₄")
+fig = plot(xlab="θ₃'", ylab="θ₄'")
 sol, sim, prob, spec = res_true
 xlims!(-0.7, 1.7)
 ylims!(-1.6, 1.5)
@@ -223,7 +223,7 @@ fig
 #-
 
 vars=(1, 2)
-fig = plot(xlab="x₁", ylab="x₂")
+fig = plot(xlab="θ₁", ylab="θ₂")
 sol, sim, prob, spec = res_false
 plot_helper(fig, vars, sol, sim, prob, spec, false)
 ## savefig("Double-Pendulum-more-robust-x$(vars[1])-x$(vars[2]).png")
@@ -232,7 +232,7 @@ fig
 #-
 
 vars=(3, 4)
-fig = plot(xlab="x₃", ylab="x₄")
+fig = plot(xlab="θ₃'", ylab="θ₄'")
 sol, sim, prob, spec = res_false
 xlims!(-1.8, 1.5)
 ylims!(-1.6, 1.5)

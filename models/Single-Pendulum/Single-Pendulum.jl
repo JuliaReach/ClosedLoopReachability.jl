@@ -139,7 +139,7 @@ using Plots
 import DisplayAs
 
 vars = (0, 1)
-fig = plot()
+fig = plot(ylab="θ")
 unsafe_states_projected = project(unsafe_states, [vars[2]])
 time = Interval(0.5, 1.0)
 unsafe_states_projected = cartesian_product(time, unsafe_states_projected)

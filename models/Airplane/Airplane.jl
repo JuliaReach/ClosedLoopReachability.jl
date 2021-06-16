@@ -269,7 +269,7 @@ function plot_helper(fig, vars)
 end
 
 vars = (2, 7)
-fig = plot(xlab="x₂", ylab="x₇", leg=:bottomleft)
+fig = plot(xlab="y", ylab="ϕ", leg=:bottomleft)
 plot_helper(fig, vars)
 if falsification
     xlims!(-0.01, 0.65)
@@ -284,7 +284,7 @@ fig
 #-
 
 vars = (8, 9)
-fig = plot(xlab="x₈", ylab="x₉", leg=:bottom)
+fig = plot(xlab="θ", ylab="ψ", leg=:bottom)
 plot_helper(fig, vars)
 if falsification
     xlims!(0.999, 1.03)
