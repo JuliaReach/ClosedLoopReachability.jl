@@ -70,7 +70,7 @@ function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Laz
     tn = sup(domain(X)) # assume that the reach set spans the whole period (checked outside this method)
     X_Δt = evaluate(S, tn)
 
-    n = dim(P₀) # number of state variables
+    n = dim(P₀) # number of state variables = dim(X) - dim(U₀)
     m = dim(U₀) # control variables
 
     vTM = Vector{TaylorModel1{TaylorN{N}, N}}(undef, n + m)
@@ -81,7 +81,7 @@ function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Laz
 
     zeroI = interval(zero(N), zero(N))
     Δtn = zeroI
-    for i in 1:n
+    @inbounds for i in 1:n
         W = TaylorModelN(X_Δt[i], zeroI, zeroBox(n + m), symBox(n + m))
         Ŵ = fp_rpa(W)
         p = Taylor1(TaylorN(polynomial(Ŵ)), orderT)
@@ -90,14 +90,13 @@ function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Laz
     end
 
     # fill the components for the inputs
-    @assert dim(U₀) == 1
-    @assert m == 1
-    U₀ = overapproximate(U₀, Interval)
-    I = U₀.dat
-    pi = mid(I) + zero(TaylorN(n+m, order=orderQ))
-    d = diam(I) / 2
-    rem = interval(-d, d)
-    @inbounds vTM[n+m] = TaylorModel1(Taylor1(pi, orderT), rem, zeroI, Δtn)
-
+    B₀ = convert(IntervalBox, box_approximation(U₀))
+    @inbounds for i in 1:m
+        I = B₀[i]
+        pi = mid(I) + zero(TaylorN(n+m, order=orderQ))
+        d = diam(I) / 2
+        rem = interval(-d, d)
+        vTM[n+i] = TaylorModel1(Taylor1(pi, orderT), rem, zeroI, Δtn)
+    end
     return TaylorModelReachSet(vTM, Δtn)
 end
