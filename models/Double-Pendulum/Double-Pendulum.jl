@@ -180,13 +180,15 @@ res_false = run(false);
 using Plots
 import DisplayAs
 
-function plot_helper(fig, vars, sol, sim, prob, spec)
+function plot_helper(fig, vars, sol, sim, prob, spec, plot_sol)
     safe_states = spec.ext
     plot!(fig, project(safe_states, vars), color=:lightgreen, linecolor=:black, lw=5.0)
     if 0 ∉ vars
         plot!(fig, project(initial_state(prob), vars), lab="X₀")
     end
-    plot!(fig, sol, vars=vars, color=:yellow, lab="")
+    if plot_sol
+        plot!(fig, sol, vars=vars, color=:yellow, lab="")
+    end
     plot_simulation!(fig, sim; vars=vars, color=:red, lab="")
     fig = DisplayAs.Text(DisplayAs.PNG(fig))
 end
@@ -195,7 +197,7 @@ vars=(1, 2)
 fig = plot(xlab="x₁", ylab="x₂")
 sol, sim, prob, spec = res_true
 xlims!(-0.5, 1.9)
-plot_helper(fig, vars, sol, sim, prob, spec)
+plot_helper(fig, vars, sol, sim, prob, spec, true)
 ## savefig("Double-Pendulum-less-robust-x$(vars[1])-x$(vars[2]).png")
 fig
 
@@ -206,7 +208,7 @@ fig = plot(xlab="x₃", ylab="x₄")
 sol, sim, prob, spec = res_true
 xlims!(-0.7, 1.7)
 ylims!(-1.6, 1.5)
-plot_helper(fig, vars, sol, sim, prob, spec)
+plot_helper(fig, vars, sol, sim, prob, spec, true)
 ## savefig("Double-Pendulum-less-robust-x$(vars[1])-x$(vars[2]).png")
 fig
 
@@ -215,7 +217,7 @@ fig
 vars=(1, 2)
 fig = plot(xlab="x₁", ylab="x₂")
 sol, sim, prob, spec = res_false
-plot_helper(fig, vars, sol, sim, prob, spec)
+plot_helper(fig, vars, sol, sim, prob, spec, false)
 ## savefig("Double-Pendulum-more-robust-x$(vars[1])-x$(vars[2]).png")
 fig
 
@@ -226,7 +228,7 @@ fig = plot(xlab="x₃", ylab="x₄")
 sol, sim, prob, spec = res_false
 xlims!(-1.8, 1.5)
 ylims!(-1.6, 1.5)
-plot_helper(fig, vars, sol, sim, prob, spec)
+plot_helper(fig, vars, sol, sim, prob, spec, false)
 ## savefig("Double-Pendulum-more-robust-x$(vars[1])-x$(vars[2]).png")
 fig
 
