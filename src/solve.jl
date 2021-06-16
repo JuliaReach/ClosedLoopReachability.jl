@@ -58,8 +58,7 @@ function solve(prob::AbstractControlProblem, args...; kwargs...)
 
     input_splitter = get(kwargs, :input_splitter, NoSplitter())
 
-    rec_method = get(kwargs, :reconstruction_method,
-                     CartesianProductReconstructor())
+    rec_method = get(kwargs, :reconstruction_method, TaylorModelReconstructor())
 
     remove_zero_generators = get(kwargs, :remove_zero_generators, true)
 
