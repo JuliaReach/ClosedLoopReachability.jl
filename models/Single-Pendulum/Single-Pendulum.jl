@@ -9,7 +9,7 @@
 module SinglePendulum  #jl
 
 using NeuralNetworkAnalysis
-using NeuralNetworkAnalysis: SingleEntryVector
+using NeuralNetworkAnalysis: SingleEntryVector, TaylorModelReconstructor
 
 # The following option determines whether the falsification settings should be
 # used or not. The falsification settings are sufficient to show that the safety
@@ -94,12 +94,14 @@ end;
 import DifferentialEquations
 
 alg = TMJets(abstol=1e-7, orderT=4, orderQ=1)
-alg_nn = Ai2();
+alg_nn = Ai2()
+reconstruction_method = TaylorModelReconstructor();
 
 function benchmark(; silent::Bool=false)
     ## We solve the controlled system:
     silent || println("flowpipe construction")
-    res_sol = @timed solve(prob, T=T, alg_nn=alg_nn, alg=alg)
+    res_sol = @timed solve(prob, T=T, alg_nn=alg_nn, alg=alg,
+                           reconstruction_method=reconstruction_method)
     sol = res_sol.value
     silent || print_timed(res_sol)
 
