@@ -157,7 +157,7 @@ else
 end
 plot_simulation!(fig, sim; vars=vars, color=:red, lab="")
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("SinglePendulum.pdf")
+## savefig("Single-Pendulum.png")
 fig
 
 #-

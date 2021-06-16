@@ -221,28 +221,28 @@ end
 
 fig, vars, infix = plot_helper_12(true)
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("DoublePendulum-$infix-x$(vars[1])-x$(vars[2]).pdf")
+## savefig("DoublePendulum-$infix-x$(vars[1])-x$(vars[2]).png")
 fig
 
 #-
 
 fig, vars, infix = plot_helper_34(true)
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("DoublePendulum-$infix-x$(vars[1])-x$(vars[2]).pdf")
+## savefig("DoublePendulum-$infix-x$(vars[1])-x$(vars[2]).png")
 fig
 
 #-
 
 fig, vars, infix = plot_helper_12(false)
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("DoublePendulum-$infix-x$(vars[1])-x$(vars[2]).pdf")
+## savefig("DoublePendulum-$infix-x$(vars[1])-x$(vars[2]).png")
 fig
 
 #-
 
 fig, vars, infix = plot_helper_34(false)
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("DoublePendulum-$infix-x$(vars[1])-x$(vars[2]).pdf")
+## savefig("DoublePendulum-$infix-x$(vars[1])-x$(vars[2]).png")
 fig
 
 #-

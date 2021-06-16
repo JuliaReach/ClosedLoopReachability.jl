@@ -334,7 +334,7 @@ for o in res1
     plot!(fig, o, alpha=1.0)
 end
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("VertCAS-rand.pdf")
+## savefig("VertCAS-rand.png")
 fig
 
 #-
@@ -345,7 +345,7 @@ for (i, c) in [(1, :blue), (2, :orange), (3, :green), (4, :cyan)]
     [plot!(fig, o, lw=2.0, alpha=1., markershape=:none, seriestype=:shape, c=c) for o in res2[i]]
 end
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("VertCAS-sets.pdf")
+## savefig("VertCAS-sets.png")
 fig
 
 # ## References

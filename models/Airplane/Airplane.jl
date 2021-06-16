@@ -277,7 +277,7 @@ else
     xlims!(-1.8, 22.5)
     ylims!(-1.05, 1.05)
 end
-## savefig("Airplane-x2-x7.pdf")
+## savefig("Airplane-x2-x7.png")
 fig
 
 #-
@@ -292,7 +292,7 @@ else
     xlims!(-1.05, 1.2)
     ylims!(-1.05, 1.2)
 end
-## savefig("Airplane-x8-x9.pdf")
+## savefig("Airplane-x8-x9.png")
 fig
 
 #-

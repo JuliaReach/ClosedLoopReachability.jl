@@ -158,7 +158,7 @@ end
 vars = (1, 2)
 fig = plot(xlab="x₁", ylab="x₂")
 plot_helper(fig, vars)
-## savefig("TORA-x1-x2.pdf")
+## savefig("TORA-x1-x2.png")
 fig
 
 #-
@@ -190,7 +190,7 @@ plot_helper(fig, vars)
 vars=(3, 4)
 fig = plot(xlab="x₃", ylab="x₄")
 plot_helper(fig, vars)
-## savefig("TORA-x3-x4.pdf")
+## savefig("TORA-x3-x4.png")
 fig
 
 #-

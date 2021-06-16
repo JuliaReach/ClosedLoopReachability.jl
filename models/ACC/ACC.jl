@@ -204,7 +204,7 @@ plot_simulation!(fig, sim; output_map=output_map_rel, color=:red, lab="Drel")
 plot_simulation!(fig, sim; output_map=output_map_safe, color=:blue, lab="Dsafe")
 
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("ACC.pdf")
+## savefig("ACC.png")
 fig
 
 #-
