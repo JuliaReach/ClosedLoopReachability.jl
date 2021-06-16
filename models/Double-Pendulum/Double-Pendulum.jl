@@ -91,9 +91,9 @@ function DoublePendulum_model(use_less_robust_controller::Bool)
     ## Safety specification: [x[1], x[2], x[3], x[4]] ∈ safe_states for all t
     if falsification
         if use_less_robust_controller
-            k = 8
+            k = 5
         else
-            k = 6
+            k = 7
         end
     else
         k = 20
@@ -110,7 +110,8 @@ function DoublePendulum_model(use_less_robust_controller::Bool)
                                HalfSpace(SingleEntryVector(3, 6, -1.0), -lb),
                                HalfSpace(SingleEntryVector(4, 6, 1.0), ub),
                                HalfSpace(SingleEntryVector(4, 6, -1.0), -lb)])
-    predicate = X -> isdisjoint(X, safe_states)  # property for guaranteed violation
+    predicate = X -> isdisjoint(overapproximate(X, Hyperrectangle),
+                                safe_states)  # sufficient property for guaranteed violation
     predicate_sol = sol -> any(predicate(R) for F in sol for R in F);
 
     spec = Specification(T, predicate_sol, safe_states)
@@ -180,7 +181,7 @@ res_false = run(false);
 using Plots
 import DisplayAs
 
-function plot_helper(fig, vars, sol, sim, prob, spec, plot_sol)
+function plot_helper(fig, vars, sol, sim, prob, spec)
     safe_states = spec.ext
     if vars[1] == 0
         safe_states_projected = project(safe_states, [vars[2]])
@@ -193,9 +194,7 @@ function plot_helper(fig, vars, sol, sim, prob, spec, plot_sol)
     if !falsification && 0 ∉ vars
         plot!(fig, project(initial_state(prob), vars), lab="X₀")
     end
-    if plot_sol
-        plot!(fig, sol, vars=vars, color=:yellow, lab="")
-    end
+    plot!(fig, sol, vars=vars, color=:yellow, lab="")
     lab_sim = falsification ? "simulation" : ""
     plot_simulation!(fig, sim; vars=vars, color=:black, lab=lab_sim)
     fig = DisplayAs.Text(DisplayAs.PNG(fig))
@@ -208,7 +207,7 @@ if falsification
     plot!(leg=:topleft)
 end
 xlims!(-0.5, 2.0)
-plot_helper(fig, vars, sol, sim, prob, spec, true)
+plot_helper(fig, vars, sol, sim, prob, spec)
 ## savefig("Double-Pendulum-less-robust-x$(vars[1])-x$(vars[2]).png")
 fig
 
@@ -222,7 +221,7 @@ if falsification
 end
 xlims!(-0.7, 1.7)
 ylims!(-1.6, 1.5)
-plot_helper(fig, vars, sol, sim, prob, spec, true)
+plot_helper(fig, vars, sol, sim, prob, spec)
 ## savefig("Double-Pendulum-less-robust-x$(vars[1])-x$(vars[2]).png")
 fig
 
@@ -234,7 +233,7 @@ sol, sim, prob, spec = res_false
 if falsification
     plot!(leg=:topleft)
 end
-plot_helper(fig, vars, sol, sim, prob, spec, false)
+plot_helper(fig, vars, sol, sim, prob, spec)
 ## savefig("Double-Pendulum-more-robust-x$(vars[1])-x$(vars[2]).png")
 fig
 
@@ -250,7 +249,7 @@ else
     xlims!(-1.8, 1.5)
     ylims!(-1.6, 1.5)
 end
-plot_helper(fig, vars, sol, sim, prob, spec, false)
+plot_helper(fig, vars, sol, sim, prob, spec)
 ## savefig("Double-Pendulum-more-robust-x$(vars[1])-x$(vars[2]).png")
 fig
 
