@@ -52,7 +52,9 @@ function _reconstruct(method::CartesianProductReconstructor, P₀::LazySet, U₀
     return Q₀
 end
 
-struct TaylorModelReconstructor <: AbstractReconstructionMethod end
+@with_kw struct TaylorModelReconstructor <: AbstractReconstructionMethod
+    box::Bool = false
+end
 
 # if no Taylor model is available => use the given set P₀
 function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀, X::Nothing, ti) where {N}
@@ -90,13 +92,38 @@ function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Laz
     end
 
     # fill the components for the inputs
-    B₀ = convert(IntervalBox, box_approximation(U₀))
-    @inbounds for i in 1:m
-        I = B₀[i]
-        pi = mid(I) + zero(TaylorN(n+m, order=orderQ))
-        d = diam(I) / 2
-        rem = interval(-d, d)
-        vTM[n+i] = TaylorModel1(Taylor1(pi, orderT), rem, zeroI, Δtn)
+    if method.box
+        B₀ = convert(IntervalBox, box_approximation(U₀))
+        @inbounds for i in 1:m
+            I = B₀[i]
+            pi = mid(I) + zero(TaylorN(n+m, order=orderQ))
+            d = diam(I) / 2
+            rem = interval(-d, d)
+            vTM[n+i] = TaylorModel1(Taylor1(pi, orderT), rem, zeroI, Δtn)
+        end
+    else
+        Z₀ = ReachabilityAnalysis._convert_or_overapproximate(U₀, Zonotope)
+        Z₀ = ReachabilityAnalysis._reduce_order(Z₀, 2)
+        # TODO use _overapproximate_structured directly?
+        #Utm₀ = set(ReachabilityAnalysis._overapproximate_structured(Z₀, TaylorModelReachSet, orderT=orderT, orderQ=orderQ))
+        #@inbounds for i in 1:m
+        #    vTM[n+i] = Utm₀[i]
+        #end
+
+        x = set_variables("x", numvars=n+m, order=orderQ)
+        xc = view(x, n+1:n+m)
+        G = Z₀.generators
+        c = Z₀.center
+        @assert size(G) == (m, 2m)
+        M = view(G, :, 1:m)
+        D = view(G, :, m+1:2m)
+        @assert isdiag(D)
+        @inbounds for i in 1:m
+            pi = c[i] + sum(view(M, i, :) .* xc)
+            di = abs(D[i, i])
+            rem = interval(-di, di)
+            vTM[n+i] = TaylorModel1(Taylor1(pi, orderT), rem, zeroI, Δtn)
+        end
     end
     return TaylorModelReachSet(vTM, Δtn)
 end
