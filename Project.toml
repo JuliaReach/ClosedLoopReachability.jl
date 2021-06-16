@@ -3,7 +3,7 @@ uuid = "73c0b437-a350-4e9b-97ac-9adb151c271b"
 authors = ["Marcelo Forets <mforets@gmail.com>",
            "Sebastian Guadalupe <sebastianguadalupe00@gmail.com>",
            "Christian Schilling <git@christianschilling.net>"]
-version = "0.1.0"
+version = "0.2.0"
 
 [deps]
 CommonSolve = "38540f10-b2f7-11e9-35d8-d573e4eb0ff2"
