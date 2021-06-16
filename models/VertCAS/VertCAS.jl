@@ -306,38 +306,51 @@ end;
 
 X0 = _random_states(10, true, false)  # randomly sampled points (incl. vertices)
 println("$(length(X0)) simulations with central advisories")
-@time res1 = run(X0)
-check(res1);
+res = @timed begin
+    res1 = run(X0)
+    check(res1)
+end
+println("total analysis time")
+print_timed(res);
 
 # Simulation result for all choices of velocity:
 
 println("flowpipe construction (unsound) with central advisories")
-@time res2 = run(_all_states())
-check(res1);
+res = @timed begin
+    res2 = run(_all_states())
+    check(res1)
+end
+println("total analysis time")
+print_timed(res);
 
 # Finally we plot the results:
 
 using Plots
 import DisplayAs
 
-fig = plot(ylab="τ (time to reach horizontally)", xlab="h (vertical distance)")
-plot!(fig, bad_states, xlims=(-200, 200), ylims=(14, 26), alpha=0.2, c=:red)
+function plot_helper()
+    fig = plot(xlims=(-200, 200), ylims=(14, 26), xlab="h (vertical distance)",
+               ylab="τ (time to reach horizontally)")
+    plot!(fig, bad_states, alpha=0.2, c=:red, lab="unsafe states")
+    return fig
+end
+
+fig = plot_helper()
 for o in res1
     plot!(fig, o, alpha=1.0)
 end
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("VertCAS-rand.pdf")
+## savefig("VertCAS-rand.png")
 fig
 
 #-
 
-fig = plot(ylab="τ (time to reach horizontally)", xlab="h (vertical distance)")
-plot!(fig, bad_states, xlims=(-200, 200), ylims=(14, 26), alpha=0.2, c=:red)
+fig = plot_helper()
 for (i, c) in [(1, :blue), (2, :orange), (3, :green), (4, :cyan)]
     [plot!(fig, o, lw=2.0, alpha=1., markershape=:none, seriestype=:shape, c=c) for o in res2[i]]
 end
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("VertCAS-sets.pdf")
+## savefig("VertCAS-sets.png")
 fig
 
 # ## References

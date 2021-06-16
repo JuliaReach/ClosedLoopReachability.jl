@@ -237,7 +237,10 @@ function benchmark(; silent::Bool=false)
 end
 
 benchmark(silent=true)  # warm-up
-sol, sim = benchmark();  # benchmark
+res = @timed benchmark()  # benchmark
+sol, sim = res.value
+println("total analysis time")
+print_timed(res);
 
 # Finally we plot the results:
 
@@ -255,17 +258,18 @@ function plot_helper(fig, vars)
     else
         safe_states_projected = project(safe_states, vars)
     end
-    plot!(fig, safe_states_projected, color=:lightgreen, linecolor=:black, lw=5.0)
-    if 0 ∉ vars
+    plot!(fig, safe_states_projected, color=:lightgreen, lab="safe states")
+    if !falsification && 0 ∉ vars
         plot!(fig, project(initial_state(prob), vars), lab="X₀")
     end
-    plot!(fig, sol, vars=vars, color=:orange, lab="")
-    plot_simulation!(fig, sim; vars=vars, color=:red, lab="")
+    plot!(fig, sol, vars=vars, color=:yellow, lab="")
+    lab_sim = falsification ? "simulation" : ""
+    plot_simulation!(fig, sim; vars=vars, color=:black, lab=lab_sim)
     fig = DisplayAs.Text(DisplayAs.PNG(fig))
 end
 
 vars = (2, 7)
-fig = plot(xlab="x₂", ylab="x₇", leg=:bottomleft)
+fig = plot(xlab="y", ylab="ϕ", leg=:bottomleft)
 plot_helper(fig, vars)
 if falsification
     xlims!(-0.01, 0.65)
@@ -274,13 +278,13 @@ else
     xlims!(-1.8, 22.5)
     ylims!(-1.05, 1.05)
 end
-## savefig("Airplane-x2-x7.pdf")
+## savefig("Airplane-x2-x7.png")
 fig
 
 #-
 
 vars = (8, 9)
-fig = plot(xlab="x₈", ylab="x₉", leg=:bottom)
+fig = plot(xlab="θ", ylab="ψ", leg=:bottom)
 plot_helper(fig, vars)
 if falsification
     xlims!(0.999, 1.03)
@@ -289,7 +293,7 @@ else
     xlims!(-1.05, 1.2)
     ylims!(-1.05, 1.2)
 end
-## savefig("Airplane-x8-x9.pdf")
+## savefig("Airplane-x8-x9.png")
 fig
 
 #-

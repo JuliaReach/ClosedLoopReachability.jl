@@ -11,7 +11,7 @@
 module ACC  #jl
 
 using NeuralNetworkAnalysis, MAT
-using NeuralNetworkAnalysis: FunctionPreprocessing
+using NeuralNetworkAnalysis: FunctionPreprocessing, TaylorModelReconstructor
 
 # ## Model
 #
@@ -144,10 +144,13 @@ alg = TMJets(abstol=1e-6, orderT=6, orderQ=1);
 # To propagate sets through the neural network, we use the `Ai2` algorithm:
 alg_nn = Ai2()
 
+reconstruction_method = TaylorModelReconstructor()
+
 function benchmark(; silent::Bool=false)
     ## We solve the controlled system:
     silent || println("flowpipe construction")
-    res_sol = @timed solve(prob, T=T, alg_nn=alg_nn, alg=alg)
+    res_sol = @timed solve(prob, T=T, alg_nn=alg_nn, alg=alg,
+                           reconstruction_method=reconstruction_method)
     sol = res_sol.value
     silent || print_timed(res_sol)
 
@@ -165,12 +168,19 @@ function benchmark(; silent::Bool=false)
 end
 
 benchmark(silent=true)  # warm-up
-@time solz = benchmark();  # benchmark
+res = @timed benchmark()  # benchmark
+sol = res.value
+println("total analysis time")
+print_timed(res);
 
 # We also compute some simulations:
+
 import DifferentialEquations
 
-sim = simulate(prob, T=T, trajectories=10, include_vertices=true);
+println("simulation")
+res = @timed simulate(prob, T=T, trajectories=10, include_vertices=true)
+sim = res.value
+print_timed(res);
 
 # Finally we plot the results:
 
@@ -179,7 +189,7 @@ import DisplayAs
 
 fig = plot(leg=(0.4, 0.3))
 xlabel!(fig, "time")
-F = flowpipe(solz)
+F = flowpipe(sol)
 
 fp_rel = linear_map(Matrix(d_rel'), F)
 output_map_rel = d_rel
@@ -194,7 +204,7 @@ plot_simulation!(fig, sim; output_map=output_map_rel, color=:red, lab="Drel")
 plot_simulation!(fig, sim; output_map=output_map_safe, color=:blue, lab="Dsafe")
 
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("ACC.pdf")
+## savefig("ACC.png")
 fig
 
 #-

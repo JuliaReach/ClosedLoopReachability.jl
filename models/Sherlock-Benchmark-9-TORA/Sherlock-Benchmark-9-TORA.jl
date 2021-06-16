@@ -120,11 +120,19 @@ function benchmark(; T=T, silent::Bool=false)
 end
 
 benchmark(T=T_warmup, silent=true)  # warm-up
-@time sol = benchmark(T=T_reach);  # benchmark
+res = @timed benchmark(T=T_reach)  # benchmark
+sol = res.value
+println("total analysis time")
+print_timed(res);
 
 # We also compute some simulations:
+
 import DifferentialEquations
-@time sim = simulate(prob, T=T; trajectories=10, include_vertices=true);
+
+println("simulation")
+res = @timed simulate(prob, T=T; trajectories=10, include_vertices=true)
+sim = res.value
+print_timed(res);
 
 # Finally we plot the results
 using Plots
@@ -138,19 +146,19 @@ function plot_helper(fig, vars)
     else
         safe_states_projected = project(safe_states, vars)
     end
-    plot!(fig, safe_states_projected, color=:lightgreen, linecolor=:black, lw=5.0)
-    if 0 ∉ vars
+    plot!(fig, safe_states_projected, color=:lightgreen, lab="safe states")
+    if verification && 0 ∉ vars
         plot!(fig, project(X₀, vars), lab="X₀")
     end
     plot!(fig, sol, vars=vars, color=:yellow, lab="")
-    plot_simulation!(fig, sim; vars=vars, color=:red, lab="")
+    plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
     fig = DisplayAs.Text(DisplayAs.PNG(fig))
 end
 
 vars = (1, 2)
 fig = plot(xlab="x₁", ylab="x₂")
 plot_helper(fig, vars)
-## savefig("TORA-x1-x2.pdf")
+## savefig("TORA-x1-x2.png")
 fig
 
 #-
@@ -182,7 +190,7 @@ plot_helper(fig, vars)
 vars=(3, 4)
 fig = plot(xlab="x₃", ylab="x₄")
 plot_helper(fig, vars)
-## savefig("TORA-x3-x4.pdf")
+## savefig("TORA-x3-x4.png")
 fig
 
 #-

@@ -9,7 +9,7 @@
 module SinglePendulum  #jl
 
 using NeuralNetworkAnalysis
-using NeuralNetworkAnalysis: SingleEntryVector
+using NeuralNetworkAnalysis: SingleEntryVector, TaylorModelReconstructor
 
 # The following option determines whether the falsification settings should be
 # used or not. The falsification settings are sufficient to show that the safety
@@ -76,12 +76,12 @@ prob = ControlledPlant(ivp, controller, vars_idx, period)
 unsafe_states = HalfSpace(SingleEntryVector(1, 3, -1.0), -1.0)
 
 predicate = X -> overapproximate(X, Hyperrectangle) ⊆ unsafe_states
-function predicate_sol(sol)
+function predicate_sol(sol; silent::Bool=false)
     for F in sol
         for R in F
             t = tspan(R)
             if t.lo >= 0.5 && t.hi <= 1.0 && predicate(R)
-                println("violation for time range $t")
+                silent || println("violation for time range $t")
                 return true
             end
         end
@@ -94,19 +94,21 @@ end;
 import DifferentialEquations
 
 alg = TMJets(abstol=1e-7, orderT=4, orderQ=1)
-alg_nn = Ai2();
+alg_nn = Ai2()
+reconstruction_method = TaylorModelReconstructor();
 
 function benchmark(; silent::Bool=false)
     ## We solve the controlled system:
     silent || println("flowpipe construction")
-    res_sol = @timed solve(prob, T=T, alg_nn=alg_nn, alg=alg)
+    res_sol = @timed solve(prob, T=T, alg_nn=alg_nn, alg=alg,
+                           reconstruction_method=reconstruction_method)
     sol = res_sol.value
     silent || print_timed(res_sol)
 
     ## Next we check the property for an overapproximated flowpipe:
     silent || println("property checking")
     solz = overapproximate(sol, Zonotope)
-    res_pred = @timed predicate_sol(solz)
+    res_pred = @timed predicate_sol(solz; silent=silent)
     silent || print_timed(res_pred)
     if res_pred.value
         silent || println("The property is violated.")
@@ -126,7 +128,10 @@ function benchmark(; silent::Bool=false)
 end;
 
 benchmark(silent=true)  # warm-up
-sol, sim = benchmark();  # benchmark
+res = @timed benchmark()  # benchmark
+sol, sim = res.value
+println("total analysis time")
+print_timed(res);
 
 # Finally we plot the results:
 
@@ -134,14 +139,16 @@ using Plots
 import DisplayAs
 
 vars = (0, 1)
-fig = plot()
+fig = plot(ylab="θ")
 unsafe_states_projected = project(unsafe_states, [vars[2]])
 time = Interval(0.5, 1.0)
 unsafe_states_projected = cartesian_product(time, unsafe_states_projected)
-plot!(fig, unsafe_states_projected, color=:red, alpha=:0.5, linecolor=:black, lw=5.0)
+plot!(fig, unsafe_states_projected, color=:red, alpha=:0.2, lab="unsafe states")
 time0 = Singleton([0.0])
-plot!(fig, cartesian_product(time0, project(initial_state(prob), [vars[2]])),
-      lab="X₀")
+if !falsification
+    plot!(fig, cartesian_product(time0, project(initial_state(prob), [vars[2]])),
+          lab="X₀")
+end
 plot!(fig, sol, vars=vars, color=:yellow, lab="")
 if falsification
     xlims!(0, T)
@@ -150,9 +157,10 @@ else
     xlims!(0, T)
     ylims!(0.55, 1.3)
 end
-plot_simulation!(fig, sim; vars=vars, color=:red, lab="")
+lab_sim = falsification ? "simulation" : ""
+plot_simulation!(fig, sim; vars=vars, color=:black, lab=lab_sim)
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("SinglePendulum.pdf")
+## savefig("Single-Pendulum.png")
 fig
 
 #-

@@ -12,6 +12,12 @@ module DoublePendulum  #jl
 using NeuralNetworkAnalysis
 using NeuralNetworkAnalysis: SingleEntryVector, Specification
 
+# The following option determines whether the falsification settings should be
+# used or not. The falsification settings are sufficient to show that the safety
+# property is violated. Concretely we start from an initial point and use a
+# smaller time step.
+const falsification = true;
+
 # ## Model
 #
 # ```math
@@ -60,8 +66,7 @@ end;
 
 # ## Specification
 
-function DoublePendulum_model(use_less_robust_controller::Bool;
-                              falsification::Bool=false)
+function DoublePendulum_model(use_less_robust_controller::Bool)
     net_lr = @modelpath("Double-Pendulum", "controller_double_pendulum_less_robust.nnet")
     net_mr = @modelpath("Double-Pendulum", "controller_double_pendulum_more_robust.nnet")
     controller = read_nnet(use_less_robust_controller ? net_lr : net_mr)
@@ -117,9 +122,8 @@ end;
 
 import DifferentialEquations
 
-function run(use_less_robust_controller::Bool; falsification::Bool=false)
-    prob, spec = DoublePendulum_model(use_less_robust_controller;
-                                      falsification=falsification)
+function run(use_less_robust_controller::Bool)
+    prob, spec = DoublePendulum_model(use_less_robust_controller)
 
     alg = TMJets20(abstol=1e-9, orderT=8, orderQ=1)
     alg_nn = Ai2()
@@ -156,7 +160,10 @@ function run(use_less_robust_controller::Bool; falsification::Bool=false)
     else
         println("Running analysis with more robust controller")
     end
-    sol, sim = benchmark()  # benchmark
+    res = @timed benchmark()  # benchmark
+    sol, sim = res.value
+    println("total analysis time")
+    print_timed(res)
 
     return sol, sim, prob, spec
 end;
@@ -165,81 +172,72 @@ end;
 ## `true`: use a less robust controller
 ## `false`: use a more robust controller
 ## the choice also influences settings like the period and the specification
-res_true = run(true; falsification=true)
-res_false = run(false; falsification=true);
+res_true = run(true)
+res_false = run(false);
 
 # Finally we plot the results:
 
 using Plots
 import DisplayAs
 
-function plot_helper(fig, vars, sol, sim, prob, spec)
+function plot_helper(fig, vars, sol, sim, prob, spec, plot_sol)
     safe_states = spec.ext
-    plot!(fig, project(safe_states, vars), color=:lightgreen, linecolor=:black, lw=5.0)
-    if 0 ∉ vars
+    if vars[1] == 0
+        safe_states_projected = project(safe_states, [vars[2]])
+        time = Interval(0, T)
+        safe_states_projected = cartesian_product(time, safe_states_projected)
+    else
+        safe_states_projected = project(safe_states, vars)
+    end
+    plot!(fig, safe_states_projected, color=:lightgreen, lab="safe states")
+    if !falsification && 0 ∉ vars
         plot!(fig, project(initial_state(prob), vars), lab="X₀")
     end
-    plot!(fig, sol, vars=vars, color=:yellow, lab="")
-    plot_simulation!(fig, sim; vars=vars, color=:red, lab="")
-end
-
-function plot_helper_12(use_less_robust_controller)
-    vars=(1, 2)
-    fig = plot(xlab="x₁", ylab="x₂")
-    if use_less_robust_controller
-        infix = "less-robust"
-        sol, sim, prob, spec = res_true
-        xlims!(-0.5, 1.9)
-    else
-        infix = "more-robust"
-        sol, sim, prob, spec = res_false
+    if plot_sol
+        plot!(fig, sol, vars=vars, color=:yellow, lab="")
     end
-    plot_helper(fig, vars, sol, sim, prob, spec)
-    return fig, vars, infix
+    lab_sim = falsification ? "simulation" : ""
+    plot_simulation!(fig, sim; vars=vars, color=:black, lab=lab_sim)
+    fig = DisplayAs.Text(DisplayAs.PNG(fig))
 end
 
-function plot_helper_34(use_less_robust_controller)
-    vars=(3, 4)
-    fig = plot(xlab="x₃", ylab="x₄")
-    if use_less_robust_controller
-        infix = "less-robust"
-        sol, sim, prob, spec = res_true
-        xlims!(-0.7, 1.7)
-        ylims!(-1.6, 1.5)
-    else
-        infix = "more-robust"
-        sol, sim, prob, spec = res_false
-        xlims!(-1.8, 1.5)
-        ylims!(-1.6, 1.5)
-    end
-    plot_helper(fig, vars, sol, sim, prob, spec)
-    return fig, vars, infix
-end
-
-fig, vars, infix = plot_helper_12(true)
-fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("DoublePendulum-$infix-x$(vars[1])-x$(vars[2]).pdf")
+vars=(1, 2)
+fig = plot(xlab="θ₁", ylab="θ₂")
+sol, sim, prob, spec = res_true
+xlims!(-0.5, 1.9)
+plot_helper(fig, vars, sol, sim, prob, spec, true)
+## savefig("Double-Pendulum-less-robust-x$(vars[1])-x$(vars[2]).png")
 fig
 
 #-
 
-fig, vars, infix = plot_helper_34(true)
-fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("DoublePendulum-$infix-x$(vars[1])-x$(vars[2]).pdf")
+vars=(3, 4)
+fig = plot(xlab="θ₃'", ylab="θ₄'")
+sol, sim, prob, spec = res_true
+xlims!(-0.7, 1.7)
+ylims!(-1.6, 1.5)
+plot_helper(fig, vars, sol, sim, prob, spec, true)
+## savefig("Double-Pendulum-less-robust-x$(vars[1])-x$(vars[2]).png")
 fig
 
 #-
 
-fig, vars, infix = plot_helper_12(false)
-fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("DoublePendulum-$infix-x$(vars[1])-x$(vars[2]).pdf")
+vars=(1, 2)
+fig = plot(xlab="θ₁", ylab="θ₂")
+sol, sim, prob, spec = res_false
+plot_helper(fig, vars, sol, sim, prob, spec, false)
+## savefig("Double-Pendulum-more-robust-x$(vars[1])-x$(vars[2]).png")
 fig
 
 #-
 
-fig, vars, infix = plot_helper_34(false)
-fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("DoublePendulum-$infix-x$(vars[1])-x$(vars[2]).pdf")
+vars=(3, 4)
+fig = plot(xlab="θ₃'", ylab="θ₄'")
+sol, sim, prob, spec = res_false
+xlims!(-1.8, 1.5)
+ylims!(-1.6, 1.5)
+plot_helper(fig, vars, sol, sim, prob, spec, false)
+## savefig("Double-Pendulum-more-robust-x$(vars[1])-x$(vars[2]).png")
 fig
 
 #-

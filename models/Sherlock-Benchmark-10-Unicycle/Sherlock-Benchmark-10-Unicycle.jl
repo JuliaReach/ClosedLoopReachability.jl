@@ -89,34 +89,39 @@ alg_nn = Ai2()
 
 function benchmark(; silent::Bool=false)
     ## We solve the controlled system:
-    ## TODO uncomment once the analysis works
-##    silent || println("flowpipe construction")
-##    res_sol = @timed sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg)
-##    sol = res_sol.value
-##    silent || print_timed(res_sol)
-##
-##    ## Next we check the property for an overapproximated flowpipe:
-##    silent || println("property checking")
-##    solz = overapproximate(sol, Zonotope)
-##    res_pred = @timed predicate_sol(solz)
-##    silent || print_timed(res_pred)
-##    if res_pred.value
-##        silent || println("The property is satisfied.")
-##    else
-##        silent || println("The property may be violated.")
-##    end
-    solz = nothing
-    return solz
-end
+    silent || println("flowpipe construction")
+    res_sol = @timed sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg)
+    sol = res_sol.value
+    silent || print_timed(res_sol)
 
-benchmark(silent=true)  # warm-up
-@time sol = benchmark();  # benchmark
+    ## Next we check the property for an overapproximated flowpipe:
+    silent || println("property checking")
+    solz = overapproximate(sol, Zonotope)
+    res_pred = @timed predicate_sol(solz)
+    silent || print_timed(res_pred)
+    if res_pred.value
+        silent || println("The property is satisfied.")
+    else
+        silent || println("The property may be violated.")
+    end
+    return solz
+end;
+
+## TODO uncomment once the analysis works
+## benchmark(silent=true)  # warm-up
+## @time sol = benchmark()  # benchmark
+## sol = res.value
+## println("total analysis time")
+## print_timed(res);
 
 # We also compute some simulations:
 
 import DifferentialEquations
 
-@time sim = simulate(prob, T=T; trajectories=10, include_vertices=false);
+println("simulation")
+res = @timed simulate(prob, T=T; trajectories=10, include_vertices=false)
+sim = res.value
+print_timed(res);
 
 # Finally we plot the results:
 
@@ -131,19 +136,18 @@ function plot_helper(fig, vars)
     else
         target_set_projected = project(target_set, vars)
     end
-    plot!(fig, target_set_projected, color=:lightgreen, linecolor=:black, lw=5.0)
-    if 0 ∉ vars
-        plot!(fig, project(X₀, vars), lab="X₀")
-    end
+    plot!(fig, target_set_projected, color=:cyan, lab="target states")
 ##    plot!(fig, sol, vars=vars, color=:yellow, lab="")  ## TODO uncomment once the analysis works
-    plot_simulation!(fig, sim; vars=vars, color=:red, lab="")
+    plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
     fig = DisplayAs.Text(DisplayAs.PNG(fig))
 end
 
 vars = (1, 2)
 fig = plot(xlab="x₁", ylab="x₂")
+xlims!(-0.65, 9.6)
+ylims!(-4.55, 0.25)
 plot_helper(fig, vars)
-## savefig("Unicycle-x1-x2.pdf")
+## savefig("Unicycle-x1-x2.png")
 fig
 
 #-
@@ -153,7 +157,7 @@ fig = plot(xlab="x₃", ylab="x₄", leg=:bottomright)
 plot_helper(fig, vars)
 xlims!(-0.1, 3)
 ylims!(-0.31, 3)
-## savefig("Unicycle-x3-x4.pdf")
+## savefig("Unicycle-x3-x4.png")
 fig
 
 # ## References
