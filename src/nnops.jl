@@ -13,10 +13,6 @@ function forward(nnet::Network, x0::Vector{<:Number})
     return x
 end
 
-function forward(nnet, x0::Vector{<:Number})
-    return nnet(x0)
-end
-
 # ================================================
 # Composite methods to compute the network output
 # ================================================
@@ -268,8 +264,17 @@ end
 
 struct BlackBoxSolver <: Solver end
 
-function NeuralVerification.forward_network(solver::BlackBoxSolver, nnet, X0)
-    return nnet(X0)
+struct BlackBoxController{FT} <: AbstractNetwork
+    f::FT
+end
+
+function NeuralVerification.forward_network(solver::BlackBoxSolver,
+                                            bbc::BlackBoxController, X0)
+    return bbc.f(X0)
+end
+
+function forward(bbc::BlackBoxController, X0)
+    return bbc.f(X0)
 end
 
 # =============================

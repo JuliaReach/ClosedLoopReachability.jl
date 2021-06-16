@@ -4,12 +4,12 @@ using Requires, Reexport
 
 # unexported methods
 using ReachabilityAnalysis: _check_dim, _get_tspan, _get_cpost, _default_cpost,
-                            ReachSolution, InitialValueProblem, numtype,
+                            ReachSolution, InitialValueProblem, numtype, post,
                             AbstractContinuousPost, TimeInterval,
                             AbstractLazyReachSet, AbstractTaylorModelReachSet
 
 @reexport using NeuralVerification
-using NeuralVerification: Network, output_bound, Solver,
+using NeuralVerification: Network, output_bound, Solver, AbstractNetwork,
                           ActivationFunction, Id, ReLU, Sigmoid, Tanh,
                           @with_kw
 
@@ -20,8 +20,7 @@ const IA = IntervalArithmetic
 
 using LazySets: _leq, _geq, isapproxzero, remove_zero_generators
 
-# resolve conflicts
-using ReachabilityAnalysis: solve, complement
+import CommonSolve: solve
 
 # optional dependencies
 function __init__()

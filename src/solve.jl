@@ -1,6 +1,3 @@
-using ReachabilityAnalysis: post
-import ReachabilityAnalysis: solve
-
 """
     solve(prob::AbstractControlProblem, args...; kwargs...)
 
@@ -105,8 +102,8 @@ function _solve(cp::ControlledPlant,
     st_vars = state_vars(cp)
     in_vars = input_vars(cp)
     ctrl_vars = control_vars(cp)
-    normalization = control_normalization(cp)
     preprocessing = control_preprocessing(cp)
+    postprocessing = control_postprocessing(cp)
 
     Q₀ = initial_state(cp)
     n = length(st_vars)
@@ -138,7 +135,7 @@ function _solve(cp::ControlledPlant,
     X₀s = haskey(splitter, k) ? split(splitter[k], X₀) : [X₀]
     for X₀i in X₀s
         Fs, Us = _solve_one(X, X₀i, W₀, S, st_vars, t0, t1, cpost, rec_method,
-                            solver, network, preprocessing, normalization,
+                            solver, network, preprocessing, postprocessing,
                             input_splitter)
         append!(flowpipes, Fs)
         append!(controls, Us)
@@ -162,7 +159,7 @@ function _solve(cp::ControlledPlant,
         X₀s = haskey(splitter, k) ? split(splitter[k], X₀) : [X₀]
         for X₀i in X₀s
             Fs, Us = _solve_one(X, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method,
-                                solver, network, preprocessing, normalization,
+                                solver, network, preprocessing, postprocessing,
                                 input_splitter)
             append!(flowpipes, Fs)
             append!(controls, Us)
@@ -178,10 +175,10 @@ function _solve(cp::ControlledPlant,
     return MixedFlowpipe(flowpipes, ext)
 end
 
-function nnet_forward(solver, network, X, preprocessing, normalization)
+function nnet_forward(solver, network, X, preprocessing, postprocessing)
     X = apply(preprocessing, X)
     U = forward_network(solver, network, X)
-    U = apply(normalization, U)
+    U = apply(postprocessing, U)
     if dim(U) == 1  # simplify the control input for intervals
         U = overapproximate(U, Interval)
     end
@@ -189,12 +186,12 @@ function nnet_forward(solver, network, X, preprocessing, normalization)
 end
 
 function _solve_one(X, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method, solver,
-                    network, preprocessing, normalization, splitter)
+                    network, preprocessing, postprocessing, splitter)
     # add nondeterministic inputs (if any)
     P₀ = isnothing(W₀) ? X₀ : X₀ × W₀
 
     # get new control inputs from the controller
-    U = nnet_forward(solver, network, X₀, preprocessing, normalization)
+    U = nnet_forward(solver, network, X₀, preprocessing, postprocessing)
 
     dt = t0 .. t1
 
