@@ -184,65 +184,46 @@ function plot_helper(fig, vars, sol, sim, prob, spec)
     end
     plot!(fig, sol, vars=vars, color=:yellow, lab="")
     plot_simulation!(fig, sim; vars=vars, color=:red, lab="")
+    fig = DisplayAs.Text(DisplayAs.PNG(fig))
 end
 
-function plot_helper_12(use_less_robust_controller)
-    vars=(1, 2)
-    fig = plot(xlab="x₁", ylab="x₂")
-    if use_less_robust_controller
-        infix = "less-robust"
-        sol, sim, prob, spec = res_true
-        xlims!(-0.5, 1.9)
-    else
-        infix = "more-robust"
-        sol, sim, prob, spec = res_false
-    end
-    plot_helper(fig, vars, sol, sim, prob, spec)
-    return fig, vars, infix
-end
-
-function plot_helper_34(use_less_robust_controller)
-    vars=(3, 4)
-    fig = plot(xlab="x₃", ylab="x₄")
-    if use_less_robust_controller
-        infix = "less-robust"
-        sol, sim, prob, spec = res_true
-        xlims!(-0.7, 1.7)
-        ylims!(-1.6, 1.5)
-    else
-        infix = "more-robust"
-        sol, sim, prob, spec = res_false
-        xlims!(-1.8, 1.5)
-        ylims!(-1.6, 1.5)
-    end
-    plot_helper(fig, vars, sol, sim, prob, spec)
-    return fig, vars, infix
-end
-
-fig, vars, infix = plot_helper_12(true)
-fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("DoublePendulum-$infix-x$(vars[1])-x$(vars[2]).png")
+vars=(1, 2)
+fig = plot(xlab="x₁", ylab="x₂")
+sol, sim, prob, spec = res_true
+xlims!(-0.5, 1.9)
+plot_helper(fig, vars, sol, sim, prob, spec)
+## savefig("Double-Pendulum-less-robust-x$(vars[1])-x$(vars[2]).png")
 fig
 
 #-
 
-fig, vars, infix = plot_helper_34(true)
-fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("DoublePendulum-$infix-x$(vars[1])-x$(vars[2]).png")
+vars=(3, 4)
+fig = plot(xlab="x₃", ylab="x₄")
+sol, sim, prob, spec = res_true
+xlims!(-0.7, 1.7)
+ylims!(-1.6, 1.5)
+plot_helper(fig, vars, sol, sim, prob, spec)
+## savefig("Double-Pendulum-less-robust-x$(vars[1])-x$(vars[2]).png")
 fig
 
 #-
 
-fig, vars, infix = plot_helper_12(false)
-fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("DoublePendulum-$infix-x$(vars[1])-x$(vars[2]).png")
+vars=(1, 2)
+fig = plot(xlab="x₁", ylab="x₂")
+sol, sim, prob, spec = res_false
+plot_helper(fig, vars, sol, sim, prob, spec)
+## savefig("Double-Pendulum-more-robust-x$(vars[1])-x$(vars[2]).png")
 fig
 
 #-
 
-fig, vars, infix = plot_helper_34(false)
-fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("DoublePendulum-$infix-x$(vars[1])-x$(vars[2]).png")
+vars=(3, 4)
+fig = plot(xlab="x₃", ylab="x₄")
+sol, sim, prob, spec = res_false
+xlims!(-1.8, 1.5)
+ylims!(-1.6, 1.5)
+plot_helper(fig, vars, sol, sim, prob, spec)
+## savefig("Double-Pendulum-more-robust-x$(vars[1])-x$(vars[2]).png")
 fig
 
 #-
