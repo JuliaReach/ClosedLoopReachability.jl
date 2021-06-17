@@ -7,6 +7,11 @@ module Unicycle  #jl
 using NeuralNetworkAnalysis
 using NeuralNetworkAnalysis: UniformAdditivePostprocessing, SingleEntryVector
 
+# The following option determines whether the disturbance should be fixed or
+# not. The motivation is that for a fixed disturbance we can prove the the
+# safety property is satisfied.
+const choose_disturbance = true;
+
 # This benchmark is that of a unicycle model of a car [^1] taken from Benchmark
 # 10 of the Sherlock tool. It models the dynamics of a car involving 4
 # variables, specifically the $x$ and $y$ coordinates on a 2 dimensional
@@ -56,8 +61,10 @@ controller = read_nnet_mat(@modelpath("Sherlock-Benchmark-10-Unicycle",
 # $x_1 ∈ [−0.6,0.6], x_2 ∈ [−0.2,0.2], x_3 ∈ [−0.06,0.06], x_4 ∈ [−0.3,0.3]$
 # within a time window of 10s.
 
-X₀ = Hyperrectangle(low=[9.5, -4.5, 2.1, 1.5, -1e-4],
-                    high=[9.55, -4.45, 2.11, 1.51, 1e-1])
+w_l = -1e-4
+w_u = choose_disturbance ? w_l : 1e-1
+X₀ = Hyperrectangle(low=[9.5, -4.5, 2.1, 1.5, w_l],
+                    high=[9.55, -4.45, 2.11, 1.51, w_u])
 U₀ = ZeroSet(2)
 vars_idx = Dict(:state_vars=>1:4, :input_vars=>[5], :control_vars=>6:7)
 ivp = @ivp(x' = unicycle!(x), dim: 7, x(0) ∈ X₀ × U₀)
@@ -71,6 +78,8 @@ prob = ControlledPlant(ivp, controller, vars_idx, period;
 
 ## Safety specification: [x[1], x[2], x[3], x[4]] ∈ ±[0.6, 0.2, 0.06, 0.3] for some t ≤ T
 T = 10.0
+T_warmup = 2 * period  # shorter time horizon for dry run
+
 target_set = HPolyhedron([HalfSpace(SingleEntryVector(1, 7, 1.0), 0.6),
                           HalfSpace(SingleEntryVector(1, 7, -1.0), 0.6),
                           HalfSpace(SingleEntryVector(2, 7, 1.0), 0.2),
@@ -82,32 +91,38 @@ target_set = HPolyhedron([HalfSpace(SingleEntryVector(1, 7, 1.0), 0.6),
 predicate = X -> X ⊆ target_set
 predicate_sol = sol -> any(predicate(R) for F in sol for R in F);
 
+## sufficient check: only look at the final time point
+predicate_R_tend = R -> overapproximate(R, Zonotope, tend(R)) ⊆ target_set
+predicate_R_all = R -> R ⊆ target_set
+predicate_sol_suff = sol -> predicate_R_all(sol[end]);
+
 # ## Results
 
-alg = TMJets(abstol=1e-10, orderT=8, orderQ=1)
+alg = TMJets(abstol=1e-15, orderT=10, orderQ=1)
 alg_nn = Ai2()
+splitter = BoxSplitter([3, 1, 8, 1])
 
-function benchmark(; silent::Bool=false)
+function benchmark(; T=T, silent::Bool=false)
     ## We solve the controlled system:
     silent || println("flowpipe construction")
-    res_sol = @timed sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg)
+    res_sol = @timed sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg,
+                                 splitter=splitter)
     sol = res_sol.value
     silent || print_timed(res_sol)
 
     ## Next we check the property for an overapproximated flowpipe:
     silent || println("property checking")
-    solz = overapproximate(sol, Zonotope)
-    res_pred = @timed predicate_sol(solz)
+    res_pred = @timed predicate_sol_suff(sol)
     silent || print_timed(res_pred)
     if res_pred.value
         silent || println("The property is satisfied.")
     else
         silent || println("The property may be violated.")
     end
-    return solz
+    return sol
 end;
 
-benchmark(silent=true)  # warm-up
+benchmark(T=T_warmup, silent=true)  # warm-up
 res = @timed sol = benchmark()  # benchmark
 sol = res.value
 println("total analysis time")
@@ -127,7 +142,10 @@ print_timed(res);
 using Plots
 import DisplayAs
 
-function plot_helper(fig, vars)
+solz = overapproximate(sol, Zonotope)
+Tint = try convert(Int, T) catch; T end
+
+function plot_helper(fig, vars; show_simulation::Bool=true)
     if vars[1] == 0
         target_set_projected = project(target_set, [vars[2]])
         time = Interval(0, T)
@@ -135,29 +153,49 @@ function plot_helper(fig, vars)
     else
         target_set_projected = project(target_set, vars)
     end
-    plot!(fig, sol, vars=vars, color=:yellow, lab="")
+    plot!(fig, solz, vars=vars, color=:yellow, lab="")
     plot!(fig, target_set_projected, color=:cyan, alpha=0.5, lab="target states")
-    plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
-    fig = DisplayAs.Text(DisplayAs.PNG(fig))
+    if show_simulation
+        plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
+    end
 end
 
 vars = (1, 2)
 fig = plot(xlab="x₁", ylab="x₂")
-xlims!(-0.65, 9.6)
-ylims!(-4.55, 0.25)
-fig = plot_helper(fig, vars)
+plot_helper(fig, vars)
 ## savefig("Unicycle-x1-x2.png")
-fig
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+
+#-
+
+
+fig = plot(xlab="x₁", ylab="x₂")
+plot_helper(fig, vars; show_simulation=false)
+xlims!(0, 1)
+ylims!(-0.5, 0.5)
+plot!(fig, overapproximate(sol[end], Zonotope, tend(solz[end])), vars=vars,
+      color=:orange, lab="reach set at t = $Tint")
+## savefig("Unicycle-close-x1-x2.png")
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 #-
 
 vars=(3, 4)
 fig = plot(xlab="x₃", ylab="x₄", leg=:bottomright)
-fig = plot_helper(fig, vars)
-xlims!(-0.1, 3)
-ylims!(-0.31, 3)
+plot_helper(fig, vars)
 ## savefig("Unicycle-x3-x4.png")
-fig
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+
+#-
+
+fig = plot(xlab="x₃", ylab="x₄", leg=:bottomright)
+plot_helper(fig, vars; show_simulation=false)
+xlims!(-0.1, 0.1)
+ylims!(-0.4, 0)
+plot!(fig, overapproximate(sol[end], Zonotope, tend(solz[end])), vars=vars,
+      color=:orange, lab="reach set at t = $Tint")
+## savefig("Unicycle-close-x3-x4.png")
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 # ## References
 
