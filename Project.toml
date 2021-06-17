@@ -1,8 +1,6 @@
 name = "NeuralNetworkAnalysis"
 uuid = "73c0b437-a350-4e9b-97ac-9adb151c271b"
-authors = ["Marcelo Forets <mforets@gmail.com>",
-           "Sebastian Guadalupe <sebastianguadalupe00@gmail.com>",
-           "Christian Schilling <git@christianschilling.net>"]
+authors = ["Marcelo Forets <mforets@gmail.com>", "Sebastian Guadalupe <sebastianguadalupe00@gmail.com>", "Christian Schilling <git@christianschilling.net>"]
 version = "0.1.0"
 
 [deps]
@@ -16,6 +14,7 @@ Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 
 [compat]
+CommonSolve = "0.2"
 DifferentialEquations = "6"
 LazySets = "1.46"
 MAT = "0.8, 0.9, 0.10"
