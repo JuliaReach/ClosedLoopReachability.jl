@@ -145,7 +145,7 @@ vars = (1, 2)
 fig = plot(xlab="x₁", ylab="x₂")
 xlims!(-0.65, 9.6)
 ylims!(-4.55, 0.25)
-plot_helper(fig, vars)
+fig = plot_helper(fig, vars)
 ## savefig("Unicycle-x1-x2.png")
 fig
 
@@ -153,7 +153,7 @@ fig
 
 vars=(3, 4)
 fig = plot(xlab="x₃", ylab="x₄", leg=:bottomright)
-plot_helper(fig, vars)
+fig = plot_helper(fig, vars)
 xlims!(-0.1, 3)
 ylims!(-0.31, 3)
 ## savefig("Unicycle-x3-x4.png")

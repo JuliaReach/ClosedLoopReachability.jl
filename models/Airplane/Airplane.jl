@@ -270,7 +270,7 @@ end
 
 vars = (2, 7)
 fig = plot(xlab="y", ylab="ϕ", leg=:bottomleft)
-plot_helper(fig, vars)
+fig = plot_helper(fig, vars)
 if falsification
     xlims!(-0.01, 0.65)
     ylims!(0.9, 1.01)
@@ -285,7 +285,7 @@ fig
 
 vars = (8, 9)
 fig = plot(xlab="θ", ylab="ψ", leg=:bottom)
-plot_helper(fig, vars)
+fig = plot_helper(fig, vars)
 if falsification
     xlims!(0.999, 1.03)
     ylims!(0.99, 1.001)

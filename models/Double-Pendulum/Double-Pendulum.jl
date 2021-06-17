@@ -207,7 +207,7 @@ if falsification
     plot!(leg=:topleft)
 end
 xlims!(-0.5, 2.0)
-plot_helper(fig, vars, sol, sim, prob, spec)
+fig = plot_helper(fig, vars, sol, sim, prob, spec)
 ## savefig("Double-Pendulum-less-robust-x$(vars[1])-x$(vars[2]).png")
 fig
 
@@ -221,7 +221,7 @@ if falsification
 end
 xlims!(-0.7, 1.7)
 ylims!(-1.6, 1.5)
-plot_helper(fig, vars, sol, sim, prob, spec)
+fig = plot_helper(fig, vars, sol, sim, prob, spec)
 ## savefig("Double-Pendulum-less-robust-x$(vars[1])-x$(vars[2]).png")
 fig
 
@@ -233,7 +233,7 @@ sol, sim, prob, spec = res_false
 if falsification
     plot!(leg=:topleft)
 end
-plot_helper(fig, vars, sol, sim, prob, spec)
+fig = plot_helper(fig, vars, sol, sim, prob, spec)
 ## savefig("Double-Pendulum-more-robust-x$(vars[1])-x$(vars[2]).png")
 fig
 
@@ -249,7 +249,7 @@ else
     xlims!(-1.8, 1.5)
     ylims!(-1.6, 1.5)
 end
-plot_helper(fig, vars, sol, sim, prob, spec)
+fig = plot_helper(fig, vars, sol, sim, prob, spec)
 ## savefig("Double-Pendulum-more-robust-x$(vars[1])-x$(vars[2]).png")
 fig
 
