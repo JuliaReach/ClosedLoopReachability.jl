@@ -7,11 +7,6 @@ module Unicycle  #jl
 using NeuralNetworkAnalysis
 using NeuralNetworkAnalysis: UniformAdditivePostprocessing, SingleEntryVector
 
-# The following option determines whether the disturbance should be fixed or
-# not. The motivation is that for a fixed disturbance we can prove the the
-# safety property is satisfied.
-const choose_disturbance = true;
-
 # This benchmark is that of a unicycle model of a car [^1] taken from Benchmark
 # 10 of the Sherlock tool. It models the dynamics of a car involving 4
 # variables, specifically the $x$ and $y$ coordinates on a 2 dimensional
@@ -61,10 +56,8 @@ controller = read_nnet_mat(@modelpath("Sherlock-Benchmark-10-Unicycle",
 # $x_1 ∈ [−0.6,0.6], x_2 ∈ [−0.2,0.2], x_3 ∈ [−0.06,0.06], x_4 ∈ [−0.3,0.3]$
 # within a time window of 10s.
 
-w_l = -1e-4
-w_u = choose_disturbance ? w_l : 1e-1
-X₀ = Hyperrectangle(low=[9.5, -4.5, 2.1, 1.5, w_l],
-                    high=[9.55, -4.45, 2.11, 1.51, w_u])
+X₀ = Hyperrectangle(low=[9.5, -4.5, 2.1, 1.5, -1e-4],
+                    high=[9.55, -4.45, 2.11, 1.51, 1e-4])
 U₀ = ZeroSet(2)
 vars_idx = Dict(:state_vars=>1:4, :input_vars=>[5], :control_vars=>6:7)
 ivp = @ivp(x' = unicycle!(x), dim: 7, x(0) ∈ X₀ × U₀)
