@@ -62,7 +62,7 @@ controller = read_nnet_mat(@modelpath("Sherlock-Benchmark-10-Unicycle",
 # within a time window of 10s.
 
 w_l = -1e-4
-w_u = choose_disturbance ? w_l : 1e-1
+w_u = choose_disturbance ? w_l : 1e-4
 X₀ = Hyperrectangle(low=[9.5, -4.5, 2.1, 1.5, w_l],
                     high=[9.55, -4.45, 2.11, 1.51, w_u])
 U₀ = ZeroSet(2)
