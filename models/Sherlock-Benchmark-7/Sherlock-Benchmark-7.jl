@@ -2,7 +2,7 @@
 #
 #md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/Sherlock-Benchmark-7.ipynb)
 #
-# The model was first proposed in [^YH12], where the authors originally designed a
+# The model was first proposed in [YH12], where the authors originally designed a
 # discontinuous sliding mode controller for this system.
 
 # ## Model
@@ -54,7 +54,7 @@ prob = @ivp(x' = f!(x), dim: 5, x(0) ∈ X₀ × W₀ × U₀);
 
 # ## References
 
-# [^YH12]: Dong-Hae Yeom and Young Hoon Joo. [*Control Lyapunov function design by
-#          cancelling input singularity.*](http://www.koreascience.or.kr/article/JAKO201220962918909.page).
-#          International Journal of Fuzzy Logic and Intelligent Systems, 12, 06 2012.
+# [YH12]: Dong-Hae Yeom and Young Hoon Joo. [*Control Lyapunov function design by
+#         cancelling input singularity.*](http://www.koreascience.or.kr/article/JAKO201220962918909.page).
+#         International Journal of Fuzzy Logic and Intelligent Systems, 12, 06 2012.
 #

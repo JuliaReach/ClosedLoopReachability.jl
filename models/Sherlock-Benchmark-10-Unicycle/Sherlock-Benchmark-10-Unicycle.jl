@@ -7,7 +7,7 @@ module Unicycle  #jl
 using NeuralNetworkAnalysis
 using NeuralNetworkAnalysis: UniformAdditivePostprocessing, SingleEntryVector
 
-# This benchmark is that of a unicycle model of a car [^1] taken from Benchmark
+# This benchmark is that of a unicycle model of a car [1] taken from Benchmark
 # 10 of the Sherlock tool. It models the dynamics of a car involving 4
 # variables, specifically the $x$ and $y$ coordinates on a 2 dimensional
 # plane, as well as velocity magnitude (speed) and steering angle.
@@ -192,7 +192,7 @@ fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 # ## References
 
-# [^1] Souradeep Dutta, Xin Chen, and Sriram Sankaranarayanan. *Reachability
+# [1] Souradeep Dutta, Xin Chen, and Sriram Sankaranarayanan. *Reachability
 # analysis for neural feedback systems using regressive polynomial rule
 # inference.* In [Proceedings of the 22nd ACMInternational Conference on Hybrid
 # Systems: Computation and Control, HSCC 2019, Montreal,QC, Canada,
