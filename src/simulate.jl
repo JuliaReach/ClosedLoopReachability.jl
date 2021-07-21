@@ -10,7 +10,7 @@ Simulate a controlled system for a family of random trajectories.
 
 ### Output
 
-An object of type [`EnsembleSimulationSolution`](@ref).
+An object of type `EnsembleSimulationSolution`.
 
 ### Notes
 
