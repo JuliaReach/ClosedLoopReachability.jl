@@ -21,12 +21,15 @@ using NeuralNetworkAnalysis, LinearAlgebra
 # (NMAC), a region where the ownship and intruder are separated by less than
 # 100ft vertically and 500ft horizontally. The ownship (black) is assumed
 # to have a constant horizontal speed, and the intruder (red) is assumed to
-# follow a constant horizontal trajectory towards ownship, see Figure 1.
-# The current geometry of the system is described by
+# follow a constant horizontal trajectory towards ownship, see the figure below.
 #
-# 1) $h(ft)$: Intruder altitude relative to ownship
-# 2) $\dot h_0 (ft/min)$: Ownship vertical climbrate
-# 3) $τ(s)$: the seconds until the ownship (black) and intruder (red) are no longer horizontally separated
+# ![](https://raw.githubusercontent.com/JuliaReach/NeuralNetworkAnalysis.jl/master/models/VertCAS/nmac.png)
+#
+# The current geometry of the system is described by:
+#
+# 1) Intruder altitude relative to ownship $h(ft)$
+# 2) Ownship vertical climbrate $\dot h_0 (ft/min)$
+# 3) The seconds until the ownship (black) and intruder (red) are no longer horizontally separated $τ(s)$
 #
 # We can, therefore, assume that the intruder is static and the horizontal
 # separation $\tau$ decreases by one each second.
