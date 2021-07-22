@@ -16,6 +16,12 @@ function plot_simulation!(fig, sim::EnsembleSimulationSolution; vars=nothing, ou
     if !got_vars && !got_output_map
         throw(ArgumentError("either `vars` or `output_map` should be specified"))
     elseif got_vars
+        if vars isa AbstractVector
+            if length(vars) != 2
+                error("unexpected length of `vars`: $(length(vars))")
+            end
+            vars = (vars[1], vars[2])
+        end
         _plot_function = _plot_simulation_vars!
         opts = vars
     else
