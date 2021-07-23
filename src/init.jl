@@ -27,7 +27,7 @@ function __init__()
     @require DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa" begin
         include("init_DifferentialEquations.jl")
         @require Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80" begin
-            using .Plots
+            import .Plots
             include("init_DifferentialEquations_Plots.jl")
         end
     end
