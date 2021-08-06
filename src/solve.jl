@@ -157,7 +157,7 @@ function _solve(cp::ControlledPlant,
         t1 = tvec[k+1]
         X₀s = haskey(splitter, k) ? split(splitter[k], X₀) : [X₀]
         for X₀i in X₀s
-            Fs, Us = _solve_one(X, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method,
+            Fs, Us = _solve_one(X, X₀i, W₀, S, st_vars, t0, t1, cpost, rec_method,
                                 solver, network, preprocessing, postprocessing,
                                 input_splitter)
             append!(flowpipes, Fs)
