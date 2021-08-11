@@ -13,7 +13,7 @@ using NeuralNetworkAnalysis: SingleEntryVector
 
 # The following option determines whether the falsification settings should be
 # used or not. The falsification settings are sufficient to show that the safety
-# property is violated. Concretely we start from an initial point and use a
+# property is violated. Concretely, we start from an initial point and use a
 # smaller time step.
 const falsification = true;
 

@@ -5,7 +5,7 @@
 module Unicycle  #jl
 
 using NeuralNetworkAnalysis
-using NeuralNetworkAnalysis: UniformAdditivePostprocessing, SingleEntryVector
+using NeuralNetworkAnalysis: UniformAdditivePostprocessing
 
 # This benchmark is that of a unicycle model of a car [^DCS19] taken from Benchmark
 # 10 of the Sherlock tool. It models the dynamics of a car involving 4
@@ -73,20 +73,14 @@ prob = ControlledPlant(ivp, controller, vars_idx, period;
 T = 10.0
 T_warmup = 2 * period  # shorter time horizon for dry run
 
-target_set = HPolyhedron([HalfSpace(SingleEntryVector(1, 7, 1.0), 0.6),
-                          HalfSpace(SingleEntryVector(1, 7, -1.0), 0.6),
-                          HalfSpace(SingleEntryVector(2, 7, 1.0), 0.2),
-                          HalfSpace(SingleEntryVector(2, 7, -1.0), 0.2),
-                          HalfSpace(SingleEntryVector(3, 7, 1.0), 0.06),
-                          HalfSpace(SingleEntryVector(3, 7, -1.0), 0.06),
-                          HalfSpace(SingleEntryVector(4, 7, 1.0), 0.3),
-                          HalfSpace(SingleEntryVector(4, 7, -1.0), 0.3)])
-predicate = X -> X ⊆ target_set
+target_states = cartesian_product(Hyperrectangle(zeros(4), [0.6, 0.2, 0.06, 0.3]),
+                                  Universe(3))
+predicate = X -> X ⊆ target_states
 predicate_sol = sol -> any(predicate(R) for F in sol for R in F);
 
 ## sufficient check: only look at the final time point
-predicate_R_tend = R -> overapproximate(R, Zonotope, tend(R)) ⊆ target_set
-predicate_R_all = R -> R ⊆ target_set
+predicate_R_tend = R -> overapproximate(R, Zonotope, tend(R)) ⊆ target_states
+predicate_R_all = R -> R ⊆ target_states
 predicate_sol_suff = sol -> predicate_R_all(sol[end]);
 
 # ## Results
@@ -140,14 +134,14 @@ Tint = try convert(Int, T) catch; T end
 
 function plot_helper(fig, vars; show_simulation::Bool=true)
     if vars[1] == 0
-        target_set_projected = project(target_set, [vars[2]])
+        target_states_projected = project(target_states, [vars[2]])
         time = Interval(0, T)
-        target_set_projected = cartesian_product(time, target_set_projected)
+        target_states_projected = cartesian_product(time, target_states_projected)
     else
-        target_set_projected = project(target_set, vars)
+        target_states_projected = project(target_states, vars)
     end
     plot!(fig, solz, vars=vars, color=:yellow, lab="")
-    plot!(fig, target_set_projected, color=:cyan, alpha=0.5, lab="target states")
+    plot!(fig, target_states_projected, color=:cyan, alpha=0.5, lab="target states")
     if show_simulation
         plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
     end

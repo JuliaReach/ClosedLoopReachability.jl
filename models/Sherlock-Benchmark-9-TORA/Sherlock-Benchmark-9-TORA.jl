@@ -5,8 +5,7 @@
 module TORA  #jl
 
 using NeuralNetworkAnalysis, MAT
-using NeuralNetworkAnalysis: UniformAdditivePostprocessing, SingleEntryVector,
-                             NoSplitter
+using NeuralNetworkAnalysis: UniformAdditivePostprocessing, NoSplitter
 
 # The following option determines whether the verification settings should be
 # used or not. The verification settings are chosen to show that the safety
@@ -71,19 +70,12 @@ control_postprocessing = UniformAdditivePostprocessing(-10.0)  # control postpro
 prob = ControlledPlant(ivp, controller, vars_idx, period;
                        postprocessing=control_postprocessing)
 
-## Safety specification
+## Safety specification: x[1], x[2], x[3], x[4] ∈ [-2, 2] for all t ≤ T
 T = 20.0  # time horizon
 T_warmup = 2 * period  # shorter time horizon for dry run
 T_reach = verification ? T : T_warmup  # shorter time horizon if not verifying
 
-safe_states = HPolyhedron([HalfSpace(SingleEntryVector(1, 5, 1.0), 2.0),
-                           HalfSpace(SingleEntryVector(1, 5, -1.0), 2.0),
-                           HalfSpace(SingleEntryVector(2, 5, 1.0), 2.0),
-                           HalfSpace(SingleEntryVector(2, 5, -1.0), 2.0),
-                           HalfSpace(SingleEntryVector(3, 5, 1.0), 2.0),
-                           HalfSpace(SingleEntryVector(3, 5, -1.0), 2.0),
-                           HalfSpace(SingleEntryVector(4, 5, 1.0), 2.0),
-                           HalfSpace(SingleEntryVector(4, 5, -1.0), 2.0)])
+safe_states = cartesian_product(BallInf(zeros(4), 2.0), Universe(1))
 predicate = X -> X ⊆ safe_states;
 
 # ## Results
