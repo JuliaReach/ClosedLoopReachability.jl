@@ -10,11 +10,11 @@
 module DoublePendulum  #jl
 
 using NeuralNetworkAnalysis
-using NeuralNetworkAnalysis: SingleEntryVector, Specification
+using NeuralNetworkAnalysis: Specification
 
 # The following option determines whether the falsification settings should be
 # used or not. The falsification settings are sufficient to show that the safety
-# property is violated. Concretely we start from an initial point and use a
+# property is violated. Concretely, we start from an initial point and use a
 # smaller time step.
 const falsification = true;
 
@@ -88,7 +88,7 @@ function DoublePendulum_model(use_less_robust_controller::Bool)
 
     prob = ControlledPlant(ivp, controller, vars_idx, period)
 
-    ## Safety specification: [x[1], x[2], x[3], x[4]] ∈ safe_states for all t
+    ## Safety specification: x[1], x[2], x[3], x[4] ∈ [lb, ub] for all t
     if falsification
         if use_less_robust_controller
             k = 5
@@ -102,17 +102,11 @@ function DoublePendulum_model(use_less_robust_controller::Bool)
 
     lb = use_less_robust_controller ? -1.0 : -0.5
     ub = use_less_robust_controller ? 1.7 : 1.5
-    safe_states = HPolyhedron([HalfSpace(SingleEntryVector(1, 6, 1.0), ub),
-                               HalfSpace(SingleEntryVector(1, 6, -1.0), -lb),
-                               HalfSpace(SingleEntryVector(2, 6, 1.0), ub),
-                               HalfSpace(SingleEntryVector(2, 6, -1.0), -lb),
-                               HalfSpace(SingleEntryVector(3, 6, 1.0), ub),
-                               HalfSpace(SingleEntryVector(3, 6, -1.0), -lb),
-                               HalfSpace(SingleEntryVector(4, 6, 1.0), ub),
-                               HalfSpace(SingleEntryVector(4, 6, -1.0), -lb)])
-    predicate = X -> isdisjoint(overapproximate(X, Hyperrectangle),
-                                safe_states)  # sufficient property for guaranteed violation
-    predicate_sol = sol -> any(predicate(R) for F in sol for R in F);
+    safe_states = cartesian_product(Hyperrectangle(low=fill(lb, 4), high=fill(ub, 4)),
+                                    Universe(2))
+    ## sufficient property for guaranteed violation
+    predicate = X -> isdisjoint(overapproximate(X, Hyperrectangle), safe_states)
+    predicate_sol = sol -> any(predicate(R) for F in sol for R in F)
 
     spec = Specification(T, predicate_sol, safe_states)
 

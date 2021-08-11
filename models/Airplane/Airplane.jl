@@ -21,11 +21,10 @@
 module Airplane  #jl
 
 using NeuralNetworkAnalysis
-using NeuralNetworkAnalysis: SingleEntryVector
 
 # The following option determines whether the falsification settings should be
 # used or not. The falsification settings are sufficient to show that the safety
-# property is violated. Concretely we start from an initial point and use a
+# property is violated. Concretely, we start from an initial point and use a
 # smaller time step.
 const falsification = true;
 
@@ -178,8 +177,7 @@ period = 0.1  # control period
 
 prob = ControlledPlant(ivp, controller, vars_idx, period);
 
-# Safety specification: $x_2$ should be in $[−0.5, 0.5]$ and $x_7, x_8, x_9$
-# should be in $[-1, 1]$.
+# Safety specification: $[x_2, x_7, x_8, x_9] ∈ ±[0.5, 1, 1, 1]$.
 if falsification
     k = 4  # falsification can run for a shorter time horizon
 else
@@ -187,14 +185,10 @@ else
 end
 T = k * period  # time horizon
 
-safe_states = HPolyhedron([HalfSpace(SingleEntryVector(2, 18, 1.0), 0.5),
-                           HalfSpace(SingleEntryVector(2, 18, -1.0), 0.5),
-                           HalfSpace(SingleEntryVector(7, 18, 1.0), 1.0),
-                           HalfSpace(SingleEntryVector(7, 18, -1.0), 1.0),
-                           HalfSpace(SingleEntryVector(8, 18, 1.0), 1.0),
-                           HalfSpace(SingleEntryVector(8, 18, -1.0), 1.0),
-                           HalfSpace(SingleEntryVector(9, 18, 1.0), 1.0),
-                           HalfSpace(SingleEntryVector(9, 18, -1.0), 1.0)])
+safe_states = concretize(CartesianProductArray([
+    Universe(1), Interval(-0.5, 0.5),  # x_2 ∈ ± 0.5
+    Universe(4), BallInf(zeros(3), 1.0),  # x_7, x_8, x_9 ∈ ± 1
+    Universe(9)]))
 
 ## property for guaranteed violation
 predicate = X -> isdisjoint(overapproximate(X, Hyperrectangle), safe_states)
