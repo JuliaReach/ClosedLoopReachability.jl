@@ -1,4 +1,4 @@
-using NeuralVerification, MAT
+using NeuralVerification
 using NeuralVerification: Layer, Network, ReLU, Id
 
 _vec(A::AbstractMatrix) = vec(A)
@@ -80,6 +80,7 @@ The following activation functions are supported:
 """
 function read_nnet_mat(file::String; key=nothing, act_key="activation_fcns")
     isdefined(@__MODULE__, :MAT) || error("package 'MAT' is required")
+
     vars = matread(file)
 
     # some models store the controller under a specified key

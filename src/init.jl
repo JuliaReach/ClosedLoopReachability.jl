@@ -31,4 +31,8 @@ function __init__()
             include("init_DifferentialEquations_Plots.jl")
         end
     end
+
+    @require MAT = "23992714-dd62-5051-b70f-ba57cb901cac" begin
+        using MAT: matread
+    end
 end
