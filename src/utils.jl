@@ -245,11 +245,11 @@ end
 function _read_weights_biases_sherlock(io, m, n)
     W = Matrix{Float32}(undef, m, n)
     b = Vector{Float32}(undef, n)
-    for j in 1:n
-        for i in 1:m
+    for i in 1:m
+        for j in 1:n
             W[i, j] = parse(Float32, readline(io))
         end
-        b[j] = parse(Float32, readline(io))
+        b[i] = parse(Float32, readline(io))
     end
     return W, b
 end
@@ -309,11 +309,11 @@ function _write_weights_biases_sherlock(io, layer)
     W = layer.weights
     b = layer.bias
     m, n = size(W)
-    for j in 1:n
-        for i in 1:m
+    for i in 1:m
+        for j in 1:n
             println(io, W[i, j])
         end
-        println(io, b[j])
+        println(io, b[i])
     end
 end
 
