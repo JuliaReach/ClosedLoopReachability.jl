@@ -24,6 +24,7 @@ export solve, forward, simulate,
 
 # utility functions
 export @modelpath, read_nnet_mat, read_nnet_yaml, read_nnet_sherlock,
+       write_nnet_sherlock,
        print_timed
 
 end
