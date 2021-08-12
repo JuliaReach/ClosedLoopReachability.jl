@@ -200,7 +200,7 @@ A `Network`.
 The Sherlock format is the format used by the tool `Sherlock`.
 The format is documented
 [here](https://github.com/souradeep-111/sherlock/blob/981fbf8d3bc99f76e0135f2f518e97d2a318cb7c/sherlock-network-format.pdf).
-All hidden layers implicitly use a ReLU activation function.
+All layers including the output layer implicitly use a ReLU activation function.
 """
 function read_nnet_sherlock(file::String)
     layers = nothing
@@ -225,18 +225,13 @@ function read_nnet_sherlock(file::String)
         # - all incoming weights to the last neuron in hidden layer 1
         # - bias term of the last neuron in hidden layer 1
         # continue with hidden layer 2 until the output layer
-        @inbounds for layer in 1:n_hlayers
+        @inbounds for layer in 1:(n_hlayers + 1)
             m = layer == 1 ? n_inputs : n_neurons[layer - 1]
-            n = n_neurons[layer]
+            n = layer > n_hlayers ? n_outputs : n_neurons[layer]
             W, b = _read_weights_biases_sherlock(io, m, n)
             # the Sherlock format implicitly uses ReLU activation functions
             layers[layer] = Layer(W, b, ReLU())
         end
-
-        m = n_hlayers == 0 ? n_inputs : n_neurons[end]
-        n = n_outputs
-        W, b = _read_weights_biases_sherlock(io, m, n)
-        layers[end] = Layer(W, b, Id())
     end
 
     return Network(layers)
@@ -283,24 +278,14 @@ function write_nnet_sherlock(nnet::Network, file::String)
             println(io, string(n_nodes(layers[i])))
         end
 
-        # one line for each weight and bias of the hidden layers
-        @inbounds for layer in layers[1:end-1]
+        # one line for each weight and bias of the hidden and output layers
+        @inbounds for layer in layers
             if !(layer.activation isa ReLU)
-                throw(ArgumentError("the Sherlock format requires ReLU " *
-                    "activations, but received a $(typeof(layer.activation)) " *
-                    "activation"))
+                @info "the Sherlock format requires ReLU activations, but " *
+                    "received a $(typeof(layer.activation)) activation"
             end
             _write_weights_biases_sherlock(io, layer)
         end
-
-        # one line for each weight and bias of the output layer
-        layer = layers[end]
-        if !(layer.activation isa Id)
-            throw(ArgumentError("the Sherlock format requires an identity " *
-                "activation at the output layer, but received a " *
-                " $(typeof(layer.activation)) activation"))
-        end
-        _write_weights_biases_sherlock(io, layer)
     end
     nothing
 end
