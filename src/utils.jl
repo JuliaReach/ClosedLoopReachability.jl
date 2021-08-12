@@ -1,5 +1,5 @@
 using NeuralVerification
-using NeuralVerification: Layer, Network, ReLU, Id
+using NeuralVerification: Layer, n_nodes
 
 _vec(A::AbstractMatrix) = vec(A)
 _vec(A::Number) = [A]
@@ -252,6 +252,69 @@ function _read_weights_biases_sherlock(io, m, n)
         b[j] = parse(Float32, readline(io))
     end
     return W, b
+end
+
+"""
+    write_nnet_sherlock(nnet::Network, file::String)
+
+Write a neural network to a file in Sherlock format.
+
+### Input
+
+- `nnet` -- neural network
+- `file` -- string indicating the location of the output file
+
+### Notes
+
+See [`read_nnet_sherlock`](@ref) for information about the Sherlock format.
+"""
+function write_nnet_sherlock(nnet::Network, file::String)
+    layers = nnet.layers
+    n_inputs = size(layers[1].weights, 1)
+    n_outputs = n_nodes(layers[end])
+    n_hlayers = length(layers) - 1  # includes the output layer
+    open(file, "w") do io
+        println(io, string(n_inputs))  # number of neurons in input layer
+        println(io, string(n_outputs))  # number of neurons in output layer
+        println(io, string(n_hlayers))  # number of hidden layers
+
+        # one line for each number of neurons in the hidden layers
+        @inbounds for i in 1:n_hlayers
+            println(io, string(n_nodes(layers[i])))
+        end
+
+        # one line for each weight and bias of the hidden layers
+        @inbounds for layer in layers[1:end-1]
+            if !(layer.activation isa ReLU)
+                throw(ArgumentError("the Sherlock format requires ReLU " *
+                    "activations, but received a $(typeof(layer.activation)) " *
+                    "activation"))
+            end
+            _write_weights_biases_sherlock(io, layer)
+        end
+
+        # one line for each weight and bias of the output layer
+        layer = layers[end]
+        if !(layer.activation isa Id)
+            throw(ArgumentError("the Sherlock format requires an identity " *
+                "activation at the output layer, but received a " *
+                " $(typeof(layer.activation)) activation"))
+        end
+        _write_weights_biases_sherlock(io, layer)
+    end
+    nothing
+end
+
+function _write_weights_biases_sherlock(io, layer)
+    W = layer.weights
+    b = layer.bias
+    m, n = size(W)
+    for j in 1:n
+        for i in 1:m
+            println(io, W[i, j])
+        end
+        println(io, b[j])
+    end
 end
 
 # ====================

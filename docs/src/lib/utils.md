@@ -17,4 +17,5 @@ CurrentModule = NeuralNetworkAnalysis
 read_nnet_mat
 read_nnet_yaml
 read_nnet_sherlock
+write_nnet_sherlock
 ```
