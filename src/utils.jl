@@ -178,6 +178,82 @@ function read_nnet_yaml(data::Dict)
     return Network(layers)
 end
 
+# ================================================
+# Reading a network in Sherlock format
+# ================================================
+
+"""
+    read_nnet_sherlock(file::String)
+
+Read a neural network from a file in Sherlock format.
+
+### Input
+
+- `file` -- string indicating the location of the input file
+
+### Output
+
+A `Network`.
+
+### Notes
+
+The Sherlock format is the format used by the tool `Sherlock`.
+The format is documented
+[here](https://github.com/souradeep-111/sherlock/blob/981fbf8d3bc99f76e0135f2f518e97d2a318cb7c/sherlock-network-format.pdf).
+All hidden layers implicitly use a ReLU activation function.
+"""
+function read_nnet_sherlock(file::String)
+    layers = nothing
+    open(file, "r") do io
+        n_inputs = parse(Int, readline(io))  # number of neurons in input layer
+        n_outputs = parse(Int, readline(io))  # number of neurons in output layer
+        n_hlayers = parse(Int, readline(io))  # number of hidden layers
+        layers = Vector{Layer}(undef, n_hlayers + 1)
+
+        # one line for each number of neurons in the hidden layers
+        n_neurons = Vector{Int}(undef, n_hlayers)
+        @inbounds for i in 1:n_hlayers
+            n_neurons[i] = parse(Int, readline(io))
+        end
+
+        # one line for each weight and bias in the following order:
+        # - all incoming weights to neuron 1 in hidden layer 1
+        # - bias term of neuron 1 in hidden layer 1
+        # - all incoming weights to neuron 2 in hidden layer 1
+        # - bias term of neuron 2 in hidden layer 1
+        # - ...
+        # - all incoming weights to the last neuron in hidden layer 1
+        # - bias term of the last neuron in hidden layer 1
+        # continue with hidden layer 2 until the output layer
+        @inbounds for layer in 1:n_hlayers
+            m = layer == 1 ? n_inputs : n_neurons[layer - 1]
+            n = n_neurons[layer]
+            W, b = _read_weights_biases_sherlock(io, m, n)
+            # the Sherlock format implicitly uses ReLU activation functions
+            layers[layer] = Layer(W, b, ReLU())
+        end
+
+        m = n_hlayers == 0 ? n_inputs : n_neurons[end]
+        n = n_outputs
+        W, b = _read_weights_biases_sherlock(io, m, n)
+        layers[end] = Layer(W, b, Id())
+    end
+
+    return Network(layers)
+end
+
+function _read_weights_biases_sherlock(io, m, n)
+    W = Matrix{Float32}(undef, m, n)
+    b = Vector{Float32}(undef, n)
+    for j in 1:n
+        for i in 1:m
+            W[i, j] = parse(Float32, readline(io))
+        end
+        b[j] = parse(Float32, readline(io))
+    end
+    return W, b
+end
+
 # ====================
 # toy model generation
 # ====================
