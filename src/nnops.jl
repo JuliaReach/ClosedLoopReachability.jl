@@ -192,6 +192,12 @@ end
 # International Conference on Hybrid Systems: Computation and Control. 2019.
 # ==============================================================================
 
+# works with Sigmoind and Tanh networks
+@with_kw struct TanhSolver{T} <: Solver
+    postprocessing::T = x -> x  # default: identity (= no postprocessing)
+    alg::TMJets = TMJets()
+end
+
 # ref. Eq (6) in [VER19]
 # d(σ(x))/dx = σ(x)*(1-σ(x))
 # g(t, x) = σ(tx) = 1 / (1 + exp(-tx))
@@ -219,12 +225,13 @@ const ACTFUN = Dict(Tanh() => (tanh!, ZEROINT),
 
 # Method: Cartesian decomposition (intervals for each one-dimensional subspace)
 # Only Tanh, Sigmoid and Id functions are supported
-function forward(nnet::Network, X0::LazySet;
-                 alg=TMJets(abstol=1e-14, orderQ=2, orderT=6))
+function NeuralVerification.forward_network(solver::TanhSolver, nnet::Network, X0::LazySet)
+
+    alg = solver.alg
 
     # initial states
     xᴾ₀ = _decompose_1D(X0)
-    xᴾ₀ = LazySets.array(xᴾ₀)  # see https://github.com/JuliaReach/ReachabilityAnalysis.jl/issues/254
+    xᴾ₀ = array(xᴾ₀)
     xᴾ₀ = [x.dat for x in xᴾ₀] # use concrete inteval matrix-vector operations
 
     for layer in nnet.layers  # loop over layers
@@ -255,6 +262,9 @@ function forward(nnet::Network, X0::LazySet;
         end
         xᴾ₀ = copy(xᴾ′)
     end
+
+    # FIXME apply post-processing
+
     return CartesianProductArray([Interval(x) for x in xᴾ₀])
 end
 
