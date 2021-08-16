@@ -226,8 +226,8 @@ function read_nnet_sherlock(file::String)
         # - bias term of the last neuron in hidden layer 1
         # continue with hidden layer 2 until the output layer
         @inbounds for layer in 1:(n_hlayers + 1)
-            m = layer == 1 ? n_inputs : n_neurons[layer - 1]
-            n = layer > n_hlayers ? n_outputs : n_neurons[layer]
+            m = layer > n_hlayers ? n_outputs : n_neurons[layer]
+            n = layer == 1 ? n_inputs : n_neurons[layer - 1]
             W, b = _read_weights_biases_sherlock(io, m, n)
             # the Sherlock format implicitly uses ReLU activation functions
             layers[layer] = Layer(W, b, ReLU())
@@ -239,7 +239,7 @@ end
 
 function _read_weights_biases_sherlock(io, m, n)
     W = Matrix{Float32}(undef, m, n)
-    b = Vector{Float32}(undef, n)
+    b = Vector{Float32}(undef, m)
     for i in 1:m
         for j in 1:n
             W[i, j] = parse(Float32, readline(io))
