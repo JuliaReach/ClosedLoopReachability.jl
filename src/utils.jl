@@ -265,7 +265,7 @@ See [`read_nnet_sherlock`](@ref) for information about the Sherlock format.
 """
 function write_nnet_sherlock(nnet::Network, file::String)
     layers = nnet.layers
-    n_inputs = size(layers[1].weights, 1)
+    n_inputs = size(layers[1].weights, 2)
     n_outputs = n_nodes(layers[end])
     n_hlayers = length(layers) - 1  # includes the output layer
     open(file, "w") do io
