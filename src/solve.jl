@@ -127,13 +127,13 @@ function _solve(cp::ControlledPlant,
 
     # first step
     k = 1
-    X = nothing
+    R = nothing
     t0 = tvec[k]
     t1 = tvec[k+1]
     X₀ = project(Q₀, st_vars)
     X₀s = haskey(splitter, k) ? split(splitter[k], X₀) : [X₀]
     for X₀i in X₀s
-        Fs, Us = _solve_one(X, X₀i, W₀, S, st_vars, t0, t1, cpost, rec_method,
+        Fs, Us = _solve_one(R, X₀i, W₀, S, st_vars, t0, t1, cpost, rec_method,
                             solver, network, preprocessing, postprocessing,
                             input_splitter)
         append!(flowpipes, Fs)
@@ -150,14 +150,14 @@ function _solve(cp::ControlledPlant,
         prev_part = pop!(waiting_list)
         k = prev_part.k + 1
         t = tend(prev_part.F)
-        X = prev_part.F(t)
-        X₀ = _project_oa(X, st_vars, t;
+        R = prev_part.F(t)
+        X₀ = _project_oa(R, st_vars, t;
                          remove_zero_generators=remove_zero_generators) |> set
         t0 = tvec[k]
         t1 = tvec[k+1]
         X₀s = haskey(splitter, k) ? split(splitter[k], X₀) : [X₀]
         for X₀i in X₀s
-            Fs, Us = _solve_one(X, X₀i, W₀, S, st_vars, t0, t1, cpost, rec_method,
+            Fs, Us = _solve_one(R, X₀i, W₀, S, st_vars, t0, t1, cpost, rec_method,
                                 solver, network, preprocessing, postprocessing,
                                 input_splitter)
             append!(flowpipes, Fs)
@@ -184,7 +184,7 @@ function nnet_forward(solver, network, X, preprocessing, postprocessing)
     return U
 end
 
-function _solve_one(X, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method, solver,
+function _solve_one(R, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method, solver,
                     network, preprocessing, postprocessing, splitter)
     # add nondeterministic inputs (if any)
     P₀ = isnothing(W₀) ? X₀ : X₀ × W₀
@@ -199,7 +199,7 @@ function _solve_one(X, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method, solver
     Us = []
     for Ui in split(splitter, U)
         # combine states with new control inputs
-        Q₀ = _reconstruct(rec_method, P₀, Ui, X, t0)
+        Q₀ = _reconstruct(rec_method, P₀, Ui, R, t0)
 
         sol = post(cpost, IVP(S, Q₀), dt)
 
