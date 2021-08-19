@@ -2,12 +2,12 @@
 # Projection operations
 # ========================================
 
-function _project_oa(X::AbstractLazyReachSet, vars, t; remove_zero_generators=true)
-    return Project(X, vars)
+function _project_oa(R::AbstractLazyReachSet, vars, t; remove_zero_generators=true)
+    return Project(R, vars)
 end
 
-function _project_oa(X::AbstractTaylorModelReachSet, vars, t; remove_zero_generators=true)
-    Z = overapproximate(X, Zonotope, t, remove_zero_generators=remove_zero_generators)
+function _project_oa(R::AbstractTaylorModelReachSet, vars, t; remove_zero_generators=true)
+    Z = overapproximate(R, Zonotope, t, remove_zero_generators=remove_zero_generators)
     return project(set(Z), vars; remove_zero_generators=remove_zero_generators)
 end
 
@@ -47,7 +47,7 @@ abstract type AbstractReconstructionMethod end
 
 struct CartesianProductReconstructor <: AbstractReconstructionMethod end
 
-function _reconstruct(method::CartesianProductReconstructor, P₀::LazySet, U₀::LazySet, X, ti)
+function _reconstruct(method::CartesianProductReconstructor, P₀::LazySet, U₀::LazySet, R, ti)
     Q₀ = P₀ × U₀
     return Q₀
 end
@@ -57,28 +57,28 @@ end
 end
 
 # if no Taylor model is available => use the given set P₀
-function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀, X::Nothing, ti) where {N}
-    return _reconstruct(CartesianProductReconstructor(), P₀, U₀, X, ti)
+function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀, R::Nothing, ti) where {N}
+    return _reconstruct(CartesianProductReconstructor(), P₀, U₀, R, ti)
 end
 
-function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Vector{<:LazySet}, X::TaylorModelReachSet{N}, ti) where {N}
+function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Vector{<:LazySet}, R::TaylorModelReachSet{N}, ti) where {N}
     @assert length(U₀) == 1 "expected the length of U₀ to be 1, got $(lenght(U₀))"
-    return _reconstruct(method, P₀, first(U₀), X, ti)
+    return _reconstruct(method, P₀, first(U₀), R, ti)
 end
 
-function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::LazySet, X::TaylorModelReachSet{N}, ti) where {N}
-    # evaluate X at the final time of the reach-set
-    S = set(X)
-    tn = sup(domain(X)) # assume that the reach set spans the whole period (checked outside this method)
+function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::LazySet, R::TaylorModelReachSet{N}, ti) where {N}
+    # evaluate R at the final time of the reach-set
+    S = set(R)
+    tn = sup(domain(R)) # assume that the reach set spans the whole period (checked outside this method)
     X_Δt = evaluate(S, tn)
 
-    n = dim(P₀) # number of state variables = dim(X) - dim(U₀)
+    n = dim(P₀) # number of state variables = dim(P₀) - dim(U₀)
     m = dim(U₀) # control variables
 
     vTM = Vector{TaylorModel1{TaylorN{N}, N}}(undef, n + m)
 
     # construct state variables
-    orderT = get_order(first(set(X)))
+    orderT = get_order(first(S))
     orderQ = get_order(X_Δt[1])
 
     zeroI = interval(zero(N), zero(N))
