@@ -91,7 +91,7 @@ end
 function benchmark(; T=T, silent::Bool=false)
     ## We solve the controlled system:
     silent || println("flowpipe construction")
-    res_sol = @timed sol = solve(prob, T=T, alg_nn=alg_nn, alg=alg,
+    res_sol = @timed solve(prob, T=T, alg_nn=alg_nn, alg=alg,
                                  splitter=splitter)
     sol = res_sol.value
     silent || print_timed(res_sol)
