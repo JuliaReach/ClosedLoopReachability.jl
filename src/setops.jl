@@ -96,10 +96,10 @@ function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Laz
         B₀ = convert(IntervalBox, box_approximation(U₀))
         @inbounds for i in 1:m
             I = B₀[i]
-            pi = mid(I) + zero(TaylorN(n+m, order=orderQ))
+            p = mid(I) + zero(TaylorN(n+m, order=orderQ))
             d = diam(I) / 2
             rem = interval(-d, d)
-            vTM[n+i] = TaylorModel1(Taylor1(pi, orderT), rem, zeroI, Δtn)
+            vTM[n+i] = TaylorModel1(Taylor1(p, orderT), rem, zeroI, Δtn)
         end
     else
         Z₀ = ReachabilityAnalysis._convert_or_overapproximate(U₀, Zonotope)
@@ -119,10 +119,10 @@ function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Laz
         D = view(G, :, m+1:2m)
         @assert isdiag(D)
         @inbounds for i in 1:m
-            pi = c[i] + sum(view(M, i, :) .* xc)
-            di = abs(D[i, i])
-            rem = interval(-di, di)
-            vTM[n+i] = TaylorModel1(Taylor1(pi, orderT), rem, zeroI, Δtn)
+            p = c[i] + sum(view(M, i, :) .* xc)
+            d = abs(D[i, i])
+            rem = interval(-d, d)
+            vTM[n+i] = TaylorModel1(Taylor1(p, orderT), rem, zeroI, Δtn)
         end
     end
     return TaylorModelReachSet(vTM, Δtn)
