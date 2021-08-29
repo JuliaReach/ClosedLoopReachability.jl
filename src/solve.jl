@@ -132,10 +132,21 @@ function _solve(cp::ControlledPlant,
     t1 = tvec[k+1]
     X₀ = project(Q₀, st_vars)
     X₀s = haskey(splitter, k) ? split(splitter[k], X₀) : [X₀]
-    for X₀i in X₀s
-        Fs, Us = _solve_one(R, X₀i, W₀, S, st_vars, t0, t1, cpost, rec_method,
-                            solver, network, preprocessing, postprocessing,
-                            input_splitter)
+    results = Vector(undef, length(X₀s))
+
+    # first perform an isolated analysis because of problems in TaylorSeries
+    # (global variables need to be written once)
+    @inbounds results[1] = _solve_one(R, first(X₀s), W₀, S, st_vars, t0, t1,
+        cpost, rec_method, solver, network, preprocessing, postprocessing,
+        input_splitter)
+    # parallelize analysis of the remaining parts
+    Threads.@threads for i in 2:length(results)
+        @inbounds results[i] = _solve_one(R, X₀s[i], W₀, S, st_vars, t0, t1,
+            cpost, rec_method, solver, network, preprocessing, postprocessing,
+            input_splitter)
+    end
+    # collect results from all threads
+    for (Fs, Us) in results
         append!(flowpipes, Fs)
         append!(controls, Us)
         if k < length(tvec) - 1
@@ -156,10 +167,15 @@ function _solve(cp::ControlledPlant,
         t0 = tvec[k]
         t1 = tvec[k+1]
         X₀s = haskey(splitter, k) ? split(splitter[k], X₀) : [X₀]
-        for X₀i in X₀s
-            Fs, Us = _solve_one(R, X₀i, W₀, S, st_vars, t0, t1, cpost, rec_method,
-                                solver, network, preprocessing, postprocessing,
-                                input_splitter)
+        results = Vector(undef, length(X₀s))
+        # parallelize analysis
+        Threads.@threads for i in 1:length(results)
+            @inbounds results[i] = _solve_one(R, X₀s[i], W₀, S, st_vars, t0, t1,
+                cpost, rec_method, solver, network, preprocessing,
+                postprocessing, input_splitter)
+        end
+        # collect results from all threads
+        for (Fs, Us) in results
             append!(flowpipes, Fs)
             append!(controls, Us)
             if k < length(tvec) - 1
