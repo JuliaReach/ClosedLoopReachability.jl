@@ -4,7 +4,7 @@
 
 module Unicycle  #jl
 
-using NeuralNetworkAnalysis
+using NeuralNetworkAnalysis, MAT
 using NeuralNetworkAnalysis: UniformAdditivePostprocessing
 
 # This benchmark is that of a unicycle model of a car [^DCS19] taken from Benchmark
