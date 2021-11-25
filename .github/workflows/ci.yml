@@ -21,18 +21,40 @@ jobs:
       matrix:
         julia-version: ['1.6']
         julia-arch: [x64]
-        os: [ubuntu-latest, macOS-latest]
+        os: [ubuntu-latest, windows-latest]
+        include:
+          - julia-version: '1.5'  # test on oldest supported version
+            julia-arch: x64
+            os: ubuntu-latest
+#          - julia-version: 'nightly'  # test on latest version
+#            julia-arch: x64
+#            os: ubuntu-latest
+#            experimental: true
     env:
       JULIA_PKG_SERVER: ''
     steps:
-      - uses: actions/checkout@v2
-      - name: "Set up Julia"
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Set up Julia
         uses: julia-actions/setup-julia@v1
         with:
           version: ${{ matrix.julia-version }}
           arch: ${{ matrix.julia-arch }}
-      - run: |
-          julia --project -e 'using Pkg; Pkg.develop(PackageSpec(name="NeuralVerification", url="https://github.com/sisl/NeuralVerification.jl")); Pkg.instantiate()'
+      - name: Install dependencies
+        run: |
+          julia --project --color=yes -e 'using Pkg;
+          Pkg.develop(PackageSpec(name="NeuralVerification", url="https://github.com/sisl/NeuralVerification.jl"));
+          Pkg.instantiate();
+          Pkg.build(verbose=true)'
+        shell: bash
+      - name: Build
+        run: |
+          julia --project --color=yes --check-bounds=yes -e 'using Pkg;
+              Pkg.test(coverage=true);
+              Pkg.add("Coverage");
+              using Coverage;
+              Codecov.submit(process_folder())'
+        shell: bash
       - uses: actions/cache@v1
         env:
           cache-name: cache-artifacts
