@@ -113,7 +113,7 @@ end
 
 plant(cp::ControlledPlant) = cp.ivp
 MathematicalSystems.initial_state(cp::ControlledPlant) = initial_state(cp.ivp)
-system(cp::ControlledPlant) = cp.ivp.s
+MathematicalSystems.system(cp::ControlledPlant) = system(cp.ivp)
 controller(cp::ControlledPlant) = cp.controller
 period(cp::ControlledPlant) = cp.period
 control_postprocessing(cp::ControlledPlant) = cp.postprocessing
