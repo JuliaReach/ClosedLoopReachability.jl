@@ -3,7 +3,7 @@ using Documenter, NeuralNetworkAnalysis
 DocMeta.setdocmeta!(NeuralNetworkAnalysis, :DocTestSetup,
                     :(using NeuralNetworkAnalysis); recursive=true)
 
-# Generate models
+# generate models
 include("generate.jl")
 
 makedocs(
@@ -11,7 +11,7 @@ makedocs(
     modules = [NeuralNetworkAnalysis],
     format = Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true",
                              collapselevel = 1,
-                             assets = ["assets/juliareach-light.css"]),
+                             assets = ["assets/aligned.css"]),
     pages = [
         "Home" => "index.md",
         "Examples" => Any["Adaptive Cruise Controller (ACC)" => "models/ACC.md",
@@ -25,8 +25,7 @@ makedocs(
                           #"Nonlinear Cart-Pole" => "models/Cart-Pole.md"],
         "API Reference" => Any["Problem types"=>"lib/problems.md",
                                "Solvers"=>"lib/solvers.md",
-                               "Utilities"=>"lib/utils.md"],
-        "About" => "about.md"
+                               "Utilities"=>"lib/utils.md"]
     ],
     strict = false
 )

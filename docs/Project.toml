@@ -6,7 +6,3 @@ Literate = "98b081ad-f1c9-55d3-8b20-4c87d4299306"
 MAT = "23992714-dd62-5051-b70f-ba57cb901cac"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 Symbolics = "0c5d862f-8b57-4792-8d23-62f2024744c7"
-
-[compat]
-MAT = "0.10"
-Symbolics = "1.4"
