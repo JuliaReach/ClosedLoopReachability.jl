@@ -8,8 +8,6 @@
 
 Methods to verify neural network control systems using reachability analysis
 
-:warning: This package is still a work-in-progress.
-
 ## Links
 
 - [Proceedings of ARCH-COMP20 Category Report:
