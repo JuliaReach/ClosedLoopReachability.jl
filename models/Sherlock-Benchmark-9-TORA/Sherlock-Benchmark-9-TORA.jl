@@ -81,7 +81,7 @@ predicate = X -> X ⊆ safe_states;
 # ## Results
 
 alg = TMJets(abstol=1e-10, orderT=8, orderQ=3)
-alg_nn = Ai2()
+alg_nn = DeepZ()
 if verification
     splitter = BoxSplitter([4, 4, 3, 5])
 else

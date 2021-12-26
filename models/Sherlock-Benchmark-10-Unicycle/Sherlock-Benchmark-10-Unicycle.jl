@@ -86,7 +86,7 @@ predicate_sol_suff = sol -> predicate_R_all(sol[end]);
 # ## Results
 
 alg = TMJets(abstol=1e-15, orderT=10, orderQ=1)
-alg_nn = Ai2()
+alg_nn = DeepZ()
 splitter = BoxSplitter([3, 1, 8, 1])
 
 function benchmark(; T=T, silent::Bool=false)

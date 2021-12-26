@@ -190,7 +190,7 @@ function forward_adv(X::Singleton, τ, adv; alg=nothing)
 end
 
 ## set-based case
-function forward_adv(X::AbstractZonotope, τ, adv; alg=Ai2())
+function forward_adv(X::AbstractZonotope, τ, adv; alg=DeepZ())
     Y = cartesian_product(X, Singleton([τ]))
 
     Y = normalize(Y)
@@ -200,7 +200,7 @@ function forward_adv(X::AbstractZonotope, τ, adv; alg=Ai2())
     return CTRL_IDX[imax]
 end
 
-function VCAS!(out::Vector{State{T, N}}, KMAX; ACC=ACC_MIDDLE, alg_nn=Ai2()) where {T, N}
+function VCAS!(out::Vector{State{T, N}}, KMAX; ACC=ACC_MIDDLE, alg_nn=DeepZ()) where {T, N}
 
     ## unpack initial state
     X0 = first(out)

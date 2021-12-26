@@ -94,7 +94,7 @@ end;
 import DifferentialEquations
 
 alg = TMJets(abstol=1e-7, orderT=4, orderQ=1)
-alg_nn = Ai2()
+alg_nn = DeepZ()
 
 function benchmark(; silent::Bool=false)
     ## We solve the controlled system:
