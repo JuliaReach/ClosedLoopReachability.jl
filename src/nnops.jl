@@ -1,3 +1,9 @@
+import NeuralVerification: forward_linear,
+                           forward_act,
+                           forward_network
+
+using NeuralVerification: Layer
+
 # ================================================
 # Internal forward network functions
 # ================================================
@@ -31,7 +37,7 @@ function SplitSolver(solver)
     return SplitSolver(solver, split_fun, merge_fun)
 end
 
-function NeuralVerification.forward_network(solver::SplitSolver, nnet::Network, X0)
+function forward_network(solver::SplitSolver, nnet::Network, X0)
     X0_split = solver.split_fun(X0)
     Y_union = UnionSetArray()
     for X in X0_split
@@ -53,7 +59,7 @@ end
     directions = OctDirections
 end
 
-function NeuralVerification.forward_network(solver::SampledApprox, nnet, input)
+function forward_network(solver::SampledApprox, nnet, input)
     samples = sample(input, solver.nsamples;
                      include_vertices=solver.include_vertices)
 
@@ -79,6 +85,96 @@ function NeuralVerification.forward_network(solver::SampledApprox, nnet, input)
     end
 end
 
+# ==============================================================================
+# Method to handle networks with ReLU, sigmoid, and Tanh activation functions
+# from [FAS18]
+#
+# [FAS18]: Singh, Gagandeep, et al. "Fast and Effective Robustness
+# Certification." NeurIPS 2018.
+# ==============================================================================
+
+struct DeepZ <: Solver end
+
+function forward_linear(solver::DeepZ, L::Layer, Z::AbstractZonotope)
+    return affine_map(L.weights, Z, L.bias)
+end
+
+function forward_act(solver::DeepZ, L::Layer{Id}, Z::AbstractZonotope)
+    return Z
+end
+
+function forward_act(solver::DeepZ, L::Layer{ReLU}, Z::AbstractZonotope)
+    return overapproximate(Rectification(Z), Zonotope)  # implemented in LazySets
+end
+
+function sigmoid(x::Number)
+    ex = exp(x)
+    return ex / (1 + ex)
+end
+
+function sigmoid2(x::Number)
+    ex = exp(x)
+    return ex / (1 + ex)^2
+end
+
+function _overapproximate_zonotope(Z::AbstractZonotope{N}, act, act′) where {N}
+    Z = set(S)
+    c = copy(center(Z))
+    G = copy(genmat(Z))
+    n, m = size(G)
+    row_idx = Vector{Int}()
+    μ_idx = Vector{N}()
+
+    @inbounds for i in 1:n
+        lx, ux = low(Z, i), high(Z, i)
+        ly, uy = act(lx), act(ux)
+
+        if _isapprox(lx, ux)
+            c[i] = uy
+            for j in 1:m
+                G[i, j] = zero(N)
+            end
+        else
+            λ = min(act′(lx), act′(ux))
+            μ₁ = (uy + ly - λ * (ux + lx)) / 2
+            μ₂ = uy / 2 - ly - λ * (ux - lx)
+            c[i] = c[i] * λ + μ₁
+            for j in 1:m
+                G[i, j] = G[i, j] * λ
+            end
+            push!(row_idx, i)
+            push!(μ_idx, μ₂)
+        end
+    end
+
+    q = length(row_idx)
+    if q >= 1
+        Gnew = zeros(N, n, q)
+        j = 1
+        @inbounds for i in row_idx
+            Gnew[i, j] = μ_idx[j]
+            j += 1
+        end
+        Gout = hcat(G, Gnew)
+    else
+        Gout = G
+    end
+
+    return Zonotope(c, remove_zero_columns(Gout))
+end
+
+function forward_act(solver::DeepZ, L::Layer{Sigmoid}, Z::AbstractZonotope)
+    act(x) = sigmoid(x)
+    act′(x) = sigmoid2(x)
+    return _overapproximate_zonotope(Z, act, act′)
+end
+
+function forward_act(solver::DeepZ, L::Layer{Tanh}, Z::AbstractZonotope)
+    act(x) = tanh(x)
+    act′(x) = 1 - tanh(x)^2
+    return _overapproximate_zonotope(Z, act, act′)
+end
+
 # ==========================================================
 # Methods to handle networks with ReLU activation functions
 # ==========================================================
@@ -87,7 +183,7 @@ end
 # it exploits that box(relu(X)) == relu(box(X))
 struct BoxSolver <: Solver end
 
-function NeuralVerification.forward_network(solver::BoxSolver, nnet::Network, X0)
+function forward_network(solver::BoxSolver, nnet::Network, X0)
     X = X0
     for layer in nnet.layers
         # affine map and box approximation
@@ -112,7 +208,7 @@ end
     convexify::Bool = false
 end
 
-function NeuralVerification.forward_network(solver::ConcreteReLU, nnet::Network, X0)
+function forward_network(solver::ConcreteReLU, nnet::Network, X0)
     X = [X0]
     for layer in nnet.layers
         if typeof(X[1]) <: UnionSetArray
@@ -138,7 +234,7 @@ end
     apply_convex_hull::Bool = false
 end
 
-function NeuralVerification.forward_network(solver::VertexSolver, nnet::Network, X0)
+function forward_network(solver::VertexSolver, nnet::Network, X0)
     N = eltype(X0)
     P = X0
 
@@ -268,8 +364,7 @@ struct BlackBoxController{FT} <: AbstractNetwork
     f::FT
 end
 
-function NeuralVerification.forward_network(solver::BlackBoxSolver,
-                                            bbc::BlackBoxController, X0)
+function forward_network(solver::BlackBoxSolver, bbc::BlackBoxController, X0)
     return bbc.f(X0)
 end
 
@@ -288,9 +383,8 @@ function forward(nnet::Network, X0::AbstractSingleton)
 end
 
 for SOLVER in LazySets.subtypes(Solver, true)
-    @eval function NeuralVerification.forward_network(solver::$SOLVER,
-                                                      nnet::Network,
-                                                      X0::AbstractSingleton)
+    @eval function forward_network(solver::$SOLVER, nnet::Network,
+                                   X0::AbstractSingleton)
               return forward(nnet, X0)
           end
 end
