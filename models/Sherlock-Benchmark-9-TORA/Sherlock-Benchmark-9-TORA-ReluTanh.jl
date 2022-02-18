@@ -2,16 +2,10 @@
 #
 #md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/Sherlock-Benchmark-9-TORA.ipynb)
 
-module TORA  #jl
+module TORA_ReluTanh  #jl
 
 using NeuralNetworkAnalysis, MAT
 using NeuralNetworkAnalysis: UniformAdditivePostprocessing, NoSplitter
-
-# The following option determines whether the verification settings should be
-# used or not. The verification settings are chosen to show that the safety
-# property is satisfied. Concretely we split the initial states into small
-# chunks and run many analyses.
-const verification = false;
 
 # This model consists of a cart attached to a wall with a spring. The cart is
 # free to move on a friction-less surface. The car has a weight attached to an
@@ -49,7 +43,7 @@ const verification = false;
     return dx
 end
 
-path = @modelpath("Sherlock-Benchmark-9-TORA", "controllerTora.mat")
+path = @modelpath("Sherlock-Benchmark-9-TORA", "controllerToraReluTanh.mat")
 controller = read_nnet_mat(path, act_key="act_fcns");
 
 # ## Specification
@@ -73,7 +67,6 @@ prob = ControlledPlant(ivp, controller, vars_idx, period;
 ## Safety specification: x[1], x[2], x[3], x[4] ∈ [-2, 2] for all t ≤ T
 T = 20.0  # time horizon
 T_warmup = 2 * period  # shorter time horizon for dry run
-T_reach = verification ? T : T_warmup  # shorter time horizon if not verifying
 
 safe_states = cartesian_product(BallInf(zeros(4), 2.0), Universe(1))
 predicate = X -> X ⊆ safe_states;
@@ -82,17 +75,11 @@ predicate = X -> X ⊆ safe_states;
 
 alg = TMJets(abstol=1e-10, orderT=8, orderQ=3)
 alg_nn = DeepZ()
-if verification
-    splitter = BoxSplitter([4, 4, 3, 5])
-else
-    splitter = NoSplitter()
-end
 
 function benchmark(; T=T, silent::Bool=false)
     ## We solve the controlled system:
     silent || println("flowpipe construction")
-    res_sol = @timed solve(prob, T=T, alg_nn=alg_nn, alg=alg,
-                                 splitter=splitter)
+    res_sol = @timed solve(prob, T=T, alg_nn=alg_nn, alg=alg)
     sol = res_sol.value
     silent || print_timed(res_sol)
 
@@ -110,7 +97,7 @@ function benchmark(; T=T, silent::Bool=false)
 end
 
 benchmark(T=T_warmup, silent=true)  # warm-up
-res = @timed benchmark(T=T_reach)  # benchmark
+res = @timed benchmark(T=T)  # benchmark
 sol = res.value
 println("total analysis time")
 print_timed(res);
@@ -137,7 +124,7 @@ function plot_helper(fig, vars)
         safe_states_projected = project(safe_states, vars)
     end
     plot!(fig, safe_states_projected, color=:lightgreen, lab="safe states")
-    if !verification && 0 ∉ vars
+    if 0 ∉ vars
         plot!(fig, project(X₀, vars), lab="X₀")
     end
     plot!(fig, sol, vars=vars, color=:yellow, lab="")

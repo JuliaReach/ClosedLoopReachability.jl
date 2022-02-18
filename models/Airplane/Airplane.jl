@@ -199,7 +199,7 @@ predicate_sol = sol -> any(predicate(R) for F in sol for R in F);
 import DifferentialEquations
 
 alg = TMJets(abstol=1e-10, orderT=7, orderQ=1)
-alg_nn = Ai2()
+alg_nn = DeepZ()
 
 function benchmark(; silent::Bool=false)
     ## We solve the controlled system:

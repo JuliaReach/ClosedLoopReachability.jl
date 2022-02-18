@@ -142,7 +142,7 @@ predicate = X -> X ⊆ safe_states;
 alg = TMJets(abstol=1e-6, orderT=6, orderQ=1);
 
 # To propagate sets through the neural network, we use the `Ai2` algorithm:
-alg_nn = Ai2()
+alg_nn = DeepZ()
 
 
 function benchmark(; silent::Bool=false)

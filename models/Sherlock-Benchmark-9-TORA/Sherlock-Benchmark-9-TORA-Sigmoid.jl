@@ -2,7 +2,7 @@
 #
 #md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/Sherlock-Benchmark-9-TORA.ipynb)
 
-module TORA  #jl
+module TORA_Sigmoid  #jl
 
 using NeuralNetworkAnalysis, MAT
 using NeuralNetworkAnalysis: UniformAdditivePostprocessing, NoSplitter
@@ -49,7 +49,7 @@ const verification = false;
     return dx
 end
 
-path = @modelpath("Sherlock-Benchmark-9-TORA", "controllerTora.mat")
+path = @modelpath("Sherlock-Benchmark-9-TORA", "controllerToraSigmoid.mat")
 controller = read_nnet_mat(path, act_key="act_fcns");
 
 # ## Specification
@@ -73,7 +73,7 @@ prob = ControlledPlant(ivp, controller, vars_idx, period;
 ## Safety specification: x[1], x[2], x[3], x[4] ∈ [-2, 2] for all t ≤ T
 T = 20.0  # time horizon
 T_warmup = 2 * period  # shorter time horizon for dry run
-T_reach = verification ? T : T_warmup  # shorter time horizon if not verifying
+T_reach = verification ? T : 5.0  # shorter time horizon if not verifying
 
 safe_states = cartesian_product(BallInf(zeros(4), 2.0), Universe(1))
 predicate = X -> X ⊆ safe_states;

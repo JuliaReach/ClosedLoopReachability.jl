@@ -15,7 +15,9 @@ makedocs(
     pages = [
         "Home" => "index.md",
         "Examples" => Any["Adaptive Cruise Controller (ACC)" => "models/ACC.md",
-                          "Translational Oscillations (TORA)" => "models/Sherlock-Benchmark-9-TORA.md",
+                          "Translational Oscillations (TORA) with ReLU controller" => "models/Sherlock-Benchmark-9-TORA.md",
+                          "Translational Oscillations (TORA) with sigmoid controller" => "models/Sherlock-Benchmark-9-TORA-Sigmoid.md",
+                          "Translational Oscillations (TORA) with ReLU/tanh controller" => "models/Sherlock-Benchmark-9-TORA-ReluTanh.md",
                           "Unicycle Car Model" => "models/Sherlock-Benchmark-10-Unicycle.md",
                           "Vertical Collision Avoidance (VCAS)" => "models/VertCAS.md",
                           "Single Inverted Pendulum" => "models/Single-Pendulum.md",

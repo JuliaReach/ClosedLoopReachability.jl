@@ -42,8 +42,8 @@ T = N*period;
 
 sol_raw = solve(prob, T=T, alg_nn=alg_nn, alg=alg);
 
-import DifferentialEquations
-sim = simulate(prob, T=T; trajectories=10, include_vertices=true);
+# import DifferentialEquations
+# sim = simulate(prob, T=T; trajectories=10, include_vertices=true);
 
 # using Plots
 # fig = plot()
