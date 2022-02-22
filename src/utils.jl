@@ -1,6 +1,3 @@
-using NeuralVerification
-using NeuralVerification: Layer, n_nodes
-
 _vec(A::AbstractMatrix) = vec(A)
 _vec(A::Number) = [A]
 _vec(A::AbstractVector) = A
@@ -50,14 +47,66 @@ macro modelpath(model_path::String, name::String)
 end
 
 # ================================================
+# Reading a network in NNET format
+# ================================================
+
+"""
+    read_nnet(file; final_activation=Id())
+
+Read a neural network stored in a `.nnet` file.
+
+### Input
+
+- `file`             -- string indicating the location of the `.nnet` file
+- `final_activation` -- (optional, default: `Id()`) activation function of the
+                        last layer
+
+### Output
+
+A `Network` struct.
+
+### Notes
+
+For more info on the `.nnet` format, see [here](https://github.com/sisl/NNet).
+The format assumes all hidden layers have ReLU activation except for the last
+one.
+
+The code is taken from
+[here](https://github.com/sisl/NeuralVerification.jl/blob/237f0924eaf1988188219aff4360a677534f3871/src/utils/util.jl#L10).
+"""
+function read_nnet(file::String; final_activation=Id())
+    f = open(file)
+    line = readline(f)
+    while occursin("//", line)  # skip comments
+        line = readline(f)
+    end
+    nlayers = parse(Int64, split(line, ",")[1])
+    layer_sizes = parse.(Int64, split(readline(f), ",")[1:nlayers+1])
+    for i in 1:5
+        line = readline(f)
+    end
+    layers = Layer[_read_layer(dim, f) for dim in layer_sizes[2:end-1]]
+    push!(layers, _read_layer(last(layer_sizes), f, final_activation))
+    return Network(layers)
+end
+
+function _read_layer(output_dim::Int64, f::IOStream, act = ReLU())
+     rowparse(splitrow) = parse.(Float64, splitrow[findall(!isempty, splitrow)])
+     W_str_vec = [rowparse(split(readline(f), ",")) for i in 1:output_dim]
+     weights = vcat(W_str_vec'...)
+     bias_string = [split(readline(f), ",")[1] for j in 1:output_dim]
+     bias = rowparse(bias_string)
+     return Layer(weights, bias, act)
+end
+
+# ================================================
 # Reading a network in MAT format
 # ================================================
 
 """
     read_nnet_mat(file; key=nothing, act_key="activation_fcns")
 
-Read a neural network stored in a `.mat` file and return the corresponding network
-in the format of `NeuralVerification.jl`.
+Read a neural network stored in a `.mat` file.
 
 ### Input
 
@@ -147,12 +196,11 @@ const ACT_YAML = Dict("Id"=>Id(),
 
 Read a neural network from a file in YAML format (see `YAML.jl`) and convert it
 
-Read a neural network stored in a `.mat` file and return the corresponding network
-in the format of `NeuralVerification.jl`.
+Read a neural network stored in a `.yml` file.
 
 ### Input
 
-- `file` -- string indicating the location of the `.mat` file containing the neural network
+- `file` -- string indicating the location of the `.yml` file containing the neural network
 - `key`  -- (optional, default: `"controller"`) key used to search the dictionary
 
 ### Output
@@ -266,7 +314,7 @@ See [`read_nnet_sherlock`](@ref) for information about the Sherlock format.
 function write_nnet_sherlock(nnet::Network, file::String)
     layers = nnet.layers
     n_inputs = size(layers[1].weights, 2)
-    n_outputs = n_nodes(layers[end])
+    n_outputs = length(layers[end])
     n_hlayers = length(layers) - 1  # includes the output layer
     open(file, "w") do io
         println(io, string(n_inputs))  # number of neurons in input layer
@@ -275,7 +323,7 @@ function write_nnet_sherlock(nnet::Network, file::String)
 
         # one line for each number of neurons in the hidden layers
         @inbounds for i in 1:n_hlayers
-            println(io, string(n_nodes(layers[i])))
+            println(io, string(length(layers[i])))
         end
 
         # one line for each weight and bias of the hidden and output layers

@@ -1,8 +1,4 @@
-import NeuralVerification: forward_linear,
-                           forward_act,
-                           forward_network
-
-using NeuralVerification: Layer
+abstract type Solver end
 
 # ================================================
 # Internal forward network functions
@@ -17,6 +13,20 @@ function forward(nnet::Network, x0::Vector{<:Number})
         x = layer.activation(W * x + b)
     end
     return x
+end
+
+function forward_network(solver::Solver, nnet::Network, X0)
+    X = X0
+    for layer in nnet.layers
+        _, X = forward_layer(solver, layer, X)
+    end
+    return X
+end
+
+function forward_layer(solver, layer, reach)
+    Yl = forward_linear(solver, layer, reach)
+    Y = forward_act(solver, layer, Yl)
+    return Yl, Y
 end
 
 # ================================================
@@ -68,7 +78,7 @@ function forward_network(solver::SampledApprox, nnet, input)
         MIN = Inf
         MAX = -Inf
         for sample in samples
-            output = first(NV.compute_output(nnet, sample))
+            output = first(forward(nnet, sample))
             MIN = min(MIN, output)
             MAX = max(MAX, output)
         end
@@ -76,7 +86,7 @@ function forward_network(solver::SampledApprox, nnet, input)
     else
         vlist = Vector{Vector{eltype(samples[1])}}(undef, length(samples))
         @inbounds for (i, sample) in enumerate(samples)
-            vlist[i] = NV.compute_output(nnet, sample)
+            vlist[i] = forward(nnet, sample)
         end
         convex_hull!(vlist)
         P = VPolytope(vlist)

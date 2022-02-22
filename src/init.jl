@@ -8,14 +8,10 @@ using ReachabilityAnalysis: _check_dim, _get_tspan, _get_cpost, _default_cpost,
                             AbstractContinuousPost, TimeInterval,
                             AbstractLazyReachSet, AbstractTaylorModelReachSet
 
-@reexport using NeuralVerification
-using NeuralVerification: Network, output_bound, Solver, AbstractNetwork,
-                          ActivationFunction, Id, ReLU, Sigmoid, Tanh,
-                          @with_kw
+using Parameters: @with_kw
 
 # aliases
 const RA = ReachabilityAnalysis
-const NV = NeuralVerification
 const IA = IntervalArithmetic
 
 using LazySets: _leq, _geq, isapproxzero, remove_zero_generators
