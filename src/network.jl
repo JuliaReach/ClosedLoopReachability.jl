@@ -6,7 +6,7 @@ end
 
 abstract type AbstractNetwork end
 
-struct Network
+struct Network <: AbstractNetwork
     layers::Vector{Layer}
 end
 
