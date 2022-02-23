@@ -1,6 +1,8 @@
 module NeuralNetworkAnalysis
 
 include("init.jl")
+include("activation.jl")
+include("network.jl")
 include("problem.jl")
 include("nnops.jl")
 include("setops.jl")
@@ -10,7 +12,10 @@ include("simulate.jl")
 include("solve.jl")
 
 # problem types
-export ControlledPlant,
+export Network,
+       Layer,
+       Id, Relu, Sigmoid, Tanh,
+       ControlledPlant,
        BlackBoxController
 
 # splitters
@@ -19,11 +24,11 @@ export BoxSplitter, ZonotopeSplitter,
        SignSplitter
 
 # solvers
-export solve, forward, simulate,
+export solve, forward, forward_network, simulate,
        DeepZ, SampledApprox, VertexSolver, BoxSolver, SplitSolver, BlackBoxSolver
 
 # utility functions
-export @modelpath, read_nnet_mat, read_nnet_yaml, read_nnet_sherlock,
+export @modelpath, read_nnet, read_nnet_mat, read_nnet_yaml, read_nnet_sherlock,
        write_nnet_sherlock,
        print_timed
 
