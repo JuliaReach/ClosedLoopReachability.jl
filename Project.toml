@@ -13,7 +13,7 @@ Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 
 [compat]
 CommonSolve = "0.1 - 0.2"
-LazySets = "1.46 - 1.55"
+LazySets = "1.46"
 MathematicalSystems = "0.11"
 Parameters = "0.12"
 ReachabilityAnalysis = "0.14.5, 0.15 - 0.16"
