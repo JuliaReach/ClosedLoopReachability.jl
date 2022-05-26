@@ -1,7 +1,10 @@
 using .DifferentialEquations
 const DE = DifferentialEquations
 
-import .DifferentialEquations: controls
+if isdefined(DifferentialEquations, :controls)
+    # before v7, DE had deps importing ModelingToolkit, which exports `controls`
+    import .DifferentialEquations: controls
+end
 
 export trajectory,
        trajectories,
