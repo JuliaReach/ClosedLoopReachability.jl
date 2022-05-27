@@ -25,9 +25,8 @@ jobs:
       - name: Install dependencies
         run: |
           julia --project=docs/ -e 'using Pkg;
-          Pkg.develop(PackageSpec(name="NeuralVerification", url="https://github.com/sisl/NeuralVerification.jl"));
-          Pkg.develop(PackageSpec(path=pwd()));
-          Pkg.instantiate()'
+              Pkg.develop(PackageSpec(path=pwd()));
+              Pkg.instantiate()'
       - name: Build and deploy
         env:
           GKSwstype: nul  # fix for Plots with GR backend

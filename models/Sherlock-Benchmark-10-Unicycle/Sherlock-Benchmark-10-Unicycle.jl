@@ -4,8 +4,8 @@
 
 module Unicycle  #jl
 
-using NeuralNetworkAnalysis, MAT
-using NeuralNetworkAnalysis: UniformAdditivePostprocessing
+using ClosedLoopReachability, MAT
+using ClosedLoopReachability: UniformAdditivePostprocessing
 
 # This benchmark is that of a unicycle model of a car [^DCS19] taken from Benchmark
 # 10 of the Sherlock tool. It models the dynamics of a car involving 4

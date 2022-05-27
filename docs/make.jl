@@ -1,14 +1,14 @@
-using Documenter, NeuralNetworkAnalysis
+using Documenter, ClosedLoopReachability
 
-DocMeta.setdocmeta!(NeuralNetworkAnalysis, :DocTestSetup,
-                    :(using NeuralNetworkAnalysis); recursive=true)
+DocMeta.setdocmeta!(ClosedLoopReachability, :DocTestSetup,
+                    :(using ClosedLoopReachability); recursive=true)
 
 # generate models
 include("generate.jl")
 
 makedocs(
-    sitename = "NeuralNetworkAnalysis.jl",
-    modules = [NeuralNetworkAnalysis],
+    sitename = "ClosedLoopReachability.jl",
+    modules = [ClosedLoopReachability],
     format = Documenter.HTML(prettyurls = get(ENV, "CI", nothing) == "true",
                              collapselevel = 1,
                              assets = ["assets/aligned.css"]),
@@ -33,6 +33,6 @@ makedocs(
 )
 
 deploydocs(
-    repo = "github.com/JuliaReach/NeuralNetworkAnalysis.jl.git",
+    repo = "github.com/JuliaReach/ClosedLoopReachability.jl.git",
     push_preview=true
 )

@@ -8,8 +8,8 @@
 
 module SinglePendulum  #jl
 
-using NeuralNetworkAnalysis
-using NeuralNetworkAnalysis: SingleEntryVector
+using ClosedLoopReachability
+using ClosedLoopReachability: SingleEntryVector
 
 # The following option determines whether the falsification settings should be
 # used or not. The falsification settings are sufficient to show that the safety

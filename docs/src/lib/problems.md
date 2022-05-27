@@ -1,6 +1,6 @@
 ```@meta
-DocTestSetup = :(using NeuralNetworkAnalysis)
-CurrentModule = NeuralNetworkAnalysis
+DocTestSetup = :(using ClosedLoopReachability)
+CurrentModule = ClosedLoopReachability
 ```
 
 # Problem types

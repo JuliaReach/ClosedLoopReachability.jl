@@ -4,8 +4,8 @@
 
 module TORA_Sigmoid  #jl
 
-using NeuralNetworkAnalysis, MAT
-using NeuralNetworkAnalysis: UniformAdditivePostprocessing, NoSplitter
+using ClosedLoopReachability, MAT
+using ClosedLoopReachability: UniformAdditivePostprocessing, NoSplitter
 
 # The following option determines whether the verification settings should be
 # used or not. The verification settings are chosen to show that the safety
