@@ -9,7 +9,7 @@
 
 module VertCAS  #jl
 
-using NeuralNetworkAnalysis, LinearAlgebra
+using ClosedLoopReachability, LinearAlgebra
 
 # ## Model
 #
@@ -23,7 +23,7 @@ using NeuralNetworkAnalysis, LinearAlgebra
 # to have a constant horizontal speed, and the intruder (red) is assumed to
 # follow a constant horizontal trajectory towards ownship, see the figure below.
 #
-# ![](https://raw.githubusercontent.com/JuliaReach/NeuralNetworkAnalysis.jl/master/models/VertCAS/nmac.png)
+# ![](https://raw.githubusercontent.com/JuliaReach/ClosedLoopReachability.jl/master/models/VertCAS/nmac.png)
 #
 # The current geometry of the system is described by:
 #

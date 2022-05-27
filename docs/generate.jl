@@ -1,6 +1,6 @@
 # generate examples
 import Literate
-import NeuralNetworkAnalysis: @modelpath
+import ClosedLoopReachability: @modelpath
 
 MODELS = [
     joinpath(@__DIR__, "..", "models", "ACC"),

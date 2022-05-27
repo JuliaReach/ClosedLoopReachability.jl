@@ -1,4 +1,4 @@
-module NeuralNetworkAnalysis
+module ClosedLoopReachability
 
 include("init.jl")
 include("activation.jl")

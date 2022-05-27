@@ -4,8 +4,8 @@
 
 module TORA_ReluTanh  #jl
 
-using NeuralNetworkAnalysis, MAT
-using NeuralNetworkAnalysis: UniformAdditivePostprocessing, NoSplitter
+using ClosedLoopReachability, MAT
+using ClosedLoopReachability: UniformAdditivePostprocessing, NoSplitter
 
 # This model consists of a cart attached to a wall with a spring. The cart is
 # free to move on a friction-less surface. The car has a weight attached to an

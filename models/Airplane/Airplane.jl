@@ -20,7 +20,7 @@
 
 module Airplane  #jl
 
-using NeuralNetworkAnalysis
+using ClosedLoopReachability
 
 # The following option determines whether the falsification settings should be
 # used or not. The falsification settings are sufficient to show that the safety

@@ -210,7 +210,7 @@ A `Network` struct.
 ### Notes
 
 The following activation functions are supported: identity, relu, sigmoid and tanh;
-see `NeuralNetworkAnalysis.ACT_YAML`.
+see `ClosedLoopReachability.ACT_YAML`.
 """
 function read_nnet_yaml(data::Dict)
     NLAYERS = length(data["offsets"])

@@ -21,7 +21,7 @@
 # The trained network had 2 hidden layers, with 300 neurons in the first layer,
 # and 200 in the second layer. The sampling time for this controller was 0.5s.
 
-using NeuralNetworkAnalysis
+using ClosedLoopReachability
 
 # The spatial variables are aguemte
 @taylorize function f!(dx, x, p, t)

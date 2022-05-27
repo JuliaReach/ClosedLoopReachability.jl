@@ -30,7 +30,7 @@
 # to the plant is 10.  However if ``\textrm{output}_1 < \textrm{output}_2`` then the input supplied
 # to the plant is -10.
 
-using NeuralNetworkAnalysis
+using ClosedLoopReachability
 
 @taylorize function cartpole!(du, u, p, t)
     local f, m, l, mt, g = 10, 0.1, 0.5, 1.1, 9.8
