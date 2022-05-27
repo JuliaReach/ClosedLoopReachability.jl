@@ -42,13 +42,8 @@ jobs:
           arch: ${{ matrix.julia-arch }}
       - name: Cache artifacts
         uses: julia-actions/cache@v1
-      - name: Install dependencies
-        run: |
-          julia --project --color=yes -e 'using Pkg;
-              Pkg.develop(PackageSpec(name="NeuralVerification", url="https://github.com/sisl/NeuralVerification.jl"));
-              Pkg.instantiate();
-              Pkg.build(verbose=true)'
-        shell: bash
+      - name: Build package
+        uses: julia-actions/julia-buildpkg@v1
         continue-on-error: ${{ matrix.julia-version == 'nightly' }}
       - name: Run tests
         uses: julia-actions/julia-runtest@v1
