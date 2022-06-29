@@ -128,7 +128,6 @@ function sigmoid2(x::Number)
 end
 
 function _overapproximate_zonotope(Z::AbstractZonotope{N}, act, act′) where {N}
-    Z = set(S)
     c = copy(center(Z))
     G = copy(genmat(Z))
     n, m = size(G)
@@ -139,7 +138,7 @@ function _overapproximate_zonotope(Z::AbstractZonotope{N}, act, act′) where {N
         lx, ux = low(Z, i), high(Z, i)
         ly, uy = act(lx), act(ux)
 
-        if _isapprox(lx, ux)
+        if LazySets._isapprox(lx, ux)
             c[i] = uy
             for j in 1:m
                 G[i, j] = zero(N)
@@ -170,7 +169,7 @@ function _overapproximate_zonotope(Z::AbstractZonotope{N}, act, act′) where {N
         Gout = G
     end
 
-    return Zonotope(c, remove_zero_columns(Gout))
+    return Zonotope(c, LazySets.remove_zero_columns(Gout))
 end
 
 function forward_act(solver::DeepZ, L::Layer{Sigmoid}, Z::AbstractZonotope)
