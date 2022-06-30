@@ -354,6 +354,9 @@ end
 # Reading a network in POLAR format
 # ================================================
 
+const ACT_POLAR = Dict("Affine"=>Id(),
+                       "sigmoid"=>Sigmoid())
+
 function read_nnet_polar(file::String)
     layers = nothing
     open(file, "r") do io
@@ -371,7 +374,7 @@ function read_nnet_polar(file::String)
         # one line for each activation function
         activations = Vector{ActivationFunction}(undef, n_hlayers + 1)
         @inbounds for i in 1:(n_hlayers + 1)
-            activations[i] = _parse_activation_polar(readline(io))
+            activations[i] = ACT_POLAR[readline(io)]
         end
 
         # the layers use the Sherlock format
@@ -384,15 +387,6 @@ function read_nnet_polar(file::String)
     end
 
     return Network(layers)
-end
-
-function _parse_activation_polar(string::String)
-    if string == "sigmoid"
-        return Sigmoid()
-    elseif string == "Affine"
-        return Id()
-    end
-    throw(ArgumentError("cannot parse the activation function `$string`"))
 end
 
 # ====================
