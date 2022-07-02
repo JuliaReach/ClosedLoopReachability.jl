@@ -16,6 +16,7 @@ CurrentModule = ClosedLoopReachability
 ```@docs
 read_nnet_mat
 read_nnet_yaml
+read_nnet_onnx
 read_nnet_sherlock
 write_nnet_sherlock
 ```
