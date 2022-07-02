@@ -248,8 +248,8 @@ A `Network` struct.
 This implementation does not apply to general `ONNX` networks because it assumes
 a specific structure:
 1. First comes a bias vector for the input vector that is a zero vector.
-2. Next come the weight matrices `W` and bias vectors `b` in pairs *in the order
-in which they are applied*.
+2. Next come the weight matrices `W` (transposed) and bias vectors `b` in pairs
+*in the order in which they are applied*.
 3. Next come the affine maps and the activation functions *in the order in which
 they are applied*. The last layer does not have an activation function.
 
@@ -276,7 +276,7 @@ function read_nnet_onnx(data)
         if !(op.val isa AbstractMatrix)
             break
         end
-        W = op.val
+        W = permutedims(op.val)
         idx += 1
         op = ops[idx]
         @assert op.val isa AbstractVector "expected a bias vector"
