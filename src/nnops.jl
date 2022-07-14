@@ -146,7 +146,8 @@ function _overapproximate_zonotope(Z::AbstractZonotope{N}, act, act′) where {N
         else
             λ = min(act′(lx), act′(ux))
             μ₁ = (uy + ly - λ * (ux + lx)) / 2
-            μ₂ = uy / 2 - ly - λ * (ux - lx)
+            # Note: there is a typo in the paper (missing parentheses)
+            μ₂ = (uy - ly - λ * (ux - lx)) / 2
             c[i] = c[i] * λ + μ₁
             for j in 1:m
                 G[i, j] = G[i, j] * λ
