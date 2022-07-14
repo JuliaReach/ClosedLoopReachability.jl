@@ -9,3 +9,29 @@
 This package implements methods to analyze closed-loop control systems using reachability analysis.
 
 Currently we support neural-network controllers.
+
+
+## 📜 How to cite
+
+If you use this package in your work, please cite it using the metadata in [CITATION.bib](https://github.com/JuliaReach/LazySets.jl/blob/master/CITATION.bib).
+
+<details>
+<summary>Click to see BibTeX entry. </summary>
+
+```
+@inproceedings{SchillingFG22,
+  author    = {Christian Schilling and
+               Marcelo Forets and
+               Sebasti{\'{a}}n Guadalupe},
+  title     = {Verification of Neural-Network Control Systems by Integrating {T}aylor
+               Models and Zonotopes},
+  booktitle = {{AAAI}},
+  pages     = {8169--8177},
+  publisher = {{AAAI} Press},
+  year      = {2022},
+  url       = {https://ojs.aaai.org/index.php/AAAI/article/view/20790},
+  doi       = {10.1609/aaai.v36i7.20790}
+}
+```
+
+</details>
