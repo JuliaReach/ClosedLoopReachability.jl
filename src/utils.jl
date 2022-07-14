@@ -187,6 +187,7 @@ end
 # ================================================
 
 const ACT_YAML = Dict("Id"=>Id(),
+                      "Linear"=>Id(),
                       "ReLU"=>ReLU(),
                       "Sigmoid"=>Sigmoid(),
                       "Tanh"=>Tanh())
