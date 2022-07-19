@@ -69,7 +69,7 @@ end
     directions = OctDirections
 end
 
-function forward_network(solver::SampledApprox, nnet, input)
+function forward_network(solver::SampledApprox, nnet::Network, input)
     samples = sample(input, solver.nsamples;
                      include_vertices=solver.include_vertices)
 
