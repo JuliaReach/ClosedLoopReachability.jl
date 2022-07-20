@@ -123,7 +123,7 @@ import DifferentialEquations
 function run(use_less_robust_controller::Bool)
     prob, spec = DoublePendulum_model(use_less_robust_controller)
 
-    alg = TMJets21b(abstol=1e-9, orderT=8, orderQ=1)
+    alg = TMJets(abstol=1e-9, orderT=8, orderQ=1)
     alg_nn = DeepZ()
 
     function benchmark(; silent::Bool=false)
