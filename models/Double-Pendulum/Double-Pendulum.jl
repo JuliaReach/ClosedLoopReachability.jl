@@ -62,6 +62,9 @@ const mL = m*L^2;
     dx[2] = x₄
     dx[3] = ★ * bignum / (2 * denom) - x4sin12 + gLsin1 + T1_frac
     dx[4] = - bignum / denom
+    dx[5] = zero(T₁)
+    dx[6] = zero(T₂)
+    return dx
 end;
 
 # ## Specification
@@ -120,7 +123,7 @@ import DifferentialEquations
 function run(use_less_robust_controller::Bool)
     prob, spec = DoublePendulum_model(use_less_robust_controller)
 
-    alg = TMJets20(abstol=1e-9, orderT=8, orderQ=1)
+    alg = TMJets21b(abstol=1e-9, orderT=8, orderQ=1)
     alg_nn = DeepZ()
 
     function benchmark(; silent::Bool=false)
