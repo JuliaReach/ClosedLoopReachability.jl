@@ -156,6 +156,7 @@ const Ixz = 0.0
     dx[16] = zero(Mx)
     dx[17] = zero(My)
     dx[18] = zero(Mz)
+    return dx
 end;
 
 # ## Specifications
