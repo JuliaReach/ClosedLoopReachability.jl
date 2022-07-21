@@ -138,7 +138,7 @@ function _overapproximate_zonotope(Z::AbstractZonotope{N}, act, act′) where {N
         lx, ux = low(Z, i), high(Z, i)
         ly, uy = act(lx), act(ux)
 
-        if LazySets._isapprox(lx, ux)
+        if _isapprox(lx, ux)
             c[i] = uy
             for j in 1:m
                 G[i, j] = zero(N)
@@ -170,7 +170,7 @@ function _overapproximate_zonotope(Z::AbstractZonotope{N}, act, act′) where {N
         Gout = G
     end
 
-    return Zonotope(c, LazySets.remove_zero_columns(Gout))
+    return Zonotope(c, remove_zero_columns(Gout))
 end
 
 function forward_act(solver::DeepZ, L::Layer{Sigmoid}, Z::AbstractZonotope)
@@ -330,7 +330,7 @@ function forward(nnet::Network, X0::LazySet;
 
     # initial states
     xᴾ₀ = _decompose_1D(X0)
-    xᴾ₀ = LazySets.array(xᴾ₀)  # see https://github.com/JuliaReach/ReachabilityAnalysis.jl/issues/254
+    xᴾ₀ = array(xᴾ₀)  # see https://github.com/JuliaReach/ReachabilityAnalysis.jl/issues/254
     xᴾ₀ = [x.dat for x in xᴾ₀] # use concrete inteval matrix-vector operations
 
     for layer in nnet.layers  # loop over layers
@@ -392,7 +392,7 @@ function forward(nnet::Network, X0::AbstractSingleton)
     return Singleton(x1)
 end
 
-for SOLVER in LazySets.subtypes(Solver, true)
+for SOLVER in subtypes(Solver, true)
     @eval function forward_network(solver::$SOLVER, nnet::Network,
                                    X0::AbstractSingleton)
               return forward(nnet, X0)
