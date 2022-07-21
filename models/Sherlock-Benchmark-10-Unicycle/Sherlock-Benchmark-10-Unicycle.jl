@@ -7,7 +7,7 @@ module Unicycle  #jl
 using ClosedLoopReachability, MAT
 using ClosedLoopReachability: UniformAdditivePostprocessing
 
-# This benchmark is that of a unicycle model of a car [^DCS19] taken from Benchmark
+# This benchmark is that of a unicycle model of a car [^1] taken from Benchmark
 # 10 of the Sherlock tool. It models the dynamics of a car involving 4
 # variables, specifically the $x$ and $y$ coordinates on a 2 dimensional
 # plane, as well as velocity magnitude (speed) and steering angle.
@@ -73,14 +73,14 @@ prob = ControlledPlant(ivp, controller, vars_idx, period;
 T = 10.0
 T_warmup = 2 * period  # shorter time horizon for dry run
 
-target_states = cartesian_product(Hyperrectangle(zeros(4), [0.6, 0.2, 0.06, 0.3]),
-                                  Universe(3))
-predicate = X -> X ⊆ target_states
+target_set = cartesian_product(Hyperrectangle(zeros(4), [0.6, 0.2, 0.06, 0.3]),
+                               Universe(3))
+predicate = X -> X ⊆ target_set
 predicate_sol = sol -> any(predicate(R) for F in sol for R in F);
 
 ## sufficient check: only look at the final time point
-predicate_R_tend = R -> overapproximate(R, Zonotope, tend(R)) ⊆ target_states
-predicate_R_all = R -> R ⊆ target_states
+predicate_R_tend = R -> overapproximate(R, Zonotope, tend(R)) ⊆ target_set
+predicate_R_all = R -> R ⊆ target_set
 predicate_sol_suff = sol -> predicate_R_all(sol[end]);
 
 # ## Results
@@ -134,14 +134,14 @@ Tint = try convert(Int, T) catch; T end
 
 function plot_helper(fig, vars; show_simulation::Bool=true)
     if vars[1] == 0
-        target_states_projected = project(target_states, [vars[2]])
+        target_set_projected = project(target_set, [vars[2]])
         time = Interval(0, T)
-        target_states_projected = cartesian_product(time, target_states_projected)
+        target_set_projected = cartesian_product(time, target_set_projected)
     else
-        target_states_projected = project(target_states, vars)
+        target_set_projected = project(target_set, vars)
     end
     plot!(fig, solz, vars=vars, color=:yellow, lab="")
-    plot!(fig, target_states_projected, color=:cyan, alpha=0.5, lab="target states")
+    plot!(fig, target_set_projected, color=:cyan, alpha=0.5, lab="target states")
     if show_simulation
         plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
     end
@@ -186,11 +186,11 @@ fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 # ## References
 
-# [^DCS19]: Souradeep Dutta, Xin Chen, and Sriram Sankaranarayanan. *Reachability
-#           analysis for neural feedback systems using regressive polynomial rule
-#           inference.* In [Proceedings of the 22nd ACMInternational Conference on Hybrid
-#           Systems: Computation and Control, HSCC 2019, Montreal,QC, Canada,
-#           April 16-18, 2019., pages 157–168, 2019](https://dl.acm.org/doi/abs/10.1145/3302504.3311807).
+# [^1] Souradeep Dutta, Xin Chen, and Sriram Sankaranarayanan. *Reachability
+# analysis for neural feedback systems using regressive polynomial rule
+# inference.* In [Proceedings of the 22nd ACMInternational Conference on Hybrid
+# Systems: Computation and Control, HSCC 2019, Montreal,QC, Canada,
+# April 16-18, 2019., pages 157–168, 2019](https://dl.acm.org/doi/abs/10.1145/3302504.3311807).
 
 end  #jl
 nothing  #jl

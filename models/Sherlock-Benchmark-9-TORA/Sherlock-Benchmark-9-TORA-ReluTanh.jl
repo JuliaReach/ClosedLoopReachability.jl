@@ -5,7 +5,12 @@
 module TORA_ReluTanh  #jl
 
 using ClosedLoopReachability, MAT
-using ClosedLoopReachability: UniformAdditivePostprocessing, NoSplitter
+using ClosedLoopReachability: UniformAdditivePostprocessing
+
+# The following option determines whether the falsification settings should be
+# used or not. The falsification settings are sufficient to show that the safety
+# property is violated. Concretely we use a shorter time horizon.
+const falsification = true;
 
 # This model consists of a cart attached to a wall with a spring. The cart is
 # free to move on a friction-less surface. The car has a weight attached to an
@@ -67,9 +72,10 @@ prob = ControlledPlant(ivp, controller, vars_idx, period;
 ## Safety specification: x[1], x[2], x[3], x[4] ∈ [-2, 2] for all t ≤ T
 T = 20.0  # time horizon
 T_warmup = 2 * period  # shorter time horizon for dry run
+T_reach = falsification ? 0.4 : T  # shorter time horizon if falsifying
 
 safe_states = cartesian_product(BallInf(zeros(4), 2.0), Universe(1))
-predicate = X -> X ⊆ safe_states;
+predicate = sol -> any(isdisjoint(R, safe_states) for F in sol for R in F);
 
 # ## Results
 
@@ -97,7 +103,7 @@ function benchmark(; T=T, silent::Bool=false)
 end
 
 benchmark(T=T_warmup, silent=true)  # warm-up
-res = @timed benchmark(T=T)  # benchmark
+res = @timed benchmark(T=T_reach)  # benchmark
 sol = res.value
 println("total analysis time")
 print_timed(res);
@@ -107,7 +113,8 @@ print_timed(res);
 import DifferentialEquations
 
 println("simulation")
-res = @timed simulate(prob, T=T; trajectories=10, include_vertices=true)
+res = @timed simulate(prob, T=T; trajectories=falsification ? 1 : 10,
+                      include_vertices=!falsification)
 sim = res.value
 print_timed(res);
 
@@ -128,6 +135,7 @@ function plot_helper(fig, vars)
         plot!(fig, project(X₀, vars), lab="X₀")
     end
     plot!(fig, sol, vars=vars, color=:yellow, lab="")
+    lab_sim = falsification ? "simulation" : ""
     plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
     fig = DisplayAs.Text(DisplayAs.PNG(fig))
 end
@@ -135,7 +143,7 @@ end
 vars = (1, 2)
 fig = plot(xlab="x₁", ylab="x₂")
 fig = plot_helper(fig, vars)
-## savefig("TORA-x1-x2.png")
+## savefig("TORA-relutanhx1-x2.png")
 fig
 
 #-
@@ -167,7 +175,7 @@ plot_helper(fig, vars)
 vars=(3, 4)
 fig = plot(xlab="x₃", ylab="x₄")
 fig = plot_helper(fig, vars)
-## savefig("TORA-x3-x4.png")
+## savefig("TORA-relutanhx3-x4.png")
 fig
 
 #-

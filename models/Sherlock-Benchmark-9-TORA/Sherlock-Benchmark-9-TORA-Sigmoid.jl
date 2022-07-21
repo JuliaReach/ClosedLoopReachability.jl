@@ -5,13 +5,12 @@
 module TORA_Sigmoid  #jl
 
 using ClosedLoopReachability, MAT
-using ClosedLoopReachability: UniformAdditivePostprocessing, NoSplitter
+using ClosedLoopReachability: UniformAdditivePostprocessing
 
-# The following option determines whether the verification settings should be
-# used or not. The verification settings are chosen to show that the safety
-# property is satisfied. Concretely we split the initial states into small
-# chunks and run many analyses.
-const verification = false;
+# The following option determines whether the falsification settings should be
+# used or not. The falsification settings are sufficient to show that the safety
+# property is violated. Concretely we use a shorter time horizon.
+const falsification = true;
 
 # This model consists of a cart attached to a wall with a spring. The cart is
 # free to move on a friction-less surface. The car has a weight attached to an
@@ -73,26 +72,21 @@ prob = ControlledPlant(ivp, controller, vars_idx, period;
 ## Safety specification: x[1], x[2], x[3], x[4] ∈ [-2, 2] for all t ≤ T
 T = 20.0  # time horizon
 T_warmup = 2 * period  # shorter time horizon for dry run
-T_reach = verification ? T : 5.0  # shorter time horizon if not verifying
+T_reach = falsification ? 0.4 : T  # shorter time horizon if falsifying
 
+## The property for falsifying:
 safe_states = cartesian_product(BallInf(zeros(4), 2.0), Universe(1))
-predicate = X -> X ⊆ safe_states;
+predicate = sol -> any(isdisjoint(R, safe_states) for F in sol for R in F);
 
 # ## Results
 
 alg = TMJets(abstol=1e-10, orderT=8, orderQ=3)
 alg_nn = DeepZ()
-if verification
-    splitter = BoxSplitter([4, 4, 3, 5])
-else
-    splitter = NoSplitter()
-end
 
 function benchmark(; T=T, silent::Bool=false)
     ## We solve the controlled system:
     silent || println("flowpipe construction")
-    res_sol = @timed solve(prob, T=T, alg_nn=alg_nn, alg=alg,
-                                 splitter=splitter)
+    res_sol = @timed solve(prob, T=T, alg_nn=alg_nn, alg=alg)
     sol = res_sol.value
     silent || print_timed(res_sol)
 
@@ -101,10 +95,11 @@ function benchmark(; T=T, silent::Bool=false)
     solz = overapproximate(sol, Zonotope)
     res_pred = @timed predicate(solz)
     silent || print_timed(res_pred)
+
     if res_pred.value
-        silent || println("The property is satisfied.")
+        silent || println("The property is violated.")
     else
-        silent || println("The property may be violated.")
+        silent || println("The property may be satisfied.")
     end
     return solz
 end
@@ -120,7 +115,8 @@ print_timed(res);
 import DifferentialEquations
 
 println("simulation")
-res = @timed simulate(prob, T=T; trajectories=10, include_vertices=true)
+res = @timed simulate(prob, T=T; trajectories=falsification ? 1 : 10,
+                      include_vertices=!falsification)
 sim = res.value
 print_timed(res);
 
@@ -137,10 +133,11 @@ function plot_helper(fig, vars)
         safe_states_projected = project(safe_states, vars)
     end
     plot!(fig, safe_states_projected, color=:lightgreen, lab="safe states")
-    if !verification && 0 ∉ vars
+    if 0 ∉ vars
         plot!(fig, project(X₀, vars), lab="X₀")
     end
     plot!(fig, sol, vars=vars, color=:yellow, lab="")
+    lab_sim = falsification ? "simulation" : ""
     plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
     fig = DisplayAs.Text(DisplayAs.PNG(fig))
 end
@@ -148,7 +145,7 @@ end
 vars = (1, 2)
 fig = plot(xlab="x₁", ylab="x₂")
 fig = plot_helper(fig, vars)
-## savefig("TORA-x1-x2.png")
+## savefig("TORA-sigmoid-x1-x2.png")
 fig
 
 #-
@@ -180,7 +177,7 @@ plot_helper(fig, vars)
 vars=(3, 4)
 fig = plot(xlab="x₃", ylab="x₄")
 fig = plot_helper(fig, vars)
-## savefig("TORA-x3-x4.png")
+## savefig("TORA-sigmoid-x3-x4.png")
 fig
 
 #-
