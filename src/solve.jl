@@ -28,7 +28,7 @@ The solution of a reachability problem controlled by a periodic controller.
 
 - While this function is written with a neural-network controlled systems in
 mind, the type of the controller is arbitrary, as long as a function
-`forward_network` to analyze it is available.
+`forward` to analyze it is available.
 """
 function solve(prob::AbstractControlProblem, args...; kwargs...)
     ivp = plant(prob)
@@ -192,7 +192,7 @@ end
 
 function nnet_forward(solver, network, X, preprocessing, postprocessing)
     X = apply(preprocessing, X)
-    U = forward_network(solver, network, X)
+    U = forward(solver, network, X)
     U = apply(postprocessing, U)
     if dim(U) == 1  # simplify the control input for intervals
         U = overapproximate(U, Interval)

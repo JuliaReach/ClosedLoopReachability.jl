@@ -194,7 +194,7 @@ function forward_adv(X::AbstractZonotope, τ, adv; alg=DeepZ())
     Y = cartesian_product(X, Singleton([τ]))
 
     Y = normalize(Y)
-    out = forward_network(alg, CONTROLLERS[adv], Y)
+    out = forward(alg, CONTROLLERS[adv], Y)
 
     imax = argmax(high(out))
     return CTRL_IDX[imax]
