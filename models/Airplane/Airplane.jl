@@ -268,9 +268,9 @@ fig = plot(xlab="y", ylab="ϕ", leg=:bottomleft)
 fig = plot_helper(fig, vars)
 if falsification
     xlims!(-0.01, 0.65)
-    ylims!(0.9, 1.01)
+    ylims!(0.85, 1.01)
 else
-    xlims!(-1.8, 22.5)
+    xlims!(-0.55, 0.55)
     ylims!(-1.05, 1.05)
 end
 ## savefig("Airplane-x2-x7.png")
@@ -281,13 +281,8 @@ fig
 vars = (8, 9)
 fig = plot(xlab="θ", ylab="ψ", leg=:bottom)
 fig = plot_helper(fig, vars)
-if falsification
-    xlims!(0.999, 1.03)
-    ylims!(0.99, 1.001)
-else
-    xlims!(-1.05, 1.2)
-    ylims!(-1.05, 1.2)
-end
+xlims!(-1.05, 1.05)
+ylims!(-1.05, 1.05)
 ## savefig("Airplane-x8-x9.png")
 fig
 
