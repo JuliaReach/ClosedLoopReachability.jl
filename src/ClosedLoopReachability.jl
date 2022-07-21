@@ -24,7 +24,7 @@ export BoxSplitter, ZonotopeSplitter,
        SignSplitter
 
 # solvers
-export solve, forward, forward_network, simulate,
+export solve, forward, simulate,
        DeepZ, SampledApprox, VertexSolver, BoxSolver, SplitSolver, BlackBoxSolver
 
 # utility functions

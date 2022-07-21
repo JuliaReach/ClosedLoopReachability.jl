@@ -15,7 +15,7 @@ function forward(nnet::Network, x0::Vector{<:Number})
     return x
 end
 
-function forward_network(solver::Solver, nnet::Network, X0)
+function forward(solver::Solver, nnet::Network, X0)
     X = X0
     for layer in nnet.layers
         _, X = forward_layer(solver, layer, X)
@@ -47,11 +47,11 @@ function SplitSolver(solver)
     return SplitSolver(solver, split_fun, merge_fun)
 end
 
-function forward_network(solver::SplitSolver, nnet::Network, X0)
+function forward(solver::SplitSolver, nnet::Network, X0)
     X0_split = solver.split_fun(X0)
     Y_union = UnionSetArray()
     for X in X0_split
-        Y = forward_network(solver.solver, nnet, X)
+        Y = forward(solver.solver, nnet, X)
         push!(array(Y_union), Y)
     end
     Y_merged = solver.merge_fun(Y_union)
@@ -69,7 +69,7 @@ end
     directions = OctDirections
 end
 
-function forward_network(solver::SampledApprox, nnet::Network, input)
+function forward(solver::SampledApprox, nnet::Network, input)
     samples = sample(input, solver.nsamples;
                      include_vertices=solver.include_vertices)
 
@@ -193,7 +193,7 @@ end
 # it exploits that box(relu(X)) == relu(box(X))
 struct BoxSolver <: Solver end
 
-function forward_network(solver::BoxSolver, nnet::Network, X0)
+function forward(solver::BoxSolver, nnet::Network, X0)
     X = X0
     for layer in nnet.layers
         # affine map and box approximation
@@ -218,7 +218,7 @@ end
     convexify::Bool = false
 end
 
-function forward_network(solver::ConcreteReLU, nnet::Network, X0)
+function forward(solver::ConcreteReLU, nnet::Network, X0)
     X = [X0]
     for layer in nnet.layers
         if typeof(X[1]) <: UnionSetArray
@@ -244,7 +244,7 @@ end
     apply_convex_hull::Bool = false
 end
 
-function forward_network(solver::VertexSolver, nnet::Network, X0)
+function forward(solver::VertexSolver, nnet::Network, X0)
     N = eltype(X0)
     P = X0
 
@@ -374,7 +374,7 @@ struct BlackBoxController{FT} <: AbstractNetwork
     f::FT
 end
 
-function forward_network(solver::BlackBoxSolver, bbc::BlackBoxController, X0)
+function forward(solver::BlackBoxSolver, bbc::BlackBoxController, X0)
     return bbc.f(X0)
 end
 
@@ -393,7 +393,7 @@ function forward(nnet::Network, X0::AbstractSingleton)
 end
 
 for SOLVER in subtypes(Solver, true)
-    @eval function forward_network(solver::$SOLVER, nnet::Network,
+    @eval function forward(solver::$SOLVER, nnet::Network,
                                    X0::AbstractSingleton)
               return forward(nnet, X0)
           end
