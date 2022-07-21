@@ -296,13 +296,13 @@ end
 
 ## project onto the h variable
 function _project(X::Vector{State{T, N}}) where {T<:Singleton, N}
-    return [Singleton([Xi.state.element[1], Xi.τ]) for Xi in X]
+    return [Singleton([Xi.τ, Xi.state.element[1]]) for Xi in X]
 end
 
 _interval(X::LazySet, i) = overapproximate(Projection(X, (i,)), Interval)
 
 function _project(X::Vector{State{T, N}}) where {T<:Zonotope, N}
-    Xint = [_interval(Xi.state, 1) × Singleton([Xi.τ]) for Xi in X]
+    Xint = [Singleton([Xi.τ]) × _interval(Xi.state, 1) for Xi in X]
 end
 
 function run(X0)
@@ -349,9 +349,10 @@ using Plots
 import DisplayAs
 
 function plot_helper()
-    fig = plot(xlims=(-200, 200), ylims=(14, 26), xlab="h (vertical distance)",
-               ylab="τ (time to reach horizontally)")
-    plot!(fig, bad_states, alpha=0.2, c=:red, lab="unsafe states")
+    fig = plot(xlims=(14, 26), ylims=(-200, 200), ylab="h (vertical distance)",
+               xlab="τ (time to reach horizontally)", xflip=true)
+    bad_states_projected = cartesian_product(Universe(1), project(bad_states, [1]))
+    plot!(fig, bad_states_projected, alpha=0.2, c=:red, lab="unsafe states")
     return fig
 end
 
