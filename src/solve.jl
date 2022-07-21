@@ -1,7 +1,7 @@
 """
     solve(prob::AbstractControlProblem, args...; kwargs...)
 
-Solves the controlled problem defined by `prob`
+Solve the control problem defined by `prob`.
 
 ### Input
 
@@ -13,6 +13,7 @@ below for details. See the online documentation for examples.
 ### Output
 
 The solution of a reachability problem controlled by a periodic controller.
+The control signals are stored in the `ext` field with each flowpipe.
 
 ### Notes
 
