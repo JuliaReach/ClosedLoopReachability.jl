@@ -10,7 +10,8 @@
 
 module ACC  #jl
 
-using ClosedLoopReachability, MAT
+using ClosedLoopReachability, MAT, Plots
+import YAML, DifferentialEquations, DisplayAs
 using ClosedLoopReachability: FunctionPreprocessing
 
 # ## Model
@@ -88,8 +89,11 @@ end
 # $x_{lead} - x_{ego} - T_{gap} * v_{ego} ≥ D_{default}$.
 
 ## We choose the controller with 5 hidden layers.
-controller = read_nnet_mat(@modelpath("ACC", "controller_5_20.mat");
+controller_relu = read_nnet_mat(@modelpath("ACC", "controller_5_20.mat");
                            act_key="act_fcns");
+
+## We also consider an alternative controller with tanh activations.
+controller_tanh = read_nnet_yaml(YAML.load_file(@modelpath("ACC", "tanh.yml")));
 
 ## The initial states according to the specification are:
 X₀ = Hyperrectangle(low=[90, 32, 0, 10, 30, 0],
@@ -122,8 +126,8 @@ function preprocess(X::AbstractVector)  # version for simulations
 end
 control_preprocessing = FunctionPreprocessing(preprocess)
 
-prob = ControlledPlant(ivp, controller, vars_idx, period;
-                       preprocessing=control_preprocessing);
+problem(controller) = ControlledPlant(ivp, controller, vars_idx, period;
+                                      preprocessing=control_preprocessing);
 
 ## Safety specification
 T = 5.0  # time horizon
@@ -141,11 +145,11 @@ predicate = X -> X ⊆ safe_states;
 # To integrate the ODE, we use the Taylor-model-based algorithm:
 alg = TMJets(abstol=1e-6, orderT=6, orderQ=1);
 
-# To propagate sets through the neural network, we use the `Ai2` algorithm:
+# To propagate sets through the neural network, we use the `DeepZ` algorithm:
 alg_nn = DeepZ()
 
 
-function benchmark(; silent::Bool=false)
+function benchmark(prob; silent::Bool=false)
     ## We solve the controlled system:
     silent || println("flowpipe construction")
     res_sol = @timed solve(prob, T=T, alg_nn=alg_nn, alg=alg)
@@ -165,45 +169,57 @@ function benchmark(; silent::Bool=false)
     return solz
 end
 
-benchmark(silent=true)  # warm-up
-res = @timed benchmark()  # benchmark
-sol = res.value
-println("total analysis time")
-print_timed(res);
+function run(; use_relu_controller::Bool)
+    if use_relu_controller
+        println("Running analysis with ReLU controller")
+        prob = problem(controller_relu)
+        scenario = "relu"
+    else
+        println("Running analysis with tanh controller")
+        prob = problem(controller_tanh)
+        scenario = "tanh"
+    end
 
-# We also compute some simulations:
+    benchmark(prob, silent=true)  # warm-up
+    res = @timed benchmark(prob)  # benchmark
+    sol = res.value
+    println("total analysis time")
+    print_timed(res);
 
-import DifferentialEquations
+    ## We also compute some simulations:
 
-println("simulation")
-res = @timed simulate(prob, T=T, trajectories=10, include_vertices=true)
-sim = res.value
-print_timed(res);
+    println("simulation")
+    res = @timed simulate(prob, T=T, trajectories=10, include_vertices=true)
+    sim = res.value
+    print_timed(res);
 
-# Finally we plot the results:
+    ## Finally we plot the results:
 
-using Plots
-import DisplayAs
+    fig = plot(leg=(0.4, 0.3))
+    xlabel!(fig, "time")
+    F = flowpipe(sol)
 
-fig = plot(leg=(0.4, 0.3))
-xlabel!(fig, "time")
-F = flowpipe(sol)
+    fp_rel = linear_map(Matrix(d_rel'), F)
+    output_map_rel = d_rel
 
-fp_rel = linear_map(Matrix(d_rel'), F)
-output_map_rel = d_rel
+    fp_safe = affine_map(Matrix(d_safe'), [D_default], F)
+    output_map_safe = vcat([D_default], d_safe)
 
-fp_safe = affine_map(Matrix(d_safe'), [D_default], F)
-output_map_safe = vcat([D_default], d_safe)
+    plot!(fig, fp_rel, vars=(0, 1), c=:red, alpha=.4)
+    plot!(fig, fp_safe, vars=(0, 1), c=:blue, alpha=.4)
 
-plot!(fig, fp_rel, vars=(0, 1), c=:red, alpha=.4)
-plot!(fig, fp_safe, vars=(0, 1), c=:blue, alpha=.4)
+    plot_simulation!(fig, sim; output_map=output_map_rel, color=:red, lab="Drel")
+    plot_simulation!(fig, sim; output_map=output_map_safe, color=:blue, lab="Dsafe")
 
-plot_simulation!(fig, sim; output_map=output_map_rel, color=:red, lab="Drel")
-plot_simulation!(fig, sim; output_map=output_map_safe, color=:blue, lab="Dsafe")
+    fig = DisplayAs.Text(DisplayAs.PNG(fig))
+    ## savefig("ACC-$scenario.png")
+end
 
-fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("ACC.png")
-fig
+run(use_relu_controller=true)
+
+#-
+
+run(use_relu_controller=false)
 
 #-
 
