@@ -120,7 +120,6 @@ function _solve(cp::ControlledPlant,
     RT = rsetrep(cpost)
     FT = Flowpipe{NT, RT, Vector{RT}}
     flowpipes = Vector{FT}()
-    control_signals = Vector()
 
     # waiting list
     waiting_list = Vector{WaitingListElement{FT}}()
@@ -132,7 +131,7 @@ function _solve(cp::ControlledPlant,
     t1 = tvec[k+1]
     X₀ = project(Q₀, st_vars)
     X₀s = haskey(splitter, k) ? split(splitter[k], X₀) : [X₀]
-    results = Vector(undef, length(X₀s))
+    results = Vector{Vector{Flowpipe}}(undef, length(X₀s))
 
     # first perform an isolated analysis because of problems in TaylorSeries
     # (global variables need to be written once)
@@ -146,9 +145,8 @@ function _solve(cp::ControlledPlant,
             input_splitter)
     end
     # collect results from all threads
-    for (Fs, Us) in results
+    for Fs in results
         append!(flowpipes, Fs)
-        append!(control_signals, Us)
         if k < length(tvec) - 1
             for F in Fs
                 push!(waiting_list, WaitingListElement(F, k))
@@ -167,7 +165,7 @@ function _solve(cp::ControlledPlant,
         t0 = tvec[k]
         t1 = tvec[k+1]
         X₀s = haskey(splitter, k) ? split(splitter[k], X₀) : [X₀]
-        results = Vector(undef, length(X₀s))
+        results = Vector{Vector{Flowpipe}}(undef, length(X₀s))
         # parallelize analysis
         Threads.@threads for i in 1:length(results)
             @inbounds results[i] = _solve_one(R, X₀s[i], W₀, S, st_vars, t0, t1,
@@ -175,9 +173,8 @@ function _solve(cp::ControlledPlant,
                 postprocessing, input_splitter)
         end
         # collect results from all threads
-        for (Fs, Us) in results
+        for Fs in results
             append!(flowpipes, Fs)
-            append!(control_signals, Us)
             if k < length(tvec) - 1
                 for F in Fs
                     push!(waiting_list, WaitingListElement(F, k))
@@ -186,8 +183,7 @@ function _solve(cp::ControlledPlant,
         end
     end
 
-    ext = Dict{Symbol, Any}(:controls=>control_signals)
-    return MixedFlowpipe(flowpipes, ext)
+    return MixedFlowpipe(flowpipes)
 end
 
 function nnet_forward(solver, network, X, preprocessing, postprocessing)
@@ -211,8 +207,7 @@ function _solve_one(R, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method, solver
     dt = t0 .. t1
 
     # split control inputs
-    sols = []
-    Us = []
+    sols = Flowpipe[]
     for Ui in split(splitter, U)
         # combine states with new control inputs
         Q₀ = _reconstruct(rec_method, P₀, Ui, R, t0)
@@ -224,7 +219,10 @@ function _solve_one(R, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method, solver
         @assert isapproxzero(Δt) "the flowpipe duration differs from the " *
             "requested duration by $Δt time units (stopped at $(t1′))"
         push!(sols, sol)
-        push!(Us, Ui)
+
+        # attach control signals to flowpipe
+        sol.ext[:controls] = Ui
     end
-    return sols, Us
+
+    return sols
 end
