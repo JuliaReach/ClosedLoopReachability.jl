@@ -59,7 +59,7 @@ controller = read_nnet_mat(@modelpath("Sherlock-Benchmark-10-Unicycle",
 X₀ = Hyperrectangle(low=[9.5, -4.5, 2.1, 1.5, -1e-4],
                     high=[9.55, -4.45, 2.11, 1.51, 1e-4])
 U₀ = ZeroSet(2)
-vars_idx = Dict(:state_vars=>1:4, :input_vars=>[5], :control_vars=>6:7)
+vars_idx = Dict(:states=>1:4, :disturbances=>[5], :controls=>6:7)
 ivp = @ivp(x' = unicycle!(x), dim: 7, x(0) ∈ X₀ × U₀)
 
 period = 0.2  # control period

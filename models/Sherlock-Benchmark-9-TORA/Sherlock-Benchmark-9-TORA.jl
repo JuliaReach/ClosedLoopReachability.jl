@@ -61,7 +61,7 @@ controller = read_nnet_mat(path, act_key="act_fcns");
 X₀ = Hyperrectangle(low=[0.6, -0.7, -0.4, 0.5], high=[0.7, -0.6, -0.3, 0.6])
 U = ZeroSet(1)
 
-vars_idx = Dict(:state_vars=>1:4, :control_vars=>5)
+vars_idx = Dict(:states=>1:4, :controls=>5)
 ivp = @ivp(x' = TORA!(x), dim: 5, x(0) ∈ X₀ × U)
 
 period = 1.0  # control period

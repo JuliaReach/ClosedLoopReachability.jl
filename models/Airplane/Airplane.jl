@@ -171,7 +171,7 @@ if falsification
 end
 U₀ = ZeroSet(6)
 
-vars_idx = Dict(:state_vars=>1:12, :control_vars=>13:18)
+vars_idx = Dict(:states=>1:12, :controls=>13:18)
 ivp = @ivp(x' = airplane!(x), dim: 18, x(0) ∈ X₀ × U₀)
 
 period = 0.1  # control period

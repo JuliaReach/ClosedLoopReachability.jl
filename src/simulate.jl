@@ -23,14 +23,14 @@ function simulate(cp::AbstractControlProblem, args...; kwargs...)
 
     ivp = plant(cp)
     network = controller(cp)
-    st_vars = state_vars(cp)
-    inpt_vars = input_vars(cp)
+    st_vars = states(cp)
+    dist_vars = disturbances(cp)
     n = length(st_vars)
     X₀ = project(initial_state(cp), st_vars)
-    if !isempty(inpt_vars)
-        W₀ = project(initial_state(cp), inpt_vars)
+    if !isempty(dist_vars)
+        W₀ = project(initial_state(cp), dist_vars)
     end
-    ctrl_vars = control_vars(cp)
+    ctrl_vars = controls(cp)
     τ = period(cp)
     time_span = _get_tspan(args...; kwargs...)
     trajectories = get(kwargs, :trajectories, 10)
@@ -43,40 +43,40 @@ function simulate(cp::AbstractControlProblem, args...; kwargs...)
     iterations = ceil(Int, diam(time_span) / τ)
 
     # sample initial states
-    states = sample(X₀, trajectories; include_vertices=include_vertices)
-    trajectories = length(states)
+    x0_vec = sample(X₀, trajectories; include_vertices=include_vertices)
+    trajectories = length(x0_vec)
 
     # preallocate
     extended = Vector{Vector{Float64}}(undef, trajectories)
     simulations = Vector{EnsembleSolution}(undef, iterations)
     all_controls = Vector{Vector{Vector{Float64}}}(undef, iterations)
-    all_inputs = Vector{Vector{Vector{Float64}}}(undef, iterations)
+    all_disturbances = Vector{Vector{Vector{Float64}}}(undef, iterations)
 
     @inbounds for i in 1:iterations
         # compute control inputs
-        controls = Vector{Vector{Float64}}(undef, trajectories)
+        control_signals = Vector{Vector{Float64}}(undef, trajectories)
         for j in 1:trajectories
-            x₀ = states[j]
+            x₀ = x0_vec[j]
             x₀ = apply(preprocessing, x₀)
             network_output = forward(network, x₀)
-            controls[j] = apply(postprocessing, network_output)
+            control_signals[j] = apply(postprocessing, network_output)
         end
-        all_controls[i] = controls
+        all_controls[i] = control_signals
 
-        # compute  inputs
-        if !isempty(inpt_vars)
-            inputs = sample(W₀, trajectories)
-            all_inputs[i] = inputs
+        # compute disturbances
+        if !isempty(dist_vars)
+            disturbance_signals = sample(W₀, trajectories)
+            all_disturbances[i] = disturbance_signals
         else
-            inputs = nothing
+            disturbance_signals = nothing
         end
 
-        # extend system state with inputs
+        # extend system state with disturbances
         for j in 1:trajectories
-            if inputs == nothing
-                extended[j] = vcat(states[j], controls[j])
+            if disturbance_signals == nothing
+                extended[j] = vcat(x0_vec[j], control_signals[j])
             else
-                extended[j] = vcat(states[j], inputs[j], controls[j])
+                extended[j] = vcat(x0_vec[j], disturbance_signals[j], control_signals[j])
             end
         end
 
@@ -90,12 +90,12 @@ function simulate(cp::AbstractControlProblem, args...; kwargs...)
         for j in 1:trajectories
             ode_solution = simulations[i][j]
             final_extended = ode_solution.u[end]
-            states[j] = final_extended[st_vars]
+            x0_vec[j] = final_extended[st_vars]
         end
 
         # advance time
         t = T
     end
 
-    return EnsembleSimulationSolution(simulations, all_controls, all_inputs)
+    return EnsembleSimulationSolution(simulations, all_controls, all_disturbances)
 end
