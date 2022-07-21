@@ -16,7 +16,6 @@ end
 # ========================================
 
 # decompose a set into the Cartesian product of intervals
-using LazySets.Arrays: SingleEntryVector
 
 function _decompose_1D(X0::LazySet{N}) where {N}
     n = dim(X0)
@@ -33,7 +32,7 @@ end
 # Overapproximation
 # ==================
 
-function LazySets.overapproximate(X::UnionSetArray, ::Type{Interval})
+function overapproximate(X::UnionSetArray, ::Type{Interval})
     return overapproximate(ConvexHullArray(array(X)), Interval)
 end
 

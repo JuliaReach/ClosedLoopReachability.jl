@@ -221,8 +221,8 @@ function _solve_one(R, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method, solver
 
         t1′ = tend(sol)
         Δt = t1 - t1′  # difference of exact and actual control time
-        @assert LazySets.isapproxzero(Δt) "the flowpipe duration differs " *
-            "from the requested duration by $Δt time units (stopped at $(t1′))"
+        @assert isapproxzero(Δt) "the flowpipe duration differs from the " *
+            "requested duration by $Δt time units (stopped at $(t1′))"
         push!(sols, sol)
         push!(Us, Ui)
     end
