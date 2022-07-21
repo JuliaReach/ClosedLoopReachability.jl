@@ -97,7 +97,7 @@ X₀ = Hyperrectangle(low=[90, 32, 0, 10, 30, 0],
 U₀ = ZeroSet(1);
 
 ## The system has 6 state variables and 1 control variable:
-vars_idx = Dict(:state_vars=>1:6, :control_vars=>7)
+vars_idx = Dict(:states=>1:6, :controls=>7)
 ivp = @ivp(x' = ACC!(x), dim: 7, x(0) ∈ X₀ × U₀)
 period = 0.1;  # control period
 

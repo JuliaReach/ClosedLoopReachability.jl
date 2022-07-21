@@ -61,7 +61,7 @@ if falsification
 end
 U0 = ZeroSet(1)
 ivp = @ivp(x' = single_pendulum!(x), dim: 3, x(0) ∈ X0 × U0)
-vars_idx = Dict(:state_vars=>1:2, :control_vars=>3)
+vars_idx = Dict(:states=>1:2, :controls=>3)
 
 period = 0.05  # control period
 if falsification

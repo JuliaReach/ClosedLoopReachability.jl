@@ -524,7 +524,7 @@ function random_control_problems(n::Integer, m::Integer; ivp=nothing, period=0.1
         ivp = random_affine_ivp(n, m)
     end
 
-    vars_idx = Dict(:state_vars=>1:n, :control_vars=>(n+1):(n+m))
+    vars_idx = Dict(:states=>1:n, :controls=>(n+1):(n+m))
     problems = ControlledPlant[]
 
     # create random constant controller

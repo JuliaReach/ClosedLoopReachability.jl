@@ -84,7 +84,7 @@ function DoublePendulum_model(use_less_robust_controller::Bool)
         end
     end
     U₀ = ZeroSet(2)
-    vars_idx = Dict(:state_vars=>1:4, :control_vars=>5:6)
+    vars_idx = Dict(:states=>1:4, :controls=>5:6)
     ivp = @ivp(x' = double_pendulum!(x), dim: 6, x(0) ∈ X₀ × U₀)
 
     period = use_less_robust_controller ? 0.05 : 0.02  # control period

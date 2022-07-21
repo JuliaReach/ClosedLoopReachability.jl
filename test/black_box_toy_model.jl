@@ -31,7 +31,7 @@ controller = BlackBoxController(oscillator);
 
 X₀ = Interval(0.95, 0.99);
 U = ZeroSet(1);
-vars_idx = Dict(:state_vars=>[1], :control_vars=>2);
+vars_idx = Dict(:states=>[1], :controls=>2);
 ivp = @ivp(x' = sys!(x), dim: 2, x(0) ∈ X₀ × U);
 period = 0.1;
 prob = ControlledPlant(ivp, controller, vars_idx, period);

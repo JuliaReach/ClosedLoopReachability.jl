@@ -119,9 +119,9 @@ period(cp::ControlledPlant) = cp.period
 control_postprocessing(cp::ControlledPlant) = cp.postprocessing
 control_preprocessing(cp::ControlledPlant) = cp.preprocessing
 
-state_vars(cp::ControlledPlant) = get(cp.vars, :state_vars, Int[])
-input_vars(cp::ControlledPlant) = get(cp.vars, :input_vars, Int[])
-control_vars(cp::ControlledPlant) = get(cp.vars, :control_vars, Int[])
+states(cp::ControlledPlant) = get(cp.vars, :states, Int[])
+disturbances(cp::ControlledPlant) = get(cp.vars, :disturbances, Int[])
+controls(cp::ControlledPlant) = get(cp.vars, :controls, Int[])
 
 # =============
 # Specification

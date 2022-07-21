@@ -98,21 +98,21 @@ function _solve(cp::ControlledPlant,
 
     S = system(cp)
     network = controller(cp)
-    st_vars = state_vars(cp)
-    in_vars = input_vars(cp)
-    ctrl_vars = control_vars(cp)
+    st_vars = states(cp)
+    dist_vars = disturbances(cp)
+    ctrl_vars = controls(cp)
     preprocessing = control_preprocessing(cp)
     postprocessing = control_postprocessing(cp)
 
     Q₀ = initial_state(cp)
     n = length(st_vars)
-    m = length(in_vars)
+    m = length(dist_vars)
     q = length(ctrl_vars)
-    dim(Q₀) == n + m + q || throw(ArgumentError("dimension mismatch; expect " *
-        "the dimension of the initial states of the initial-value problem to " *
-        "be $(n + m + q), but it is $(dim(Q₀))"))
+    dim(Q₀) == n + m + q || throw(ArgumentError("dimension mismatch; " *
+        "expected the dimension of the initial states of the initial-value " *
+        "problem to be $(n + m + q), but it is $(dim(Q₀))"))
 
-    W₀ = m > 0 ? project(Q₀, in_vars) : nothing
+    W₀ = m > 0 ? project(Q₀, dist_vars) : nothing
 
     # preallocate output flowpipes
     sol = nothing
@@ -120,7 +120,7 @@ function _solve(cp::ControlledPlant,
     RT = rsetrep(cpost)
     FT = Flowpipe{NT, RT, Vector{RT}}
     flowpipes = Vector{FT}()
-    controls = Vector()
+    control_signals = Vector()
 
     # waiting list
     waiting_list = Vector{WaitingListElement{FT}}()
@@ -148,7 +148,7 @@ function _solve(cp::ControlledPlant,
     # collect results from all threads
     for (Fs, Us) in results
         append!(flowpipes, Fs)
-        append!(controls, Us)
+        append!(control_signals, Us)
         if k < length(tvec) - 1
             for F in Fs
                 push!(waiting_list, WaitingListElement(F, k))
@@ -177,7 +177,7 @@ function _solve(cp::ControlledPlant,
         # collect results from all threads
         for (Fs, Us) in results
             append!(flowpipes, Fs)
-            append!(controls, Us)
+            append!(control_signals, Us)
             if k < length(tvec) - 1
                 for F in Fs
                     push!(waiting_list, WaitingListElement(F, k))
@@ -186,7 +186,7 @@ function _solve(cp::ControlledPlant,
         end
     end
 
-    ext = Dict{Symbol, Any}(:controls=>controls)
+    ext = Dict{Symbol, Any}(:controls=>control_signals)
     return MixedFlowpipe(flowpipes, ext)
 end
 
@@ -202,7 +202,7 @@ end
 
 function _solve_one(R, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method, solver,
                     network, preprocessing, postprocessing, splitter)
-    # add nondeterministic inputs (if any)
+    # add disturbances (if any)
     P₀ = isnothing(W₀) ? X₀ : X₀ × W₀
 
     # get new control inputs from the controller
