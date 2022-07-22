@@ -10,8 +10,11 @@ MODELS = [
     joinpath(@__DIR__, "..", "models", "Single-Pendulum"),
     joinpath(@__DIR__, "..", "models", "Double-Pendulum"),
     joinpath(@__DIR__, "..", "models", "Airplane"),
-    joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-7"),
-    joinpath(@__DIR__, "..", "models", "Cart-Pole")
+    joinpath(@__DIR__, "..", "models", "AttitudeControl"),
+    joinpath(@__DIR__, "..", "models", "Quadrotor"),
+    joinpath(@__DIR__, "..", "models", "Spacecraft"),
+    #joinpath(@__DIR__, "..", "models", "Sherlock-Benchmark-7"),
+    #joinpath(@__DIR__, "..", "models", "Cart-Pole"),
 ]
 GENERATEDDIR = joinpath(@__DIR__, "src", "models")
 MODELDIR = joinpath(@__DIR__, "..", "models")
