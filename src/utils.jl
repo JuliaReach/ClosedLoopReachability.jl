@@ -103,6 +103,10 @@ end
 # Reading a network in MAT format
 # ================================================
 
+const ACT_MAT = Dict("linear"=>Id(),
+                     "relu"=>ReLU(),
+                     "tanh"=>Tanh())
+
 """
     read_nnet_mat(file; key=nothing, act_key="activation_fcns")
 
@@ -122,10 +126,8 @@ A `Network` struct.
 
 ### Notes
 
-The following activation functions are supported:
-
-- RELU: "relu" (`ReLU`)
-- Identity: "linear" (`Id`)
+The following activation functions are supported: identity, relu, and tanh;
+see `ClosedLoopReachability.ACT_MAT`.
 """
 function read_nnet_mat(file::String; key=nothing, act_key="activation_fcns")
     isdefined(@__MODULE__, :MAT) || error("package 'MAT' is required")
@@ -168,13 +170,8 @@ function read_nnet_mat(file::String; key=nothing, act_key="activation_fcns")
         b = dic["b"][n]
 
         # activation function
-        if aF[n] == "relu"
-            act = ReLU()
-        elseif aF[n] == "linear"
-            act = Id()
-        else
-            error("error, aF = $(aF[n]), nLayer = $n")
-        end
+        act = ACT_MAT[aF[n]]
+
         layers[n] = Layer(W, _vec(b), act)
     end
 
