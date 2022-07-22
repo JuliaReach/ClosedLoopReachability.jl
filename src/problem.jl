@@ -33,6 +33,19 @@ function apply(postprocessing::UniformAdditivePostprocessing, X::UnionSetArray)
     return UnionSetArray([apply(postprocessing, Xi) for Xi in array(X)])
 end
 
+
+struct ProjectionPostprocessing{VN<:AbstractVector{Int}} <: ControlPostprocessing
+    dims::VN
+end
+
+function apply(postprocessing::ProjectionPostprocessing, x)
+    return x[postprocessing.dims]
+end
+
+function apply(postprocessing::ProjectionPostprocessing, X::LazySet)
+    return project(X, postprocessing.dims)
+end
+
 # =====================
 # Control preprocessing
 # =====================
