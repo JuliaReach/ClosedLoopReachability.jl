@@ -148,8 +148,8 @@ const Ixz = 0.0
     dx[8] = ϕθψ[2]
     dx[9] = ϕθψ[3]
     dx[10] = Mz  # simplified term
-    dx[11] = My  # simplified term
-    dx[12] = Mx  # simplified term
+    dx[11] = Mx  # simplified term
+    dx[12] = My  # simplified term
     dx[13] = zero(Fx)
     dx[14] = zero(Fy)
     dx[15] = zero(Fz)
@@ -281,8 +281,13 @@ fig
 vars = (8, 9)
 fig = plot(xlab="θ", ylab="ψ", leg=:bottom)
 fig = plot_helper(fig, vars)
-xlims!(-1.05, 1.05)
-ylims!(-1.05, 1.05)
+if falsification
+    xlims!(0.9, 1.01)
+    ylims!(0.85, 1.01)
+else
+    xlims!(-1.05, 1.05)
+    ylims!(-1.05, 1.05)
+end
 ## savefig("Airplane-x8-x9.png")
 fig
 
