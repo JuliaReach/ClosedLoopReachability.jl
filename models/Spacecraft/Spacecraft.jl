@@ -124,8 +124,6 @@ res = @timed benchmark()  # benchmark
 sol = res.value
 println("total analysis time")
 print_timed(res);
-io = isdefined(Main, :io) ? Main.io : stdout
-print(io, "JuliaReach, Spacecraft, small X0, verified, $(res.time)\n")
 
 # We also compute some simulations:
 

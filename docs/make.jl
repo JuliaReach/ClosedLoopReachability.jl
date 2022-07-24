@@ -33,7 +33,7 @@ makedocs(
                                "Solvers"=>"lib/solvers.md",
                                "Utilities"=>"lib/utils.md"]
     ],
-    strict = false
+    strict = true
 )
 
 deploydocs(
