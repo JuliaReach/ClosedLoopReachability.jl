@@ -16,7 +16,7 @@ using ClosedLoopReachability, LinearAlgebra
 # This benchmark is a closed-loop variant of aircraft collision avoidance
 # system ACAS X. The scenario involves two aircraft, the ownship and the
 # intruder, where the ownship is equipped with a collision avoidance system
-# referred to as VerticalCAS [3]. VerticalCAS once every second issues vertical
+# referred to as VerticalCAS. VerticalCAS once every second issues vertical
 # climbrate advisories to the ownship pilot to avoid a near mid-air collision
 # (NMAC), a region where the ownship and intruder are separated by less than
 # 100ft vertically and 500ft horizontally. The ownship (black) is assumed
