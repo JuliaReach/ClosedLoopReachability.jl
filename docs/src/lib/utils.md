@@ -14,6 +14,7 @@ CurrentModule = ClosedLoopReachability
 ## Reading networks
 
 ```@docs
+read_nnet
 read_nnet_mat
 read_nnet_yaml
 read_nnet_onnx
