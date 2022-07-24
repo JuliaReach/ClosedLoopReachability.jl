@@ -243,7 +243,7 @@ using Plots
 import DisplayAs
 
 ## set more precise tolerance for plotting small sets correctly
-LazySets.set_ztol(Float64, 1e-9)
+ClosedLoopReachability.LazySets.set_ztol(Float64, 1e-9)
 
 function plot_helper(fig, vars)
     if vars[1] == 0
