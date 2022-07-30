@@ -12,7 +12,7 @@ Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 [compat]
 CommonSolve = "0.1 - 0.2"
 Parameters = "0.12"
-ReachabilityAnalysis = "0.14.5 - 0.18, 0.19"
+ReachabilityAnalysis = "0.14.5 - 0.18, 0.19, 0.20"
 Reexport = "0.2, 1"
 Requires = "0.5, 1"
 julia = "1.5"
