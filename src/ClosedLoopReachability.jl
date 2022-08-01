@@ -1,8 +1,7 @@
 module ClosedLoopReachability
 
+include("DNN/DNN.jl")
 include("init.jl")
-include("activation.jl")
-include("network.jl")
 include("problem.jl")
 include("nnops.jl")
 include("setops.jl")
