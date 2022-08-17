@@ -7,11 +7,6 @@ module TORA_ReluTanh  #jl
 using ClosedLoopReachability, MAT
 using ClosedLoopReachability: UniformAdditivePostprocessing
 
-# The following option determines whether the falsification settings should be
-# used or not. The falsification settings are sufficient to show that the safety
-# property is violated. Concretely we use a shorter time horizon.
-const falsification = true;
-
 # This model consists of a cart attached to a wall with a spring. The cart is
 # free to move on a friction-less surface. The car has a weight attached to an
 # arm, which is free to rotate about an axis. This serves as the control input
@@ -53,29 +48,26 @@ controller = read_nnet_mat(path, act_key="act_fcns");
 
 # ## Specification
 
-# The verification problem is safety. For an initial set of $x_1 ∈ [0.6, 0.7]$,
-# $x_2 ∈ [−0.7, −0.6]$, $x_3 ∈ [−0.4, −0.3]$, and $x_4 ∈ [0.5, 0.6]$, the
-# system has to stay within the box $x ∈ [−2, 2]^4$ for a time window of 20s.
-
-X₀ = Hyperrectangle(low=[0.6, -0.7, -0.4, 0.5], high=[0.7, -0.6, -0.3, 0.6])
+X₀ = Hyperrectangle(low=[-0.77, -0.45, 0.51, -0.3], high=[-0.75, -0.43, 0.54, -0.28])
 U = ZeroSet(1)
 
 vars_idx = Dict(:states=>1:4, :controls=>5)
 ivp = @ivp(x' = TORA!(x), dim: 5, x(0) ∈ X₀ × U)
 
-period = 1.0  # control period
+period = 0.5  # control period
 control_postprocessing = UniformAdditivePostprocessing(-10.0)  # control postprocessing
 
 prob = ControlledPlant(ivp, controller, vars_idx, period;
                        postprocessing=control_postprocessing)
 
-## Safety specification: x[1], x[2], x[3], x[4] ∈ [-2, 2] for all t ≤ T
-T = 20.0  # time horizon
+## Safety specification
+T = 5.0  # time horizon
 T_warmup = 2 * period  # shorter time horizon for dry run
-T_reach = falsification ? 0.4 : T  # shorter time horizon if falsifying
 
-safe_states = cartesian_product(BallInf(zeros(4), 2.0), Universe(1))
-predicate = sol -> any(isdisjoint(R, safe_states) for F in sol for R in F);
+goal_states_x1x2 = Hyperrectangle(low=[-0.1, -0.9], high=[0.2, -0.6])
+goal_states = cartesian_product(goal_states_x1x2, Universe(3))
+predicate =
+    sol -> all(isdisjoint(project(R, [1, 2]), goal_states_x1x2) for F in sol for R in F);
 
 # ## Results
 
@@ -94,16 +86,17 @@ function benchmark(; T=T, silent::Bool=false)
     solz = overapproximate(sol, Zonotope)
     res_pred = @timed predicate(solz)
     silent || print_timed(res_pred)
+
     if res_pred.value
-        silent || println("The property is satisfied.")
+        silent || println("The property is violated.")
     else
-        silent || println("The property may be violated.")
+        silent || println("The property may be satisfied.")
     end
     return solz
 end
 
 benchmark(T=T_warmup, silent=true)  # warm-up
-res = @timed benchmark(T=T_reach)  # benchmark
+res = @timed benchmark(T=T)  # benchmark
 sol = res.value
 println("total analysis time")
 print_timed(res);
@@ -113,8 +106,7 @@ print_timed(res);
 import DifferentialEquations
 
 println("simulation")
-res = @timed simulate(prob, T=T; trajectories=falsification ? 1 : 10,
-                      include_vertices=!falsification)
+res = @timed simulate(prob, T=T; trajectories=1, include_vertices=true)
 sim = res.value
 print_timed(res);
 
@@ -124,18 +116,14 @@ import DisplayAs
 
 function plot_helper(fig, vars)
     if vars[1] == 0
-        safe_states_projected = project(safe_states, [vars[2]])
+        goal_states_projected = project(goal_states, [vars[2]])
         time = Interval(0, T)
-        safe_states_projected = cartesian_product(time, safe_states_projected)
+        goal_states_projected = cartesian_product(time, goal_states_projected)
     else
-        safe_states_projected = project(safe_states, vars)
+        goal_states_projected = project(goal_states, vars)
     end
-    plot!(fig, safe_states_projected, color=:lightgreen, lab="safe states")
-    if 0 ∉ vars
-        plot!(fig, project(X₀, vars), lab="X₀")
-    end
+    plot!(fig, goal_states_projected, color=:cyan, lab="goal states")
     plot!(fig, sol, vars=vars, color=:yellow, lab="")
-    lab_sim = falsification ? "simulation" : ""
     plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
     fig = DisplayAs.Text(DisplayAs.PNG(fig))
 end
@@ -145,70 +133,6 @@ fig = plot(xlab="x₁", ylab="x₂")
 fig = plot_helper(fig, vars)
 ## savefig("TORA-relutanhx1-x2.png")
 fig
-
-#-
-
-vars = (1, 3)
-fig = plot(xlab="x₁", ylab="x₃")
-plot_helper(fig, vars)
-
-#-
-
-vars = (1, 4)
-fig = plot(xlab="x₁", ylab="x₄")
-plot_helper(fig, vars)
-
-#-
-
-vars=(2, 3)
-fig = plot(xlab="x₂", ylab="x₃")
-plot_helper(fig, vars)
-
-#-
-
-vars=(2, 4)
-fig = plot(xlab="x₂", ylab="x₄")
-plot_helper(fig, vars)
-
-#-
-
-vars=(3, 4)
-fig = plot(xlab="x₃", ylab="x₄")
-fig = plot_helper(fig, vars)
-## savefig("TORA-relutanhx3-x4.png")
-fig
-
-#-
-
-vars = (0, 1)
-fig = plot(xlab="t", ylab="x₁")
-plot_helper(fig, vars)
-
-#-
-
-vars=(0, 2)
-fig = plot(xlab="t", ylab="x₂")
-plot_helper(fig, vars)
-
-#-
-
-vars=(0, 3)
-fig = plot(xlab="t", ylab="x₃")
-plot_helper(fig, vars)
-
-#-
-
-vars=(0, 4)
-fig = plot(xlab="t", ylab="x₄")
-plot_helper(fig, vars)
-
-#-
-
-# Here we plot the control functions for each run:
-tdom = range(0, 20, length=length(controls(sim, 1)))
-fig = plot(xlab="t", ylab="u")
-[plot!(fig, tdom, [c[1] for c in controls(sim, i)], lab="") for i in 1:length(sim)]
-fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 #-
 
