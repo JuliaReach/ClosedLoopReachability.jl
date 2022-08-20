@@ -5,12 +5,13 @@ using .DNN
 using .DNN: Id
 
 @reexport using ReachabilityAnalysis
-
 # unexported methods
 using ReachabilityAnalysis: _check_dim, _get_tspan, _get_cpost, _default_cpost,
                             ReachSolution, InitialValueProblem, numtype, post,
                             AbstractContinuousPost, TimeInterval,
                             AbstractLazyReachSet, AbstractTaylorModelReachSet
+
+using ReachabilityBase.Timing
 
 using Parameters: @with_kw
 
