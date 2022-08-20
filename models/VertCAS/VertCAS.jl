@@ -98,7 +98,7 @@ const ACC_MIDDLE = Dict(:COC => 0.0, :DNC => -7g/24, :DND => 7g/24,
 
 ## continuous dynamics matrix (h, hdot0)
 const Δτ = 1.0
-const A = [1  -Δτ; 0  1.];
+const A = [1  -Δτ; 0  1];
 
 # We load the controllers in a dictionary with the keys being the advisories.
 
@@ -215,7 +215,7 @@ function VCAS!(out::Vector{State{T, N}}, KMAX; ACC=ACC_MIDDLE, alg_nn=DeepZ()) w
         ## compute next state
         b = [-hddot*Δτ^2 / 2, hddot * Δτ]
         S′ = affine_map(A, S, b)
-        τ′ = τ - 1
+        τ′ = τ - Δτ
         adv′ = forward_adv(S′, τ′, adv, alg=alg_nn)
 
         ## store new state
@@ -254,7 +254,7 @@ predicate_sol = sol -> any(predicate(R) for F in sol for R in F);
 # ### Simulation
 
 const h0 = Interval(-133, -129)
-const hdot0 = [-19.5,-22.5, -25.5, -28.5]
+const hdot0 = [-19.5, -22.5, -25.5, -28.5]
 const τ0 = 25.0
 const adv0 = :COC
 
