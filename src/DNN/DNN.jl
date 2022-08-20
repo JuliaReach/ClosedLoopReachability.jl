@@ -2,6 +2,8 @@ module DNN
 
 using Requires
 
+using ReachabilityBase.Require
+
 export AbstractNetwork, Network, Layer,
        ActivationFunction, Id, ReLU, Sigmoid, Tanh,
        read_nnet,
