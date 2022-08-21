@@ -29,7 +29,7 @@ The following activation functions are supported: identity, relu, and tanh;
 see `ClosedLoopReachability.ACT_MAT`.
 """
 function read_nnet_mat(file::String; key=nothing, act_key="activation_fcns")
-    isdefined(@__MODULE__, :MAT) || error("package 'MAT' is required")
+    require(@__MODULE__, :MAT; fun_name="read_nnet_mat")
 
     vars = matread(file)
 

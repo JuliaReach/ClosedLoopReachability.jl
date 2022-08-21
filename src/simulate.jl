@@ -17,9 +17,7 @@ An object of type `EnsembleSimulationSolution`.
 This function uses the ensemble simulations feature from `DifferentialEquations.jl`.
 """
 function simulate(cp::AbstractControlProblem, args...; kwargs...)
-    if !isdefined(@__MODULE__, :DifferentialEquations)
-        error("package 'DifferentialEquations' is required for simulation")
-    end
+    require(@__MODULE__, :DifferentialEquations; fun_name="simulate")
 
     ivp = plant(cp)
     network = controller(cp)

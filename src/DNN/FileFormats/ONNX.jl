@@ -35,9 +35,7 @@ The following activation function is supported: sigmoid (and an implicit
 identity in the last layer); see `ClosedLoopReachability.ACT_ONNX`.
 """
 function read_nnet_onnx(data)
-    if !isdefined(@__MODULE__, :ONNX)
-        error("package `ONNX` is required for `read_nnet_onnx`")
-    end
+    require(@__MODULE__, :ONNX; fun_name="read_nnet_onnx")
 
     @assert data isa Ghost.Tape{ONNX.ONNXCtx} "`read_nnet_onnx` must be " *
         "called with `ONNX.Ghost.Tape{ONNX.ONNXCtx}`"
