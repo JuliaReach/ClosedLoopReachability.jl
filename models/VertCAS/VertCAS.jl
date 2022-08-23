@@ -208,23 +208,22 @@ function VCAS!(out::Vector{State{T, N}}, KMAX; ACC=ACC_MIDDLE, alg_nn=DeepZ()) w
     τ = X0.τ
     adv = X0.adv
 
-    ## get initial acceleration
-    hddot = ACC[adv]
-
     for i in 1:KMAX
+        adv′ = forward_adv(S, τ, adv, alg=alg_nn)
+        X = State(S, τ, adv′)
+
+        ## get acceleration from network
+        ## this logic only works for ACC_MIDDLE
+        hddot = get_acceleration(X, adv; ACC=ACC)
+
         ## compute next state
         b = [-hddot*Δτ^2 / 2, hddot * Δτ]
         S′ = affine_map(A, S, b)
         τ′ = τ - Δτ
-        adv′ = forward_adv(S′, τ′, adv, alg=alg_nn)
 
         ## store new state
         X′ = State(S′, τ′, adv′)
         push!(out, X′)
-
-        ## get acceleration from network
-        ## this logic only works for ACC_MIDDLE
-        hddot = get_acceleration(X′, adv; ACC=ACC)
 
         ## update current state
         S = S′
