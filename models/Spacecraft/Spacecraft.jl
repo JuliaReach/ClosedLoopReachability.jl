@@ -107,7 +107,7 @@ function benchmark(; silent::Bool=false)
     sol = res_sol.value
     silent || print_timed(res_sol)
 
-    ## Next we check the property for an overapproximated flowpipe:
+    ## Next we check the property:
     silent || println("property checking")
     res_pred = @timed predicate_sol(sol)
     silent || print_timed(res_pred)
@@ -130,7 +130,7 @@ print_timed(res);
 import DifferentialEquations
 
 println("simulation")
-res = @timed simulate(prob, T=T, trajectories=10, include_vertices=true)
+res = @timed simulate(prob, T=T, trajectories=1, include_vertices=true)
 sim = res.value
 print_timed(res);
 
