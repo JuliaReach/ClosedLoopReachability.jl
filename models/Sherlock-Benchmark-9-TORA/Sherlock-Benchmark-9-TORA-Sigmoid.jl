@@ -5,7 +5,7 @@
 module TORA_Sigmoid  #jl
 
 using ClosedLoopReachability, MAT
-using ClosedLoopReachability: UniformAdditivePostprocessing
+using ClosedLoopReachability: LinearMapPostprocessing
 
 # This model consists of a cart attached to a wall with a spring. The cart is
 # free to move on a friction-less surface. The car has a weight attached to an
@@ -55,7 +55,7 @@ vars_idx = Dict(:states=>1:4, :controls=>5)
 ivp = @ivp(x' = TORA!(x), dim: 5, x(0) ∈ X₀ × U)
 
 period = 0.5  # control period
-control_postprocessing = UniformAdditivePostprocessing(-10.0)  # control postprocessing
+control_postprocessing = LinearMapPostprocessing(11.0)  # control postprocessing
 
 prob = ControlledPlant(ivp, controller, vars_idx, period;
                        postprocessing=control_postprocessing)
@@ -67,8 +67,7 @@ T_warmup = 2 * period  # shorter time horizon for dry run
 ## The property for falsifying:
 goal_states_x1x2 = Hyperrectangle(low=[-0.1, -0.9], high=[0.2, -0.6])
 goal_states = cartesian_product(goal_states_x1x2, Universe(3))
-predicate =
-    sol -> all(isdisjoint(project(R, [1, 2]), goal_states_x1x2) for F in sol for R in F);
+predicate = sol -> project(sol[end][end], [1, 2]) ⊆ goal_states_x1x2;
 
 # ## Results
 
@@ -89,9 +88,9 @@ function benchmark(; T=T, silent::Bool=false)
     silent || print_timed(res_pred)
 
     if res_pred.value
-        silent || println("The property is violated.")
+        silent || println("The property is satisfied.")
     else
-        silent || println("The property may be satisfied.")
+        silent || println("The property may be violated.")
     end
     return solz
 end
@@ -126,6 +125,7 @@ function plot_helper(fig, vars)
     plot!(fig, goal_states_projected, color=:cyan, lab="goal states")
     plot!(fig, sol, vars=vars, color=:yellow, lab="")
     plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
+    lens!(fig, [0.1, 0.25], [-0.9, -0.8], inset = (1, bbox(0.4, 0.4, 0.3, 0.3)), lc=:black)
     fig = DisplayAs.Text(DisplayAs.PNG(fig))
 end
 

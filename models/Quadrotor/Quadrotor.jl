@@ -229,6 +229,7 @@ print_timed(res);
 # Finally we plot the results:
 
 using Plots
+import DisplayAs
 
 function plot_helper(fig, vars; show_simulation::Bool=true)
     plot!(fig, sol, vars=vars, color=:white, lab="")  # to set the plot limits
@@ -237,13 +238,13 @@ function plot_helper(fig, vars; show_simulation::Bool=true)
     if show_simulation
         plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
     end
+    fig = DisplayAs.Text(DisplayAs.PNG(fig))
 end
 
 vars = (0, 3)
 fig = plot(xlab="t", ylab="x₃")
 plot_helper(fig, vars)
-
-savefig("Quadrotor-t-x3.png")
+# savefig("Quadrotor-t-x3.png")
 
 end  #jl
 nothing  #jl
