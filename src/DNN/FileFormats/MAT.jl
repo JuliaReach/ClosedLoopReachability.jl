@@ -4,6 +4,7 @@
 
 const ACT_MAT = Dict("linear"=>Id(),
                      "relu"=>ReLU(),
+                     "sigmoid"=>Sigmoid(),
                      "tanh"=>Tanh())
 
 """
@@ -25,8 +26,8 @@ A `Network` struct.
 
 ### Notes
 
-The following activation functions are supported: identity, relu, and tanh;
-see `ClosedLoopReachability.ACT_MAT`.
+The following activation functions are supported: identity, relu, sigmoid, and
+tanh; see `ClosedLoopReachability.ACT_MAT`.
 """
 function read_nnet_mat(file::String; key=nothing, act_key="activation_fcns")
     require(@__MODULE__, :MAT; fun_name="read_nnet_mat")
