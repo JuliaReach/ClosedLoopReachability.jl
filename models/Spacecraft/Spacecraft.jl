@@ -153,27 +153,27 @@ print_timed(res);
 # Finally we plot the results:
 
 using Plots
+import DisplayAs
 
 function plot_helper(fig, vars; show_simulation::Bool=true)
     plot!(fig, sol, vars=vars, color=:yellow, lab="")
     if show_simulation
         plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
     end
+    fig = DisplayAs.Text(DisplayAs.PNG(fig))
 end
 
 vars = (1, 2)
 fig = plot(xlab="x", ylab="y")
 plot_helper(fig, vars)
-
-savefig("Spacecraft-x-y.png")
+# savefig("Spacecraft-x-y.png")
 
 #-
 
 vars = (3, 4)
 fig = plot(xlab="x'", ylab="y'")
 plot_helper(fig, vars)
-
-savefig("Spacecraft-x'-y'.png")
+# savefig("Spacecraft-x'-y'.png")
 
 #-
 

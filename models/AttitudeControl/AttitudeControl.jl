@@ -115,6 +115,7 @@ print_timed(res);
 # Finally we plot the results:
 
 using Plots
+import DisplayAs
 
 function plot_helper(fig, vars; show_simulation::Bool=true)
     plot!(fig, sol, vars=vars, color=:yellow, lab="")
@@ -124,13 +125,13 @@ function plot_helper(fig, vars; show_simulation::Bool=true)
     if show_simulation
         plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
     end
+    fig = DisplayAs.Text(DisplayAs.PNG(fig))
 end
 
 vars = (1, 2)
 fig = plot(xlab="ω₁", ylab="ω₂")
 plot_helper(fig, vars)
-
-savefig("AttitudeControl-x1-x2.png")
+# savefig("AttitudeControl-x1-x2.png")
 
 #-
 
