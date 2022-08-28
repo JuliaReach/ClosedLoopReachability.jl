@@ -46,6 +46,23 @@ function apply(postprocessing::ProjectionPostprocessing, X::LazySet)
     return project(X, postprocessing.dims)
 end
 
+
+struct LinearMapPostprocessing{M} <: ControlPostprocessing
+    map::M
+end
+
+function apply(postprocessing::LinearMapPostprocessing, x)
+    return postprocessing.map * x
+end
+
+function apply(postprocessing::LinearMapPostprocessing{<:Number}, X::LazySet)
+    return scale(postprocessing.map, X)
+end
+
+function apply(postprocessing::LinearMapPostprocessing, X::LazySet)
+    return linear_map(postprocessing.map, X)
+end
+
 # =====================
 # Control preprocessing
 # =====================
