@@ -141,47 +141,35 @@ function plot_helper(fig, vars; show_simulation::Bool=true)
         target_set_projected = project(target_set, vars)
     end
     plot!(fig, solz, vars=vars, color=:yellow, lab="")
+    plot!(fig, project(X₀, vars), color=:blue, lab="initial states")
     plot!(fig, target_set_projected, color=:cyan, alpha=0.5, lab="target states")
+    plot!(fig, overapproximate(sol[end][end], Zonotope, tend(sol[end])), vars=vars,
+          color=:orange, lab="reach set at t = $Tint")
     if show_simulation
         plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
     end
 end
 
 vars = (1, 2)
-fig = plot(xlab="x₁", ylab="x₂")
+fig = plot(xlab="x₁", ylab="x₂", leg=:bottomleft)
 plot_helper(fig, vars)
+lens!(fig, [0.3, 0.7], [-0.25, 0.25], inset = (1, bbox(0.1, 0.3, 0.3, 0.3)),
+      lc=:black)
+lens!(fig, [9.49, 9.56], [-4.51, -4.44], inset = (1, bbox(0.65, 0.05, 0.3, 0.3)),
+      lc=:black)
 ## savefig("Unicycle-x1-x2.png")
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 #-
 
-
-fig = plot(xlab="x₁", ylab="x₂")
-plot_helper(fig, vars; show_simulation=false)
-xlims!(0, 1)
-ylims!(-0.5, 0.5)
-plot!(fig, overapproximate(sol[end], Zonotope, tend(solz[end])), vars=vars,
-      color=:orange, lab="reach set at t = $Tint")
-## savefig("Unicycle-close-x1-x2.png")
-fig = DisplayAs.Text(DisplayAs.PNG(fig))
-
-#-
-
 vars=(3, 4)
-fig = plot(xlab="x₃", ylab="x₄", leg=:bottomright)
+fig = plot(xlab="x₃", ylab="x₄", leg=:bottom)
 plot_helper(fig, vars)
+lens!(fig, [-0.1, 0.03], [-0.4, -0.15], inset = (1, bbox(0.1, 0.1, 0.3, 0.3)),
+      lc=:black, xticks=[-0.1, -0.05, 0], yticks=[-0.3, -0.2], subplot = 2)
+lens!(fig, [2.09, 2.12], [1.495, 1.515], inset = (1, bbox(0.65, 0.6, 0.3, 0.3)),
+      lc=:black)
 ## savefig("Unicycle-x3-x4.png")
-fig = DisplayAs.Text(DisplayAs.PNG(fig))
-
-#-
-
-fig = plot(xlab="x₃", ylab="x₄", leg=:bottomright)
-plot_helper(fig, vars; show_simulation=false)
-xlims!(-0.1, 0.1)
-ylims!(-0.4, 0)
-plot!(fig, overapproximate(sol[end], Zonotope, tend(solz[end])), vars=vars,
-      color=:orange, lab="reach set at t = $Tint")
-## savefig("Unicycle-close-x3-x4.png")
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 # ## References
