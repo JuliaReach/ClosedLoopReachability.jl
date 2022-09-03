@@ -176,7 +176,7 @@ fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 # [^DCS]: Souradeep Dutta, Xin Chen, and Sriram Sankaranarayanan. *Reachability
 # analysis for neural feedback systems using regressive polynomial rule
-# inference.* In [Proceedings of the 22nd ACMInternational Conference on Hybrid
+# inference.* In [Proceedings of the 22nd ACM International Conference on Hybrid
 # Systems: Computation and Control, HSCC 2019, Montreal,QC, Canada,
 # April 16-18, 2019., pages 157–168, 2019](https://dl.acm.org/doi/abs/10.1145/3302504.3311807).
 
