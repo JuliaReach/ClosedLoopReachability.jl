@@ -28,14 +28,6 @@ function _decompose_1D(X0::LazySet{N}) where {N}
     return CartesianProductArray(out)
 end
 
-# ==================
-# Overapproximation
-# ==================
-
-function overapproximate(X::UnionSetArray, ::Type{Interval})
-    return overapproximate(ConvexHullArray(array(X)), Interval)
-end
-
 # ==============================================================
 # Construct the initial states for the continuous post-operator
 # ==============================================================

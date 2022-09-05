@@ -20,9 +20,8 @@ using Parameters: @with_kw
 const RA = ReachabilityAnalysis
 const IA = IntervalArithmetic
 
-using ReachabilityAnalysis.LazySets: _leq, _geq, isapproxzero, _isapprox, array,
+using LazySets: _leq, _geq, isapproxzero, _isapprox, array,
     remove_zero_generators, remove_zero_columns, subtypes, SingleEntryVector
-import ReachabilityAnalysis.LazySets: overapproximate
 
 import CommonSolve: solve
 

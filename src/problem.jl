@@ -29,11 +29,6 @@ function apply(postprocessing::UniformAdditivePostprocessing, X::LazySet)
     return translate(X, fill(postprocessing.shift, dim(X)))
 end
 
-function apply(postprocessing::UniformAdditivePostprocessing, X::UnionSetArray)
-    return UnionSetArray([apply(postprocessing, Xi) for Xi in array(X)])
-end
-
-
 struct ProjectionPostprocessing{VN<:AbstractVector{Int}} <: ControlPostprocessing
     dims::VN
 end
