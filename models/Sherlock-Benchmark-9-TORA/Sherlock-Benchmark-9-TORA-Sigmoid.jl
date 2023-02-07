@@ -64,7 +64,6 @@ prob = ControlledPlant(ivp, controller, vars_idx, period;
 T = 5.0  # time horizon
 T_warmup = 2 * period  # shorter time horizon for dry run
 
-## The property for falsifying:
 goal_states_x1x2 = Hyperrectangle(low=[-0.1, -0.9], high=[0.2, -0.6])
 goal_states = cartesian_product(goal_states_x1x2, Universe(3))
 predicate = sol -> project(sol[end][end], [1, 2]) ⊆ goal_states_x1x2;
