@@ -48,7 +48,7 @@ end
 end
 
 # if no Taylor model is available => use the given set P₀
-function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀, R::Nothing, ti) where {N}
+function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀, R::Nothing, ti)
     return _reconstruct(CartesianProductReconstructor(), P₀, U₀, R, ti)
 end
 
