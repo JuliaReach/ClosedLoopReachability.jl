@@ -370,7 +370,7 @@ end
 
 struct BlackBoxSolver <: Solver end
 
-struct BlackBoxController{FT} <: AbstractNetwork
+struct BlackBoxController{FT} <: AbstractNeuralNetwork
     f::FT
 end
 

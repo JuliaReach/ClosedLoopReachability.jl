@@ -1,6 +1,4 @@
-abstract type AbstractNetwork end
-
-struct Network <: AbstractNetwork
+struct Network <: AbstractNeuralNetwork
     layers::Vector{Layer}
 end
 
