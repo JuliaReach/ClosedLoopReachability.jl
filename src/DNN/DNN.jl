@@ -4,7 +4,8 @@ using Requires
 
 using ReachabilityBase.Require
 
-export AbstractNeuralNetwork, FeedforwardNetwork, Layer,
+export AbstractNeuralNetwork, AbstractLayerOp,
+       FeedforwardNetwork, Layer,
        ActivationFunction, Id, ReLU, Sigmoid, Tanh,
        read_nnet,
        read_nnet_mat,
@@ -16,6 +17,7 @@ export AbstractNeuralNetwork, FeedforwardNetwork, Layer,
 include("init.jl")
 
 include("AbstractNeuralNetwork.jl")
+include("AbstractLayerOp.jl")
 include("ActivationFunction.jl")
 include("Layer.jl")
 include("FeedforwardNetwork.jl")

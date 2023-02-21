@@ -1,4 +1,4 @@
-struct Layer{F<:ActivationFunction, N<:Real}
+struct Layer{F<:ActivationFunction, N<:Real} <: AbstractLayerOp
     weights::Matrix{N}
     bias::Vector{N}
     activation::F
