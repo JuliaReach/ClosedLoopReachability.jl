@@ -1,5 +1,5 @@
-struct FeedforwardNetwork <: AbstractNeuralNetwork
-    layers::Vector{Layer}
+struct FeedforwardNetwork{L} <: AbstractNeuralNetwork
+    layers::L
 end
 
 function Base.:(==)(N1::FeedforwardNetwork, N2::FeedforwardNetwork)
