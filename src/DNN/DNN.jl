@@ -1,13 +1,10 @@
 module DNN
 
-using Requires
+using Requires, Reexport
 
 using ReachabilityBase.Require
 
-export AbstractNeuralNetwork, AbstractLayerOp,
-       FeedforwardNetwork, DenseLayerOp,
-       ActivationFunction, Id, ReLU, Sigmoid, Tanh,
-       read_nnet,
+export read_nnet,
        read_nnet_mat,
        read_nnet_yaml,
        read_nnet_sherlock, write_nnet_sherlock,
@@ -16,11 +13,7 @@ export AbstractNeuralNetwork, AbstractLayerOp,
 
 include("init.jl")
 
-include("AbstractNeuralNetwork.jl")
-include("AbstractLayerOp.jl")
-include("ActivationFunction.jl")
-include("DenseLayerOp.jl")
-include("FeedforwardNetwork.jl")
+include("Architecture/Architecture.jl")
 
 include("FileFormats/nnet.jl")
 include("FileFormats/MAT.jl")

@@ -1,3 +1,5 @@
+# NOTE: `layers` actually contains the layer transformations, so the number of
+# layers is `length(layers) + 1`.
 struct FeedforwardNetwork{L} <: AbstractNeuralNetwork
     layers::L
 end
