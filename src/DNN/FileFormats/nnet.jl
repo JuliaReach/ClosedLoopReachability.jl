@@ -15,7 +15,7 @@ Read a neural network stored in a `.nnet` file.
 
 ### Output
 
-A `Network` struct.
+A `FeedforwardNetwork` struct.
 
 ### Notes
 
@@ -39,7 +39,7 @@ function read_nnet(file::String; final_activation=Id())
     end
     layers = Layer[_read_layer(dim, f) for dim in layer_sizes[2:end-1]]
     push!(layers, _read_layer(last(layer_sizes), f, final_activation))
-    return Network(layers)
+    return FeedforwardNetwork(layers)
 end
 
 function _read_layer(output_dim::Int64, f::IOStream, act = ReLU())

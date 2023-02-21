@@ -13,7 +13,7 @@ Read a neural network from a file in Sherlock format.
 
 ### Output
 
-A `Network`.
+A `FeedforwardNetwork`.
 
 ### Notes
 
@@ -54,7 +54,7 @@ function read_nnet_sherlock(file::String)
         end
     end
 
-    return Network(layers)
+    return FeedforwardNetwork(layers)
 end
 
 function _read_weights_biases_sherlock(io, m, n)
@@ -70,7 +70,7 @@ function _read_weights_biases_sherlock(io, m, n)
 end
 
 """
-    write_nnet_sherlock(nnet::Network, file::String)
+    write_nnet_sherlock(nnet::FeedforwardNetwork, file::String)
 
 Write a neural network to a file in Sherlock format.
 
@@ -83,7 +83,7 @@ Write a neural network to a file in Sherlock format.
 
 See [`read_nnet_sherlock`](@ref) for information about the Sherlock format.
 """
-function write_nnet_sherlock(nnet::Network, file::String)
+function write_nnet_sherlock(nnet::FeedforwardNetwork, file::String)
     layers = nnet.layers
     n_inputs = size(layers[1].weights, 2)
     n_outputs = length(layers[end])

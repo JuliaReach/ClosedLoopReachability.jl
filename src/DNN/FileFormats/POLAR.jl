@@ -34,5 +34,5 @@ function read_nnet_polar(file::String)
         end
     end
 
-    return Network(layers)
+    return FeedforwardNetwork(layers)
 end

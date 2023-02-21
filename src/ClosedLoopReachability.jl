@@ -11,7 +11,7 @@ include("simulate.jl")
 include("solve.jl")
 
 # problem types
-export Network,
+export FeedforwardNetwork,
        Layer,
        Id, ReLU, Sigmoid, Tanh,
        ControlledPlant,

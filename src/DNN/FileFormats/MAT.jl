@@ -22,7 +22,7 @@ Read a neural network stored in a `.mat` file.
 
 ### Output
 
-A `Network` struct.
+A `FeedforwardNetwork` struct.
 
 ### Notes
 
@@ -75,7 +75,7 @@ function read_nnet_mat(file::String; key=nothing, act_key="activation_fcns")
         layers[n] = Layer(W, _vec(b), act)
     end
 
-    return Network(layers)
+    return FeedforwardNetwork(layers)
 end
 
 _vec(A::AbstractMatrix) = vec(A)

@@ -16,7 +16,7 @@ Read a neural network from a file in ONNX format (see `ONNX.jl`) and convert it.
 
 ### Output
 
-A `Network` struct.
+A `FeedforwardNetwork` struct.
 
 ### Notes
 
@@ -92,5 +92,5 @@ function read_nnet_onnx(data)
         push!(layers, L)
         layer += 1
     end
-    return Network(layers)
+    return FeedforwardNetwork(layers)
 end

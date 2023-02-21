@@ -20,7 +20,7 @@ Read a neural network from a file in YAML format (see `YAML.jl`) and convert it
 
 ### Output
 
-A `Network` struct.
+A `FeedforwardNetwork` struct.
 
 ### Notes
 
@@ -38,5 +38,5 @@ function read_nnet_yaml(data::Dict)
         L = Layer(W, b, a)
         push!(layers, L)
     end
-    return Network(layers)
+    return FeedforwardNetwork(layers)
 end

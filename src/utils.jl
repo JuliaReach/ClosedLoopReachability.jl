@@ -86,31 +86,31 @@ function random_control_problems(n::Integer, m::Integer; ivp=nothing, period=0.1
     # create random constant controller
     W = zeros(m, n)
     b = 0.1 .* (rand(m) .- 0.5)  # small random values around zero
-    controller = Network([Layer(W, b, Id())])
+    controller = FeedforwardNetwork([Layer(W, b, Id())])
     push!(problems, ControlledPlant(ivp, controller, vars_idx, period))
 
     # create random affine controller
     W = 0.1 .* (rand(m, n) .- 0.5)  # small random values around zero
     b = zeros(m)
-    controller = Network([Layer(W, b, Id())])
+    controller = FeedforwardNetwork([Layer(W, b, Id())])
     push!(problems, ControlledPlant(ivp, controller, vars_idx, period))
 
     # create random affine controller with larger matrix values
     W = 1.1 * (rand(m, n) .- 0.5)  # small random values around zero
     b = zeros(m)
-    controller = Network([Layer(W, b, Id())])
+    controller = FeedforwardNetwork([Layer(W, b, Id())])
     push!(problems, ControlledPlant(ivp, controller, vars_idx, period))
 
     # create random affine controller with large bias values
     W = 0.1 .* (rand(m, n) .- 0.5)  # small random values around zero
     b = 10 * ones(m)
-    controller = Network([Layer(W, b, Id())])
+    controller = FeedforwardNetwork([Layer(W, b, Id())])
     push!(problems, ControlledPlant(ivp, controller, vars_idx, period))
 
     # create random controller with a single layer and ReLU activation function
     W = 1.1 * (rand(m, n) .- 0.5)  # small random values around zero
     b = zeros(m)
-    controller = Network([Layer(W, b, ReLU())])
+    controller = FeedforwardNetwork([Layer(W, b, ReLU())])
     push!(problems, ControlledPlant(ivp, controller, vars_idx, period))
 
     # create random controller with five layers
@@ -126,13 +126,13 @@ function random_control_problems(n::Integer, m::Integer; ivp=nothing, period=0.1
         push!(layers, Layer(W, b, af))
         k_in = k_out
     end
-    controller = Network(layers)
+    controller = FeedforwardNetwork(layers)
     push!(problems, ControlledPlant(ivp, controller, vars_idx, period))
 
     return problems
 end
 
-output_dim(controller::Network) = size(controller.layers[end].weights, 1)
+output_dim(controller::FeedforwardNetwork) = size(controller.layers[end].weights, 1)
 
 # relative size between the set-based output and the (CH of) sampled output
 function relative_size(X0, nsamples, controller, solver=DeepZ())
