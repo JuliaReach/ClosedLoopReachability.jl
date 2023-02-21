@@ -86,44 +86,45 @@ function random_control_problems(n::Integer, m::Integer; ivp=nothing, period=0.1
     # create random constant controller
     W = zeros(m, n)
     b = 0.1 .* (rand(m) .- 0.5)  # small random values around zero
-    controller = FeedforwardNetwork([Layer(W, b, Id())])
+    controller = FeedforwardNetwork([DenseLayerOp(W, b, Id())])
     push!(problems, ControlledPlant(ivp, controller, vars_idx, period))
 
     # create random affine controller
     W = 0.1 .* (rand(m, n) .- 0.5)  # small random values around zero
     b = zeros(m)
-    controller = FeedforwardNetwork([Layer(W, b, Id())])
+    controller = FeedforwardNetwork([DenseLayerOp(W, b, Id())])
     push!(problems, ControlledPlant(ivp, controller, vars_idx, period))
 
     # create random affine controller with larger matrix values
     W = 1.1 * (rand(m, n) .- 0.5)  # small random values around zero
     b = zeros(m)
-    controller = FeedforwardNetwork([Layer(W, b, Id())])
+    controller = FeedforwardNetwork([DenseLayerOp(W, b, Id())])
     push!(problems, ControlledPlant(ivp, controller, vars_idx, period))
 
     # create random affine controller with large bias values
     W = 0.1 .* (rand(m, n) .- 0.5)  # small random values around zero
     b = 10 * ones(m)
-    controller = FeedforwardNetwork([Layer(W, b, Id())])
+    controller = FeedforwardNetwork([DenseLayerOp(W, b, Id())])
     push!(problems, ControlledPlant(ivp, controller, vars_idx, period))
 
     # create random controller with a single layer and ReLU activation function
     W = 1.1 * (rand(m, n) .- 0.5)  # small random values around zero
     b = zeros(m)
-    controller = FeedforwardNetwork([Layer(W, b, ReLU())])
+    controller = FeedforwardNetwork([DenseLayerOp(W, b, ReLU())])
     push!(problems, ControlledPlant(ivp, controller, vars_idx, period))
 
     # create random controller with five layers
     l = 5
     n_max_neurons = 10
-    layers = Layer[]
+    T = DenseLayerOp{<:ActivationFunction, Matrix{Float64}, Vector{Float64}}
+    layers = T[]
     k_in = n
     for i in 1:l
         k_out = i == l ? m : rand(1:n_max_neurons)
         W = 1.1 * (rand(k_out, k_in) .- 0.5)  # small random values around zero
         b = 0.1 .* (rand(k_out) .- 0.5)  # small random values around zero
         af = i == l ? Id() : ReLU()  # ReLU activation except for the last layer
-        push!(layers, Layer(W, b, af))
+        push!(layers, DenseLayerOp(W, b, af))
         k_in = k_out
     end
     controller = FeedforwardNetwork(layers)

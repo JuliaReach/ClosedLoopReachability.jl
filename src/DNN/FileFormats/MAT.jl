@@ -48,7 +48,8 @@ function read_nnet_mat(file::String; key=nothing, act_key="activation_fcns")
     else
         m = length(dic["W"])
     end
-    layers = Vector{Layer}(undef, m)
+    T = DenseLayerOp{<:ActivationFunction, Matrix{Float64}, Vector{Float64}}
+    layers = Vector{T}(undef, m)
     aF = dic[act_key]
 
     for n = 1:m
@@ -72,7 +73,7 @@ function read_nnet_mat(file::String; key=nothing, act_key="activation_fcns")
         # activation function
         act = ACT_MAT[aF[n]]
 
-        layers[n] = Layer(W, _vec(b), act)
+        layers[n] = DenseLayerOp(W, _vec(b), act)
     end
 
     return FeedforwardNetwork(layers)

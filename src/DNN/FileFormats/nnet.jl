@@ -37,7 +37,8 @@ function read_nnet(file::String; final_activation=Id())
     for i in 1:5
         line = readline(f)
     end
-    layers = Layer[_read_layer(dim, f) for dim in layer_sizes[2:end-1]]
+    T = DenseLayerOp{<:ActivationFunction, Matrix{Float64}, Vector{Float64}}
+    layers = T[_read_layer(dim, f) for dim in layer_sizes[2:end-1]]
     push!(layers, _read_layer(last(layer_sizes), f, final_activation))
     return FeedforwardNetwork(layers)
 end
@@ -48,5 +49,5 @@ function _read_layer(output_dim::Int64, f::IOStream, act = ReLU())
      weights = vcat(W_str_vec'...)
      bias_string = [split(readline(f), ",")[1] for j in 1:output_dim]
      bias = rowparse(bias_string)
-     return Layer(weights, bias, act)
+     return DenseLayerOp(weights, bias, act)
 end

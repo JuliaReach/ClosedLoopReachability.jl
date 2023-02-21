@@ -29,13 +29,14 @@ see `ClosedLoopReachability.ACT_YAML`.
 """
 function read_nnet_yaml(data::Dict)
     n_layers = length(data["offsets"])
-    layers = []
+    T = DenseLayerOp{<:ActivationFunction, Matrix{Float64}, Vector{Float64}}
+    layers = T[]
     for k in 1:n_layers
         weights = data["weights"][k]
         W = copy(reduce(hcat, weights)')
         b = data["offsets"][k]
         a = ACT_YAML[data["activations"][k]]
-        L = Layer(W, b, a)
+        L = DenseLayerOp(W, b, a)
         push!(layers, L)
     end
     return FeedforwardNetwork(layers)

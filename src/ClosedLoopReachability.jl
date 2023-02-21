@@ -12,7 +12,7 @@ include("solve.jl")
 
 # problem types
 export FeedforwardNetwork,
-       Layer,
+       DenseLayerOp,
        Id, ReLU, Sigmoid, Tanh,
        ControlledPlant,
        BlackBoxController

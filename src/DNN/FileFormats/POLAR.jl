@@ -11,7 +11,8 @@ function read_nnet_polar(file::String)
         n_inputs = parse(Int, readline(io))  # number of neurons in input layer
         n_outputs = parse(Int, readline(io))  # number of neurons in output layer
         n_hlayers = parse(Int, readline(io))  # number of hidden layers
-        layers = Vector{Layer}(undef, n_hlayers + 1)
+        T = DenseLayerOp{<:ActivationFunction, Matrix{Float32}, Vector{Float32}}
+        layers = Vector{T}(undef, n_hlayers + 1)
 
         # one line for each number of neurons in the hidden layers
         n_neurons = Vector{Int}(undef, n_hlayers)
@@ -30,7 +31,7 @@ function read_nnet_polar(file::String)
             m = layer > n_hlayers ? n_outputs : n_neurons[layer]
             n = layer == 1 ? n_inputs : n_neurons[layer - 1]
             W, b = _read_weights_biases_sherlock(io, m, n)
-            layers[layer] = Layer(W, b, activations[layer])
+            layers[layer] = DenseLayerOp(W, b, activations[layer])
         end
     end
 

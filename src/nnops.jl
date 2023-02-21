@@ -105,15 +105,15 @@ end
 
 struct DeepZ <: Solver end
 
-function forward_linear(solver::DeepZ, L::Layer, Z::AbstractZonotope)
+function forward_linear(solver::DeepZ, L::DenseLayerOp, Z::AbstractZonotope)
     return affine_map(L.weights, Z, L.bias)
 end
 
-function forward_act(solver::DeepZ, L::Layer{Id}, Z::AbstractZonotope)
+function forward_act(solver::DeepZ, L::DenseLayerOp{Id}, Z::AbstractZonotope)
     return Z
 end
 
-function forward_act(solver::DeepZ, L::Layer{ReLU}, Z::AbstractZonotope)
+function forward_act(solver::DeepZ, L::DenseLayerOp{ReLU}, Z::AbstractZonotope)
     return overapproximate(Rectification(Z), Zonotope)  # implemented in LazySets
 end
 
@@ -173,13 +173,13 @@ function _overapproximate_zonotope(Z::AbstractZonotope{N}, act, act′) where {N
     return Zonotope(c, remove_zero_columns(Gout))
 end
 
-function forward_act(solver::DeepZ, L::Layer{Sigmoid}, Z::AbstractZonotope)
+function forward_act(solver::DeepZ, L::DenseLayerOp{Sigmoid}, Z::AbstractZonotope)
     act(x) = sigmoid(x)
     act′(x) = sigmoid2(x)
     return _overapproximate_zonotope(Z, act, act′)
 end
 
-function forward_act(solver::DeepZ, L::Layer{Tanh}, Z::AbstractZonotope)
+function forward_act(solver::DeepZ, L::DenseLayerOp{Tanh}, Z::AbstractZonotope)
     act(x) = tanh(x)
     act′(x) = 1 - tanh(x)^2
     return _overapproximate_zonotope(Z, act, act′)

@@ -28,7 +28,8 @@ function read_nnet_sherlock(file::String)
         n_inputs = parse(Int, readline(io))  # number of neurons in input layer
         n_outputs = parse(Int, readline(io))  # number of neurons in output layer
         n_hlayers = parse(Int, readline(io))  # number of hidden layers
-        layers = Vector{Layer}(undef, n_hlayers + 1)
+        T = DenseLayerOp{ReLU, Matrix{Float32}, Vector{Float32}}
+        layers = Vector{T}(undef, n_hlayers + 1)
 
         # one line for each number of neurons in the hidden layers
         n_neurons = Vector{Int}(undef, n_hlayers)
@@ -50,7 +51,7 @@ function read_nnet_sherlock(file::String)
             n = layer == 1 ? n_inputs : n_neurons[layer - 1]
             W, b = _read_weights_biases_sherlock(io, m, n)
             # the Sherlock format implicitly uses ReLU activation functions
-            layers[layer] = Layer(W, b, ReLU())
+            layers[layer] = DenseLayerOp(W, b, ReLU())
         end
     end
 

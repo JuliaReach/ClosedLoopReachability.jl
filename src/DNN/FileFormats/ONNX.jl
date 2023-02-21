@@ -59,7 +59,8 @@ function read_nnet_onnx(data)
     end
     n_layers = div(idx - 2, 2)
     @assert length(ops) == 4 * n_layers
-    layers = Layer[]
+    T = DenseLayerOp{<:ActivationFunction, Matrix{Float32}, Vector{Float32}}
+    layers = T[]
     layer = 1
     while idx <= length(ops)
         # affine map (treated implicitly)
@@ -88,7 +89,7 @@ function read_nnet_onnx(data)
             idx += 1
         end
 
-        L = Layer(W, b, a)
+        L = DenseLayerOp(W, b, a)
         push!(layers, L)
         layer += 1
     end
