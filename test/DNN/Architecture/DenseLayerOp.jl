@@ -7,6 +7,9 @@ b = [1.0, 0, -2]
 L = DenseLayerOp(W, b, Id())
 @test L(x) == W * x + b == [2.5, 0, -3.5]
 
+# invalid weight/bias combination
+@test_throws ArgumentError DenseLayerOp(W, [1.0, 0], Id())
+
 # equality
 @test L == DenseLayerOp(W, b, Id())
 @test L != DenseLayerOp(W .+ 1, b, Id()) &&

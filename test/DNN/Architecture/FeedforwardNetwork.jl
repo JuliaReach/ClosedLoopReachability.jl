@@ -10,6 +10,9 @@ L1 = DenseLayerOp(W1, b1, ReLU())
 N1 = FeedforwardNetwork([L1])
 @test N1(x) == max.(W1 * x + b1, 0) == [2.5, 0, 0]
 
+# invalid layer combination
+@test_throws ArgumentError FeedforwardNetwork([L1, L1])
+
 # 3x2 layer
 W2 = hcat([-1 -0.5 0; 0.5 -0.5 0])
 b2 = [-1.0, 0]
