@@ -2,6 +2,7 @@
 
 export AbstractNeuralNetwork, AbstractLayerOp,
        FeedforwardNetwork, DenseLayerOp,
+       dim_in, dim_out, dim,
        ActivationFunction, Id, ReLU, Sigmoid, Tanh
 
 include("AbstractNeuralNetwork.jl")

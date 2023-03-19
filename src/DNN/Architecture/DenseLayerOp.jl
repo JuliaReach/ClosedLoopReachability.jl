@@ -13,3 +13,7 @@ function Base.:(==)(L1::DenseLayerOp, L2::DenseLayerOp)
            L1.bias == L2.bias &&
            L1.activation == L2.activation
 end
+
+dim_in(L::DenseLayerOp) = size(L.weights, 2)
+
+dim_out(L::DenseLayerOp) = length(L.bias)

@@ -9,3 +9,7 @@ end
 function Base.:(==)(N1::FeedforwardNetwork, N2::FeedforwardNetwork)
     return N1.layers == N2.layers
 end
+
+dim_in(N::FeedforwardNetwork) = dim_in(first(N.layers))
+
+dim_out(N::FeedforwardNetwork) = dim_out(last(N.layers))

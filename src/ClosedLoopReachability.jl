@@ -13,6 +13,7 @@ include("solve.jl")
 # problem types
 export FeedforwardNetwork,
        DenseLayerOp,
+       dim_in, dim_out,
        Id, ReLU, Sigmoid, Tanh,
        ControlledPlant,
        BlackBoxController

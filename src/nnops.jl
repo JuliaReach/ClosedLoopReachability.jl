@@ -73,7 +73,7 @@ function forward(solver::SampledApprox, nnet::FeedforwardNetwork, input)
     samples = sample(input, solver.nsamples;
                      include_vertices=solver.include_vertices)
 
-    m = output_dim(nnet)
+    m = dim_out(nnet)
     if m == 1
         MIN = Inf
         MAX = -Inf

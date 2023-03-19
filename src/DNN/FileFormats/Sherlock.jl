@@ -86,8 +86,8 @@ See [`read_nnet_sherlock`](@ref) for information about the Sherlock format.
 """
 function write_nnet_sherlock(nnet::FeedforwardNetwork, file::String)
     layers = nnet.layers
-    n_inputs = size(layers[1].weights, 2)
-    n_outputs = length(layers[end])
+    n_inputs = dim_in(nnet)
+    n_outputs = dim_out(nnet)
     n_hlayers = length(layers) - 1  # includes the output layer
     open(file, "w") do io
         println(io, string(n_inputs))  # number of neurons in input layer
@@ -96,7 +96,7 @@ function write_nnet_sherlock(nnet::FeedforwardNetwork, file::String)
 
         # one line for each number of neurons in the hidden layers
         @inbounds for i in 1:n_hlayers
-            println(io, string(length(layers[i])))
+            println(io, string(dim_out(layers[i])))
         end
 
         # one line for each weight and bias of the hidden and output layers
