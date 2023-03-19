@@ -4,6 +4,8 @@ struct DenseLayerOp{F, M<:AbstractMatrix, B} <: AbstractLayerOp
     activation::F
 end
 
+(l::DenseLayerOp)(x) = l.activation.(l.weights * x .+ l.bias)
+
 Base.length(L::DenseLayerOp) = length(L.bias)
 
 function Base.:(==)(L1::DenseLayerOp, L2::DenseLayerOp)
