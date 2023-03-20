@@ -112,7 +112,7 @@ path = @modelpath("VertCAS", "")
 for i = 1:9
     file = joinpath(path, "VertCAS_noResp_pra0$(i)_v9_20HU_200.nnet")
     adv = CTRL_IDX[i]
-    CONTROLLERS[adv] = read_nnet(file)
+    CONTROLLERS[adv] = read_NNet(file)
 end
 
 

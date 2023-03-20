@@ -7,3 +7,7 @@ using ClosedLoopReachability.DNN: dim
     @testset "DenseLayerOp" begin include("Architecture/DenseLayerOp.jl") end
     @testset "FeedforwardNetwork" begin include("Architecture/FeedforwardNetwork.jl") end
 end
+
+@testset "FileFormats" begin
+    @testset "NNet" begin include("FileFormats/NNet.jl") end
+end

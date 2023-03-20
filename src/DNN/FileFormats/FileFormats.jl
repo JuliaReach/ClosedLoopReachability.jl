@@ -4,7 +4,7 @@ using ..Architecture
 using Requires
 using ReachabilityBase.Require
 
-export read_nnet,
+export read_NNet,
        read_nnet_mat,
        read_nnet_yaml,
        read_nnet_sherlock, write_nnet_sherlock,
@@ -13,7 +13,7 @@ export read_nnet,
 
 include("init.jl")
 
-include("nnet.jl")
+include("NNet.jl")
 include("MAT.jl")
 include("YAML.jl")
 include("Sherlock.jl")
