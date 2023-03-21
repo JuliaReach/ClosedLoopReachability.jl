@@ -44,9 +44,8 @@ using ClosedLoopReachability: UniformAdditivePostprocessing
     return dx
 end
 
-controller = read_nnet_mat(@modelpath("Sherlock-Benchmark-10-Unicycle",
-                                      "controllerB_nnv.mat");
-                           act_key="act_fcns");
+path = @modelpath("Sherlock-Benchmark-10-Unicycle", "controllerB_nnv.mat")
+controller = read_MAT(path; act_key="act_fcns");
 
 # ## Specification
 #

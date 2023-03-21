@@ -1,65 +1,64 @@
-# ==========
-# MAT format
-# ==========
-
-const ACT_MAT = Dict("linear"=>Id(),
-                     "relu"=>ReLU(),
-                     "sigmoid"=>Sigmoid(),
-                     "tanh"=>Tanh())
-
 """
-    read_nnet_mat(file; key=nothing, act_key="activation_fcns")
+    read_MAT(filename::String; act_key::String)
 
-Read a neural network stored in a `.mat` file.
+Read a neural network stored in MATLAB's
+[`MAT`](https://www.mathworks.com/help/matlab/import_export/load-parts-of-variables-from-mat-files.html)
+format. This function requires to load the
+[`MAT.jl` library](https://github.com/JuliaIO/MAT.jl).
 
 ### Input
 
-- `file`    -- string indicating the location of the `.mat` file containing the neural network
-- `key`     -- (optional, default: `nothing`) key used to search the dictionary containing the controller;
-               by default we search the top-level dictionary; a typical value is `"controller"`
-- `act_key` -- (optional, default: `"activation_fcns"`) key used to search the activation
-               functions; typical values are `"activation_fcns"` or `"act_fcns"`
+- `filename` -- name of the `MAT` file
+- `act_key`  -- key used for the activation functions
 
 ### Output
 
-A `FeedforwardNetwork` struct.
+A [`FeedforwardNetwork`](@ref).
 
 ### Notes
 
-The following activation functions are supported: identity, relu, sigmoid, and
-tanh; see `ClosedLoopReachability.ACT_MAT`.
+The `MATLAB` file encodes a dictionary, which is assumed to contain the
+following:
+
+- A vector of weight matrices (under the name `"W"`)
+- A vector of bias vectors (under the name `"b"`)
+- A vector of strings for the activation functions (under the name passed via
+  `act_key`)
+
+The following activation functions are supported:
+
+```jldoctest
+julia> [println(p.first => p.second) for p in pairs(ClosedLoopReachability.DNN.FileFormats.ACT_MAT)];
+"relu" => ReLU()
+"linear" => Id()
+"sigmoid" => Sigmoid()
+"tanh" => Tanh()
+```
 """
-function read_nnet_mat(file::String; key=nothing, act_key="activation_fcns")
-    require(@__MODULE__, :MAT; fun_name="read_nnet_mat")
+function read_MAT(filename::String; act_key::String)
+    require(@__MODULE__, :MAT; fun_name="read_MAT")
 
-    vars = matread(file)
+    # read data as a Dict
+    data = matread(filename)
 
-    # some models store the controller under a specified key
-    if !isnothing(key)
-        !haskey(vars, key) && throw(ArgumentError("didn't find key $key, existing keys are $(keys(vars))"))
-        dic = vars[key]
-    else
-        dic = vars
-    end
+    # read data
+    !haskey(data, "W") && throw(ArgumentError("could not find key `'W'`"))
+    !haskey(data, "b") && throw(ArgumentError("could not find key `'b'`"))
+    weights_vec = data["W"]
+    bias_vec = data["b"]
+    act_vec = data[act_key]
+    n_layer_ops = length(bias_vec)  # number of layer operations
 
-    # get number of layers either from a dictionary entry or from the length of the weights array
-    if haskey(dic, "number_of_layers")
-        m = Int(dic["number_of_layers"])
-    else
-        m = length(dic["W"])
-    end
     T = DenseLayerOp{<:ActivationFunction, Matrix{Float64}, Vector{Float64}}
-    layers = Vector{T}(undef, m)
-    aF = dic[act_key]
+    layers = Vector{T}(undef, n_layer_ops)
 
-    for n = 1:m
-
-        # weights matrix
-        W = dic["W"][n]
+    for i in 1:n_layer_ops
+        # weights
+        W = weights_vec[i]
         s = size(W)
         if length(s) == 4
-            # models sometimes are stored as a multi-dim array
-            # with two dimensions which are flat
+            # weights sometimes are stored as a multi-dimensional array
+            # with two flat dimensions
             if s[3] == 1 && s[4] == 1
                 W = reshape(W, s[1], s[2])
             else
@@ -68,17 +67,25 @@ function read_nnet_mat(file::String; key=nothing, act_key="activation_fcns")
         end
 
         # bias
-        b = dic["b"][n]
+        b = bias_vec[i]
 
         # activation function
-        act = ACT_MAT[aF[n]]
+        act = ACT_MAT[act_vec[i]]
 
-        layers[n] = DenseLayerOp(W, _vec(b), act)
+        layers[i] = DenseLayerOp(W, _vec(b), act)
     end
 
     return FeedforwardNetwork(layers)
 end
 
+# supported activation functions
+const ACT_MAT = Dict("linear" => Id(),
+                     "relu" => ReLU(),
+                     "sigmoid" => Sigmoid(),
+                     "tanh" => Tanh())
+
+# convert to a Vector
+_vec(A::Vector) = A
+_vec(A::AbstractVector) = Vector(A)
 _vec(A::AbstractMatrix) = vec(A)
 _vec(A::Number) = [A]
-_vec(A::AbstractVector) = A

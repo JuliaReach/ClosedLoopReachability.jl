@@ -50,7 +50,7 @@ const verification = false;
 end
 
 path = @modelpath("Sherlock-Benchmark-9-TORA", "controllerTora.mat")
-controller = read_nnet_mat(path, act_key="act_fcns");
+controller = read_MAT(path, act_key="act_fcns");
 
 # ## Specification
 

@@ -5,7 +5,7 @@ using Requires
 using ReachabilityBase.Require
 
 export read_NNet,
-       read_nnet_mat,
+       read_MAT,
        read_nnet_yaml,
        read_nnet_sherlock, write_nnet_sherlock,
        read_nnet_onnx,

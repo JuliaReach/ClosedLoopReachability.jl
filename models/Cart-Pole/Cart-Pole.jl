@@ -71,7 +71,8 @@ prob = @ivp(x' = cartpole!(x), dim: 4, x(0) ∈ X₀)
 
 using MAT
 path = joinpath(@modelpath("Cart-Pole", "CartPole_Controller.mat"))
-controller = read_nnet_mat(path, key="controller")
+# NOTE: `key` option was removed; create a new file by storing the network directly
+controller = read_MAT(path, key="controller", act_key="activation_fcns")
 
 # ## References
 

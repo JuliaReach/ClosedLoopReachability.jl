@@ -36,7 +36,8 @@ end
 
 # the ONNX network format is not supported by ONNX.jl
 using MAT
-controller = read_nnet_mat(@modelpath("Spacecraft", "model.mat"), act_key="act_fcns");
+path = @modelpath("Spacecraft", "model.mat")
+controller = read_MAT(path, act_key="act_fcns");
 # using ONNX
 # controller = read_nnet_onnx(  # MatMul not supported by ONNX.jl
 #     ONNX.load(@modelpath("Spacecraft", "model.onnx"),
