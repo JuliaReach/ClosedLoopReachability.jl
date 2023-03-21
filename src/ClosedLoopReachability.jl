@@ -13,7 +13,7 @@ include("solve.jl")
 # problem types
 export Network,
        Layer,
-       Id, Relu, Sigmoid, Tanh,
+       Id, ReLU, Sigmoid, Tanh,
        ControlledPlant,
        BlackBoxController
 
