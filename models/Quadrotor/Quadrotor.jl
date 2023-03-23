@@ -149,7 +149,7 @@ end
 # ## Specification
 
 # the simpler network format is more efficient to parse than the ONNX format
-controller = read_nnet_polar(@modelpath("Quadrotor", "quad_controller_3_64"));
+controller = read_POLAR(@modelpath("Quadrotor", "quad_controller_3_64"));
 # using ONNX
 # controller_onnx = read_nnet_onnx(
 #     ONNX.load(@modelpath("Quadrotor", "quad_controller_3_64_torch.onnx"),

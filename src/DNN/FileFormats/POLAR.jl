@@ -1,39 +1,56 @@
-# ============
-# POLAR format
-# ============
+"""
+    read_POLAR(filename::String)
 
-const ACT_POLAR = Dict("Affine"=>Id(),
-                       "sigmoid"=>Sigmoid())
+Read a neural network stored in POLAR format.
 
-function read_nnet_polar(file::String)
+### Input
+
+- `filename` -- name of the POLAR file
+
+### Output
+
+A [`FeedforwardNetwork`](@ref).
+
+### Notes
+
+The POLAR format uses the same parameter format as Sherlock (see
+[`read_Sherlock`](@ref)) but allows for general activation functions.
+"""
+function read_POLAR(filename::String)
     layers = nothing
-    open(file, "r") do io
+    open(filename, "r") do io
         n_inputs = parse(Int, readline(io))  # number of neurons in input layer
         n_outputs = parse(Int, readline(io))  # number of neurons in output layer
-        n_hlayers = parse(Int, readline(io))  # number of hidden layers
-        T = DenseLayerOp{<:ActivationFunction, Matrix{Float32}, Vector{Float32}}
-        layers = Vector{T}(undef, n_hlayers + 1)
+        # number of layer operations (+1 because the file stores the number of
+        # hidden layers)
+        n_layer_ops = parse(Int, readline(io)) + 1
 
-        # one line for each number of neurons in the hidden layers
-        n_neurons = Vector{Int}(undef, n_hlayers)
-        @inbounds for i in 1:n_hlayers
-            n_neurons[i] = parse(Int, readline(io))
+        # number of neurons per layer
+        n_neurons = Vector{Int}(undef, n_layer_ops + 1)
+        @inbounds begin
+            n_neurons[1] = n_inputs
+            # one line for each number of neurons in the hidden layers
+            for i in 2:n_layer_ops
+                n_neurons[i] = parse(Int, readline(io))
+            end
+            n_neurons[end] = n_outputs
         end
 
         # one line for each activation function
-        activations = Vector{ActivationFunction}(undef, n_hlayers + 1)
-        @inbounds for i in 1:(n_hlayers + 1)
-            activations[i] = ACT_POLAR[readline(io)]
-        end
+        activations = [ACT_POLAR[readline(io)] for _ in 1:n_layer_ops]
+
+        T = DenseLayerOp{<:ActivationFunction, Matrix{Float32}, Vector{Float32}}
+        layers = Vector{T}(undef, n_layer_ops)
 
         # the layers use the Sherlock format
-        @inbounds for layer in 1:(n_hlayers + 1)
-            m = layer > n_hlayers ? n_outputs : n_neurons[layer]
-            n = layer == 1 ? n_inputs : n_neurons[layer - 1]
-            W, b = _read_layer_Sherlock(io, m, n)
-            layers[layer] = DenseLayerOp(W, b, activations[layer])
+        @inbounds for i in 1:n_layer_ops
+            W, b = _read_layer_Sherlock(io, n_neurons[i+1], n_neurons[i])
+            layers[i] = DenseLayerOp(W, b, activations[i])
         end
     end
 
     return FeedforwardNetwork(layers)
 end
+
+const ACT_POLAR = Dict("Affine"=>Id(),
+                       "sigmoid"=>Sigmoid())

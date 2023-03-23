@@ -15,4 +15,5 @@ end
     @testset "MAT" begin include("FileFormats/MAT.jl") end
     @testset "YAML" begin include("FileFormats/YAML.jl") end
     @testset "Sherlock" begin include("FileFormats/Sherlock.jl") end
+    @testset "POLAR" begin include("FileFormats/POLAR.jl") end
 end
