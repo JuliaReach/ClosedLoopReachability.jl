@@ -93,7 +93,8 @@ path = @modelpath("ACC", "controller_5_20.mat")
 controller_relu = read_MAT(path; act_key="act_fcns");
 
 ## We also consider an alternative controller with tanh activations.
-controller_tanh = read_nnet_yaml(YAML.load_file(@modelpath("ACC", "tanh.yml")));
+path = @modelpath("ACC", "tanh.yml")
+controller_tanh = read_YAML(path);
 
 ## The initial states according to the specification are:
 X₀ = Hyperrectangle(low=[90, 32, 0, 10, 30, 0],

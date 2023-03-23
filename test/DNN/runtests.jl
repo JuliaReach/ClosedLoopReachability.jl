@@ -3,7 +3,7 @@ using Test
 
 using ClosedLoopReachability.DNN: dim
 
-import MAT
+import MAT, YAML
 
 @testset "Architecture" begin
     @testset "DenseLayerOp" begin include("Architecture/DenseLayerOp.jl") end
@@ -13,4 +13,5 @@ end
 @testset "FileFormats" begin
     @testset "NNet" begin include("FileFormats/NNet.jl") end
     @testset "MAT" begin include("FileFormats/MAT.jl") end
+    @testset "YAML" begin include("FileFormats/YAML.jl") end
 end
