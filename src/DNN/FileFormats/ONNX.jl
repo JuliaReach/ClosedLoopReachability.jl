@@ -1,48 +1,63 @@
-# ========================================
-# ONNX format
-# (load the data with the ONNX.jl package)
-# ========================================
-
-const ACT_ONNX = Dict("σ"=>Sigmoid())
-
 """
-    read_nnet_onnx(data::Dict)
+    read_ONNX(filename::String; [input_dimension=nothing])
 
-Read a neural network from a file in ONNX format (see `ONNX.jl`) and convert it.
+Read a neural network stored in [ONNX](https://github.com/onnx/onnx) format.
+This function requires to load the
+[`ONNX.jl` library](https://github.com/FluxML/ONNX.jl).
 
 ### Input
 
-- `data` -- an `ONNXCtx` struct parsed by `ONNX.jl`
+- `filename`        -- name of the `ONNX` file
+- `input_dimension` -- (optional; default: `nothing`) input dimension (required
+                       by `ONNX.jl` parser); see the notes below
 
 ### Output
 
-A `FeedforwardNetwork` struct.
+A [`FeedforwardNetwork`](@ref).
 
 ### Notes
 
-This implementation does not apply to general `ONNX` networks because it assumes
-a specific structure:
-1. First comes a bias vector for the input vector that is a zero vector.
+This implementation assumes the following structure:
+1. First comes the input vector (which is ignored).
 2. Next come the weight matrices `W` (transposed) and bias vectors `b` in pairs
-*in the order in which they are applied*.
+   *in the order in which they are applied*.
 3. Next come the affine maps and the activation functions *in the order in which
-they are applied*. The last layer does not have an activation function.
+   they are applied*. The last layer does not have an activation function.
 
-Some of these assumptions *are not checked*. Hence it may happen that it returns
-a result that is incorrect. A general implementation may be added in the future.
+Some of these assumptions are currently *not validated*. Hence it may happen
+that this function returns a result that is incorrect.
 
-The following activation function is supported: sigmoid (and an implicit
-identity in the last layer); see `ClosedLoopReachability.ACT_ONNX`.
+If the argument `input_dimension` is not provided, the file is parsed an
+additional time to read the correct number (which is inefficient).
 """
-function read_nnet_onnx(data)
-    require(@__MODULE__, :ONNX; fun_name="read_nnet_onnx")
+function read_ONNX(filename::String; input_dimension=nothing)
+    require(@__MODULE__, :ONNX; fun_name="read_ONNX")
 
-    @assert data isa Ghost.Tape{ONNX.ONNXCtx} "`read_nnet_onnx` must be " *
-        "called with `ONNX.Ghost.Tape{ONNX.ONNXCtx}`"
+    # parse input dimension if not provided
+    if isnothing(input_dimension)
+        open(filename) do io
+            onnx_raw_model = ONNX.decode(ONNX.ProtoDecoder(io), ONNX.ModelProto)
+            input = onnx_raw_model.graph.input
+            @assert input isa Vector{ONNX.ValueInfoProto} && length(input) == 1
+            dimensions = input[1].var"#type".value.value.shape.dim
+            @assert dimensions isa Vector{ONNX.var"TensorShapeProto.Dimension"} &&
+                    length(dimensions) == 2 && dimensions[1].value.value == 1
+            input_dimension = dimensions[2].value.value
+        end
+    end
+
+    # ONNX.jl expects an input, so the user must provide that
+    x0 = zeros(Float32, input_dimension)
+
+    # read data
+    data = load(filename, x0)
+
+    @assert data isa Umlaut.Tape{ONNX.ONNXCtx} "`read_ONNX` must be called " *
+        "with `ONNX.Umlaut.Tape{ONNX.ONNXCtx}`"
 
     layer_parameters = []
     ops = data.ops
-    @assert ops[1] isa Ghost.Input && iszero(ops[1].val)  # skip input operation
+    @assert ops[1] isa Umlaut.Input && iszero(ops[1].val)  # skip input operation
     idx = 2
     @inbounds while idx <= length(ops)
         op = ops[idx]
@@ -65,10 +80,10 @@ function read_nnet_onnx(data)
     while idx <= length(ops)
         # affine map (treated implicitly)
         op = ops[idx]
-        @assert op isa Ghost.Call "expected an affine map"
+        @assert op isa Umlaut.Call "expected an affine map"
         args = op.args
         @assert length(args) == 5
-        @assert args[2] == onnx_gemm
+        @assert args[2] == ONNX.onnx_gemm
         @assert args[3]._op.id == (layer == 1 ? 1 : idx - 1)
         @assert args[4]._op.id == 2 * layer
         @assert args[5]._op.id == 2 * layer + 1
@@ -81,7 +96,7 @@ function read_nnet_onnx(data)
             a = Id()
         else
             op = ops[idx]
-            @assert op isa Ghost.Call "expected an activation function"
+            @assert op isa Umlaut.Call "expected an activation function"
             args = op.args
             @assert length(args) == 2
             @assert args[2]._op.id == idx - 1
@@ -93,5 +108,8 @@ function read_nnet_onnx(data)
         push!(layers, L)
         layer += 1
     end
+
     return FeedforwardNetwork(layers)
 end
+
+const ACT_ONNX = Dict("σ"=>Sigmoid())

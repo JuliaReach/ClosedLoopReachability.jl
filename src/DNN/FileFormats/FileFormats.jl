@@ -8,7 +8,7 @@ export read_NNet,
        read_MAT,
        read_YAML,
        read_Sherlock, write_Sherlock,
-       read_nnet_onnx,
+       read_ONNX,
        read_POLAR
 
 include("init.jl")

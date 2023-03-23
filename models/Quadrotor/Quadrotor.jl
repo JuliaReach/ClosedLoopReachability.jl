@@ -150,10 +150,9 @@ end
 
 # the simpler network format is more efficient to parse than the ONNX format
 controller = read_POLAR(@modelpath("Quadrotor", "quad_controller_3_64"));
-# using ONNX
-# controller_onnx = read_nnet_onnx(
-#     ONNX.load(@modelpath("Quadrotor", "quad_controller_3_64_torch.onnx"),
-#     zeros(Float32, 12)));
+# import ONNX
+# path = @modelpath("Quadrotor", "quad_controller_3_64_torch.onnx")
+# controller_onnx = read_ONNX(path; input_dimension=12);
 # @assert controller_onnx == controller
 
 ## The initial states according to the specification are:

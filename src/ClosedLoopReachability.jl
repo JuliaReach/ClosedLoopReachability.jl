@@ -29,7 +29,7 @@ export solve, forward, simulate,
 
 # utility functions
 export @modelpath, read_NNet, read_MAT, read_YAML, read_Sherlock,
-       read_POLAR, read_nnet_onnx,
+       read_POLAR, read_ONNX,
        write_Sherlock,
        print_timed
 

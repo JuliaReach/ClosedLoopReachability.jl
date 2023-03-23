@@ -17,7 +17,7 @@ CurrentModule = ClosedLoopReachability
 read_NNet
 read_MAT
 read_YAML
-read_nnet_onnx
+read_ONNX
 read_Sherlock
 read_POLAR
 write_Sherlock
