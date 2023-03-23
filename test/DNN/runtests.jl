@@ -14,4 +14,5 @@ end
     @testset "NNet" begin include("FileFormats/NNet.jl") end
     @testset "MAT" begin include("FileFormats/MAT.jl") end
     @testset "YAML" begin include("FileFormats/YAML.jl") end
+    @testset "Sherlock" begin include("FileFormats/Sherlock.jl") end
 end

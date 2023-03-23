@@ -30,7 +30,7 @@ function read_nnet_polar(file::String)
         @inbounds for layer in 1:(n_hlayers + 1)
             m = layer > n_hlayers ? n_outputs : n_neurons[layer]
             n = layer == 1 ? n_inputs : n_neurons[layer - 1]
-            W, b = _read_weights_biases_sherlock(io, m, n)
+            W, b = _read_layer_Sherlock(io, m, n)
             layers[layer] = DenseLayerOp(W, b, activations[layer])
         end
     end
