@@ -1,4 +1,9 @@
-@reexport module Architecture
+"""
+    Architecture
+
+Module containing data structures to represent neural networks.
+"""
+module Architecture
 
 export AbstractNeuralNetwork, AbstractLayerOp,
        FeedforwardNetwork, DenseLayerOp,

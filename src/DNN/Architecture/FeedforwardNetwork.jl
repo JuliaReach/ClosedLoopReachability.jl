@@ -1,5 +1,18 @@
-# NOTE: `layers` actually contains the layer transformations, so the number of
-# layers is `length(layers) + 1`.
+"""
+    FeedforwardNetwork{L} <: AbstractNeuralNetwork
+
+Standard implementation of a feedforward neural network which stores the layer
+operations.
+
+### Fields
+
+- `layers` -- vector of layer operations (see [`AbstractLayerOp`](@ref))
+
+### Notes
+
+The field `layers` contains the layer operations, so the number of layers is
+`length(layers) + 1`.
+"""
 struct FeedforwardNetwork{L} <: AbstractNeuralNetwork
     layers::L
 

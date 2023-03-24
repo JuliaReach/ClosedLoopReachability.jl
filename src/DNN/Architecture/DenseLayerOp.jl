@@ -1,3 +1,14 @@
+"""
+    DenseLayerOp{F, M<:AbstractMatrix, B} <: AbstractLayerOp
+
+A dense layer operation is an affine map followed by an activation function.
+
+### Fields
+
+- `weights`    -- weight matrix
+- `bias`       -- bias vector
+- `activation` -- activation function
+"""
 struct DenseLayerOp{F, M<:AbstractMatrix, B} <: AbstractLayerOp
     weights::M
     bias::B
@@ -6,7 +17,8 @@ struct DenseLayerOp{F, M<:AbstractMatrix, B} <: AbstractLayerOp
     function DenseLayerOp(weights::M, bias::B, activation::F;
                           validate=Val(true)) where {F, M<:AbstractMatrix, B}
         if validate isa Val{true} && !_isconsistent(weights, bias)
-            throw(ArgumentError("inconsistent dimensions of weights ($(size(weights, 1))) and bias ($(length(bias)))"))
+            throw(ArgumentError("inconsistent dimensions of weights " *
+                            "($(size(weights, 1))) and bias ($(length(bias)))"))
         end
 
         return new{F, M, B}(weights, bias, activation)

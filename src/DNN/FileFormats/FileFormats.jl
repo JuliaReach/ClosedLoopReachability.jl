@@ -1,4 +1,9 @@
-@reexport module FileFormats
+"""
+    FileFormats
+
+Module to parse and write file formats of neural networks.
+"""
+module FileFormats
 
 using ..Architecture
 using Requires
