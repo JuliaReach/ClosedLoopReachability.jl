@@ -13,6 +13,8 @@ export read_MAT,
 
 include("init.jl")
 
+include("available_activations.jl")
+
 include("MAT.jl")
 include("NNet.jl")
 include("ONNX.jl")

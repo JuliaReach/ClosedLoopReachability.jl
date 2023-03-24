@@ -100,7 +100,7 @@ function read_ONNX(filename::String; input_dimension=nothing)
             args = op.args
             @assert length(args) == 2
             @assert args[2]._op.id == idx - 1
-            a = ACT_ONNX[string(args[1])]
+            a = available_activations[string(args[1])]
             idx += 1
         end
 
@@ -111,5 +111,3 @@ function read_ONNX(filename::String; input_dimension=nothing)
 
     return FeedforwardNetwork(layers)
 end
-
-const ACT_ONNX = Dict("σ"=>Sigmoid())

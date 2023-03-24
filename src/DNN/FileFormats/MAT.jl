@@ -24,16 +24,6 @@ following:
 - A vector of bias vectors (under the name `"b"`)
 - A vector of strings for the activation functions (under the name passed via
   `act_key`)
-
-The following activation functions are supported:
-
-```jldoctest
-julia> [println(p.first => p.second) for p in pairs(ClosedLoopReachability.DNN.FileFormats.ACT_MAT)];
-"relu" => ReLU()
-"linear" => Id()
-"sigmoid" => Sigmoid()
-"tanh" => Tanh()
-```
 """
 function read_MAT(filename::String; act_key::String)
     require(@__MODULE__, :MAT; fun_name="read_MAT")
@@ -70,19 +60,13 @@ function read_MAT(filename::String; act_key::String)
         b = bias_vec[i]
 
         # activation function
-        act = ACT_MAT[act_vec[i]]
+        act = available_activations[act_vec[i]]
 
         layers[i] = DenseLayerOp(W, _vec(b), act)
     end
 
     return FeedforwardNetwork(layers)
 end
-
-# supported activation functions
-const ACT_MAT = Dict("linear" => Id(),
-                     "relu" => ReLU(),
-                     "sigmoid" => Sigmoid(),
-                     "tanh" => Tanh())
 
 # convert to a Vector
 _vec(A::Vector) = A

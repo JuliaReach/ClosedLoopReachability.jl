@@ -34,15 +34,9 @@ function read_YAML(filename::String)
         W = weights_vec[i]
         W = Matrix(reduce(hcat, W)')
         b = bias_vec[i]
-        act = ACT_YAML[act_vec[i]]
+        act = available_activations[act_vec[i]]
         layers[i] = DenseLayerOp(W, b, act)
     end
 
     return FeedforwardNetwork(layers)
 end
-
-const ACT_YAML = Dict("Id" => Id(),
-                      "Linear" => Id(),
-                      "ReLU" => ReLU(),
-                      "Sigmoid" => Sigmoid(),
-                      "Tanh" => Tanh())

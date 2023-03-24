@@ -37,7 +37,7 @@ function read_POLAR(filename::String)
         end
 
         # one line for each activation function
-        activations = [ACT_POLAR[readline(io)] for _ in 1:n_layer_ops]
+        activations = [available_activations[readline(io)] for _ in 1:n_layer_ops]
 
         T = DenseLayerOp{<:ActivationFunction, Matrix{Float32}, Vector{Float32}}
         layers = Vector{T}(undef, n_layer_ops)
@@ -51,6 +51,3 @@ function read_POLAR(filename::String)
 
     return FeedforwardNetwork(layers)
 end
-
-const ACT_POLAR = Dict("Affine"=>Id(),
-                       "sigmoid"=>Sigmoid())
