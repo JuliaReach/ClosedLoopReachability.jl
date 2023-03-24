@@ -11,14 +11,14 @@ CurrentModule = ClosedLoopReachability
 @modelpath
 ```
 
-## Reading networks
+## Reading and writing networks
 
 ```@docs
-read_NNet
 read_MAT
-read_YAML
+read_NNet
 read_ONNX
-read_Sherlock
 read_POLAR
+read_Sherlock
 write_Sherlock
+read_YAML
 ```
