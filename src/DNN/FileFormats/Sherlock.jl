@@ -18,6 +18,17 @@ A [`FeedforwardNetwork`](@ref).
 All layers including the output layer implicitly use a ReLU activation function.
 """
 function read_Sherlock(filename::String)
+    # activation functions are not read from file because they are always ReLU
+    read_activations(io, n_layer_ops) = i -> ReLU()
+
+    layer_type = DenseLayerOp{ReLU, Matrix{Float32}, Vector{Float32}}
+
+    return _read_Sherlock_POLAR(filename, read_activations, layer_type)
+end
+
+# common code for Sherlock and POLAR format
+# (the only difference is that Sherlock always uses ReLU)
+function _read_Sherlock_POLAR(filename::String, read_activations, layer_type)
     layers = nothing
     open(filename, "r") do io
         n_inputs = parse(Int, readline(io))  # number of neurons in input layer
@@ -25,9 +36,6 @@ function read_Sherlock(filename::String)
         # number of layer operations (+1 because the file stores the number of
         # hidden layers)
         n_layer_ops = parse(Int, readline(io)) + 1
-
-        T = DenseLayerOp{ReLU, Matrix{Float32}, Vector{Float32}}
-        layers = Vector{T}(undef, n_layer_ops)
 
         # number of neurons per layer
         n_neurons = Vector{Int}(undef, n_layer_ops + 1)
@@ -40,6 +48,10 @@ function read_Sherlock(filename::String)
             n_neurons[end] = n_outputs
         end
 
+        layers = Vector{layer_type}(undef, n_layer_ops)
+
+        activations = read_activations(io, n_layer_ops)
+
         # one line for each weight and bias in the following order:
         # - all incoming weights to neuron 1 in layer 1
         # - bias term of neuron 1 in layer 1
@@ -51,7 +63,7 @@ function read_Sherlock(filename::String)
         # continue with layer 2 until the output layer
         @inbounds for i in 1:n_layer_ops
             W, b = _read_layer_Sherlock(io, n_neurons[i+1], n_neurons[i])
-            layers[i] = DenseLayerOp(W, b, ReLU())
+            layers[i] = DenseLayerOp(W, b, activations(i))
         end
     end
 
