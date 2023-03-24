@@ -4,5 +4,6 @@
 *.jl.*.cov
 *.jl.mem
 docs/build
+docs/src/models
 Manifest.toml
 *.png
