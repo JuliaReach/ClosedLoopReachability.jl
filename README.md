@@ -13,7 +13,7 @@ Currently we support neural-network controllers.
 
 ## 📜 How to cite
 
-If you use this package in your work, please cite it using the metadata in [CITATION.bib](https://github.com/JuliaReach/LazySets.jl/blob/master/CITATION.bib).
+If you use this package in your work, please cite it using the metadata [here](CITATION.bib) or below.
 
 <details>
 <summary>Click to see BibTeX entry. </summary>
