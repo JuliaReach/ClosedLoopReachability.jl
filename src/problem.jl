@@ -66,10 +66,6 @@ apply(::NoPreprocessing, x) = x
 
 struct FunctionPreprocessing{F<:Function} <: ControlPreprocessing
     f::F
-
-    function FunctionPreprocessing(f::F) where {F<:Function}
-        return new{F}(f)
-    end
 end
 
 function apply(funct::FunctionPreprocessing, x)
