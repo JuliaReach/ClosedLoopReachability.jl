@@ -129,18 +129,15 @@ ADVISORIES = Dict{Symbol, Any}()
 ## whether the current climbrate complies with the advisory or not
 ## if the advisory *does not* comply => it is changed according to the ACC dictionary
 ## otherwise, the new acceleration is zero
-using Symbolics
-@variables x
-
 ADVISORIES[:COC] = EmptySet(1)
-ADVISORIES[:DNC] = HalfSpace(x <= 0)
-ADVISORIES[:DND] = HalfSpace(x >= 0)
-ADVISORIES[:DES1500] = HalfSpace(x <= -1500)
-ADVISORIES[:CL1500] = HalfSpace(x >= 1500)
-ADVISORIES[:SDES1500] = HalfSpace(x <= -1500)
-ADVISORIES[:SCL1500] = HalfSpace(x >= 1500)
-ADVISORIES[:SDES2500] = HalfSpace(x <= -2500)
-ADVISORIES[:SCL2500] = HalfSpace(x >= 2500)
+ADVISORIES[:DNC] = HalfSpace([1.0], 0.0)
+ADVISORIES[:DND] = HalfSpace([-1.0], 0.0)
+ADVISORIES[:DES1500] = HalfSpace([1.0], -1500.0)
+ADVISORIES[:CL1500] = HalfSpace([-1.0], -1500.0)
+ADVISORIES[:SDES1500] = HalfSpace([1.0], -1500.0)
+ADVISORIES[:SCL1500] = HalfSpace([-1.0], -1500.0)
+ADVISORIES[:SDES2500] = HalfSpace([1.0], -2500.0)
+ADVISORIES[:SCL2500] = HalfSpace([-1.0], -2500.0)
 
 ## this function receives X = [h, hdot0, τ, adv′] and the
 ## *previous* advisory adv
