@@ -1,5 +1,5 @@
 """
-    DNN
+NeuralNetworkFormats
 
 Module for representations of neural networks.
 
@@ -8,7 +8,7 @@ Module for representations of neural networks.
 - [`Architecture`](@ref) -- data structures for neural networks
 - [`FileFormats`](@ref)  -- IO of file representations of neural networks
 """
-module DNN
+module NeuralNetworkFormats
 
 using Reexport
 

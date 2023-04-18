@@ -1,8 +1,8 @@
 using Requires, Reexport
 
-using .DNN
+using .NeuralNetworkFormats
 # namespace conflict
-using .DNN: Id
+using .NeuralNetworkFormats: Id
 
 @reexport using ReachabilityAnalysis
 # namespace conflict

@@ -1,6 +1,6 @@
 module ClosedLoopReachability
 
-include("DNN/DNN.jl")
+include("NeuralNetworkFormats/NeuralNetworkFormats.jl")
 include("init.jl")
 include("problem.jl")
 include("nnops.jl")

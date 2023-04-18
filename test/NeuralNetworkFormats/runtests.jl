@@ -1,7 +1,7 @@
-using ClosedLoopReachability.DNN
+using ClosedLoopReachability.NeuralNetworkFormats
 using Test
 
-using ClosedLoopReachability.DNN: dim
+using ClosedLoopReachability.NeuralNetworkFormats: dim
 
 import MAT, ONNX, YAML
 

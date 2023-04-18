@@ -29,11 +29,11 @@ makedocs(
                           #"Sliding controller" => "models/Sherlock-Benchmark-7.md",
                           #"Nonlinear Cart-Pole" => "models/Cart-Pole.md",
                          ],
-        "Manual" => Any["DNN.jl"=>"man/DNN.md"],
+        "Manual" => Any["NeuralNetworkFormats.jl"=>"man/NeuralNetworkFormats.md"],
         "API Reference" => Any["Problem types"=>"lib/problems.md",
                                "Solvers"=>"lib/solvers.md",
                                "Utilities"=>"lib/utils.md",
-                               "DNN.jl (neural-network library)"=>"lib/DNN.md"]
+                               "NeuralNetworkFormats.jl (neural-network library)"=>"lib/NeuralNetworkFormats.md"]
     ],
     strict = true
 )

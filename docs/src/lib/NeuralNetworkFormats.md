@@ -3,10 +3,10 @@ DocTestSetup = :(using ClosedLoopReachability)
 CurrentModule = ClosedLoopReachability
 ```
 
-# DNN.jl (neural-network library)
+# NeuralNetworkFormats.jl (neural-network library)
 
 ```@docs
-DNN
+NeuralNetworkFormats
 ```
 
 ## Architecture.jl (DNN data structures)
@@ -21,7 +21,7 @@ Architecture
 AbstractNeuralNetwork
 dim_in(::AbstractNeuralNetwork)
 dim_out(::AbstractNeuralNetwork)
-ClosedLoopReachability.DNN.dim(::AbstractNeuralNetwork)
+ClosedLoopReachability.NeuralNetworkFormats.dim(::AbstractNeuralNetwork)
 ```
 
 #### Implementation
@@ -36,7 +36,7 @@ FeedforwardNetwork
 AbstractLayerOp
 dim_in(::AbstractLayerOp)
 dim_out(::AbstractLayerOp)
-ClosedLoopReachability.DNN.dim(::AbstractLayerOp)
+ClosedLoopReachability.NeuralNetworkFormats.dim(::AbstractLayerOp)
 ```
 
 #### Implementation
@@ -59,7 +59,7 @@ The following strings can be parsed as activation functions:
 
 ```@example
 using ClosedLoopReachability  # hide
-ClosedLoopReachability.DNN.FileFormats.available_activations
+ClosedLoopReachability.NeuralNetworkFormats.FileFormats.available_activations
 ```
 
 ## FileFormats.jl (DNN file formats)
