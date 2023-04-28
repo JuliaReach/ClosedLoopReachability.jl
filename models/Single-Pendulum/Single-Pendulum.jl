@@ -42,7 +42,7 @@ const mL = 1/(m*L^2)
     return dx
 end
 
-controller = read_nnet(@modelpath("Single-Pendulum",
+controller = read_NNet(@modelpath("Single-Pendulum",
                                   "controller_single_pendulum.nnet"));
 
 # ## Specification

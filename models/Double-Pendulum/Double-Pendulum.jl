@@ -72,7 +72,7 @@ end;
 function DoublePendulum_model(use_less_robust_controller::Bool)
     net_lr = @modelpath("Double-Pendulum", "controller_double_pendulum_less_robust.nnet")
     net_mr = @modelpath("Double-Pendulum", "controller_double_pendulum_more_robust.nnet")
-    controller = read_nnet(use_less_robust_controller ? net_lr : net_mr)
+    controller = read_NNet(use_less_robust_controller ? net_lr : net_mr)
 
     X₀ = BallInf(fill(1.15, 4), 0.15)
     if falsification

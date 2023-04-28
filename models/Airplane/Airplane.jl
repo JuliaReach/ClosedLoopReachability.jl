@@ -161,7 +161,7 @@ end;
 
 # ## Specifications
 
-controller = read_nnet(@modelpath("Airplane", "controller_airplane.nnet"))
+controller = read_NNet(@modelpath("Airplane", "controller_airplane.nnet"))
 
 X₀ = Hyperrectangle(low=[0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     high=[0.0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0])

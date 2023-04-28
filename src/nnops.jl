@@ -5,7 +5,7 @@ abstract type Solver end
 # ================================================
 
 # output of neural network for a single input
-function forward(nnet::Network, x0::Vector{<:Number})
+function forward(nnet::FeedforwardNetwork, x0::Vector{<:Number})
     x = x0
     @inbounds for layer in nnet.layers
         W = layer.weights
@@ -15,7 +15,7 @@ function forward(nnet::Network, x0::Vector{<:Number})
     return x
 end
 
-function forward(solver::Solver, nnet::Network, X0)
+function forward(solver::Solver, nnet::FeedforwardNetwork, X0)
     X = X0
     for layer in nnet.layers
         _, X = forward_layer(solver, layer, X)
@@ -47,7 +47,7 @@ function SplitSolver(solver)
     return SplitSolver(solver, split_fun, merge_fun)
 end
 
-function forward(solver::SplitSolver, nnet::Network, X0)
+function forward(solver::SplitSolver, nnet::FeedforwardNetwork, X0)
     X0_split = solver.split_fun(X0)
     Y_union = UnionSetArray()
     for X in X0_split
@@ -69,11 +69,11 @@ end
     directions = OctDirections
 end
 
-function forward(solver::SampledApprox, nnet::Network, input)
+function forward(solver::SampledApprox, nnet::FeedforwardNetwork, input)
     samples = sample(input, solver.nsamples;
                      include_vertices=solver.include_vertices)
 
-    m = output_dim(nnet)
+    m = dim_out(nnet)
     if m == 1
         MIN = Inf
         MAX = -Inf
@@ -105,15 +105,15 @@ end
 
 struct DeepZ <: Solver end
 
-function forward_linear(solver::DeepZ, L::Layer, Z::AbstractZonotope)
+function forward_linear(solver::DeepZ, L::DenseLayerOp, Z::AbstractZonotope)
     return affine_map(L.weights, Z, L.bias)
 end
 
-function forward_act(solver::DeepZ, L::Layer{Id}, Z::AbstractZonotope)
+function forward_act(solver::DeepZ, L::DenseLayerOp{Id}, Z::AbstractZonotope)
     return Z
 end
 
-function forward_act(solver::DeepZ, L::Layer{ReLU}, Z::AbstractZonotope)
+function forward_act(solver::DeepZ, L::DenseLayerOp{ReLU}, Z::AbstractZonotope)
     return overapproximate(Rectification(Z), Zonotope)  # implemented in LazySets
 end
 
@@ -173,13 +173,13 @@ function _overapproximate_zonotope(Z::AbstractZonotope{N}, act, act′) where {N
     return Zonotope(c, remove_zero_columns(Gout))
 end
 
-function forward_act(solver::DeepZ, L::Layer{Sigmoid}, Z::AbstractZonotope)
+function forward_act(solver::DeepZ, L::DenseLayerOp{Sigmoid}, Z::AbstractZonotope)
     act(x) = sigmoid(x)
     act′(x) = sigmoid2(x)
     return _overapproximate_zonotope(Z, act, act′)
 end
 
-function forward_act(solver::DeepZ, L::Layer{Tanh}, Z::AbstractZonotope)
+function forward_act(solver::DeepZ, L::DenseLayerOp{Tanh}, Z::AbstractZonotope)
     act(x) = tanh(x)
     act′(x) = 1 - tanh(x)^2
     return _overapproximate_zonotope(Z, act, act′)
@@ -193,7 +193,7 @@ end
 # it exploits that box(relu(X)) == relu(box(X))
 struct BoxSolver <: Solver end
 
-function forward(solver::BoxSolver, nnet::Network, X0)
+function forward(solver::BoxSolver, nnet::FeedforwardNetwork, X0)
     X = X0
     for layer in nnet.layers
         # affine map and box approximation
@@ -218,7 +218,7 @@ end
     convexify::Bool = false
 end
 
-function forward(solver::ConcreteReLU, nnet::Network, X0)
+function forward(solver::ConcreteReLU, nnet::FeedforwardNetwork, X0)
     X = [X0]
     for layer in nnet.layers
         if typeof(X[1]) <: UnionSetArray
@@ -244,7 +244,7 @@ end
     apply_convex_hull::Bool = false
 end
 
-function forward(solver::VertexSolver, nnet::Network, X0)
+function forward(solver::VertexSolver, nnet::FeedforwardNetwork, X0)
     N = eltype(X0)
     P = X0
 
@@ -325,7 +325,7 @@ const ACTFUN = Dict(Tanh() => (tanh!, ZEROINT),
 
 # Method: Cartesian decomposition (intervals for each one-dimensional subspace)
 # Only Tanh, Sigmoid and Id functions are supported
-function forward(nnet::Network, X0::LazySet;
+function forward(nnet::FeedforwardNetwork, X0::LazySet;
                  alg=TMJets(abstol=1e-14, orderQ=2, orderT=6))
 
     # initial states
@@ -370,7 +370,7 @@ end
 
 struct BlackBoxSolver <: Solver end
 
-struct BlackBoxController{FT} <: AbstractNetwork
+struct BlackBoxController{FT} <: AbstractNeuralNetwork
     f::FT
 end
 
@@ -386,14 +386,14 @@ end
 # Handling of singleton inputs
 # =============================
 
-function forward(nnet::Network, X0::AbstractSingleton)
+function forward(nnet::FeedforwardNetwork, X0::AbstractSingleton)
     x0 = element(X0)
     x1 = forward(nnet, x0)
     return Singleton(x1)
 end
 
 for SOLVER in subtypes(Solver, true)
-    @eval function forward(solver::$SOLVER, nnet::Network,
+    @eval function forward(solver::$SOLVER, nnet::FeedforwardNetwork,
                                    X0::AbstractSingleton)
               return forward(nnet, X0)
           end

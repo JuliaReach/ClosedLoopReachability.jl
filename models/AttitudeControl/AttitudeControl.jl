@@ -42,11 +42,10 @@ end
 # ## Specification
 
 # the simpler network format is more efficient to parse than the ONNX format
-controller = read_nnet_polar(@modelpath("AttitudeControl", "CLF_controller_layer_num_3"));
-# using ONNX
-# controller_onnx = read_nnet_onnx(
-#     ONNX.load(@modelpath("AttitudeControl", "attitude_control_3_64_torch.onnx"),
-#     zeros(Float32, 6)));
+controller = read_POLAR(@modelpath("AttitudeControl", "CLF_controller_layer_num_3"));
+# import ONNX
+# path = @modelpath("AttitudeControl", "attitude_control_3_64_torch.onnx")
+# controller_onnx = read_ONNX(path; input_dimension=6);
 # @assert controller_onnx == controller
 
 ## The initial states according to the specification are:

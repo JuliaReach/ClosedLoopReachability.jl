@@ -36,14 +36,15 @@ end
 
 # the ONNX network format is not supported by ONNX.jl
 using MAT
-controller = read_nnet_mat(@modelpath("Spacecraft", "model.mat"), act_key="act_fcns");
+path = @modelpath("Spacecraft", "model.mat")
+controller = read_MAT(path, act_key="act_fcns");
 # using ONNX
-# controller = read_nnet_onnx(  # MatMul not supported by ONNX.jl
-#     ONNX.load(@modelpath("Spacecraft", "model.onnx"),
-#     zeros(Float32, 4)));
-# controller = read_nnet_onnx(  # Sub not supported by ONNX.jl
-#     ONNX.load(@modelpath("Spacecraft", "bias_model.onnx"),
-#     zeros(Float32, 4)));
+## MatMul not supported by ONNX.jl
+# path = @modelpath("Spacecraft", "model.onnx")
+# controller = read_ONNX(path; input_dimension=4);
+## Conv not supported by ONNX.jl
+# path = @modelpath("Spacecraft", "bias_model.onnx")
+# controller = read_ONNX(path; input_dimension=4);
 
 ## The initial states according to the specification are:
 X₀ = Hyperrectangle([88, 88, 0.0, 0],

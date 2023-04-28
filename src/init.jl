@@ -1,10 +1,12 @@
 using Requires, Reexport
 
-using .DNN
+using .NeuralNetworkFormats
 # namespace conflict
-using .DNN: Id
+using .NeuralNetworkFormats: Id
 
 @reexport using ReachabilityAnalysis
+# namespace conflict
+using ReachabilityAnalysis: dim
 # unexported methods
 using ReachabilityAnalysis: _check_dim, _get_tspan, _get_cpost, _default_cpost,
                             ReachSolution, InitialValueProblem, numtype, post,

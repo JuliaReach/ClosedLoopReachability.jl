@@ -1,6 +1,6 @@
 module ClosedLoopReachability
 
-include("DNN/DNN.jl")
+include("NeuralNetworkFormats/NeuralNetworkFormats.jl")
 include("init.jl")
 include("problem.jl")
 include("nnops.jl")
@@ -11,8 +11,9 @@ include("simulate.jl")
 include("solve.jl")
 
 # problem types
-export Network,
-       Layer,
+export FeedforwardNetwork,
+       DenseLayerOp,
+       dim_in, dim_out,
        Id, ReLU, Sigmoid, Tanh,
        ControlledPlant,
        BlackBoxController
@@ -27,9 +28,9 @@ export solve, forward, simulate,
        DeepZ, SampledApprox, VertexSolver, BoxSolver, SplitSolver, BlackBoxSolver
 
 # utility functions
-export @modelpath, read_nnet, read_nnet_mat, read_nnet_yaml, read_nnet_sherlock,
-       read_nnet_polar, read_nnet_onnx,
-       write_nnet_sherlock,
+export @modelpath, read_NNet, read_MAT, read_YAML, read_Sherlock,
+       read_POLAR, read_ONNX,
+       write_Sherlock,
        print_timed
 
 end
