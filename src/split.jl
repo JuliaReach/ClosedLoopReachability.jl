@@ -20,7 +20,7 @@ function NoSplitter()
 end
 
 function BoxSplitter(partition=nothing)
-    if partition == nothing
+    if isnothing(partition)
         # default: one split per dimension
         split_fun = X -> split(box_approximation(X), 2 * ones(Int, dim(X)))
     else
@@ -30,7 +30,7 @@ function BoxSplitter(partition=nothing)
 end
 
 function ZonotopeSplitter(generators=nothing, splits=nothing)
-    if generators == nothing && splits == nothing
+    if isnothing(generators) && isnothing(splits)
         # default: one split per generator
         function split_fun(Z)
             p = ngens(Z)
@@ -66,7 +66,7 @@ function split(s::SignSplitter, X::Interval{N}) where {N}
     l = low(X, 1)
     h = high(X, 1)
     if l < zero(N) && h > zero(N)
-        return [Interval(l, zero(N)), Interval(zero(N), h)]
+        return [LazySets.Interval(l, zero(N)), LazySets.Interval(zero(N), h)]
     else
         return [X]
     end

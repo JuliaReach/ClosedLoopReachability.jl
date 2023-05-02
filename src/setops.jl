@@ -8,7 +8,7 @@ end
 
 function _project_oa(R::AbstractTaylorModelReachSet, vars, t; remove_zero_generators=true)
     Z = overapproximate(R, Zonotope, t; remove_zero_generators=remove_zero_generators)
-    return project(set(Z), vars; remove_zero_generators=remove_zero_generators)
+    return LazySets.project(set(Z), vars; remove_zero_generators=remove_zero_generators)
 end
 
 # ========================================
@@ -23,7 +23,7 @@ function _decompose_1D(X0::LazySet{N}) where {N}
 
     @inbounds for i in 1:n
         eᵢ = SingleEntryVector(i, n, one(N))
-        out[i] = Interval(-ρ(-eᵢ, X0), ρ(eᵢ, X0))
+        out[i] = LazySets.Interval(-ρ(-eᵢ, X0), ρ(eᵢ, X0))
     end
     return CartesianProductArray(out)
 end

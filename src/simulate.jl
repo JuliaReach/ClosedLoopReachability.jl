@@ -71,7 +71,7 @@ function simulate(cp::AbstractControlProblem, args...; kwargs...)
 
         # extend system state with disturbances
         for j in 1:trajectories
-            if disturbance_signals == nothing
+            if isnothing(disturbance_signals)
                 extended[j] = vcat(x0_vec[j], control_signals[j])
             else
                 extended[j] = vcat(x0_vec[j], disturbance_signals[j], control_signals[j])

@@ -65,7 +65,7 @@ function random_affine_ivp(n, m)
         end
     end
 
-    X0 = rand(BallInf; dim=n)
+    X0 = LazySets.rand(BallInf; dim=n)
     U0 = ZeroSet(m)  # needed but ignored
 
     system = BlackBoxContinuousSystem(random_system!, n + m)
@@ -76,7 +76,7 @@ end
 
 # create a family of random control problems with the same IVP
 function random_control_problems(n::Integer, m::Integer; ivp=nothing, period=0.1)
-    if ivp == nothing
+    if isnothing(ivp)
         ivp = random_affine_ivp(n, m)
     end
 

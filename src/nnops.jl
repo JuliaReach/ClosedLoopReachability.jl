@@ -82,7 +82,7 @@ function forward(solver::SampledApprox, nnet::FeedforwardNetwork, input)
             MIN = min(MIN, output)
             MAX = max(MAX, output)
         end
-        return Interval(MIN, MAX)
+        return LazySets.Interval(MIN, MAX)
     else
         vlist = Vector{Vector{eltype(samples[1])}}(undef, length(samples))
         @inbounds for (i, sample) in enumerate(samples)

@@ -49,7 +49,7 @@ function solve(prob::AbstractControlProblem, args...; kwargs...)
 
     # get the continuous post or find a default one
     cpost = _get_cpost(ivp, args...; kwargs...)
-    if cpost == nothing
+    if isnothing(cpost)
         cpost = _default_cpost(ivp, tspan; kwargs...)
     end
 
