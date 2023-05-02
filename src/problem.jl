@@ -41,7 +41,6 @@ function apply(postprocessing::ProjectionPostprocessing, X::LazySet)
     return project(X, postprocessing.dims)
 end
 
-
 struct LinearMapPostprocessing{M} <: ControlPostprocessing
     map::M
 end
@@ -85,7 +84,6 @@ end
 # Control problems
 # ================
 
-
 abstract type AbstractControlProblem end
 
 """
@@ -118,21 +116,23 @@ Struct representing a closed-loop controlled system.
 While typically the `controller` is a neural network, this struct does not
 prescribe the type.
 """
-struct ControlledPlant{ST, CT, XT, DT, PT, CPRT, CPST} <: AbstractControlProblem
-    ivp::InitialValueProblem{ST, XT}
+struct ControlledPlant{ST,CT,XT,DT,PT,CPRT,CPST} <: AbstractControlProblem
+    ivp::InitialValueProblem{ST,XT}
     controller::CT
-    vars::Dict{Symbol, DT}
+    vars::Dict{Symbol,DT}
     period::PT
     preprocessing::CPRT
     postprocessing::CPST
 
-    function ControlledPlant(ivp::InitialValueProblem{ST, XT},
+    function ControlledPlant(ivp::InitialValueProblem{ST,XT},
                              controller::CT,
-                             vars::Dict{Symbol, DT},
+                             vars::Dict{Symbol,DT},
                              period::PT;
                              preprocessing::CPRT=NoPreprocessing(),
-                             postprocessing::CPST=NoPostprocessing()) where {ST, CT, XT, DT, PT, CPRT, CPST}
-        return new{ST, CT, XT, DT, PT, CPRT, CPST}(ivp, controller, vars, period, preprocessing, postprocessing)
+                             postprocessing::CPST=NoPostprocessing()) where {ST,CT,XT,DT,PT,CPRT,
+                                                                             CPST}
+        return new{ST,CT,XT,DT,PT,CPRT,CPST}(ivp, controller, vars, period, preprocessing,
+                                             postprocessing)
     end
 end
 
@@ -152,7 +152,7 @@ controls(cp::ControlledPlant) = get(cp.vars, :controls, Int[])
 # Specification
 # =============
 
-@with_kw struct Specification{NT, PT, ET}
+@with_kw struct Specification{NT,PT,ET}
     T::NT
     predicate::PT
     ext::ET = nothing

@@ -49,7 +49,7 @@ end
 # ==================================
 
 struct IndexedSplitter <: AbstractSplitter
-    index2splitter::Dict{Int, Splitter}
+    index2splitter::Dict{Int,Splitter}
 end
 
 Base.haskey(s::IndexedSplitter, k::Int) = haskey(s.index2splitter, k)
@@ -59,7 +59,7 @@ Base.getindex(s::IndexedSplitter, k::Int) = getindex(s.index2splitter, k)
 # splitter based on state space
 # ==============================
 
-struct SignSplitter  <: AbstractSplitter
+struct SignSplitter <: AbstractSplitter
 end
 
 function split(s::SignSplitter, X::Interval{N}) where {N}

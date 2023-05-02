@@ -66,7 +66,7 @@ function solve(prob::AbstractControlProblem, args...; kwargs...)
     sol = _solve(prob, cpost, solver, tvec, τ, splitter, input_splitter,
                  rec_method, remove_zero_generators)
 
-    d = Dict{Symbol, Any}(:solver=>solver)
+    d = Dict{Symbol,Any}(:solver => solver)
     return ReachSolution(sol, cpost, d)
 end
 
@@ -74,7 +74,7 @@ function _get_alg_nn(args...; kwargs...)
     if haskey(kwargs, :alg_nn)
         solver = kwargs[:alg_nn]
     else
-        throw(ArgumentError("the solver for the controller `alg_nn` should be "*
+        throw(ArgumentError("the solver for the controller `alg_nn` should be " *
                             "specified, but was not found"))
     end
     return solver
@@ -94,9 +94,7 @@ function _solve(cp::ControlledPlant,
                 splitter::AbstractSplitter,
                 input_splitter::AbstractSplitter,
                 rec_method::AbstractReconstructionMethod,
-                remove_zero_generators::Bool
-               ) where {N}
-
+                remove_zero_generators::Bool) where {N}
     S = system(cp)
     network = controller(cp)
     st_vars = states(cp)
@@ -110,8 +108,8 @@ function _solve(cp::ControlledPlant,
     m = length(dist_vars)
     q = length(ctrl_vars)
     dim(Q₀) == n + m + q || throw(ArgumentError("dimension mismatch; " *
-        "expected the dimension of the initial states of the initial-value " *
-        "problem to be $(n + m + q), but it is $(dim(Q₀))"))
+                                                "expected the dimension of the initial states of the initial-value " *
+                                                "problem to be $(n + m + q), but it is $(dim(Q₀))"))
 
     W₀ = m > 0 ? project(Q₀, dist_vars) : nothing
 
@@ -119,7 +117,7 @@ function _solve(cp::ControlledPlant,
     sol = nothing
     NT = numtype(cpost)
     RT = rsetrep(cpost)
-    FT = Flowpipe{NT, RT, Vector{RT}}
+    FT = Flowpipe{NT,RT,Vector{RT}}
     flowpipes = Vector{FT}()
 
     # waiting list
@@ -129,7 +127,7 @@ function _solve(cp::ControlledPlant,
     k = 1
     R = nothing
     t0 = tvec[k]
-    t1 = tvec[k+1]
+    t1 = tvec[k + 1]
     X₀ = project(Q₀, st_vars)
     X₀s = haskey(splitter, k) ? split(splitter[k], X₀) : [X₀]
     results = Vector{Vector{Flowpipe}}(undef, length(X₀s))
@@ -137,13 +135,15 @@ function _solve(cp::ControlledPlant,
     # first perform an isolated analysis because of problems in TaylorSeries
     # (global variables need to be written once)
     @inbounds results[1] = _solve_one(R, first(X₀s), W₀, S, st_vars, t0, t1,
-        cpost, rec_method, solver, network, preprocessing, postprocessing,
-        input_splitter)
+                                      cpost, rec_method, solver, network, preprocessing,
+                                      postprocessing,
+                                      input_splitter)
     # parallelize analysis of the remaining parts
     Threads.@threads for i in 2:length(results)
         @inbounds results[i] = _solve_one(R, X₀s[i], W₀, S, st_vars, t0, t1,
-            cpost, rec_method, solver, network, preprocessing, postprocessing,
-            input_splitter)
+                                          cpost, rec_method, solver, network, preprocessing,
+                                          postprocessing,
+                                          input_splitter)
     end
     # collect results from all threads
     for Fs in results
@@ -161,17 +161,17 @@ function _solve(cp::ControlledPlant,
         k = prev_part.k + 1
         t = tend(prev_part.F)
         R = prev_part.F(t)
-        X₀ = _project_oa(R, st_vars, t;
-                         remove_zero_generators=remove_zero_generators) |> set
+        X₀ = set(_project_oa(R, st_vars, t;
+                             remove_zero_generators=remove_zero_generators))
         t0 = tvec[k]
-        t1 = tvec[k+1]
+        t1 = tvec[k + 1]
         X₀s = haskey(splitter, k) ? split(splitter[k], X₀) : [X₀]
         results = Vector{Vector{Flowpipe}}(undef, length(X₀s))
         # parallelize analysis
         Threads.@threads for i in 1:length(results)
             @inbounds results[i] = _solve_one(R, X₀s[i], W₀, S, st_vars, t0, t1,
-                cpost, rec_method, solver, network, preprocessing,
-                postprocessing, input_splitter)
+                                              cpost, rec_method, solver, network, preprocessing,
+                                              postprocessing, input_splitter)
         end
         # collect results from all threads
         for Fs in results
@@ -218,7 +218,7 @@ function _solve_one(R, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method, solver
         t1′ = tend(sol)
         Δt = t1 - t1′  # difference of exact and actual control time
         @assert isapproxzero(Δt) "the flowpipe duration differs from the " *
-            "requested duration by $Δt time units (stopped at $(t1′))"
+                                 "requested duration by $Δt time units (stopped at $(t1′))"
         push!(sols, sol)
 
         # attach control signals to flowpipe

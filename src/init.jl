@@ -23,7 +23,7 @@ const RA = ReachabilityAnalysis
 const IA = IntervalArithmetic
 
 using LazySets: _leq, _geq, isapproxzero, _isapprox, array,
-    remove_zero_generators, remove_zero_columns, subtypes, SingleEntryVector
+                remove_zero_generators, remove_zero_columns, subtypes, SingleEntryVector
 
 import CommonSolve: solve
 
