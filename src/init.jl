@@ -1,8 +1,8 @@
 using Requires, Reexport
 
-using .NeuralNetworkFormats
+using ControllerFormats
 # namespace conflict
-using .NeuralNetworkFormats: Id
+using ControllerFormats: Id
 
 @reexport using ReachabilityAnalysis
 # namespace conflict
