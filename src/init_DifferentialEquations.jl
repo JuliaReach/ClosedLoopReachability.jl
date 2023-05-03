@@ -12,7 +12,7 @@ export trajectory,
        disturbances,
        solution
 
-struct SimulationSolution{TT, CT, IT}
+struct SimulationSolution{TT,CT,IT}
     trajectory::TT  # trajectory pieces for each control cycle
     controls::CT  # control inputs for each control cycle
     disturbances::IT  # disturbances for each control cycle
@@ -22,8 +22,8 @@ trajectory(sol::SimulationSolution) = sol.trajectory
 controls(sol::SimulationSolution) = sol.controls
 disturbances(sol::SimulationSolution) = sol.disturbances
 
-struct EnsembleSimulationSolution{TT, CT, IT}
-    solutions::Vector{SimulationSolution{TT, CT, IT}}
+struct EnsembleSimulationSolution{TT,CT,IT}
+    solutions::Vector{SimulationSolution{TT,CT,IT}}
 end
 
 # constructor from a bulk input
@@ -36,9 +36,9 @@ function EnsembleSimulationSolution(simulations, controls, disturbances)
     simulations_new = @inbounds [[simulations[i][j] for i in 1:n] for j in 1:m]
     controls_new = @inbounds [[controls[i][j] for i in 1:n] for j in 1:m]
     disturbances_new = @inbounds [[(isassigned(disturbances, i) ? disturbances[i][j] : nothing)
-        for i in 1:n] for j in 1:m]
+                                   for i in 1:n] for j in 1:m]
     solutions = @inbounds [SimulationSolution(simulations_new[j],
-        controls_new[j], disturbances_new[j]) for j in 1:m]
+                                              controls_new[j], disturbances_new[j]) for j in 1:m]
     return EnsembleSimulationSolution(solutions)
 end
 
@@ -64,8 +64,8 @@ function _solve_ensemble(ivp, X0_samples, tspan;
         field = ReachabilityAnalysis.outofplace_field(ivp)
     end
 
-    _prob_func(prob, i, repeat) = remake(prob, u0=X0_samples[i])
-    ensemble_prob = EnsembleProblem(ODEProblem(field, first(X0_samples), tspan),
+    _prob_func(prob, i, repeat) = remake(prob; u0=X0_samples[i])
+    ensemble_prob = EnsembleProblem(ODEProblem(field, first(X0_samples), tspan);
                                     prob_func=_prob_func)
     return DE.solve(ensemble_prob, trajectories_alg, ensemble_alg;
                     trajectories=length(X0_samples))

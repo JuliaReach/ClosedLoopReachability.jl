@@ -1,10 +1,19 @@
 # ClosedLoopReachability.jl
 
-[![Build Status](https://github.com/JuliaReach/ClosedLoopReachability.jl/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/JuliaReach/ClosedLoopReachability.jl/actions/workflows/ci.yml?query=branch%3Amaster)
-[![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://juliareach.github.io/ClosedLoopReachability.jl/dev/)
-[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000)](https://github.com/juliareach/ClosedLoopReachability.jl/blob/master/LICENSE)
-[![Code coverage](http://codecov.io/github/JuliaReach/ClosedLoopReachability.jl/coverage.svg?branch=master)](https://codecov.io/github/JuliaReach/ClosedLoopReachability.jl?branch=master)
-[![Join the chat at https://gitter.im/JuliaReach/Lobby](https://badges.gitter.im/JuliaReach/Lobby.svg)](https://gitter.im/JuliaReach/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+| **Documentation** | **Status** | **Community** | **License** |
+|:-----------------:|:----------:|:-------------:|:-----------:|
+| [![docs-dev][dev-img]][dev-url] | [![CI][ci-img]][ci-url] [![codecov][cov-img]][cov-url] | [![gitter][chat-img]][chat-url] | [![license][lic-img]][lic-url] |
+
+[dev-img]: https://img.shields.io/badge/docs-latest-blue.svg
+[dev-url]: https://juliareach.github.io/ClosedLoopReachability.jl/dev/
+[ci-img]: https://github.com/JuliaReach/ClosedLoopReachability.jl/workflows/CI/badge.svg
+[ci-url]: https://github.com/JuliaReach/ClosedLoopReachability.jl/actions/workflows/ci.yml
+[cov-img]: https://codecov.io/github/JuliaReach/ClosedLoopReachability.jl/coverage.svg
+[cov-url]: https://app.codecov.io/github/JuliaReach/ClosedLoopReachability.jl
+[chat-img]: https://img.shields.io/badge/zulip-join_chat-brightgreen.svg
+[chat-url]: https://julialang.zulipchat.com/#narrow/stream/278609-juliareach
+[lic-img]: https://img.shields.io/github/license/mashape/apistatus.svg
+[lic-url]: https://github.com/JuliaReach/ClosedLoopReachability.jl/blob/master/LICENSE
 
 This package implements methods to analyze closed-loop control systems using reachability analysis.
 

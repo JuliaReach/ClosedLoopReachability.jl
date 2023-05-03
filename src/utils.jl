@@ -60,12 +60,12 @@ function random_affine_ivp(n, m)
                 dx[i] += b[j] * x[n + j]
             end
         end
-        for i in (n+1):(n+m)
+        for i in (n + 1):(n + m)
             dx[i] = zero(x[i])
         end
     end
 
-    X0 = rand(BallInf, dim=n)
+    X0 = LazySets.rand(BallInf; dim=n)
     U0 = ZeroSet(m)  # needed but ignored
 
     system = BlackBoxContinuousSystem(random_system!, n + m)
@@ -76,11 +76,11 @@ end
 
 # create a family of random control problems with the same IVP
 function random_control_problems(n::Integer, m::Integer; ivp=nothing, period=0.1)
-    if ivp == nothing
+    if isnothing(ivp)
         ivp = random_affine_ivp(n, m)
     end
 
-    vars_idx = Dict(:states=>1:n, :controls=>(n+1):(n+m))
+    vars_idx = Dict(:states => 1:n, :controls => (n + 1):(n + m))
     problems = ControlledPlant[]
 
     # create random constant controller
@@ -116,7 +116,7 @@ function random_control_problems(n::Integer, m::Integer; ivp=nothing, period=0.1
     # create random controller with five layers
     l = 5
     n_max_neurons = 10
-    T = DenseLayerOp{<:ActivationFunction, Matrix{Float64}, Vector{Float64}}
+    T = DenseLayerOp{<:ActivationFunction,Matrix{Float64},Vector{Float64}}
     layers = T[]
     k_in = n
     for i in 1:l
@@ -138,5 +138,5 @@ function relative_size(X0, nsamples, controller, solver=DeepZ())
     @assert output_dim(controller) == 1 "the dimension of the output of the network needs to be 1, but is $output_dim(controller)"
     o = overapproximate(forward(solver, controller, X0), Interval)
     u = forward(SampledApprox(nsamples), controller, X0)
-    return diameter(o)/diameter(u)
+    return diameter(o) / diameter(u)
 end

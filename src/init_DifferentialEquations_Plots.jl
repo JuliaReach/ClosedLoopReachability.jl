@@ -2,7 +2,8 @@ export plot_simulation!
 
 # convenience function for plotting simulation results
 # use `output_map` to plot a linear combination of the state variables
-function plot_simulation!(fig, sim::EnsembleSimulationSolution; vars=nothing, output_map=nothing, kwargs...)
+function plot_simulation!(fig, sim::EnsembleSimulationSolution; vars=nothing, output_map=nothing,
+                          kwargs...)
     # The main problem is that plotting trajectories one by one changes the plot
     # limits. Hence we store the plot limits from an existing figure and restore
     # them after plotting all trajectories.
@@ -33,7 +34,7 @@ function plot_simulation!(fig, sim::EnsembleSimulationSolution; vars=nothing, ou
     xl = Plots.xlims(fig)
     yl = Plots.ylims(fig)
 
-    _plot_function(fig, sim, opts, color=color, label=label)
+    _plot_function(fig, sim, opts; color=color, label=label)
 
     # restore x and y limits
     Plots.xlims!(fig, xl)
@@ -45,7 +46,7 @@ end
 function _plot_simulation_vars!(fig, sim, vars; color, label)
     for simulation in trajectories(sim)
         for piece in simulation
-            Plots.plot!(fig, piece, vars=vars, color=color, lab=label)
+            Plots.plot!(fig, piece; vars=vars, color=color, lab=label)
             label = ""  # overwrite to have exactly one label
         end
     end
@@ -73,15 +74,15 @@ function _plot_simulation_output_map!(fig, sim, output_map::Vector{<:Real}; colo
     for simulation in trajectories(sim)
         for piece in simulation
             dt = piece.t
-            trange = range(dt[1], dt[end], length=length(dt))
+            trange = range(dt[1], dt[end]; length=length(dt))
             if isfirst
                 # plot first point only for the legend entry
                 trange1 = trange[1]:trange[1]
-                Plots.plot!(fig, trange1, f.(trange1, Ref(piece)), color=color, lab=label)
+                Plots.plot!(fig, trange1, f.(trange1, Ref(piece)); color=color, lab=label)
                 label = ""  # overwrite to have exactly one label
                 isfirst = false
             end
-            Plots.plot!(fig, trange, f.(trange, Ref(piece)), color=color, lab="")
+            Plots.plot!(fig, trange, f.(trange, Ref(piece)); color=color, lab="")
         end
     end
     return fig

@@ -33,7 +33,7 @@ end
 # Composite methods to compute the network output
 # ================================================
 
-@with_kw struct SplitSolver{S<:Solver, FS, FM} <: Solver
+@with_kw struct SplitSolver{S<:Solver,FS,FM} <: Solver
     solver::S
     split_fun::FS
     merge_fun::FM
@@ -82,7 +82,7 @@ function forward(solver::SampledApprox, nnet::FeedforwardNetwork, input)
             MIN = min(MIN, output)
             MAX = max(MAX, output)
         end
-        return Interval(MIN, MAX)
+        return LazySets.Interval(MIN, MAX)
     else
         vlist = Vector{Vector{eltype(samples[1])}}(undef, length(samples))
         @inbounds for (i, sample) in enumerate(samples)
@@ -280,10 +280,9 @@ function forward(solver::VertexSolver, nnet::FeedforwardNetwork, X0)
         Q_chull = VPolytope(vlist)
 
         # filter out negative part
-#         Q_pos = box_approximation(VPolytope(vlist_rect))  # alternative
+        #         Q_pos = box_approximation(VPolytope(vlist_rect))  # alternative
         n = dim(Q_am)
-        Q_pos = HPolyhedron(
-            [HalfSpace(SingleEntryVector(i, n, -one(N)), zero(N)) for i in 1:n])
+        Q_pos = HPolyhedron([HalfSpace(SingleEntryVector(i, n, -one(N)), zero(N)) for i in 1:n])
         P = intersection(Q_chull, Q_pos)
     end
     Q = solver.postprocessing(P)
@@ -305,7 +304,7 @@ end
 @taylorize function sigmoid!(dx, x, p, t)
     xᴶ, xᴾ = x
     dx[1] = zero(xᴶ)
-    dx[2] = xᴶ *(xᴾ - xᴾ^2)
+    return dx[2] = xᴶ * (xᴾ - xᴾ^2)
 end
 
 # footnote (3) in [VER19]
@@ -315,7 +314,7 @@ end
 @taylorize function tanh!(dx, x, p, t)
     xᴶ, xᴾ = x
     dx[1] = zero(xᴶ)
-    dx[2] = xᴶ *(1 - xᴾ^2)
+    return dx[2] = xᴶ * (1 - xᴾ^2)
 end
 
 const HALFINT = IA.Interval(0.5, 0.5)
@@ -326,7 +325,7 @@ const ACTFUN = Dict(Tanh() => (tanh!, ZEROINT),
 # Method: Cartesian decomposition (intervals for each one-dimensional subspace)
 # Only Tanh, Sigmoid and Id functions are supported
 function forward(nnet::FeedforwardNetwork, X0::LazySet;
-                 alg=TMJets(abstol=1e-14, orderQ=2, orderT=6))
+                 alg=TMJets(; abstol=1e-14, orderQ=2, orderT=6))
 
     # initial states
     xᴾ₀ = _decompose_1D(X0)
@@ -349,10 +348,10 @@ function forward(nnet::FeedforwardNetwork, X0::LazySet;
         activation!, ival = ACTFUN[act]
         xᴾ′ = fill(ival, m)
 
-        for i = 1:m  # loop over coordinates
+        for i in 1:m  # loop over coordinates
             X0i = xᴶ′[i] × xᴾ′[i]
-            ivp = @ivp(x' = activation!(x), dim=2, x(0) ∈ X0i)
-            sol = RA.solve(ivp, tspan=(0., 1.), alg=alg)
+            ivp = @ivp(x' = activation!(x), dim = 2, x(0) ∈ X0i)
+            sol = RA.solve(ivp; tspan=(0.0, 1.0), alg=alg)
 
             # interval overapproximation of the final reach-set along
             # dimension 2, which corresponds to xᴾ
@@ -394,7 +393,7 @@ end
 
 for SOLVER in subtypes(Solver, true)
     @eval function forward(solver::$SOLVER, nnet::FeedforwardNetwork,
-                                   X0::AbstractSingleton)
-              return forward(nnet, X0)
-          end
+                           X0::AbstractSingleton)
+        return forward(nnet, X0)
+    end
 end
