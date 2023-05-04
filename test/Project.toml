@@ -3,3 +3,6 @@ MAT = "23992714-dd62-5051-b70f-ba57cb901cac"
 ONNX = "d0dd6a25-fac6-55c0-abf7-829e0c774d20"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 YAML = "ddb6d928-2868-570f-bddf-ab3f9cf99eb6"
+
+[compat]
+ONNX = "0.2"
