@@ -31,16 +31,16 @@ controller = BlackBoxController(oscillator);
 
 X₀ = Interval(0.95, 0.99);
 U = ZeroSet(1);
-vars_idx = Dict(:states=>[1], :controls=>2);
-ivp = @ivp(x' = sys!(x), dim: 2, x(0) ∈ X₀ × U);
+vars_idx = Dict(:states => [1], :controls => 2);
+ivp = @ivp(x' = sys!(x), dim:2, x(0) ∈ X₀ × U);
 period = 0.1;
 prob = ControlledPlant(ivp, controller, vars_idx, period);
-alg = TMJets21b(abstol=1e-10, orderT=8, orderQ=2, adaptive=true);
+alg = TMJets21b(; abstol=1e-10, orderT=8, orderQ=2, adaptive=true);
 alg_nn = BlackBoxSolver();
 N = 10;
-T = N*period;
+T = N * period;
 
-sol_raw = solve(prob, T=T, alg_nn=alg_nn, alg=alg);
+sol_raw = solve(prob; T=T, alg_nn=alg_nn, alg=alg);
 
 # import DifferentialEquations
 # sim = simulate(prob, T=T; trajectories=10, include_vertices=true);
