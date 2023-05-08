@@ -49,10 +49,6 @@ function apply(postprocessing::LinearMapPostprocessing, x)
     return postprocessing.map * x
 end
 
-function apply(postprocessing::LinearMapPostprocessing{<:Number}, X::LazySet)
-    return scale(postprocessing.map, X)
-end
-
 function apply(postprocessing::LinearMapPostprocessing, X::LazySet)
     return linear_map(postprocessing.map, X)
 end
@@ -70,10 +66,6 @@ apply(::NoPreprocessing, x) = x
 
 struct FunctionPreprocessing{F<:Function} <: ControlPreprocessing
     f::F
-
-    function FunctionPreprocessing(f::F) where {F<:Function}
-        return new{F}(f)
-    end
 end
 
 function apply(funct::FunctionPreprocessing, x)
