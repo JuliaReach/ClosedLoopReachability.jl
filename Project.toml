@@ -14,7 +14,7 @@ Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 
 [compat]
 CommonSolve = "0.1 - 0.2"
-ControllerFormats = "0.1"
+ControllerFormats = "0.1, 0.2"
 LazySets = "2.7.6"
 Parameters = "0.12"
 ReachabilityAnalysis = "0.14.5 - 0.21, 0.22"
