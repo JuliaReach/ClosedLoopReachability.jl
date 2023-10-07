@@ -181,7 +181,7 @@ end
 function forward_adv(X::Singleton, τ, adv; alg=nothing)
     v = vcat(element(X), τ)
     v = normalize(v)
-    u = forward(CONTROLLERS[adv], v)
+    u = forward(v, CONTROLLERS[adv])
     imax = argmax(u)
     return CTRL_IDX[imax]
 end
@@ -191,7 +191,7 @@ function forward_adv(X::AbstractZonotope, τ, adv; alg=DeepZ())
     Y = cartesian_product(X, Singleton([τ]))
 
     Y = normalize(Y)
-    out = forward(alg, CONTROLLERS[adv], Y)
+    out = forward(Y, CONTROLLERS[adv], alg)
 
     imax = argmax(high(out))
     return CTRL_IDX[imax]

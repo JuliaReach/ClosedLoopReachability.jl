@@ -25,7 +25,7 @@ The control signals are stored in the `ext` field with each flowpipe.
 - Use the `T` keyword argument to specify the time horizon; the initial time is
   then assumed to be zero.
 
-- Use the `alg_nn` keyword argument to specify the solver for the controller.
+- Use the `alg_nn` keyword argument to specify the algorithm for the controller.
 
 - While this function is written with a neural-network controlled systems in
 mind, the type of the controller is arbitrary, as long as a function
@@ -53,7 +53,7 @@ function solve(prob::AbstractControlProblem, args...; kwargs...)
         cpost = _default_cpost(ivp, tspan; kwargs...)
     end
 
-    solver = _get_alg_nn(args...; kwargs...)
+    nnpost = _get_alg_nn(args...; kwargs...)
 
     splitter = get(kwargs, :splitter, NoSplitter())
 
@@ -63,21 +63,21 @@ function solve(prob::AbstractControlProblem, args...; kwargs...)
 
     remove_zero_generators = get(kwargs, :remove_zero_generators, true)
 
-    sol = _solve(prob, cpost, solver, tvec, τ, splitter, input_splitter,
+    sol = _solve(prob, cpost, nnpost, tvec, τ, splitter, input_splitter,
                  rec_method, remove_zero_generators)
 
-    d = Dict{Symbol,Any}(:solver => solver)
+    d = Dict{Symbol,Any}(:solver => nnpost)
     return ReachSolution(sol, cpost, d)
 end
 
 function _get_alg_nn(args...; kwargs...)
     if haskey(kwargs, :alg_nn)
-        solver = kwargs[:alg_nn]
+        nnpost = kwargs[:alg_nn]
     else
-        throw(ArgumentError("the solver for the controller `alg_nn` should be " *
-                            "specified, but was not found"))
+        throw(ArgumentError("the algorithm for the controller `alg_nn` " *
+                            "should be specified, but was not found"))
     end
-    return solver
+    return nnpost
 end
 
 # element of the waiting list: a flowpipe with corresponding iteration
@@ -88,7 +88,7 @@ end
 
 function _solve(cp::ControlledPlant,
                 cpost::AbstractContinuousPost,
-                solver::Solver,
+                nnpost::ForwardAlgorithm,
                 tvec::AbstractVector,
                 sampling_time::N,
                 splitter::AbstractSplitter,
@@ -135,13 +135,13 @@ function _solve(cp::ControlledPlant,
     # first perform an isolated analysis because of problems in TaylorSeries
     # (global variables need to be written once)
     @inbounds results[1] = _solve_one(R, first(X₀s), W₀, S, st_vars, t0, t1,
-                                      cpost, rec_method, solver, network, preprocessing,
+                                      cpost, rec_method, nnpost, network, preprocessing,
                                       postprocessing,
                                       input_splitter)
     # parallelize analysis of the remaining parts
     Threads.@threads for i in 2:length(results)
         @inbounds results[i] = _solve_one(R, X₀s[i], W₀, S, st_vars, t0, t1,
-                                          cpost, rec_method, solver, network, preprocessing,
+                                          cpost, rec_method, nnpost, network, preprocessing,
                                           postprocessing,
                                           input_splitter)
     end
@@ -170,7 +170,7 @@ function _solve(cp::ControlledPlant,
         # parallelize analysis
         Threads.@threads for i in 1:length(results)
             @inbounds results[i] = _solve_one(R, X₀s[i], W₀, S, st_vars, t0, t1,
-                                              cpost, rec_method, solver, network, preprocessing,
+                                              cpost, rec_method, nnpost, network, preprocessing,
                                               postprocessing, input_splitter)
         end
         # collect results from all threads
@@ -187,9 +187,9 @@ function _solve(cp::ControlledPlant,
     return MixedFlowpipe(flowpipes)
 end
 
-function nnet_forward(solver, network, X, preprocessing, postprocessing)
+function nnet_forward(nnpost, network, X, preprocessing, postprocessing)
     X = apply(preprocessing, X)
-    U = forward(solver, network, X)
+    U = forward(X, network, nnpost)
     U = apply(postprocessing, U)
     if dim(U) == 1  # simplify the control input for intervals
         U = overapproximate(U, Interval)
@@ -197,13 +197,13 @@ function nnet_forward(solver, network, X, preprocessing, postprocessing)
     return U
 end
 
-function _solve_one(R, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method, solver,
+function _solve_one(R, X₀, W₀, S, st_vars, t0, t1, cpost, rec_method, nnpost,
                     network, preprocessing, postprocessing, splitter)
     # add disturbances (if any)
     P₀ = isnothing(W₀) ? X₀ : X₀ × W₀
 
     # get new control inputs from the controller
-    U = nnet_forward(solver, network, X₀, preprocessing, postprocessing)
+    U = nnet_forward(nnpost, network, X₀, preprocessing, postprocessing)
 
     dt = t0 .. t1
 

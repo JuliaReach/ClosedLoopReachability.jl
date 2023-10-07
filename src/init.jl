@@ -3,6 +3,11 @@ using Requires, Reexport
 using ControllerFormats
 # namespace conflict
 using ControllerFormats: Id
+# parsers
+@reexport using ControllerFormats.FileFormats
+
+@reexport using NeuralNetworkReachability.ForwardAlgorithms
+using NeuralNetworkReachability.ForwardAlgorithms: ForwardAlgorithm
 
 @reexport using ReachabilityAnalysis
 # namespace conflict
@@ -15,15 +20,14 @@ using ReachabilityAnalysis: _check_dim, _get_tspan, _get_cpost, _default_cpost,
 
 using ReachabilityBase.Timing,
       ReachabilityBase.Require
+using ReachabilityBase.Arrays: SingleEntryVector
+using ReachabilityBase.Comparison: isapproxzero
 
 using Parameters: @with_kw
 
 # aliases
 const RA = ReachabilityAnalysis
 const IA = IntervalArithmetic
-
-using LazySets: _leq, _geq, isapproxzero, _isapprox, array,
-                remove_zero_generators, remove_zero_columns, subtypes, SingleEntryVector
 
 import CommonSolve: solve
 

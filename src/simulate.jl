@@ -56,7 +56,7 @@ function simulate(cp::AbstractControlProblem, args...; kwargs...)
         for j in 1:trajectories
             x₀ = x0_vec[j]
             x₀ = apply(preprocessing, x₀)
-            network_output = forward(network, x₀)
+            network_output = forward(x₀, network)
             control_signals[j] = apply(postprocessing, network_output)
         end
         all_controls[i] = control_signals
