@@ -7,3 +7,13 @@ MAT = "23992714-dd62-5051-b70f-ba57cb901cac"
 ONNX = "d0dd6a25-fac6-55c0-abf7-829e0c774d20"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 YAML = "ddb6d928-2868-570f-bddf-ab3f9cf99eb6"
+
+[compat]
+DifferentialEquations = "7"
+DisplayAs = "0.1"
+Documenter = "1"
+Literate = "2"
+MAT = "0.10"
+ONNX = "0.2"
+Plots = "1"
+YAML = "0.4"

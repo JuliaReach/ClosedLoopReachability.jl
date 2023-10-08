@@ -11,6 +11,7 @@ makedocs(; sitename="ClosedLoopReachability.jl",
          format=Documenter.HTML(; prettyurls=get(ENV, "CI", nothing) == "true",
                                 collapselevel=1,
                                 assets=["assets/aligned.css"]),
+         pagesonly=true,
          pages=["Home" => "index.md",
                 "Examples" => Any["Adaptive Cruise Controller (ACC)" => "models/ACC.md",
                                   "Translational Oscillations (TORA) with ReLU controller" => "models/Sherlock-Benchmark-9-TORA.md",
@@ -29,8 +30,7 @@ makedocs(; sitename="ClosedLoopReachability.jl",
                                   ],
                 "API Reference" => Any["Problem types" => "lib/problems.md",
                                        "Solvers" => "lib/solvers.md",
-                                       "Utilities" => "lib/utils.md"]],
-         strict=true)
+                                       "Utilities" => "lib/utils.md"]])
 
 deploydocs(; repo="github.com/JuliaReach/ClosedLoopReachability.jl.git",
            push_preview=true)
