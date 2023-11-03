@@ -330,7 +330,7 @@ function forward(nnet::FeedforwardNetwork, X0::LazySet;
     # initial states
     xᴾ₀ = _decompose_1D(X0)
     xᴾ₀ = array(xᴾ₀)  # see https://github.com/JuliaReach/ReachabilityAnalysis.jl/issues/254
-    xᴾ₀ = [x.dat for x in xᴾ₀] # use concrete inteval matrix-vector operations
+    xᴾ₀ = [x.dat for x in xᴾ₀]  # use concrete interval matrix-vector operations
 
     for layer in nnet.layers  # loop over layers
         W = layer.weights

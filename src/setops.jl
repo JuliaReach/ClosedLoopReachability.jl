@@ -54,7 +54,7 @@ end
 
 function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Vector{<:LazySet},
                       R::TaylorModelReachSet{N}, ti) where {N}
-    @assert length(U₀) == 1 "expected the length of U₀ to be 1, got $(lenght(U₀))"
+    @assert length(U₀) == 1 "expected the length of U₀ to be 1, got $(length(U₀))"
     return _reconstruct(method, P₀, first(U₀), R, ti)
 end
 
