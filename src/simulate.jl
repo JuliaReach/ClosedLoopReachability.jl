@@ -46,7 +46,7 @@ function simulate(cp::AbstractControlProblem, args...; kwargs...)
 
     # preallocate
     extended = Vector{Vector{Float64}}(undef, trajectories)
-    simulations = Vector{EnsembleSolution}(undef, iterations)
+    simulations = Vector{DE.EnsembleSolution}(undef, iterations)
     all_controls = Vector{Vector{Vector{Float64}}}(undef, iterations)
     all_disturbances = Vector{Vector{Vector{Float64}}}(undef, iterations)
 
