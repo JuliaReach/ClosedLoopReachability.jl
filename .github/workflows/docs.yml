@@ -35,4 +35,8 @@ jobs:
           GKSwstype: nul  # fix for Plots with GR backend
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # authentication with GitHub Actions token
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}  # authentication with SSH deploy key
-        run: julia --project=docs/ docs/make.jl
+        run: julia --project=docs/ --code-coverage=user docs/make.jl
+      - name: Process coverage
+        uses: julia-actions/julia-processcoverage@v1
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
