@@ -203,7 +203,7 @@ function run(; use_relu_controller::Bool)
     fp_rel = linear_map(Matrix(d_rel'), F)
     output_map_rel = d_rel
 
-    fp_safe = affine_map(Matrix(d_safe'), [D_default], F)
+    fp_safe = affine_map(Matrix(d_safe'), F, [D_default])
     output_map_safe = vcat([D_default], d_safe)
 
     plot!(fig, fp_rel, vars=(0, 1), c=:red, alpha=.4)
