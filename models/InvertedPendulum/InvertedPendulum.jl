@@ -1,7 +1,5 @@
 # # Inverted Pendulum
 #
-#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/InvertedPendulum.ipynb)
-#
 # The Inverted Pendulum benchmark is a classical model of motion.
 
 module InvertedPendulum  #jl

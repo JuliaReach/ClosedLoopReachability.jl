@@ -1,7 +1,5 @@
 # # Translational Oscillations by a Rotational Actuator (TORA)
 #
-#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/TORA.ipynb)
-#
 # The TORA benchmark models a cart attached to a wall with a spring. The cart is
 # free to move on a friction-less surface and has a weight attached to an arm,
 # which is free to rotate about an axis. This serves as the control input to

@@ -1,7 +1,5 @@
 # # Quadrotor
 #
-#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/Quadrotor.ipynb)
-#
 # The Quadrotor benchmark is a model of a flying drone with four rotors.
 #
 # ![](Quadrotor_explanation.png)
