@@ -1,7 +1,5 @@
 # # Vertical Collision Avoidance System (VerticalCAS)
 #
-#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/VerticalCAS.ipynb)
-#
 # The VerticalCAS benchmark considers a collision avoidance system (CAS),
 # required for commercial aircraft, which gives vertical climbrate advisories
 # to pilots [^JK][^ABKL].

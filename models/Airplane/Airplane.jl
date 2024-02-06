@@ -1,7 +1,5 @@
 # # Airplane
 #
-#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/Airplane.ipynb)
-#
 # The Airplane benchmark is a simple model of a flying airplane.
 
 module Airplane  #jl

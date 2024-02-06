@@ -2,45 +2,52 @@ import Literate
 import ClosedLoopReachability: @modelpath
 
 MODELS = [
-          joinpath(@__DIR__, "..", "models", "ACC"),
-          joinpath(@__DIR__, "..", "models", "Airplane"),
-          joinpath(@__DIR__, "..", "models", "AttitudeControl"),
-          joinpath(@__DIR__, "..", "models", "InvertedPendulum"),
-          joinpath(@__DIR__, "..", "models", "InvertedTwoLinkPendulum"),
-          joinpath(@__DIR__, "..", "models", "Quadrotor"),
-          joinpath(@__DIR__, "..", "models", "SpacecraftDocking"),
-          joinpath(@__DIR__, "..", "models", "TORA"),
-          joinpath(@__DIR__, "..", "models", "Unicycle"),
-          joinpath(@__DIR__, "..", "models", "VerticalCAS")
+          "ACC",
+          "Airplane",
+          "AttitudeControl",
+          "InvertedPendulum",
+          "InvertedTwoLinkPendulum",
+          "Quadrotor",
+          "SpacecraftDocking",
+          "TORA",
+          "Unicycle",
+          "VerticalCAS"
          ]
-GENERATEDDIR = joinpath(@__DIR__, "src", "models")
-MODELDIR = joinpath(@__DIR__, "..", "models")
-mkpath(GENERATEDDIR)
 
+source_dir = joinpath(@__DIR__, "..", "models")
+target_dir = joinpath(@__DIR__, "src", "models")
+mkpath(target_dir)
+
+# overwrite to use the correct model path
 macro modelpath(model_path::String, name::String)
-    return joinpath(MODELDIR, model_path, name)
+    return joinpath(source_dir, model_path, name)
 end
 
 for model in MODELS
-    for file in readdir(model)
+    model_path = abspath(joinpath(source_dir, model))
+    for file in readdir(model_path)
         if endswith(file, ".jl")
-            input = abspath(joinpath(model, file))
-            script = Literate.script(input, GENERATEDDIR; credit=false)
+            input = abspath(joinpath(model_path, file))
+            script = Literate.script(input, target_dir; credit=false)
             code = strip(read(script, String))
             mdpost(str) = replace(str, "@__CODE__" => code)
             if get(ENV, "DOCUMENTATIONGENERATOR", "") == "true"
-                Literate.markdown(input, GENERATEDDIR; postprocess=mdpost, credit=false)
+                Literate.markdown(input, target_dir; postprocess=mdpost, credit=false)
             else
                 # for the local build, one needs to set `nbviewer_root_url`
-                Literate.markdown(input, GENERATEDDIR; postprocess=mdpost, credit=false, nbviewer_root_url="..")
+                Literate.markdown(input, target_dir; postprocess=mdpost, credit=false, nbviewer_root_url="..")
             end
-            Literate.notebook(input, GENERATEDDIR; execute=true, credit=false)
+
+            # notebooks are deactivated to speed up the generation
+#             Literate.notebook(input, target_dir_md; execute=true, credit=false)
+# if used, add the following to the top of the script files (where `MODELNAME` is the model name):
+#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/MODELNAME.ipynb)
         elseif any(endswith.(file, [".png", ".jpg", ".gif"]))
-            cp(joinpath(model, file), joinpath(GENERATEDDIR, file); force=true)
+            cp(joinpath(model_path, file), joinpath(target_dir, file); force=true)
         elseif any(endswith.(file, [".md", ".polar"]))
             # ignore *.md files and controller files without warning
         else
-            @warn "ignoring $file in $model"
+            @warn "ignoring $file in $model_path"
         end
     end
 end

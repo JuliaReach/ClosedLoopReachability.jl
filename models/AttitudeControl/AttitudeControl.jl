@@ -1,7 +1,5 @@
 # # Attitude Control
 #
-#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/AttitudeControl.ipynb)
-#
 # The Attitude Control benchmark models a rigid-body system [^PPR].
 
 module AttitudeControl  #jl

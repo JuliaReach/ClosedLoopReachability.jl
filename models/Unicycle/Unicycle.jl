@@ -1,7 +1,5 @@
 # # Unicycle
 #
-#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/Unicycle.ipynb)
-#
 # The Unicycle benchmark models a unicycle vehicle [^AKM].
 #
 # ![](Unicycle_explanation.png)

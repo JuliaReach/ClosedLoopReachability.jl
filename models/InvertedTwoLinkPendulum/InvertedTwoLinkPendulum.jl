@@ -1,7 +1,5 @@
 # # Inverted Two-Link Pendulum
 #
-#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/InvertedTwoLinkPendulum.ipynb)
-#
 # The Inverted Two-Link Pendulum benchmark is a classical inverted pendulum with
 # two links. We consider two different scenarios, which we respectively refer to
 # as the less robust and the more robust scenario.

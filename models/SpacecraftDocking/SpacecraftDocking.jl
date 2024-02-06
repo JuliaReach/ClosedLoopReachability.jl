@@ -1,7 +1,5 @@
 # # Spacecraft Docking
 #
-#md # [![](https://img.shields.io/badge/show-nbviewer-579ACA.svg)](@__NBVIEWER_ROOT_URL__/models/SpacecraftDocking.ipynb)
-#
 # The Spacecraft Docking benchmark is a model of a docking spacecraft in 2D.
 #
 # ![](SpacecraftDocking_explanation.png)
