@@ -8,6 +8,7 @@ module SpacecraftDocking  #jl
 
 using ClosedLoopReachability
 import DifferentialEquations, Plots, DisplayAs
+using ReachabilityBase.CurrentPath: @current_path
 using ClosedLoopReachability: ProjectionPostprocessing
 using Plots: plot, plot!
 
@@ -43,7 +44,7 @@ end;
 # has 4 inputs (the state variables) and 4 outputs, of which only the first two
 # are meaningful ($F_x, F_y$).
 
-path = @modelpath("SpacecraftDocking", "SpacecraftDocking_controller.polar")
+path = @current_path("SpacecraftDocking", "SpacecraftDocking_controller.polar")
 controller = read_POLAR(path)
 
 postprocessing = ProjectionPostprocessing(1:2);

@@ -8,6 +8,7 @@ module Quadrotor  #jl
 
 using ClosedLoopReachability
 import DifferentialEquations, Plots, DisplayAs
+using ReachabilityBase.CurrentPath: @current_path
 using ClosedLoopReachability: SingleEntryVector
 using Plots: plot, plot!
 
@@ -80,7 +81,7 @@ end;
 # each and sigmoid activations. The controller has 12 inputs (the state
 # variables) and 3 outputs ($u_1, u_2, u_3$).
 
-path = @modelpath("Quadrotor", "Quadrotor_controller.polar")
+path = @current_path("Quadrotor", "Quadrotor_controller.polar")
 controller = read_POLAR(path);
 
 # The control period is 0.1 time units.

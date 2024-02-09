@@ -6,6 +6,7 @@ module InvertedPendulum  #jl
 
 using ClosedLoopReachability
 import DifferentialEquations, Plots, DisplayAs
+using ReachabilityBase.CurrentPath: @current_path
 using ClosedLoopReachability: SingleEntryVector
 using Plots: plot, plot!, xlims!, ylims!
 
@@ -55,7 +56,7 @@ end;
 # each and ReLU activations. The controller has 2 inputs (the state variables)
 # and 1 output ($T$).
 
-path = @modelpath("InvertedPendulum", "InvertedPendulum_controller.polar")
+path = @current_path("InvertedPendulum", "InvertedPendulum_controller.polar")
 controller = read_POLAR(path);
 
 # The control period is 0.05 time units.

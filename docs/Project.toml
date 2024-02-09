@@ -5,6 +5,7 @@ Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
 Literate = "98b081ad-f1c9-55d3-8b20-4c87d4299306"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 ReachabilityAnalysis = "1e97bd63-91d1-579d-8e8d-501d2b57c93f"
+ReachabilityBase = "379f33d0-9447-4353-bd03-d664070e549f"
 
 [compat]
 DifferentialEquations = "7"
@@ -13,3 +14,4 @@ Documenter = "1"
 Literate = "2"
 Plots = "1"
 ReachabilityAnalysis = "0.23.1"  # this version is needed for the ACC model
+ReachabilityBase = "0.2.3"

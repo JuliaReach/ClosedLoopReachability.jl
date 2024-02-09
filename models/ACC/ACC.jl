@@ -10,6 +10,7 @@ module ACC  #jl
 
 using ClosedLoopReachability
 import DifferentialEquations, Plots, DisplayAs
+using ReachabilityBase.CurrentPath: @current_path
 using ClosedLoopReachability: FunctionPreprocessing
 using Plots: plot, plot!
 
@@ -66,10 +67,10 @@ end;
 # $D_{rel} = x_{lead} - x_{ego}$ is the distance between the cars, and
 # $v_{rel} = v_{lead} - v_{ego}$ is the distance between the velocities.
 
-path = @modelpath("ACC", "ACC_controller_relu.polar")
+path = @current_path("ACC", "ACC_controller_relu.polar")
 controller_relu = read_POLAR(path)
 
-path = @modelpath("ACC", "ACC_controller_tanh.polar")
+path = @current_path("ACC", "ACC_controller_tanh.polar")
 controller_tanh = read_POLAR(path);
 
 # The controller input is $(v_{set}, T_{gap}, v_{ego}, D_{rel}, v_{rel})$, for

@@ -6,6 +6,7 @@ module AttitudeControl  #jl
 
 using ClosedLoopReachability
 import DifferentialEquations, Plots, DisplayAs
+using ReachabilityBase.CurrentPath: @current_path
 using Plots: plot, plot!
 
 # ## Model
@@ -56,7 +57,7 @@ end;
 # each and sigmoid activations. The controller has 6 inputs (the state
 # variables) and 3 outputs ($u_0, u_1, u_2$).
 
-path = @modelpath("AttitudeControl", "AttitudeControl_controller.polar")
+path = @current_path("AttitudeControl", "AttitudeControl_controller.polar")
 controller = read_POLAR(path);
 
 # The control period is 0.1 time units.
