@@ -8,6 +8,8 @@ module VerticalCAS  #jl
 
 using ClosedLoopReachability, LinearAlgebra
 import Plots, DisplayAs
+using ReachabilityBase.CurrentPath: @current_path
+using ReachabilityBase.Timing: print_timed
 using ClosedLoopReachability: FeedforwardNetwork
 using Plots: plot, plot!
 
@@ -83,7 +85,7 @@ advisory2set[:SCL2500] = HalfSpace([-1.0], -2500.0);
 
 const advisory2controller = Dict{Symbol,FeedforwardNetwork}()
 
-path_prefix = @modelpath("VerticalCAS", "")
+path_prefix = @current_path("VerticalCAS", "")
 for i in 1:9
     path = joinpath(path_prefix, "VerticalCAS_controller_$(i).polar")
     adv = index2advisory[i]

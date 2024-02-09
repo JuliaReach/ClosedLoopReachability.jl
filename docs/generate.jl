@@ -1,5 +1,5 @@
 import Literate
-import ClosedLoopReachability: @modelpath
+import ReachabilityBase.CurrentPath: @current_path
 
 MODELS = [
           #
@@ -21,8 +21,8 @@ target_dir = joinpath(@__DIR__, "src", "models")
 mkpath(target_dir)
 
 # overwrite to use the correct model path
-macro modelpath(model_path::String, name::String)
-    return joinpath(source_dir, model_path, name)
+macro current_path(prefix::String, filename::String)
+    return joinpath(source_dir, prefix, filename)
 end
 
 for model in MODELS

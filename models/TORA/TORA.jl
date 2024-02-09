@@ -14,6 +14,8 @@ module TORA  #jl
 
 using ClosedLoopReachability
 import DifferentialEquations, Plots, DisplayAs
+using ReachabilityBase.CurrentPath: @current_path
+using ReachabilityBase.Timing: print_timed
 using ClosedLoopReachability: UniformAdditivePostprocessing, NoSplitter, LinearMapPostprocessing
 using Plots: plot, plot!, lens!, bbox
 
@@ -63,7 +65,7 @@ end;
 # layer. The output normalization is $u = N(x) - 10$. The control period is 1
 # time unit.
 
-path = @modelpath("TORA", "TORA_ReLU_controller.polar")
+path = @current_path("TORA", "TORA_ReLU_controller.polar")
 controller_ReLU = read_POLAR(path)
 
 control_postprocessing1 = UniformAdditivePostprocessing(-10.0)
@@ -77,9 +79,9 @@ period1 = 1.0;
 # layers, including the output layer. The output normalization is $u = 11 N(x)$.
 # The control period is 0.5 time units.
 
-path = @modelpath("TORA", "TORA_ReLUtanh_controller.polar")
+path = @current_path("TORA", "TORA_ReLUtanh_controller.polar")
 controller_relutanh = read_POLAR(path)
-path = @modelpath("TORA", "TORA_sigmoid_controller.polar")
+path = @current_path("TORA", "TORA_sigmoid_controller.polar")
 controller_sigmoid = read_POLAR(path)
 
 control_postprocessing2 = LinearMapPostprocessing(11.0)

@@ -6,6 +6,8 @@ module Airplane  #jl
 
 using ClosedLoopReachability
 import DifferentialEquations, Plots, DisplayAs
+using ReachabilityBase.CurrentPath: @current_path
+using ReachabilityBase.Timing: print_timed
 using Plots: plot, plot!, xlims!, ylims!
 
 # The following option determines whether the falsification settings should be
@@ -150,7 +152,7 @@ end;
 # 20 neurons, respectively, and ReLU activations. The controller has 12 inputs
 # (the state variables) and 6 outputs ($F_x, F_y, F_z, M_x, M_y, M_z$).
 
-path = @modelpath("Airplane", "Airplane_controller.polar")
+path = @current_path("Airplane", "Airplane_controller.polar")
 controller = read_POLAR(path);
 
 # The control period is 0.1 time units.

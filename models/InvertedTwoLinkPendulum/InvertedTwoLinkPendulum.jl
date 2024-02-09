@@ -8,6 +8,8 @@ module InvertedTwoLinkPendulum  #jl
 
 using ClosedLoopReachability
 import DifferentialEquations, Plots, DisplayAs
+using ReachabilityBase.CurrentPath: @current_path
+using ReachabilityBase.Timing: print_timed
 using ClosedLoopReachability: Specification
 using Plots: plot, plot!, xlims!, ylims!
 
@@ -79,12 +81,12 @@ end;
 # each and ReLU activations. Both controllers have 4 inputs (the state
 # variables) and 2 output ($T₁$ and $T₂$).
 
-path = @modelpath("InvertedTwoLinkPendulum",
-                  "InvertedTwoLinkPendulum_controller_less_robust.polar")
+path = @current_path("InvertedTwoLinkPendulum",
+                     "InvertedTwoLinkPendulum_controller_less_robust.polar")
 controller_lr = read_POLAR(path)
 
-path = @modelpath("InvertedTwoLinkPendulum",
-                  "InvertedTwoLinkPendulum_controller_more_robust.polar")
+path = @current_path("InvertedTwoLinkPendulum",
+                     "InvertedTwoLinkPendulum_controller_more_robust.polar")
 controller_mr = read_POLAR(path);
 
 # The controllers have different control periods: 0.05 (less robust) resp. 0.02

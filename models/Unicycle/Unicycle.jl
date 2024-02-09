@@ -8,6 +8,8 @@ module Unicycle  #jl
 
 using ClosedLoopReachability
 import DifferentialEquations, Plots, DisplayAs
+using ReachabilityBase.CurrentPath: @current_path
+using ReachabilityBase.Timing: print_timed
 using ClosedLoopReachability: UniformAdditivePostprocessing
 using Plots: plot, plot!, lens!, bbox
 
@@ -49,7 +51,7 @@ end;
 # of the neural network $N(x)$ needs to be normalized in order to obtain $u$,
 # namely $(u_1, u_2) = N(x) - (20, 20)$.
 
-path = @modelpath("Unicycle", "Unicycle_controller.polar")
+path = @current_path("Unicycle", "Unicycle_controller.polar")
 controller = read_POLAR(path)
 
 control_postprocessing = UniformAdditivePostprocessing(-20.0);

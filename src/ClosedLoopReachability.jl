@@ -21,8 +21,4 @@ export BoxSplitter,
 # solvers
 export solve, simulate
 
-# utility functions
-export @modelpath,
-       print_timed
-
 end

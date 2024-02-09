@@ -28,8 +28,7 @@ makedocs(; sitename="ClosedLoopReachability.jl",
                                   #
                                  ],
                 "API Reference" => Any["Problem types" => "lib/problems.md",
-                                       "Solvers" => "lib/solvers.md",
-                                       "Utilities" => "lib/utils.md"]])
+                                       "Solvers" => "lib/solvers.md"]])
 
 deploydocs(; repo="github.com/JuliaReach/ClosedLoopReachability.jl.git",
            push_preview=true)
