@@ -19,9 +19,16 @@ using ReachabilityAnalysis: TaylorModel1, TaylorModelN, fp_rpa, zeroBox, symBox
 
 abstract type AbstractReconstructionMethod end
 
-struct CartesianProductReconstructor <: AbstractReconstructionMethod end
+struct ConcreteCartesianProductReconstructor <: AbstractReconstructionMethod end
 
-function _reconstruct(::CartesianProductReconstructor, P₀::LazySet, U₀::LazySet, R, ti)
+function _reconstruct(::ConcreteCartesianProductReconstructor, P₀::LazySet, U₀::LazySet, R, ti)
+    Q₀ = cartesian_product(P₀, U₀)
+    return Q₀
+end
+
+struct LazyCartesianProductReconstructor <: AbstractReconstructionMethod end
+
+function _reconstruct(::LazyCartesianProductReconstructor, P₀::LazySet, U₀::LazySet, R, ti)
     Q₀ = P₀ × U₀
     return Q₀
 end
@@ -32,7 +39,7 @@ end
 
 # if no Taylor model is available => use the given set P₀
 function _reconstruct(::TaylorModelReconstructor, P₀::LazySet, U₀, R::Nothing, ti)
-    return _reconstruct(CartesianProductReconstructor(), P₀, U₀, R, ti)
+    return _reconstruct(ConcreteCartesianProductReconstructor(), P₀, U₀, R, ti)
 end
 
 function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Vector{<:LazySet},
