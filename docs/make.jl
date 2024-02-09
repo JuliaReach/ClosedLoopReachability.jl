@@ -14,6 +14,7 @@ makedocs(; sitename="ClosedLoopReachability.jl",
          pagesonly=true,
          pages=["Home" => "index.md",
                 "Examples" => Any[
+                                  #
                                   "Adaptive Cruise Control (ACC)" => "models/ACC.md",
                                   "Airplane" => "models/Airplane.md",
                                   "Attitude Control" => "models/AttitudeControl.md",
@@ -23,7 +24,8 @@ makedocs(; sitename="ClosedLoopReachability.jl",
                                   "Spacecraft Docking" => "models/SpacecraftDocking.md",
                                   "Translational Oscillations by a Rotational Actuator (TORA)" => "models/TORA.md",
                                   "Unicycle" => "models/Unicycle.md",
-                                  "Vertical Collision Avoidance System (VerticalCAS)" => "models/VerticalCAS.md",
+                                  "Vertical Collision Avoidance System (VerticalCAS)" => "models/VerticalCAS.md"
+                                  #
                                  ],
                 "API Reference" => Any["Problem types" => "lib/problems.md",
                                        "Solvers" => "lib/solvers.md",
