@@ -9,6 +9,7 @@ module Unicycle  #jl
 using ClosedLoopReachability
 import DifferentialEquations, Plots, DisplayAs
 using ReachabilityBase.CurrentPath: @current_path
+using ReachabilityBase.Timing: print_timed
 using ClosedLoopReachability: UniformAdditivePostprocessing
 using Plots: plot, plot!, lens!, bbox
 

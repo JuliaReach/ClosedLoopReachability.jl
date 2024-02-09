@@ -7,6 +7,7 @@ module Airplane  #jl
 using ClosedLoopReachability
 import DifferentialEquations, Plots, DisplayAs
 using ReachabilityBase.CurrentPath: @current_path
+using ReachabilityBase.Timing: print_timed
 using Plots: plot, plot!, xlims!, ylims!
 
 # The following option determines whether the falsification settings should be

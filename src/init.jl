@@ -18,8 +18,7 @@ using ReachabilityAnalysis: _check_dim, _get_tspan, _get_cpost, _default_cpost,
                             AbstractContinuousPost, TimeInterval,
                             AbstractLazyReachSet, AbstractTaylorModelReachSet
 
-using ReachabilityBase.Timing,
-      ReachabilityBase.Require
+using ReachabilityBase.Require
 using ReachabilityBase.Arrays: SingleEntryVector
 using ReachabilityBase.Comparison: isapproxzero
 

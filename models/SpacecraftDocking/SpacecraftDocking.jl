@@ -9,6 +9,7 @@ module SpacecraftDocking  #jl
 using ClosedLoopReachability
 import DifferentialEquations, Plots, DisplayAs
 using ReachabilityBase.CurrentPath: @current_path
+using ReachabilityBase.Timing: print_timed
 using ClosedLoopReachability: ProjectionPostprocessing
 using Plots: plot, plot!
 

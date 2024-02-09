@@ -21,7 +21,4 @@ export BoxSplitter,
 # solvers
 export solve, simulate
 
-# utility functions
-export print_timed
-
 end
