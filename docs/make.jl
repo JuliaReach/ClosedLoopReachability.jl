@@ -26,7 +26,7 @@ makedocs(; sitename="ClosedLoopReachability.jl",
                                   "Unicycle" => "models/Unicycle.md",
                                   "Vertical Collision Avoidance System (VerticalCAS)" => "models/VerticalCAS.md"
                                   #
-                                 ],
+                                  ],
                 "API Reference" => Any["Problem types" => "lib/problems.md",
                                        "Solvers" => "lib/solvers.md"]])
 
