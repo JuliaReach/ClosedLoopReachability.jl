@@ -170,18 +170,19 @@ end;
 
 # To enclose the continuous dynamics, we use a Taylor-model-based algorithm:
 
-alg = TMJets(abstol=1e-9, orderT=8, orderQ=1);
+algorithm_plant = TMJets(abstol=1e-9, orderT=8, orderQ=1);
 
 # To propagate sets through the neural network, we use the `DeepZ` algorithm:
 
-alg_nn = DeepZ();
+algorithm_controller = DeepZ();
 
 # The falsification benchmark is given below:
 
 function benchmark(prob, spec; T, silent::Bool=false)
     ## Solve the controlled system:
     silent || println("Flowpipe construction:")
-    res = @timed solve(prob; T=T, alg_nn=alg_nn, alg=alg)
+    res = @timed solve(prob; T=T, algorithm_controller=algorithm_controller,
+                       algorithm_plant=algorithm_plant)
     sol = res.value
     silent || print_timed(res)
 

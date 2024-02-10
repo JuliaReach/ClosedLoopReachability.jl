@@ -122,18 +122,19 @@ T_warmup = 2 * period;  # shorter time horizon for warm-up run
 
 # To enclose the continuous dynamics, we use a Taylor-model-based algorithm:
 
-alg = TMJets(abstol=1e-8, orderT=5, orderQ=1, adaptive=false);
+algorithm_plant = TMJets(abstol=1e-8, orderT=5, orderQ=1, adaptive=false);
 
 # To propagate sets through the neural network, we use the `DeepZ` algorithm:
 
-alg_nn = DeepZ();
+algorithm_controller = DeepZ();
 
 # The verification benchmark is given below:
 
 function benchmark(; T=T, silent::Bool=false)
     ## Solve the controlled system:
     silent || println("Flowpipe construction:")
-    res = @timed solve(prob; T=T, alg_nn=alg_nn, alg=alg)
+    res = @timed solve(prob; T=T, algorithm_controller=algorithm_controller,
+                       algorithm_plant=algorithm_plant)
     sol = res.value
     silent || print_timed(res)
 

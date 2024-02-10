@@ -115,15 +115,15 @@ end;
 # $\textit{adv}$ is computed as the argmax of the output score of
 # $N_{\textit{adv}}$ on $(h, \dot{h}_0, τ)$:
 
-function next_adv(X::LazySet, τ, adv; alg_nn=DeepZ())
+function next_adv(X::LazySet, τ, adv; algorithm_controller=DeepZ())
     Y = cartesian_product(X, Singleton([τ]))
     Y = normalize(Y)
-    out = forward(Y, advisory2controller[adv], alg_nn)
+    out = forward(Y, advisory2controller[adv], algorithm_controller)
     imax = argmax(high(out))
     return index2advisory[imax]
 end
 
-function next_adv(X::Singleton, τ, adv; alg_nn=nothing)
+function next_adv(X::Singleton, τ, adv; algorithm_controller=nothing)
     v = vcat(element(X), τ)
     v = normalize(v)
     u = forward(v, advisory2controller[adv])
@@ -195,7 +195,7 @@ end;
 const Δτ = 1.0
 const A = [1 -Δτ; 0 1]  # dynamics matrix (h, \dot{h}_0)
 
-function VerticalCAS!(out::Vector{<:State}, kmax::Int; acc, alg_nn)
+function VerticalCAS!(out::Vector{<:State}, kmax::Int; acc, algorithm_controller)
     ## Unpack the initial state:
     X0 = first(out)
     S = X0.state
@@ -204,7 +204,7 @@ function VerticalCAS!(out::Vector{<:State}, kmax::Int; acc, alg_nn)
 
     for k in 1:kmax
         ## Get the next advisory and acceleration:
-        adv′ = next_adv(S, τ, adv; alg_nn=alg_nn)
+        adv′ = next_adv(S, τ, adv; algorithm_controller=algorithm_controller)
         X = State(S, τ, adv′)
         hddot = next_acc(X, adv; acc=acc)
 
@@ -284,7 +284,7 @@ end;
 function simulate_VerticalCAS(X0::State; kmax)
     out = [X0]
     sizehint!(out, kmax + 1)
-    VerticalCAS!(out, kmax; acc=acc_central, alg_nn=DeepZ())
+    VerticalCAS!(out, kmax; acc=acc_central, algorithm_controller=DeepZ())
     return out
 end;
 
