@@ -100,12 +100,12 @@ T_warmup = 2 * period;  # shorter time horizon for warm-up run
 
 # To enclose the continuous dynamics, we use a Taylor-model-based algorithm:
 
-alg = TMJets(abstol=1e-15, orderT=10, orderQ=1);
+algorithm_plant = TMJets(abstol=1e-15, orderT=10, orderQ=1);
 
 # To propagate sets through the neural network, we use the `DeepZ` algorithm. We
 # also use an additional splitting strategy to increase the precision.
 
-alg_nn = DeepZ()
+algorithm_controller = DeepZ()
 splitter = BoxSplitter([3, 1, 7, 1]);
 
 # The verification benchmark is given below:
@@ -113,7 +113,8 @@ splitter = BoxSplitter([3, 1, 7, 1]);
 function benchmark(; T=T, silent::Bool=false)
     ## Solve the controlled system:
     silent || println("Flowpipe construction:")
-    res = @timed solve(prob; T=T, alg_nn=alg_nn, alg=alg, splitter=splitter)
+    res = @timed solve(prob; T=T, algorithm_controller=algorithm_controller,
+                       algorithm_plant=algorithm_plant, splitter=splitter)
     sol = res.value
     silent || print_timed(res)
 
