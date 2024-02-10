@@ -38,11 +38,13 @@ jobs:
             Pkg.instantiate()'
       - name: Build and deploy
         run: julia --project=docs/ --code-coverage=user docs/make.jl
-      - name: Process coverage
-        uses: julia-actions/julia-processcoverage@v1
-      - name: Upload coverage
-        uses: codecov/codecov-action@v4
         env:
           GKSwstype: nul  # fix for Plots with GR backend
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # authentication with GitHub Actions token
           DOCUMENTER_KEY: ${{ secrets.DOCUMENTER_KEY }}  # authentication with SSH deploy key
+      - name: Process coverage
+        uses: julia-actions/julia-processcoverage@v1
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: lcov.info
