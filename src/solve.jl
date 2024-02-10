@@ -5,7 +5,7 @@ Solve the control problem defined by `prob`.
 
 ### Input
 
-- `prob`   -- controlled problem
+- `prob` -- controlled problem
 
 Additional options are passed as arguments or keyword arguments; see the notes
 below for details. See the online documentation for examples.
@@ -17,21 +17,30 @@ The control signals are stored in the `ext` field with each flowpipe.
 
 ### Notes
 
-- Use the `tspan` keyword argument to specify the time span; it can be:
-    - a tuple,
-    - an interval, or
-    - a vector with two components.
+#### Mandatory arguments
 
-- Use the `T` keyword argument to specify the time horizon; the initial time is
-  then assumed to be zero.
+- Use the `tspan` keyword argument to specify the time span (start time and time
+horizon); it can be a tuple, an interval, or a vector with two components.
+Alternatively, use the `T` keyword argument to specify only the time horizon,
+in which case the start time is assumed to be zero.
 
-- Use the `algorithm_plant` keyword argument to specify the algorithm for the plant.
+- Use the `algorithm_plant` keyword argument to specify the algorithm for the
+plant.
 
-- Use the `algorithm_controller` keyword argument to specify the algorithm for the controller.
+- Use the `algorithm_controller` keyword argument to specify the algorithm for
+the controller.
 
-- While this function is written with a neural-network controlled systems in
-mind, the type of the controller is arbitrary, as long as a function
-`forward` to analyze it is available.
+#### Optional arguments
+
+- Use the `splitter` and `input_splitter` keyword arguments to specify a
+splitter.
+
+Default: `NoSplitter()`
+
+- Use the `reconstruction_method` keyword arguments to specify a reconstruction
+method for the interface between plant and controller.
+
+Default: `TaylorModelReconstructor()`
 """
 function solve(prob::AbstractControlProblem, args...; kwargs...)
     ivp = plant(prob)
@@ -65,7 +74,7 @@ function solve(prob::AbstractControlProblem, args...; kwargs...)
 
     remove_zero_generators = get(kwargs, :remove_zero_generators, true)
 
-    sol = _solve(prob, algorithm_plant, algorithm_controller, tvec, τ, splitter, input_splitter,
+    sol = _solve(prob, algorithm_plant, algorithm_controller, tvec, splitter, input_splitter,
                  reconstruction_method, remove_zero_generators)
 
     d = Dict{Symbol,Any}(:solver_controller => algorithm_controller)
@@ -77,7 +86,7 @@ function _get_algorithm_plant(args...; kwargs...)
         algorithm_controller = kwargs[:algorithm_plant]
     else
         throw(ArgumentError("the algorithm for the plant `algorithm_plant` " *
-                            "should be specified, but was not found"))
+                            "should be specified, but it was not found"))
     end
     return algorithm_controller
 end
@@ -87,7 +96,7 @@ function _get_algorithm_controller(args...; kwargs...)
         algorithm_controller = kwargs[:algorithm_controller]
     else
         throw(ArgumentError("the algorithm for the controller `algorithm_controller` " *
-                            "should be specified, but was not found"))
+                            "should be specified, but it was not found"))
     end
     return algorithm_controller
 end
@@ -102,11 +111,10 @@ function _solve(cp::ControlledPlant,
                 algorithm_plant::AbstractContinuousPost,
                 algorithm_controller::ForwardAlgorithm,
                 tvec::AbstractVector,
-                sampling_time::N,
                 splitter::AbstractSplitter,
                 input_splitter::AbstractSplitter,
                 reconstruction_method::AbstractReconstructionMethod,
-                remove_zero_generators::Bool) where {N}
+                remove_zero_generators::Bool)
     S = system(cp)
     controller = ClosedLoopReachability.controller(cp)
     st_vars = states(cp)
@@ -119,14 +127,15 @@ function _solve(cp::ControlledPlant,
     n = length(st_vars)
     m = length(dist_vars)
     q = length(ctrl_vars)
-    dim(Q₀) == n + m + q || throw(ArgumentError("dimension mismatch; " *
-                                                "expected the dimension of the initial states of the initial-value " *
-                                                "problem to be $(n + m + q), but it is $(dim(Q₀))"))
+    if dim(Q₀) != n + m + q
+        throw(ArgumentError("dimension mismatch; expected the dimension of the " *
+                            "initial states of the initial-value problem to be " *
+                            "$(n + m + q), but it is $(dim(Q₀))"))
+    end
 
     W₀ = m > 0 ? project(Q₀, dist_vars) : nothing
 
     # preallocate output flowpipes
-    sol = nothing
     NT = numtype(algorithm_plant)
     RT = rsetrep(algorithm_plant)
     FT = Flowpipe{NT,RT,Vector{RT}}
@@ -146,12 +155,12 @@ function _solve(cp::ControlledPlant,
 
     # first perform an isolated analysis because of problems in TaylorSeries
     # (global variables need to be written once)
-    @inbounds results[1] = _solve_one(R, first(X₀s), W₀, S, st_vars, t0, t1, algorithm_plant,
+    @inbounds results[1] = _solve_one(R, first(X₀s), W₀, S, t0, t1, algorithm_plant,
                                       reconstruction_method, algorithm_controller, controller,
                                       preprocessing, postprocessing, input_splitter)
     # parallelize analysis of the remaining parts
     Threads.@threads for i in 2:length(results)
-        @inbounds results[i] = _solve_one(R, X₀s[i], W₀, S, st_vars, t0, t1, algorithm_plant,
+        @inbounds results[i] = _solve_one(R, X₀s[i], W₀, S, t0, t1, algorithm_plant,
                                           reconstruction_method, algorithm_controller, controller,
                                           preprocessing, postprocessing, input_splitter)
     end
@@ -179,7 +188,7 @@ function _solve(cp::ControlledPlant,
         results = Vector{Vector{Flowpipe}}(undef, length(X₀s))
         # parallelize analysis
         Threads.@threads for i in 1:length(results)
-            @inbounds results[i] = _solve_one(R, X₀s[i], W₀, S, st_vars, t0, t1, algorithm_plant,
+            @inbounds results[i] = _solve_one(R, X₀s[i], W₀, S, t0, t1, algorithm_plant,
                                               reconstruction_method, algorithm_controller,
                                               controller, preprocessing, postprocessing,
                                               input_splitter)
@@ -208,7 +217,7 @@ function controller_forward(algorithm_controller, controller, X, preprocessing, 
     return U
 end
 
-function _solve_one(R, X₀, W₀, S, st_vars, t0, t1, algorithm_plant, reconstruction_method,
+function _solve_one(R, X₀, W₀, S, t0, t1, algorithm_plant, reconstruction_method,
                     algorithm_controller, controller, preprocessing, postprocessing, splitter)
     # add disturbances (if any)
     P₀ = isnothing(W₀) ? X₀ : X₀ × W₀
