@@ -13,5 +13,5 @@ DisplayAs = "0.1"
 Documenter = "1"
 Literate = "2"
 Plots = "1"
-ReachabilityAnalysis = "0.23.1"  # this version is needed for the ACC model
+ReachabilityAnalysis = "0.23.1 - 0.24"
 ReachabilityBase = "0.2.3"
