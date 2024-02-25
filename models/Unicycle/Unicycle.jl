@@ -15,9 +15,10 @@ using Plots: plot, plot!, lens!, bbox
 
 # ## Model
 
-# There are 4 state variables $(x_1, x_2, x_3, x_4)$, where $(x_1, x_2)$
-# describe the $x$ and $y$ coordinates in the plane, $x_3$ is the velocity, and
-# $x_4$ is the steering angle. The dynamics are given as follows:
+# There are 4 state variables ``(x_1, x_2, x_3, x_4)``, where ``(x_1, x_2)``
+# describe the ``x`` and ``y`` coordinates in the plane, ``x_3`` is the
+# velocity, and ``x_4`` is the steering angle. The dynamics are given as
+# follows:
 #
 # ```math
 # \begin{aligned}
@@ -27,7 +28,7 @@ using Plots: plot, plot!, lens!, bbox
 # \dot{x}_4 &= u_1 + w
 # \end{aligned}
 # ```
-# where $w$ is a bounded error in the range $[−10^{−4}, 10^{−4}]$, which we
+# where ``w`` is a bounded error in the range ``[−10^{−4}, 10^{−4}]``, which we
 # model as a nondeterministically assigned constant for simplicity.
 
 vars_idx = Dict(:states => 1:4, :disturbances => [5], :controls => 6:7)
@@ -47,9 +48,9 @@ end;
 
 # We are given a neural-network controller with 1 hidden layer of 500 neurons
 # and ReLU activations in all layers, including the output layer. The controller
-# has 4 inputs (the state variables) and 2 outputs ($u_1$ and $u_2$). The output
-# of the neural network $N(x)$ needs to be normalized in order to obtain $u$,
-# namely $(u_1, u_2) = N(x) - (20, 20)$.
+# has 4 inputs (the state variables) and 2 outputs (``u_1`` and ``u_2``). The
+# output of the neural network ``N(x)`` needs to be normalized in order to
+# obtain ``u``, namely ``(u_1, u_2) = N(x) - (20, 20)``.
 
 path = @current_path("Unicycle", "Unicycle_controller.polar")
 controller = read_POLAR(path)

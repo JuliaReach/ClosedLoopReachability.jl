@@ -20,18 +20,19 @@ const falsification = true;
 
 # ## Model
 
-# A ball of mass $m$ is attached to a massless beam of length $L$. The beam is
-# actuated with a torque $T$. We assume viscous friction with coefficient $c$.
+# A ball of mass ``m`` is attached to a massless beam of length ``L``. The beam
+# is actuated with a torque ``T``. We assume viscous friction with coefficient
+# ``c``.
 #
 # The governing equation of motion can be obtained as follows:
 #
 # ```math
 # \ddot{θ} = \dfrac{g}{L} \sin(θ) + \dfrac{1}{m L^2} (T - c \dot{θ})
 # ```
-# where $θ$ is the angle that the link makes with the upward vertical axis,
-# $\dot{θ}$ is the angular velocity, and $g$ is the gravitational acceleration.
-# The state vector is $(θ, \dot{θ})$. The model constants are chosen as
-# $m = L = 0.5$, $c = 0$, and $g = 1$.
+# where ``θ`` is the angle that the link makes with the upward vertical axis,
+# ``\dot{θ}`` is the angular velocity, and ``g`` is the gravitational
+# acceleration. The state vector is ``(θ, \dot{θ})``. The model constants are
+# chosen as ``m = L = 0.5``, ``c = 0``, and ``g = 1``.
 #
 # ![](InvertedPendulum_explanation.png)
 
@@ -55,7 +56,7 @@ end;
 
 # We are given a neural-network controller with 2 hidden layers of 25 neurons
 # each and ReLU activations. The controller has 2 inputs (the state variables)
-# and 1 output ($T$).
+# and 1 output (``T``).
 
 path = @current_path("InvertedPendulum", "InvertedPendulum_controller.polar")
 controller = read_POLAR(path);
@@ -66,7 +67,7 @@ period = 0.05;
 
 # ## Specification
 
-# The uncertain initial condition is $θ \in [1, 1.2], \dot{θ} \in [0, 0.2]$.
+# The uncertain initial condition is ``θ \in [1, 1.2], \dot{θ} \in [0, 0.2]``.
 
 X₀ = BallInf([1.1, 0.1], 0.1)
 if falsification
@@ -80,8 +81,8 @@ U₀ = ZeroSet(1);
 ivp = @ivp(x' = InvertedPendulum!(x), dim: 3, x(0) ∈ X₀ × U₀)
 prob = ControlledPlant(ivp, controller, vars_idx, period);
 
-# The safety specification is that $θ ∈ [0, 1]$ for $t ∈ [0.5, 1]$ (i.e., the
-# control periods $10 ≤ k ≤ 20$). A sufficient condition for guaranteed
+# The safety specification is that ``θ ∈ [0, 1]`` for ``t ∈ [0.5, 1]`` (i.e.,
+# the control periods ``10 ≤ k ≤ 20``). A sufficient condition for guaranteed
 # violation is to overapproximate the result with hyperrectangles.
 
 unsafe_states = HalfSpace(SingleEntryVector(1, 3, -1.0), -1.0)

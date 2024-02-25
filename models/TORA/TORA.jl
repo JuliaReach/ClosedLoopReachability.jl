@@ -3,7 +3,7 @@
 # The TORA benchmark models a cart attached to a wall with a spring. The cart is
 # free to move on a friction-less surface and has a weight attached to an arm,
 # which is free to rotate about an axis. This serves as the control input to
-# stabilize the cart at the origin $x = 0$ [^JFK].
+# stabilize the cart at the origin ``x = 0`` [^JFK].
 #
 # ![](TORA_explanation.png)
 #
@@ -56,13 +56,13 @@ end;
 
 # We are given three neural-network controllers. All controllers have 3 hidden
 # layers of 100 neurons each, 6 inputs (the state variables), and 1 output
-# ($u$). The output of the neural networks $N(x)$ needs to be normalized in
-# order to obtain $u$.
+# (``u``). The output of the neural networks ``N(x)`` needs to be normalized in
+# order to obtain ``u``.
 
 # ### Scenario 1
 
 # The controller uses ReLU activations in all layers, including the output
-# layer. The output normalization is $u = N(x) - 10$. The control period is 1
+# layer. The output normalization is ``u = N(x) - 10``. The control period is 1
 # time unit.
 
 path = @current_path("TORA", "TORA_ReLU_controller.polar")
@@ -76,8 +76,8 @@ period1 = 1.0;
 
 # One controller has ReLU activations in all hidden layers and tanh activations
 # in the output layer. The other controller has sigmoid activations in all
-# layers, including the output layer. The output normalization is $u = 11 N(x)$.
-# The control period is 0.5 time units.
+# layers, including the output layer. The output normalization is
+# ``u = 11 N(x)``. The control period is 0.5 time units.
 
 path = @current_path("TORA", "TORA_ReLUtanh_controller.polar")
 controller_relutanh = read_POLAR(path)
@@ -92,8 +92,8 @@ period2 = 0.5;
 #
 # ### Scenario 1
 
-# The uncertain initial condition is $x_1 ∈ [0.6, 0.7], x_2 ∈ [−0.7, −0.6],
-# x_3 ∈ [−0.4, −0.3], x_4 ∈ [0.5, 0.6]$.
+# The uncertain initial condition is ``x_1 ∈ [0.6, 0.7], x_2 ∈ [−0.7, −0.6],
+# x_3 ∈ [−0.4, −0.3], x_4 ∈ [0.5, 0.6]``.
 
 X₀1 = Hyperrectangle(low=[0.6, -0.7, -0.4, 0.5], high=[0.7, -0.6, -0.3, 0.6])
 U = ZeroSet(1);
@@ -102,9 +102,9 @@ U = ZeroSet(1);
 
 ivp1 = @ivp(x' = TORA!(x), dim: 5, x(0) ∈ X₀1 × U);
 
-# The safety specification is to stay within the box $x ∈ [−2, 2]^4$ for a time
-# horizon of 20 time units. A sufficient condition for guaranteed verification
-# is to overapproximate the result with hyperrectangles.
+# The safety specification is to stay within the box ``x ∈ [−2, 2]^4`` for a
+# time horizon of 20 time units. A sufficient condition for guaranteed
+# verification is to overapproximate the result with hyperrectangles.
 
 safe_states = cartesian_product(BallInf(zeros(4), 2.0), Universe(1))
 
@@ -116,8 +116,8 @@ T1_reach = verification ? T1 : T1_warmup;  # shorter time horizon if not verifyi
 
 # ### Scenario 2
 
-# The uncertain initial condition is $x_1 ∈ [-0.77, -0.75],
-# x_2 ∈ [-0.45, -0.43], x_3 ∈ [0.51, 0.54], x_4 ∈ [-0.3, -0.28]$.
+# The uncertain initial condition is ``x_1 ∈ [-0.77, -0.75],
+# x_2 ∈ [-0.45, -0.43], x_3 ∈ [0.51, 0.54], x_4 ∈ [-0.3, -0.28]``.
 
 X₀2 = Hyperrectangle(low=[-0.77, -0.45, 0.51, -0.3], high=[-0.75, -0.43, 0.54, -0.28])
 U = ZeroSet(1);
@@ -127,7 +127,7 @@ U = ZeroSet(1);
 ivp2 = @ivp(x' = TORA!(x), dim: 5, x(0) ∈ X₀2 × U);
 
 # The specification is to reach the goal region
-# $x_1 ∈ [-0.1, 0.2], x_2 ∈ [-0.9, -0.6]$ within 5 time units. A sufficient
+# ``x_1 ∈ [-0.1, 0.2], x_2 ∈ [-0.9, -0.6]`` within 5 time units. A sufficient
 # condition for guaranteed verification is to overapproximate the result at the
 # end with a hyperrectangle.
 

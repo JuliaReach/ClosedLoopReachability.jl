@@ -24,10 +24,10 @@ const falsification = true;
 # ```math
 # (s_x, s_y, s_z, v_x, v_y, v_z, ϕ, θ, ψ, r, p, q)
 # ```
-# where $(s_x, s_y, s_z)$ is the position of the center of gravity and
-# $(v_x, v_y, v_z)$ are the components of velocity, both in $(x, y, z)$
-# directions, $(p, q, r)$ are the body rotation rates, and $(ϕ, θ, ψ)$ are the
-# Euler angles. The coordinates are visualized below.
+# where ``(s_x, s_y, s_z)`` is the position of the center of gravity and
+# ``(v_x, v_y, v_z)`` are the components of velocity, both in ``(x, y, z)``
+# directions, ``(p, q, r)`` are the body rotation rates, and ``(ϕ, θ, ψ)`` are
+# the Euler angles. The coordinates are visualized below.
 #
 # ![](Airplane_explanation.png)
 #
@@ -43,12 +43,12 @@ const falsification = true;
 # I_{xz} \dot{p} + I_z \dot{r} &= M_z - (I_y - I_x) q p - I_{xz} r q
 # \end{aligned}
 # ```
-# where $m$ denotes the mass of the airplane, $I_x$, $I_y$, $I_z$, and $I_{xz}$
-# are the moments of inertia with respect to the indicated axis, and the control
-# parameters consist of the three force components $F_x$, $F_y$, $F_z$ and the
-# three moment components $M_x$, $M_y$, $M_z$. For simplicity, we assume that
-# the aerodynamic forces are absorbed in the $F$'s. Beside the above six
-# equations, we have six additional kinematic equations:
+# where ``m`` denotes the mass of the airplane, ``I_x``, ``I_y``, ``I_z``, and
+# ``I_{xz}`` are the moments of inertia with respect to the indicated axis, and
+# the control parameters consist of the three force components ``F_x``, ``F_y``,
+# ``F_z`` and the three moment components ``M_x``, ``M_y``, ``M_z``. For
+# simplicity, we assume that the aerodynamic forces are absorbed in the ``F``'s.
+# Beside the above six equations, we have six additional kinematic equations:
 #
 # ```math
 # \begin{pmatrix}
@@ -92,7 +92,7 @@ const falsification = true;
 #
 # For simplicity of the control design, the parameters have been chosen to have
 # some nominal dimensionless values:
-# $m = 1$, $I_x = I_y = I_z = 1$, $I_{xz} = 0$ and $g = 1$.
+# ``m = 1``, ``I_x = I_y = I_z = 1``, ``I_{xz} = 0`` and ``g = 1``.
 
 vars_idx = Dict(:states => 1:12, :controls => 13:18)
 
@@ -150,7 +150,7 @@ end;
 
 # We are given a neural-network controller with 3 hidden layers of 100, 100, and
 # 20 neurons, respectively, and ReLU activations. The controller has 12 inputs
-# (the state variables) and 6 outputs ($F_x, F_y, F_z, M_x, M_y, M_z$).
+# (the state variables) and 6 outputs (``F_x, F_y, F_z, M_x, M_y, M_z``).
 
 path = @current_path("Airplane", "Airplane_controller.polar")
 controller = read_POLAR(path);
@@ -176,8 +176,8 @@ U₀ = ZeroSet(6);
 ivp = @ivp(x' = Airplane!(x), dim: 18, x(0) ∈ X₀ × U₀)
 prob = ControlledPlant(ivp, controller, vars_idx, period);
 
-# The safety specification is that $(x_2, x_7, x_8, x_9) ∈ ±[0.5, 1, 1, 1]$ for
-# 20 control periods. A sufficient condition for guaranteed violation is to
+# The safety specification is that ``(x_2, x_7, x_8, x_9) ∈ ±[0.5, 1, 1, 1]``
+# for 20 control periods. A sufficient condition for guaranteed violation is to
 # overapproximate the result with hyperrectangles.
 
 safe_states = concretize(CartesianProductArray([

@@ -12,7 +12,7 @@ using Plots: plot, plot!
 
 # ## Model
 
-# There are 6 state variables: $(ω_1, ω_2, ω_3, ψ_1, ψ_2, ψ_3)$. The system
+# There are 6 state variables: ``(ω_1, ω_2, ω_3, ψ_1, ψ_2, ψ_3)``. The system
 # dynamics are given as follows:
 #
 # ```math
@@ -25,9 +25,9 @@ using Plots: plot, plot!
 # \dot{ψ}_3 &= 0.5 (ω₁ (ξ - ψ₂) + ω₂ (ξ + ψ₁) + ω₃ (ξ + 1))
 # \end{aligned}
 # ```
-# where $ω = (ω_1, ω_2, ω_3)$ is the angular velocity in a body-fixed frame,
-# $ψ = (ψ_1, ψ_2, ψ_3)$ are the Rodrigues parameters, and
-# $ξ = ψ₁^2 + ψ₂^2 + ψ₃^2$.
+# where ``ω = (ω_1, ω_2, ω_3)`` is the angular velocity in a body-fixed frame,
+# ``ψ = (ψ_1, ψ_2, ψ_3)`` are the Rodrigues parameters, and
+# ``ξ = ψ₁^2 + ψ₂^2 + ψ₃^2``.
 
 vars_idx = Dict(:states => 1:6, :controls => 7:9)
 
@@ -56,7 +56,7 @@ end;
 
 # We are given a neural-network controller with 3 hidden layers of 64 neurons
 # each and sigmoid activations. The controller has 6 inputs (the state
-# variables) and 3 outputs ($u_0, u_1, u_2$).
+# variables) and 3 outputs (``u_0, u_1, u_2``).
 
 path = @current_path("AttitudeControl", "AttitudeControl_controller.polar")
 controller = read_POLAR(path);

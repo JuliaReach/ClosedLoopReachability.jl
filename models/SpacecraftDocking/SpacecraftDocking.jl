@@ -15,9 +15,9 @@ using Plots: plot, plot!
 
 # ## Model
 
-# There are 4 state variables $(s_x, s_y, \dot{s}_x, \dot{s}_y)$, where
-# $(s_x, s_y)$ is the position and $(\dot{s}_x, \dot{s}_y)$ is the velocity of
-# the spacecraft [^RCMGDH].
+# There are 4 state variables ``(s_x, s_y, \dot{s}_x, \dot{s}_y)``, where
+# ``(s_x, s_y)`` is the position and ``(\dot{s}_x, \dot{s}_y)`` is the velocity
+# of the spacecraft [^RCMGDH].
 
 vars_idx = Dict(:states => 1:4, :controls => 5:6)
 
@@ -43,7 +43,7 @@ end;
 # and identity activations everywhere else. In particular, the first and
 # last layer represent a pre- and postprocessing via linear maps. The controller
 # has 4 inputs (the state variables) and 4 outputs, of which only the first two
-# are meaningful ($F_x, F_y$).
+# are meaningful (``F_x, F_y``).
 
 path = @current_path("SpacecraftDocking", "SpacecraftDocking_controller.polar")
 controller = read_POLAR(path)
