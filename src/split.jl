@@ -1,5 +1,3 @@
-import ReachabilityAnalysis: split
-
 abstract type AbstractSplitter end
 
 # ==================
@@ -10,8 +8,8 @@ struct Splitter{S} <: AbstractSplitter
     split_fun::S
 end
 
-split(s::Splitter, X) = s.split_fun(X)
-Base.haskey(s::Splitter, k::Int) = k == 1
+apply(s::Splitter, X) = s.split_fun(X)
+Base.haskey(::Splitter, k::Int) = k == 1
 Base.getindex(s::Splitter, k::Int) = k == 1 ? s : error("key $k not found")
 
 function NoSplitter()
@@ -62,7 +60,7 @@ Base.getindex(s::IndexedSplitter, k::Int) = getindex(s.index2splitter, k)
 struct SignSplitter <: AbstractSplitter
 end
 
-function split(s::SignSplitter, X::Interval{N}) where {N}
+function apply(::SignSplitter, X::Interval{N}) where {N}
     l = low(X, 1)
     h = high(X, 1)
     if l < zero(N) && h > zero(N)
