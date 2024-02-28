@@ -22,9 +22,10 @@ const falsification = true;
 
 # ## Model
 
-# The double-link inverted pendulum consists of equal point masses $m$ at the
-# end of connected mass-less links of length $L$. Both links are actuated with
-# torques $T_1$ and $T_2$. We assume viscous friction with coefficient $c$.
+# The double-link inverted pendulum consists of equal point masses ``m`` at the
+# end of connected mass-less links of length ``L``. Both links are actuated with
+# torques ``T_1`` and ``T_2``. We assume viscous friction with coefficient
+# ``c``.
 #
 # The governing equations of motion can be obtained as:
 #
@@ -36,10 +37,11 @@ const falsification = true;
 #     \dfrac{g}{L} sin(θ_2) + \dfrac{c}{m L^2} \dot{θ}_2 &= \dfrac{1}{m L^2} T_2
 # \end{aligned}
 # ```
-# where $θ_1$ and $θ_2$ are the angles that the links make with the upward
-# vertical axis, $\dot{θ}_1$ and $\dot{θ}_2$ are the angular velocities, and $g$
-# is the gravitational acceleration. The state vector is
-# $(θ_1, θ_2, \dot{θ}_1, \dot{θ}_2)$. See the picture below for a visualization.
+# where ``θ_1`` and ``θ_2`` are the angles that the links make with the upward
+# vertical axis, ``\dot{θ}_1`` and ``\dot{θ}_2`` are the angular velocities, and
+# ``g`` is the gravitational acceleration. The state vector is
+# ``(θ_1, θ_2, \dot{θ}_1, \dot{θ}_2)``. See the picture below for a
+# visualization.
 #
 # ![](InvertedTwoLinkPendulum_explanation.png)
 #
@@ -79,7 +81,7 @@ end;
 
 # We are given two neural-network controllers with 2 hidden layers of 25 neurons
 # each and ReLU activations. Both controllers have 4 inputs (the state
-# variables) and 2 output ($T₁$ and $T₂$).
+# variables) and 2 output (``T₁`` and ``T₂``).
 
 path = @current_path("InvertedTwoLinkPendulum",
                      "InvertedTwoLinkPendulum_controller_less_robust.polar")
@@ -98,12 +100,12 @@ period_mr = 0.02;
 # ## Specification
 
 # The uncertain initial condition is
-# $(θ_1, θ_2, \dot{θ}_1, \dot{θ}_2) ∈ [1, 1.3]^4$.
+# ``(θ_1, θ_2, \dot{θ}_1, \dot{θ}_2) ∈ [1, 1.3]^4``.
 #
-# The safety specification is that, for all times $t$ for 20 control periods, we
-# have $(θ_1, θ_2, \dot{θ}_1, \dot{θ}_2) ∈ [-1, 1.7]^4$ (less robust scenario)
-# respectively $(θ_1, θ_2, \dot{θ}_1, \dot{θ}_2) ∈ [-0.5, 1.5]^4$ (more robust
-# scenario). A sufficient condition for guaranteed violation is to
+# The safety specification is that, for all times ``t`` for 20 control periods,
+# we have ``(θ_1, θ_2, \dot{θ}_1, \dot{θ}_2) ∈ [-1, 1.7]^4`` (less robust
+# scenario) respectively ``(θ_1, θ_2, \dot{θ}_1, \dot{θ}_2) ∈ [-0.5, 1.5]^4``
+# (more robust scenario). A sufficient condition for guaranteed violation is to
 # overapproximate the result with hyperrectangles.
 #
 # The following script creates a different problem instance for the less robust

@@ -29,10 +29,10 @@ using Plots: plot, plot!
 # \dot{γ}_{ego} &= -2 γ_{ego} + 2 a_{ego} - u v_{ego}^2
 # \end{aligned}
 # ```
-# where $u = 0.0001$ is the friction parameter, and for each car
-# $i ∈ \{ego, lead\}$ we have that $x_i$ is the position, $v_i$ is the
-# velocity, $γ_i$ is the acceleration, and $a_i$ is the control input for the
-# acceleration.
+# where ``u = 0.0001`` is the friction parameter, and for each car
+# ``i ∈ \{ego, lead\}`` we have that ``x_i`` is the position, ``v_i`` is the
+# velocity, ``γ_i`` is the acceleration, and ``a_i`` is the control input for
+# the acceleration.
 
 vars_idx = Dict(:states => 1:6, :controls => 7)
 
@@ -63,10 +63,11 @@ end;
 # We are given two neural-network controllers with 5 hidden layers of 20 neurons
 # each. One controller uses ReLU activations and the other controller uses tanh
 # activations. Both controllers have 5 inputs
-# $(v_{set}, T_{gap}, v_{ego}, D_{rel}, v_{rel})$ and one output ($a_{ego}$),
-# where $v_{set} = 30$ is the ego car's set velocity, $T_{gap} = 1.4$,
-# $D_{rel} = x_{lead} - x_{ego}$ is the distance between the cars, and
-# $v_{rel} = v_{lead} - v_{ego}$ is the distance between the velocities.
+# ``(v_{set}, T_{gap}, v_{ego}, D_{rel}, v_{rel})`` and one output
+# (``a_{ego}``), where ``v_{set} = 30`` is the ego car's set velocity,
+# ``T_{gap} = 1.4``, ``D_{rel} = x_{lead} - x_{ego}`` is the distance between
+# the cars, and ``v_{rel} = v_{lead} - v_{ego}`` is the distance between the
+# velocities.
 
 path = @current_path("ACC", "ACC_controller_relu.polar")
 controller_relu = read_POLAR(path)
@@ -74,8 +75,8 @@ controller_relu = read_POLAR(path)
 path = @current_path("ACC", "ACC_controller_tanh.polar")
 controller_tanh = read_POLAR(path);
 
-# The controller input is $(v_{set}, T_{gap}, v_{ego}, D_{rel}, v_{rel})$, for
-# which we define a transformation matrix $M$.
+# The controller input is ``(v_{set}, T_{gap}, v_{ego}, D_{rel}, v_{rel})``, for
+# which we define a transformation matrix ``M``.
 
 v_set = 30.0
 T_gap = 1.4
@@ -123,13 +124,14 @@ problem(controller) = ControlledPlant(ivp, controller, vars_idx, period;
                                       preprocessing=control_preprocessing);
 
 # We consider a scenario where both cars are driving safely and the lead car
-# suddenly slows down with $a_{lead} = -2$. We want to verify that there is no
+# suddenly slows down with ``a_{lead} = -2``. We want to verify that there is no
 # collision in the following 5 time units, i.e., the ego car must maintain a
-# safe distance $D_{safe}$ from the lead car. Formally, the safety specification
-# is $D_{rel} ≥ D_{safe}$, where $D_{safe} = D_{default} + T_{gap} · v_{ego}$
-# and $D_{default} = 10$. After substitution, the specification reduces to
-# $x_{lead} - x_{ego} - T_{gap} · v_{ego} ≥ D_{default}$. A sufficient condition
-# for guaranteed verification is to overapproximate the result with
+# safe distance ``D_{safe}`` from the lead car. Formally, the safety
+# specification is ``D_{rel} ≥ D_{safe}``, where
+# ``D_{safe} = D_{default} + T_{gap} · v_{ego}`` and ``D_{default} = 10``. After
+# substitution, the specification reduces to
+# ``x_{lead} - x_{ego} - T_{gap} · v_{ego} ≥ D_{default}``. A sufficient
+# condition for guaranteed verification is to overapproximate the result with
 # hyperrectangles.
 
 D_default = 10.0

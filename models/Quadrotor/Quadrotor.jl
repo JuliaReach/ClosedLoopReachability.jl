@@ -15,12 +15,13 @@ using Plots: plot, plot!
 
 # ## Model
 
-# There are 12 state variables $(x_1, …, x_{12})$, where $(x_1, x_2)$ is the
-# inertial position (north and east), $x_3$ is the altitude, $(x_4, x_5, x_6)$
-# is the velocity (longitudinal, lateral, vertical), $(x_7, x_8, x_9)$ is the
-# (roll, pitch, yaw) angle, and $(x_{10}, x_{11}, x_{12})$ is the (roll, pitch,
-# yaw) rate. The control inputs $(u_1, u_2, u_3)$ represent the torque. For more
-# details we refer to [^B].
+# There are 12 state variables ``(x_1, …, x_{12})``, where ``(x_1, x_2)`` is the
+# inertial position (north and east), ``x_3`` is the altitude,
+# ``(x_4, x_5, x_6)`` is the velocity (longitudinal, lateral, vertical),
+# ``(x_7, x_8, x_9)`` is the (roll, pitch, yaw) angle, and
+# ``(x_{10}, x_{11}, x_{12})`` is the (roll, pitch, yaw) rate. The control
+# inputs ``(u_1, u_2, u_3)`` represent the torque. For more details we refer to
+# [^B].
 
 vars_idx = Dict(:states => 1:12, :controls => 13:15)
 
@@ -80,7 +81,7 @@ end;
 
 # We are given a neural-network controller with 3 hidden layers of 64 neurons
 # each and sigmoid activations. The controller has 12 inputs (the state
-# variables) and 3 outputs ($u_1, u_2, u_3$).
+# variables) and 3 outputs (``u_1, u_2, u_3``).
 
 path = @current_path("Quadrotor", "Quadrotor_controller.polar")
 controller = read_POLAR(path);
@@ -103,8 +104,8 @@ U₀ = ZeroSet(3);
 ivp = @ivp(x' = Quadrotor!(x), dim: 15, x(0) ∈ X₀ × U₀)
 prob = ControlledPlant(ivp, controller, vars_idx, period);
 
-# The specification is to stabilize the attitude $x_3$ to the goal region
-# $[0.94, 1.06]$ until a time horizon of 50 time units. A sufficient condition
+# The specification is to stabilize the attitude ``x_3`` to the goal region
+# ``[0.94, 1.06]`` until a time horizon of 50 time units. A sufficient condition
 # for guaranteed verification is to overapproximate the result at the end with a
 # hyperrectangle.
 

@@ -29,13 +29,14 @@ using Plots: plot, plot!
 # ![](VerticalCAS_explanation.png)
 #
 # The current geometry of the system is described by the intruder altitude
-# relative to the ownship $h$ (in ft), the ownship vertical climbrate
-# $\dot{h}_0$ (in ft/min), and the time $τ$ (in seconds) until the ownship and
-# intruder are no longer horizontally separated. We can assume that the intruder
-# is static and the horizontal separation $τ$ decreases by 1 each second.
+# relative to the ownship ``h`` (in ft), the ownship vertical climbrate
+# ``\dot{h}_0`` (in ft/min), and the time ``τ`` (in seconds) until the ownship
+# and intruder are no longer horizontally separated. We can assume that the
+# intruder is static and the horizontal separation ``τ`` decreases by 1 each
+# second.
 #
 # In addition to the parameters describing the geometry of the encounter, the
-# dynamics also depend on the advisory $\textit{adv}$ issued to the ownship at
+# dynamics also depend on the advisory ``\textit{adv}`` issued to the ownship at
 # the previous time step. The following data structure stores all this
 # information:
 
@@ -75,11 +76,11 @@ advisory2set[:SCL1500] = HalfSpace([-1.0], -1500.0)
 advisory2set[:SDES2500] = HalfSpace([1.0], -2500.0)
 advisory2set[:SCL2500] = HalfSpace([-1.0], -2500.0);
 
-# VerticalCAS is implemented as nine neural networks $N_i$, one for each
+# VerticalCAS is implemented as nine neural networks ``N_i``, one for each
 # (previous) advisory. All neural networks have the same structure: five hidden
 # layers of 20 neurons each and ReLU activations, three inputs
-# ($h, \dot{h}_0, τ$), and nine outputs representing the score of each possible
-# advisory.
+# (``h, \dot{h}_0, τ``), and nine outputs representing the score of each
+# possible advisory.
 
 # We create a dictionary that maps each advisory to the respective controller:
 
@@ -111,9 +112,9 @@ function normalize(X::LazySet)
     return Z
 end;
 
-# Given a current state $(h, \dot{h}_0, τ, \textit{adv})$, the new advisory
-# $\textit{adv}$ is computed as the argmax of the output score of
-# $N_{\textit{adv}}$ on $(h, \dot{h}_0, τ)$:
+# Given a current state ``(h, \dot{h}_0, τ, \textit{adv})``, the new advisory
+# ``\textit{adv}`` is computed as the argmax of the output score of
+# ``N_{\textit{adv}}`` on ``(h, \dot{h}_0, τ)``:
 
 function next_adv(X::LazySet, τ, adv; algorithm_controller=DeepZ())
     Y = cartesian_product(X, Singleton([τ]))
@@ -131,27 +132,27 @@ function next_adv(X::Singleton, τ, adv; algorithm_controller=nothing)
     return index2advisory[imax]
 end;
 
-# Given the new advisory, the pilot can choose acceleration $\ddot{h}_0$ as
+# Given the new advisory, the pilot can choose acceleration ``\ddot{h}_0`` as
 # follows.
 #
 # 1. If the new advisory is COC (1), then any acceleration from the set
-#    $\left\{-\dfrac{g}{8}, 0, \dfrac{g}{8}\right\}$ can be chosen, where $g$
-#    represents the gravitational constant $32.2$ ft/s$^2$.
+#    ``\left\{-\dfrac{g}{8}, 0, \dfrac{g}{8}\right\}`` can be chosen, where
+#    ``g`` represents the gravitational constant ``32.2`` ft/s``^2``.
 # 2. For all remaining advisories, if the previous advisory coincides with the
 #    new one and the current climb rate complies with the new advisory (e.g.,
-#    $\dot{h}_0$ is non-positive for DNC and $\dot{h}_0 ≥ 1500$ for CL1500), the
-#    acceleration $\ddot{h}_0$ is $0$.
-# 3. Otherwise, the pilot can choose acceleration $\ddot{h}_0$ from the sets
+#    ``\dot{h}_0`` is non-positive for DNC and ``\dot{h}_0 ≥ 1500`` for CL1500),
+#    the acceleration ``\ddot{h}_0`` is ``0``.
+# 3. Otherwise, the pilot can choose acceleration ``\ddot{h}_0`` from the sets
 #    given below (for convenience, we also list the options for COC again).
-#    1. COC: $\left\{-\dfrac{g}{8}, 0, \dfrac{g}{8}\right\}$
-#    2. DNC: $\left\{-\dfrac{g}{3}, -\dfrac{7g}{24}, -\dfrac{g}{4}\right\}$
-#    3. DND: $\left\{\dfrac{g}{4}, \dfrac{7g}{24}, \dfrac{g}{3}\right\}$
-#    4. DES1500: $\left\{-\dfrac{g}{3}, -\dfrac{7g}{24}, -\dfrac{g}{4}\right\}$
-#    5. CL1500: $\left\{\dfrac{g}{4}, \dfrac{7g}{24}, \dfrac{g}{3}\right\}$
-#    6. SDES1500: $\left\{-\dfrac{g}{3}\right\}$
-#    7. SCL1500: $\left\{\dfrac{g}{3}\right\}$
-#    8. SDES2500: $\left\{-\dfrac{g}{3}\right\}$
-#    9. SCL2500: $\left\{\dfrac{g}{3}\right\}$
+#    1. COC: ``\left\{-\dfrac{g}{8}, 0, \dfrac{g}{8}\right\}``
+#    2. DNC: ``\left\{-\dfrac{g}{3}, -\dfrac{7g}{24}, -\dfrac{g}{4}\right\}``
+#    3. DND: ``\left\{\dfrac{g}{4}, \dfrac{7g}{24}, \dfrac{g}{3}\right\}``
+#    4. DES1500: ``\left\{-\dfrac{g}{3}, -\dfrac{7g}{24}, -\dfrac{g}{4}\right\}``
+#    5. CL1500: ``\left\{\dfrac{g}{4}, \dfrac{7g}{24}, \dfrac{g}{3}\right\}``
+#    6. SDES1500: ``\left\{-\dfrac{g}{3}\right\}``
+#    7. SCL1500: ``\left\{\dfrac{g}{3}\right\}``
+#    8. SDES2500: ``\left\{-\dfrac{g}{3}\right\}``
+#    9. SCL2500: ``\left\{\dfrac{g}{3}\right\}``
 #
 # Below we only consider the central options.
 
@@ -160,9 +161,9 @@ const acc_central = Dict(:COC => 0.0, :DNC => -7g / 24, :DND => 7g / 24,
                          :DES1500 => -7g / 24, :CL1500 => 7g / 24, :SDES1500 => -g / 3,
                          :SCL1500 => g / 3, :SDES2500 => -g / 3, :SCL2500 => g / 3);
 
-# The following function receives $X = [h, \dot{h}_0, τ, \textit{adv}']$ as well
-# as the previous advisory $\textit{adv}$, and returns the new acceleration
-# $\ddot{h}_0$:
+# The following function receives ``X = [h, \dot{h}_0, τ, \textit{adv}']`` as
+# well as the previous advisory ``\textit{adv}``, and returns the new
+# acceleration ``\ddot{h}_0``:
 
 function next_acc(X::State, adv; acc=acc_central)
     ## Project on hdot and transform units from ft/s to ft/min:
@@ -177,10 +178,10 @@ function next_acc(X::State, adv; acc=acc_central)
     return (comply && adv == adv′) ? 0.0 : acc[adv′]
 end;
 
-# Given the current system state $(h, \dot{h}_0, τ, \textit{adv})$, the new
-# advisory $\textit{adv}'$, and the acceleration $\ddot{h}_0$, the new state of
-# the system $(h(k+1), \dot{h}_0(k+1), τ(k+1),\textit{adv}(k+1))$ is computed as
-# follows:
+# Given the current system state ``(h, \dot{h}_0, τ, \textit{adv})``, the new
+# advisory ``\textit{adv}'``, and the acceleration ``\ddot{h}_0``, the new state
+# of the system ``(h(k+1), \dot{h}_0(k+1), τ(k+1),\textit{adv}(k+1))`` is
+# computed as follows:
 #
 # ```math
 # \begin{aligned}
@@ -190,7 +191,7 @@ end;
 # \textit{adv}(k+1) &= \textit{adv}'
 # \end{aligned}
 # ```
-# where $Δτ = 1$.
+# where ``Δτ = 1``.
 
 const Δτ = 1.0
 const A = [1 -Δτ; 0 1]  # dynamics matrix (h, \dot{h}_0)
@@ -225,9 +226,9 @@ end;
 
 # ## Specification
 
-# The uncertain initial condition is $h \in [-133, -129]$,
-# $\dot{h}_0 \in \{-19.5, -22.5, -25.5, -28.5\}$, $τ = 25$, and
-# $\textit{adv} = \text{COC}$:
+# The uncertain initial condition is ``h \in [-133, -129]``,
+# ``\dot{h}_0 \in \{-19.5, -22.5, -25.5, -28.5\}``, ``τ = 25``, and
+# ``\textit{adv} = \text{COC}``:
 
 const h_0 = Interval(-133.0, -129.0)
 const hdot0_0 = [-19.5, -22.5, -25.5, -28.5]
@@ -235,8 +236,8 @@ const τ_0 = 25.0
 const adv_0 = :COC;
 
 # The safety specification is that the ownship avoids entering the NMAC zone
-# within $k \in \{1, …, 10\}$ steps, i.e., $h(k) > 100$ or $h(k) < -100$, for
-# all possible choices of acceleration by the pilot.
+# within ``k \in \{1, …, 10\}`` steps, i.e., ``h(k) > 100`` or ``h(k) < -100``,
+# for all possible choices of acceleration by the pilot.
 
 unsafe_states = HalfSpace([1.0, 0.0], 100.0) ∩ HalfSpace([-1.0, 0.0], 100.0)
 
@@ -292,7 +293,7 @@ end;
 
 _interval(X::LazySet, i) = Interval(extrema(X, i)...);
 
-# Helper function to project onto the $h$ variable:
+# Helper function to project onto the ``h`` variable:
 
 function _project(X::Vector{State{T}}) where {T<:Singleton}
     return [Singleton([Xi.τ, Xi.state.element[1]]) for Xi in X]
