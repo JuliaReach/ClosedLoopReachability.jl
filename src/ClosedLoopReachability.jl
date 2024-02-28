@@ -9,8 +9,7 @@ include("simulate.jl")
 include("solve.jl")
 
 # problem types
-export ControlledPlant,
-       BlackBoxController
+export ControlledPlant
 
 # splitters
 export BoxSplitter,
