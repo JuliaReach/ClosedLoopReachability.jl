@@ -150,7 +150,7 @@ function _solve(cp::ControlledPlant,
     t0 = tvec[k]
     t1 = tvec[k + 1]
     X₀ = project(Q₀, st_vars)
-    X₀s = haskey(splitter, k) ? split(splitter[k], X₀) : [X₀]
+    X₀s = haskey(splitter, k) ? apply(splitter[k], X₀) : [X₀]
     results = Vector{Vector{Flowpipe}}(undef, length(X₀s))
 
     # first perform an isolated analysis because of problems in TaylorSeries
@@ -184,7 +184,7 @@ function _solve(cp::ControlledPlant,
                              remove_zero_generators=remove_zero_generators))
         t0 = tvec[k]
         t1 = tvec[k + 1]
-        X₀s = haskey(splitter, k) ? split(splitter[k], X₀) : [X₀]
+        X₀s = haskey(splitter, k) ? apply(splitter[k], X₀) : [X₀]
         results = Vector{Vector{Flowpipe}}(undef, length(X₀s))
         # parallelize analysis
         Threads.@threads for i in 1:length(results)
@@ -229,7 +229,7 @@ function _solve_one(R, X₀, W₀, S, t0, t1, algorithm_plant, reconstruction_me
 
     # split control inputs
     sols = Flowpipe[]
-    for Ui in split(splitter, U)
+    for Ui in apply(splitter, U)
         # combine states with new control inputs
         Q₀ = _reconstruct(reconstruction_method, P₀, Ui, R, t0)
 
