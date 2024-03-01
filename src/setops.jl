@@ -2,7 +2,7 @@
 # Projection operations
 # ========================================
 
-function _project_oa(R::AbstractLazyReachSet, vars, t; remove_zero_generators=true)
+function _project_oa(R::AbstractLazyReachSet, vars, ::Any; remove_zero_generators=true)
     return Project(R, vars)
 end
 
@@ -49,7 +49,7 @@ function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Vec
 end
 
 function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::LazySet,
-                      R::TaylorModelReachSet{N}, ti) where {N}
+                      R::TaylorModelReachSet{N}, ::Any) where {N}
     # evaluate R at the final time of the reach-set
     S = set(R)
     tn = sup(domain(R)) # assume that the reach set spans the whole period (checked outside this method)
