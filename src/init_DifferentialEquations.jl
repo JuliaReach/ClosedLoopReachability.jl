@@ -64,7 +64,8 @@ function _solve_ensemble(ivp, X0_samples, tspan;
         field = ReachabilityAnalysis.outofplace_field(ivp)
     end
 
-    _prob_func(prob, i, repeat) = DE.remake(prob; u0=X0_samples[i])
+    # the third argument is not needed here
+    _prob_func(prob, i, _repeat) = DE.remake(prob; u0=X0_samples[i])
     ensemble_prob = DE.EnsembleProblem(DE.ODEProblem(field, first(X0_samples), tspan);
                                        prob_func=_prob_func)
     return DE.solve(ensemble_prob, trajectories_alg, ensemble_alg;

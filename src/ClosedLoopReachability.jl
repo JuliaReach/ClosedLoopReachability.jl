@@ -20,4 +20,4 @@ export BoxSplitter,
 # solvers
 export solve, simulate
 
-end
+end  # module

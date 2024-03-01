@@ -6,7 +6,7 @@
 function random_affine_ivp(n, m)
     A_rand = rand(n, n) .- 0.5  # random values around zero
     b_rand = rand(m) .- 0.5  # random values around zero
-    function random_system!(dx, x, params, t; A=A_rand, b=b_rand)
+    function random_system!(dx, x, p, t; A=A_rand, b=b_rand)
         for i in 1:n
             dx[i] = zero(x[i])
             for j in 1:n
