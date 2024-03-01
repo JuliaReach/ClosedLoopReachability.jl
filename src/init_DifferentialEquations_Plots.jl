@@ -52,37 +52,14 @@ function _plot_simulation_vars!(fig, sim, vars; color, label)
     end
 end
 
-function _plot_simulation_output_map!(fig, sim, output_map::Vector{<:Real}; color, label)
-
-    # dimension check
-    numvars = length(output_map)
-    traj1 = sim.solutions[1].trajectory[1]
-    n = length(traj1.u[1])
-    if numvars == n
-        c0 = 0.0
-        coeffs = output_map
-    elseif numvars == n + 1
-        c0 = output_map[1]
-        coeffs = output_map[2:end]
-    else
-        throw(ArgumentError("the length of the `output_map` should be $n or $(n+1), got $numvars"))
-    end
-
-    f(t, P) = t -> c0 + sum(coeffs[i] * P(t)[i] for i in 1:n)
-    isfirst = true
+function _plot_simulation_output_map!(fig, sim, output_map; color, label)
+    # plot the first point only for the legend entry
+    piece1 = first(first(trajectories(sim)))
+    Plots.plot!(fig, [piece1.t[1]], [output_map(piece1.u[1])]; color=color, lab=label)
 
     for simulation in trajectories(sim)
         for piece in simulation
-            dt = piece.t
-            trange = range(dt[1], dt[end]; length=length(dt))
-            if isfirst
-                # plot first point only for the legend entry
-                trange1 = trange[1]:trange[1]
-                Plots.plot!(fig, trange1, f.(trange1, Ref(piece)); color=color, lab=label)
-                label = ""  # overwrite to have exactly one label
-                isfirst = false
-            end
-            Plots.plot!(fig, trange, f.(trange, Ref(piece)); color=color, lab="")
+            Plots.plot!(fig, piece.t, output_map.(piece.u); color=color, lab="")
         end
     end
     return fig

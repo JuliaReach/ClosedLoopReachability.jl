@@ -222,10 +222,10 @@ function plot_helper(sol, sim, scenario)
     F = overapproximate(flowpipe(sol), Zonotope)
 
     fp_rel = linear_map(Matrix(d_rel'), F)
-    output_map_rel = d_rel
+    output_map_rel = x -> dot(d_rel, x)
 
     fp_safe = affine_map(Matrix(d_safe'), F, [D_default])
-    output_map_safe = vcat([D_default], d_safe)
+    output_map_safe = x -> dot(d_safe, x) + D_default
 
     fig = plot(leg=(0.4, 0.3), xlab="time")
     plot!(fig, fp_rel; vars=(0, 1), c=:red, alpha=0.4)
