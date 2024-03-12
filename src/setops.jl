@@ -15,8 +15,6 @@ end
 # Construct the initial states for the continuous post-operator
 # ==============================================================
 
-using ReachabilityAnalysis: TaylorModel1, TaylorModelN, fp_rpa, zeroBox, symBox
-
 abstract type AbstractReconstructionMethod end
 
 struct ConcreteCartesianProductReconstructor <: AbstractReconstructionMethod end

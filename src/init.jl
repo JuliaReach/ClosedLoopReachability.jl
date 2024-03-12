@@ -3,7 +3,7 @@ using Requires, Reexport
 using ControllerFormats
 # namespace conflict
 using ControllerFormats: Id
-# parsers
+# controller formats and parsers
 @reexport using ControllerFormats.FileFormats
 
 @reexport using NeuralNetworkReachability.ForwardAlgorithms
@@ -16,7 +16,8 @@ using ReachabilityAnalysis: dim
 using ReachabilityAnalysis: _check_dim, _get_tspan, _get_cpost, _default_cpost,
                             ReachSolution, InitialValueProblem, numtype, post,
                             AbstractContinuousPost, TimeInterval,
-                            AbstractLazyReachSet, AbstractTaylorModelReachSet
+                            AbstractLazyReachSet, AbstractTaylorModelReachSet,
+                            TaylorModel1, TaylorModelN, fp_rpa, zeroBox, symBox
 
 using ReachabilityBase.Require
 using ReachabilityBase.Arrays: SingleEntryVector
