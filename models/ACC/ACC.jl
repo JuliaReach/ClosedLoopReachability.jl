@@ -222,19 +222,24 @@ sol_tanh, sim_tanh = run(use_relu_controller=false);
 # Script to plot the results:
 
 function plot_helper(sol, sim)
-    F = overapproximate(flowpipe(sol), Zonotope)
-
-    fp_rel = linear_map(Matrix(d_rel'), F)
-    output_map_rel = x -> dot(d_rel, x)
-
-    fp_safe = affine_map(Matrix(d_safe'), F, [D_default])
-    output_map_safe = x -> dot(d_safe, x) + D_default
-
     fig = plot(leg=(0.4, 0.3))
-    plot!(fig, fp_rel; vars=(0, 1), c=:red, alpha=0.4)
+    for F in sol, R in F
+        ## Subdivide the reach sets in time to obtain more precise plots:
+        R = overapproximate(R, Zonotope; ntdiv=5)
+        R_rel = linear_map(Matrix(d_rel'), R)
+        plot!(fig, R_rel; vars=(0, 1), c=:red, alpha=0.4)
+    end
+
+    solz = overapproximate(flowpipe(sol), Zonotope)
+    fp_safe = affine_map(Matrix(d_safe'), solz, [D_default])
     plot!(fig, fp_safe; vars=(0, 1), c=:blue, alpha=0.4)
+
+    output_map_rel = x -> dot(d_rel, x)
     plot_simulation!(fig, sim; output_map=output_map_rel, color=:red, lab="Drel")
+
+    output_map_safe = x -> dot(d_safe, x) + D_default
     plot_simulation!(fig, sim; output_map=output_map_safe, color=:blue, lab="Dsafe")
+
     plot!(fig; xlab="time")
     return fig
 end;
