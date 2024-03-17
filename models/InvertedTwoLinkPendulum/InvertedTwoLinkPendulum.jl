@@ -215,11 +215,11 @@ function run(; less_robust_scenario::Bool)
     benchmark(prob, spec; T=T_warmup, silent=true)  # warm-up
     res = @timed benchmark(prob, spec; T=spec.T)  # benchmark
     sol = res.value
-    println("total analysis time")
+    println("Total analysis time:")
     print_timed(res)
 
     ## Compute some simulations:
-    println("simulation")
+    println("Simulation:")
     trajectories = falsification ? 1 : 10
     res = @timed simulate(prob; T=spec.T, trajectories=trajectories,
                           include_vertices=!falsification)
