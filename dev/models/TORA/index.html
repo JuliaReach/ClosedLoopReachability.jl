@@ -116,32 +116,32 @@ function run(; scenario1::Bool, ReLUtanh_activations)
     return sol, sim
 end;</code></pre><h3 id="Scenario-1-3"><a class="docs-heading-anchor" href="#Scenario-1-3">Scenario 1</a><a class="docs-heading-anchor-permalink" href="#Scenario-1-3" title="Permalink"></a></h3><p>Run the verification benchmark:</p><pre><code class="language-julia hljs">sol_r, sim_r = run(scenario1=true, ReLUtanh_activations=nothing);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis of scenario 1 with ReLU activations
 Flowpipe construction:
-  0.503865 seconds (4.01 M allocations: 549.139 MiB, 17.32% gc time)
+  0.506742 seconds (4.01 M allocations: 549.144 MiB, 16.23% gc time)
 Property checking:
-  0.009549 seconds (50.76 k allocations: 9.714 MiB)
+  0.009658 seconds (50.76 k allocations: 9.714 MiB)
   The property is satisfied.
 Total analysis time:
-  0.517353 seconds (4.07 M allocations: 559.771 MiB, 16.87% gc time)
+  0.520384 seconds (4.07 M allocations: 559.775 MiB, 15.80% gc time)
 Simulation:
-  0.426604 seconds (534.38 k allocations: 39.575 MiB)</code></pre><h3 id="Scenario-2-3"><a class="docs-heading-anchor" href="#Scenario-2-3">Scenario 2</a><a class="docs-heading-anchor-permalink" href="#Scenario-2-3" title="Permalink"></a></h3><p>Run the verification benchmark for the controller with ReLU/tanh activations:</p><pre><code class="language-julia hljs">sol_rt, sim_rt = run(scenario1=false, ReLUtanh_activations=true);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis of scenario 2 with ReLUtanh activations
+  0.438294 seconds (534.43 k allocations: 39.578 MiB)</code></pre><h3 id="Scenario-2-3"><a class="docs-heading-anchor" href="#Scenario-2-3">Scenario 2</a><a class="docs-heading-anchor-permalink" href="#Scenario-2-3" title="Permalink"></a></h3><p>Run the verification benchmark for the controller with ReLU/tanh activations:</p><pre><code class="language-julia hljs">sol_rt, sim_rt = run(scenario1=false, ReLUtanh_activations=true);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis of scenario 2 with ReLUtanh activations
 Flowpipe construction:
-  1.454461 seconds (12.02 M allocations: 1.612 GiB, 13.21% gc time)
+  1.476932 seconds (12.02 M allocations: 1.612 GiB, 13.61% gc time)
 Property checking:
-  0.000618 seconds (3.17 k allocations: 621.477 KiB)
+  0.000637 seconds (3.17 k allocations: 621.477 KiB)
   The property is satisfied.
 Total analysis time:
-  1.458779 seconds (12.03 M allocations: 1.613 GiB, 13.17% gc time)
+  1.481705 seconds (12.03 M allocations: 1.613 GiB, 13.57% gc time)
 Simulation:
-  0.064204 seconds (44.96 k allocations: 3.804 MiB)</code></pre><p>Run the verification benchmark for the controller with sigmoid activations:</p><pre><code class="language-julia hljs">sol_sig, sim_sig = run(scenario1=false, ReLUtanh_activations=false);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis of scenario 2 with sigmoid activations
+  0.065839 seconds (44.98 k allocations: 3.805 MiB)</code></pre><p>Run the verification benchmark for the controller with sigmoid activations:</p><pre><code class="language-julia hljs">sol_sig, sim_sig = run(scenario1=false, ReLUtanh_activations=false);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis of scenario 2 with sigmoid activations
 Flowpipe construction:
-  4.525071 seconds (38.14 M allocations: 5.067 GiB, 12.23% gc time)
+  4.603340 seconds (38.14 M allocations: 5.067 GiB, 12.39% gc time)
 Property checking:
-  0.000630 seconds (3.17 k allocations: 621.477 KiB)
+  0.000615 seconds (3.17 k allocations: 621.477 KiB)
   The property is satisfied.
 Total analysis time:
-  4.525934 seconds (38.14 M allocations: 5.068 GiB, 12.23% gc time)
+  4.604188 seconds (38.14 M allocations: 5.068 GiB, 12.39% gc time)
 Simulation:
-  0.003172 seconds (21.11 k allocations: 2.208 MiB)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><h3 id="Scenario-1-4"><a class="docs-heading-anchor" href="#Scenario-1-4">Scenario 1</a><a class="docs-heading-anchor-permalink" href="#Scenario-1-4" title="Permalink"></a></h3><p>Preprocess the results:</p><pre><code class="language-julia hljs">solz = overapproximate(sol_r, Zonotope);</code></pre><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper1!(fig, vars)
+  0.003239 seconds (21.11 k allocations: 2.208 MiB)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><h3 id="Scenario-1-4"><a class="docs-heading-anchor" href="#Scenario-1-4">Scenario 1</a><a class="docs-heading-anchor-permalink" href="#Scenario-1-4" title="Permalink"></a></h3><p>Preprocess the results:</p><pre><code class="language-julia hljs">solz = overapproximate(sol_r, Zonotope);</code></pre><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper1!(fig, vars)
     plot!(fig, project(safe_states, vars); color=:lightgreen, lab=&quot;safe&quot;)
     plot!(fig, solz; vars=vars, color=:yellow, lab=&quot;&quot;)
     plot!(fig, project(X₀1, vars); c=:cornflowerblue, alpha=1, lab=&quot;X₀&quot;)
@@ -150,10 +150,10 @@ Simulation:
 end;</code></pre><p>Plot the results:</p><pre><code class="language-julia hljs">vars = (1, 2)
 fig = plot(xlab=&quot;x₁&quot;, ylab=&quot;x₂&quot;)
 fig = plot_helper1!(fig, vars)
-# savefig(&quot;TORA-ReLU-x1-x2.png&quot;)  # command to save the plot to a file</code></pre><img src="8ede9b71.png" alt="Example block output"/><pre><code class="language-julia hljs">vars = (3, 4)
+# savefig(&quot;TORA-ReLU-x1-x2.png&quot;)  # command to save the plot to a file</code></pre><img src="5b4cc0da.png" alt="Example block output"/><pre><code class="language-julia hljs">vars = (3, 4)
 fig = plot(xlab=&quot;x₃&quot;, ylab=&quot;x₄&quot;)
 fig = plot_helper1!(fig, vars)
-# savefig(&quot;TORA-ReLU-x3-x4.png&quot;)  # command to save the plot to a file</code></pre><img src="de673cc2.png" alt="Example block output"/><h3 id="Scenario-2-4"><a class="docs-heading-anchor" href="#Scenario-2-4">Scenario 2</a><a class="docs-heading-anchor-permalink" href="#Scenario-2-4" title="Permalink"></a></h3><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper2(sol, sim)
+# savefig(&quot;TORA-ReLU-x3-x4.png&quot;)  # command to save the plot to a file</code></pre><img src="26cc509c.png" alt="Example block output"/><h3 id="Scenario-2-4"><a class="docs-heading-anchor" href="#Scenario-2-4">Scenario 2</a><a class="docs-heading-anchor-permalink" href="#Scenario-2-4" title="Permalink"></a></h3><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper2(sol, sim)
     vars = (1, 2)
     fig = plot(xlab=&quot;x₁&quot;, ylab=&quot;x₂&quot;)
     plot!(fig, project(goal_states, vars); color=:cyan, lab=&quot;goal&quot;)
@@ -167,10 +167,10 @@ lens!(fig, [-0.785, -0.735], [-0.47, -0.41]; inset=(1, bbox(0.2, 0.4, 0.2, 0.2))
 lens!(fig, [0.0, 0.25], [-0.85, -0.7]; inset=(1, bbox(0.6, 0.4, 0.2, 0.2)),
       lc=:black, xticks=[0, 0.2], yticks=[-0.8, -0.7], subplot=3)
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-# savefig(&quot;TORA-ReLUtanh-x1-x2.png&quot;)  # command to save the plot to a file</code></pre><img src="53f813b2.png" alt="Example block output"/><pre><code class="language-julia hljs">fig = plot_helper2(sol_sig, sim_sig)
+# savefig(&quot;TORA-ReLUtanh-x1-x2.png&quot;)  # command to save the plot to a file</code></pre><img src="d339e55c.png" alt="Example block output"/><pre><code class="language-julia hljs">fig = plot_helper2(sol_sig, sim_sig)
 lens!(fig, [-0.785, -0.735], [-0.47, -0.41]; inset=(1, bbox(0.2, 0.4, 0.2, 0.2)),
       lc=:black, xticks=[-0.77, -0.75], yticks=[-0.45, -0.43], subplot=3)
 lens!(fig, [0.09, 0.22], [-0.9, -0.8]; inset=(1, bbox(0.6, 0.4, 0.2, 0.2)),
       lc=:black, xticks=[0.1, 0.2], yticks=[-0.9, -0.8], subplot=3)
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-# savefig(&quot;TORA-sigmoid-x1-x2.png&quot;)  # command to save the plot to a file</code></pre><img src="fff8b4e4.png" alt="Example block output"/><h2 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h2><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-JFK"><a class="tag is-link" href="#citeref-JFK">JFK</a>Mrdjan Jankovic, Daniel Fontaine, and Petar V. Kokotovic. <em>TORA     example: cascade- and passivity-based control designs</em>. In     <a href="https://doi.org/10.1109/87.491203">IEEE Trans. Control. Syst. Technol.</a></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../SpacecraftDocking/">« Spacecraft Docking</a><a class="docs-footer-nextpage" href="../Unicycle/">Unicycle »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.3.0 on <span class="colophon-date" title="Tuesday 12 March 2024 18:35">Tuesday 12 March 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+# savefig(&quot;TORA-sigmoid-x1-x2.png&quot;)  # command to save the plot to a file</code></pre><img src="c937541a.png" alt="Example block output"/><h2 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h2><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-JFK"><a class="tag is-link" href="#citeref-JFK">JFK</a>Mrdjan Jankovic, Daniel Fontaine, and Petar V. Kokotovic. <em>TORA     example: cascade- and passivity-based control designs</em>. In     <a href="https://doi.org/10.1109/87.491203">IEEE Trans. Control. Syst. Technol.</a></li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../SpacecraftDocking/">« Spacecraft Docking</a><a class="docs-footer-nextpage" href="../Unicycle/">Unicycle »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.3.0 on <span class="colophon-date" title="Sunday 17 March 2024 10:13">Sunday 17 March 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

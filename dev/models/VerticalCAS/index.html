@@ -169,24 +169,24 @@ res = @timed benchmark(X0; kmax=kmax)  # benchmark
 res_random = res.value
 println(&quot;Total analysis time:&quot;)
 print_timed(res);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Running 48 simulations with central advisories
-  0.003495 seconds (18.96 k allocations: 2.255 MiB)
+  0.003488 seconds (18.96 k allocations: 2.255 MiB)
 Property checking:
-  0.000006 seconds (1 allocation: 16 bytes)
+  0.000005 seconds (1 allocation: 16 bytes)
   The property is violated.
 Total analysis time:
-  0.014532 seconds (25.38 k allocations: 3.277 MiB)</code></pre><p>Simulation result for all choices of velocity:</p><pre><code class="language-julia hljs">println(&quot;Running flowpipe construction (unsound) with central advisories:&quot;)
+  0.014307 seconds (25.38 k allocations: 3.277 MiB)</code></pre><p>Simulation result for all choices of velocity:</p><pre><code class="language-julia hljs">println(&quot;Running flowpipe construction (unsound) with central advisories:&quot;)
 X0 = all_states()
 benchmark(X0; kmax=kmax_warmup, silent=true)  # warm-up
 res = @timed benchmark(X0; kmax=kmax)  # benchmark
 res_all = res.value
 println(&quot;Total analysis time:&quot;)
 print_timed(res);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Running flowpipe construction (unsound) with central advisories:
-  0.000758 seconds (5.06 k allocations: 1.063 MiB)
+  0.000777 seconds (5.06 k allocations: 1.063 MiB)
 Property checking:
-  0.000006 seconds (5 allocations: 288 bytes)
+  0.000005 seconds (5 allocations: 288 bytes)
   The property is violated.
 Total analysis time:
-  0.009115 seconds (11.04 k allocations: 2.056 MiB)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Preprocess the results (extend from time points to time intervals):</p><pre><code class="language-julia hljs">function extend_x(X::Singleton)
+  0.008639 seconds (11.04 k allocations: 2.057 MiB)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Preprocess the results (extend from time points to time intervals):</p><pre><code class="language-julia hljs">function extend_x(X::Singleton)
     return LineSegment(element(X), element(X) .+ [Δτ, 0])
 end
 
@@ -213,7 +213,7 @@ for o in res_random
     plot!(fig, o; alpha=1)
 end
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-# savefig(&quot;VerticalCAS-rand.png&quot;)  # command to save the plot to a file</code></pre><img src="6c18998c.png" alt="Example block output"/><pre><code class="language-julia hljs">fig = plot_helper()
+# savefig(&quot;VerticalCAS-rand.png&quot;)  # command to save the plot to a file</code></pre><img src="c7d4dd58.png" alt="Example block output"/><pre><code class="language-julia hljs">fig = plot_helper()
 for (i, c) in [(1, :brown), (2, :green), (3, :orange), (4, :cyan)]
     lab = &quot;h_0′ = $(hdot0_0[i])&quot;
     for o in res_all[i]
@@ -223,4 +223,4 @@ for (i, c) in [(1, :brown), (2, :green), (3, :orange), (4, :cyan)]
     end
 end
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-# savefig(&quot;VerticalCAS-sets.png&quot;)  # command to save the plot to a file</code></pre><img src="e7d8370a.png" alt="Example block output"/><h2 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h2><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-JK"><a class="tag is-link" href="#citeref-JK">JK</a>Kyle D. Julian and Mykel J. Kochenderfer (2019). <em>A reachability method    for verifying dynamical systems with deep neural network controllers</em>.    <a href="https://arxiv.org/pdf/1903.00520.pdf">arXiv:1903.00520</a>.</li><li class="footnote" id="footnote-ABKL"><a class="tag is-link" href="#citeref-ABKL">ABKL</a>Michael E. Akintunde, Elena Botoeva, Panagiotis Kouvaros, and Alessio      Lomuscio (2020). <em>Formal verification of neural agents in      non-deterministic environments</em>. In <a href="http://ifaamas.org/Proceedings/aamas2020/pdfs/p25.pdf">Proceedings of the 19th      International Conference on Autonomous Agents and Multiagent      Systems</a>.</li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../Unicycle/">« Unicycle</a><a class="docs-footer-nextpage" href="../../lib/problems/">Problem types »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.3.0 on <span class="colophon-date" title="Tuesday 12 March 2024 18:35">Tuesday 12 March 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+# savefig(&quot;VerticalCAS-sets.png&quot;)  # command to save the plot to a file</code></pre><img src="e7d8370a.png" alt="Example block output"/><h2 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h2><section class="footnotes is-size-7"><ul><li class="footnote" id="footnote-JK"><a class="tag is-link" href="#citeref-JK">JK</a>Kyle D. Julian and Mykel J. Kochenderfer (2019). <em>A reachability method    for verifying dynamical systems with deep neural network controllers</em>.    <a href="https://arxiv.org/pdf/1903.00520.pdf">arXiv:1903.00520</a>.</li><li class="footnote" id="footnote-ABKL"><a class="tag is-link" href="#citeref-ABKL">ABKL</a>Michael E. Akintunde, Elena Botoeva, Panagiotis Kouvaros, and Alessio      Lomuscio (2020). <em>Formal verification of neural agents in      non-deterministic environments</em>. In <a href="http://ifaamas.org/Proceedings/aamas2020/pdfs/p25.pdf">Proceedings of the 19th      International Conference on Autonomous Agents and Multiagent      Systems</a>.</li></ul></section></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../Unicycle/">« Unicycle</a><a class="docs-footer-nextpage" href="../../lib/problems/">Problem types »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.3.0 on <span class="colophon-date" title="Sunday 17 March 2024 10:13">Sunday 17 March 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
