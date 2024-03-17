@@ -136,11 +136,11 @@ function run(; less_robust_scenario::Bool)
     benchmark(prob, spec; T=T_warmup, silent=true)  # warm-up
     res = @timed benchmark(prob, spec; T=spec.T)  # benchmark
     sol = res.value
-    println(&quot;total analysis time&quot;)
+    println(&quot;Total analysis time:&quot;)
     print_timed(res)
 
     # Compute some simulations:
-    println(&quot;simulation&quot;)
+    println(&quot;Simulation:&quot;)
     trajectories = falsification ? 1 : 10
     res = @timed simulate(prob; T=spec.T, trajectories=trajectories,
                           include_vertices=!falsification)
@@ -150,25 +150,25 @@ function run(; less_robust_scenario::Bool)
     return sol, sim, prob, spec
 end;</code></pre><p>Run the analysis script for the less robust scenario:</p><pre><code class="language-julia hljs">sol_lr, sim_lr, prob_lr, spec_lr = run(less_robust_scenario=true);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis with less robust scenario
 Flowpipe construction:
-  0.905897 seconds (15.80 M allocations: 1.173 GiB, 11.46% gc time)
+  0.977117 seconds (15.80 M allocations: 1.173 GiB, 13.34% gc time)
 Property checking:
   Violation for time range [0.184229, 0.200001].
-  0.006153 seconds (48.04 k allocations: 4.197 MiB)
+  0.006281 seconds (48.04 k allocations: 4.197 MiB)
   The property is violated.
-total analysis time
-  0.915420 seconds (15.85 M allocations: 1.178 GiB, 11.34% gc time)
-simulation
-  0.459742 seconds (529.79 k allocations: 38.094 MiB, 4.30% gc time)</code></pre><p>Run the analysis script for the more robust scenario:</p><pre><code class="language-julia hljs">sol_mr, sim_mr, prob_mr, spec_mr = run(less_robust_scenario=false);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis with more robust scenario
+Total analysis time:
+  0.986965 seconds (15.85 M allocations: 1.178 GiB, 13.20% gc time)
+Simulation:
+  0.451156 seconds (529.79 k allocations: 38.094 MiB)</code></pre><p>Run the analysis script for the more robust scenario:</p><pre><code class="language-julia hljs">sol_mr, sim_mr, prob_mr, spec_mr = run(less_robust_scenario=false);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis with more robust scenario
 Flowpipe construction:
-  0.442360 seconds (7.47 M allocations: 572.509 MiB, 11.24% gc time)
+  0.450411 seconds (7.47 M allocations: 572.508 MiB, 11.25% gc time)
 Property checking:
   Violation for time range [0.0999999, 0.120001].
-  0.002589 seconds (24.06 k allocations: 2.202 MiB)
+  0.002714 seconds (24.06 k allocations: 2.202 MiB)
   The property is violated.
-total analysis time
-  0.445152 seconds (7.50 M allocations: 575.500 MiB, 11.17% gc time)
-simulation
-  0.000491 seconds (1.65 k allocations: 129.422 KiB)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper!(fig, vars, sol, sim, prob, spec, scenario)
+Total analysis time:
+  0.453345 seconds (7.50 M allocations: 575.499 MiB, 11.18% gc time)
+Simulation:
+  0.000489 seconds (1.65 k allocations: 129.422 KiB)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper!(fig, vars, sol, sim, prob, spec, scenario)
     safe_states = spec.ext
     plot!(fig, project(safe_states, vars); color=:lightgreen, lab=&quot;safe&quot;)
     plot!(fig, sol; vars=vars, color=:yellow, lab=&quot;&quot;)
@@ -193,4 +193,4 @@ else
     xlims!(-1.8, 1.5)
     ylims!(-1.6, 1.5)
 end
-fig = plot_helper!(fig, vars, sol_mr, sim_mr, prob_mr, spec_mr, &quot;more-robust&quot;)</code></pre><img src="3b6a52a9.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../InvertedPendulum/">« Inverted Pendulum</a><a class="docs-footer-nextpage" href="../Quadrotor/">Quadrotor »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.3.0 on <span class="colophon-date" title="Sunday 17 March 2024 10:13">Sunday 17 March 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+fig = plot_helper!(fig, vars, sol_mr, sim_mr, prob_mr, spec_mr, &quot;more-robust&quot;)</code></pre><img src="3b6a52a9.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../InvertedPendulum/">« Inverted Pendulum</a><a class="docs-footer-nextpage" href="../Quadrotor/">Quadrotor »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.3.0 on <span class="colophon-date" title="Sunday 17 March 2024 10:42">Sunday 17 March 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
