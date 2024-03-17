@@ -183,7 +183,7 @@ fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 vars = (3, 4)
 fig = plot(xlab="x₃", ylab="x₄", leg=:bottom)
-fig = plot_helper!(fig, vars)
+fig = plot_helper!(fig, vars; show_simulation=false)
 lens!(fig, [2.09, 2.12], [1.495, 1.515]; inset=(1, bbox(0.72, 0.54, 0.25, 0.25)),
       lc=:black, xticks=[2.1, 2.11], yticks=[1.5, 1.51], subplot=2)
 lens!(fig, [-0.1, 0.03], [-0.4, -0.15]; inset=(1, bbox(0.1, 0.1, 0.25, 0.25)),
