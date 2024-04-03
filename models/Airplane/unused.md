@@ -7,10 +7,10 @@ Rϕθ_ = (ϕ, θ) -> [cos(θ)  sin(θ) * sin(ϕ)   sin(θ) * cos(ϕ);
 mat_2 = 1 / cos(θ) * Rϕθ_(ϕ, θ)
 
 # Unused constants (terms are simplified instead):
-const Ix = 1.0
-const Iy = 1.0
-const Iz = 1.0
-const Ixz = 0.0
+const I_x = 1.0
+const I_y = 1.0
+const I_z = 1.0
+const I_xz = 0.0
 
 # Plot of the other two relevant dimensions
 
