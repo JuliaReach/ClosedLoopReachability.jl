@@ -381,7 +381,7 @@ end;
 
 fig = plot_helper()
 for o in res_random
-    plot!(fig, o; alpha=1)
+    plot!(fig, o; alpha=1, markershape=:none)
 end
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
 ## savefig("VerticalCAS-rand.png")  # command to save the plot to a file
@@ -392,8 +392,7 @@ fig = plot_helper()
 for (i, c) in [(1, :brown), (2, :green), (3, :orange), (4, :cyan)]
     lab = "h_0′ = $(hdot0_0[i])"
     for o in res_all[i]
-        plot!(fig, o; lw=2, alpha=1, markershape=:none, seriestype=:shape, c=c,
-              lab=lab)
+        plot!(fig, o; lw=2, alpha=1, seriestype=:shape, c=c, lab=lab)
         lab = ""
     end
 end
