@@ -194,11 +194,13 @@ function benchmark(prob, spec; T, silent::Bool=false)
     silent || print_timed(res)
     if res.value
         silent || println("  The property is violated.")
+        result = "falsified"
     else
         silent || println("  The property may be satisfied.")
+        result = "not falsified"
     end
 
-    return sol
+    return sol, result
 end
 
 function run(; less_robust_scenario::Bool)
@@ -211,10 +213,10 @@ function run(; less_robust_scenario::Bool)
     end
     prob, spec = InvertedTwoLinkPendulum_spec(less_robust_scenario)
 
-    ## Run the verification benchmark:
+    ## Run the falsification benchmark:
     benchmark(prob, spec; T=T_warmup, silent=true)  # warm-up
     res = @timed benchmark(prob, spec; T=spec.T)  # benchmark
-    sol = res.value
+    sol, _ = res.value
     println("Total analysis time:")
     print_timed(res)
 
