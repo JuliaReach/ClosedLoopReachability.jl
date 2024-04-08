@@ -7,7 +7,7 @@ function _project_oa(R::AbstractLazyReachSet, vars, ::Any; remove_zero_generator
 end
 
 function _project_oa(R::AbstractTaylorModelReachSet, vars, t; remove_zero_generators=true)
-    Z = overapproximate(R, Zonotope, t; remove_zero_generators=remove_zero_generators)
+    Z = overapproximate(R, Zonotope, t)
     return LazySets.project(set(Z), vars; remove_zero_generators=remove_zero_generators)
 end
 
