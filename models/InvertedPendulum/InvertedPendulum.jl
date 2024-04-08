@@ -143,18 +143,20 @@ function benchmark(; T=T, silent::Bool=false)
     silent || print_timed(res)
     if res.value
         silent || println("  The property is violated.")
+        result = "falsified"
     else
         silent || println("  The property may be satisfied.")
+        result = "not falsified"
     end
 
-    return sol
+    return sol, result
 end;
 
 # Run the falsification benchmark and compute some simulations:
 
 benchmark(T=T_warmup, silent=true)  # warm-up
 res = @timed benchmark(T=T)  # benchmark
-sol = res.value
+sol, _ = res.value
 println("Total analysis time:")
 print_timed(res)
 

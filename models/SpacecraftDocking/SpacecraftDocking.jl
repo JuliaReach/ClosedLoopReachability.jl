@@ -115,18 +115,20 @@ function benchmark(; T=T, silent::Bool=false)
     silent || print_timed(res)
     if res.value
         silent || println("  The property is satisfied.")
+        result = "verified"
     else
         silent || println("  The property may be violated.")
+        result = "not verified"
     end
 
-    return sol
+    return sol, result
 end;
 
 # Run the verification benchmark and compute some simulations:
 
 benchmark(T=T_warmup, silent=true)  # warm-up
 res = @timed benchmark(T=T)  # benchmark
-sol = res.value
+sol, _ = res.value
 println("Total analysis time:")
 print_timed(res)
 

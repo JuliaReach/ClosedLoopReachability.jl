@@ -318,11 +318,13 @@ function benchmark(X0; kmax, silent::Bool=false)
     silent || print_timed(res)
     if res.value
         silent || println("  The property is violated.")
+        result = "falsified"
     else
         silent || println("  The property may be satisfied.")
+        result = "not falsified"
     end
 
-    return sol
+    return sol, result
 end;
 
 # Simulation result for a random choice of velocity:
@@ -331,7 +333,7 @@ X0 = random_states(10, true, false)  # randomly sampled points (incl. vertices)
 println("Running $(length(X0)) simulations with central advisories")
 benchmark(X0; kmax=kmax_warmup, silent=true)  # warm-up
 res = @timed benchmark(X0; kmax=kmax)  # benchmark
-res_random = res.value
+res_random, _ = res.value
 println("Total analysis time:")
 print_timed(res);
 
@@ -341,7 +343,7 @@ println("Running flowpipe construction (unsound) with central advisories:")
 X0 = all_states()
 benchmark(X0; kmax=kmax_warmup, silent=true)  # warm-up
 res = @timed benchmark(X0; kmax=kmax)  # benchmark
-res_all = res.value
+res_all, _ = res.value
 println("Total analysis time:")
 print_timed(res);
 

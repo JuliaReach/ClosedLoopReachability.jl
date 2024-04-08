@@ -169,11 +169,13 @@ function benchmark(prob; T=T, splitter, predicate, silent::Bool=false)
     silent || print_timed(res)
     if res.value
         silent || println("  The property is satisfied.")
+        result = "verified"
     else
         silent || println("  The property may be violated.")
+        result = "not verified"
     end
 
-    return sol
+    return sol, result
 end;
 
 function run(; scenario1::Bool, ReLUtanh_activations)
@@ -206,7 +208,7 @@ function run(; scenario1::Bool, ReLUtanh_activations)
     ## Run the verification benchmark:
     benchmark(prob; T=T_warmup, splitter=splitter, predicate=predicate, silent=true)  # warm-up
     res = @timed benchmark(prob; T=T, splitter=splitter, predicate=predicate)  # benchmark
-    sol = res.value
+    sol, _ = res.value
     println("Total analysis time:")
     print_timed(res)
 

@@ -171,11 +171,13 @@ function benchmark(prob; T=T, silent::Bool=false)
     silent || print_timed(res)
     if res.value
         silent || println("  The property is satisfied.")
+        result = "verified"
     else
         silent || println("  The property may be violated.")
+        result = "not verified"
     end
 
-    return sol
+    return sol, result
 end;
 
 # For each controller we execute the same analysis script, which runs the
@@ -193,7 +195,7 @@ function run(; use_relu_controller::Bool)
     ## Run the verification benchmark:
     benchmark(prob; T=T_warmup, silent=true)  # warm-up
     res = @timed benchmark(prob; T=T)  # benchmark
-    sol = res.value
+    sol, _ = res.value
     println("Total analysis time:")
     print_timed(res)
 
