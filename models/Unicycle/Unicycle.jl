@@ -157,7 +157,8 @@ Tint = try convert(Int, T) catch; T end;
 
 # Script to plot the results:
 
-function plot_helper!(fig, vars; show_simulation::Bool=true)
+function plot_helper(vars; show_simulation::Bool=true)
+    fig = plot()
     plot!(fig, project(goal_set, vars); color=:cyan, alpha=0.5, lab="goal")
     plot!(fig, solz; vars=vars, color=:yellow, lab="")
     plot!(fig, project(X₀, vars); color=:cornflowerblue, alpha=1, lab="X₀")
@@ -173,26 +174,26 @@ end;
 # Plot the results:
 
 vars = (1, 2)
-fig = plot(xlab="x₁", ylab="x₂", leg=:bottomleft)
-fig = plot_helper!(fig, vars)
+fig = plot_helper(vars)
+plot!(fig; xlab="x₁", ylab="x₂", leg=:bottomleft)
 lens!(fig, [9.49, 9.56], [-4.51, -4.44]; inset=(1, bbox(0.65, 0.05, 0.25, 0.25)),
       lc=:black, xticks=[9.5, 9.55], yticks=[-4.5, -4.45], subplot=2)
 lens!(fig, [0.3, 0.7], [-0.25, 0.25]; inset=(1, bbox(0.1, 0.3, 0.25, 0.25)),
       lc=:black, xticks=[0.4, 0.6], yticks=[-0.2, 0.2], subplot=3)
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("Unicycle-x1-x2.png")  # command to save the plot to a file
+## savefig(fig, "Unicycle-x1-x2.png")  # command to save the plot to a file
 
 #-
 
 vars = (3, 4)
-fig = plot(xlab="x₃", ylab="x₄", leg=:bottom)
-fig = plot_helper!(fig, vars; show_simulation=false)
+fig = plot_helper(vars; show_simulation=false)
+plot!(fig; xlab="x₃", ylab="x₄", leg=:bottom)
 lens!(fig, [2.09, 2.12], [1.495, 1.515]; inset=(1, bbox(0.72, 0.54, 0.25, 0.25)),
       lc=:black, xticks=[2.1, 2.11], yticks=[1.5, 1.51], subplot=2)
 lens!(fig, [-0.1, 0.03], [-0.4, -0.15]; inset=(1, bbox(0.1, 0.1, 0.25, 0.25)),
       lc=:black, xticks=[-0.08, 0], yticks=[-0.3, -0.2], subplot=3)
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("Unicycle-x3-x4.png")  # command to save the plot to a file
+## savefig(fig, "Unicycle-x3-x4.png")  # command to save the plot to a file
 
 end  #jl
 nothing  #jl

@@ -256,27 +256,30 @@ solz = overapproximate(sol_r, Zonotope);
 
 # Script to plot the results:
 
-function plot_helper1!(fig, vars)
+function plot_helper1(vars)
+    fig = plot()
     plot!(fig, project(safe_states, vars); color=:lightgreen, lab="safe")
     plot!(fig, solz; vars=vars, color=:yellow, lab="")
     plot!(fig, project(X₀1, vars); c=:cornflowerblue, alpha=1, lab="X₀")
     plot_simulation!(fig, sim_r; vars=vars, color=:black, lab="")
-    fig = DisplayAs.Text(DisplayAs.PNG(fig))
+    return fig
 end;
 
 # Plot the results:
 
 vars = (1, 2)
-fig = plot(xlab="x₁", ylab="x₂")
-fig = plot_helper1!(fig, vars)
-## savefig("TORA-ReLU-x1-x2.png")  # command to save the plot to a file
+fig = plot_helper1(vars)
+plot!(fig; xlab="x₁", ylab="x₂")
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+## savefig(fig, "TORA-ReLU-x1-x2.png")  # command to save the plot to a file
 
 #-
 
 vars = (3, 4)
-fig = plot(xlab="x₃", ylab="x₄")
-fig = plot_helper1!(fig, vars)
-## savefig("TORA-ReLU-x3-x4.png")  # command to save the plot to a file
+fig = plot_helper1(vars)
+plot!(fig; xlab="x₃", ylab="x₄")
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+## savefig(fig, "TORA-ReLU-x3-x4.png")  # command to save the plot to a file
 
 #-
 
@@ -286,11 +289,12 @@ fig = plot_helper1!(fig, vars)
 
 function plot_helper2(sol, sim)
     vars = (1, 2)
-    fig = plot(xlab="x₁", ylab="x₂")
+    fig = plot()
     plot!(fig, project(goal_states, vars); color=:cyan, lab="goal")
     plot!(fig, sol; vars=vars, color=:yellow, lab="")
     plot!(fig, project(X₀2, vars); c=:cornflowerblue, alpha=1, lab="X₀")
     plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
+    plot!(fig; xlab="x₁", ylab="x₂")
     return fig
 end;
 
@@ -302,7 +306,7 @@ lens!(fig, [-0.785, -0.735], [-0.47, -0.41]; inset=(1, bbox(0.2, 0.4, 0.2, 0.2))
 lens!(fig, [0.0, 0.25], [-0.85, -0.7]; inset=(1, bbox(0.6, 0.4, 0.2, 0.2)),
       lc=:black, xticks=[0, 0.2], yticks=[-0.8, -0.7], subplot=3)
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("TORA-ReLUtanh-x1-x2.png")  # command to save the plot to a file
+## savefig(fig, "TORA-ReLUtanh.png")  # command to save the plot to a file
 
 #-
 
@@ -312,7 +316,7 @@ lens!(fig, [-0.785, -0.735], [-0.47, -0.41]; inset=(1, bbox(0.2, 0.4, 0.2, 0.2))
 lens!(fig, [0.09, 0.22], [-0.9, -0.8]; inset=(1, bbox(0.6, 0.4, 0.2, 0.2)),
       lc=:black, xticks=[0.1, 0.2], yticks=[-0.9, -0.8], subplot=3)
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("TORA-sigmoid-x1-x2.png")  # command to save the plot to a file
+## savefig(fig, "TORA-sigmoid.png")  # command to save the plot to a file
 
 end  #jl
 nothing  #jl

@@ -142,28 +142,29 @@ print_timed(res);
 
 # Script to plot the results:
 
-function plot_helper!(fig, vars; show_simulation::Bool=true)
+function plot_helper(vars)
+    fig = plot()
     plot!(fig, sol; vars=vars, color=:yellow, lab="")
     plot!(fig, project(X₀, vars); c=:cornflowerblue, alpha=0.7, lab="X₀")
-    if show_simulation
-        plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
-    end
-    fig = DisplayAs.Text(DisplayAs.PNG(fig))
+    plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
+    return fig
 end;
 
 # Plot the results:
 
 vars = (1, 2)
-fig = plot(xlab="x", ylab="y")
-fig = plot_helper!(fig, vars)
-## savefig("SpacecraftDocking-x-y.png")  # command to save the plot to a file
+fig = plot_helper(vars)
+plot!(fig; xlab="x", ylab="y")
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+## savefig(fig, "SpacecraftDocking-x-y.png")  # command to save the plot to a file
 
 #-
 
 vars = (3, 4)
-fig = plot(xlab="x'", ylab="y'")
-fig = plot_helper!(fig, vars)
-## savefig("SpacecraftDocking-x'-y'.png")  # command to save the plot to a file
+fig = plot_helper(vars)
+plot!(fig; xlab="x'", ylab="y'")
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+## savefig(fig, "SpacecraftDocking-x'-y'.png")  # command to save the plot to a file
 
 end  #jl
 nothing  #jl

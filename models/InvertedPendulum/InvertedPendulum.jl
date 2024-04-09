@@ -173,7 +173,7 @@ print_timed(res);
 
 function plot_helper()
     vars = (0, 1)
-    fig = plot(ylab="θ")
+    fig = plot()
     unsafe_states_projected = cartesian_product(Interval(0.5, 1.0),
                                                 project(unsafe_states, [vars[2]]))
     plot!(fig, unsafe_states_projected; color=:red, alpha=:0.2, lab="unsafe")
@@ -189,13 +189,15 @@ function plot_helper()
     end
     lab_sim = falsification ? "simulation" : ""
     plot_simulation!(fig, sim; vars=vars, color=:black, lab=lab_sim)
-    fig = DisplayAs.Text(DisplayAs.PNG(fig))
+    plot!(fig; xlab="t", ylab="θ")
+    return fig
 end;
 
 # Plot the results:
 
 fig = plot_helper()
-## savefig("InvertedPendulum.png")  # command to save the plot to a file
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+## savefig(fig, "InvertedPendulum.png")  # command to save the plot to a file
 
 end  #jl
 nothing  #jl

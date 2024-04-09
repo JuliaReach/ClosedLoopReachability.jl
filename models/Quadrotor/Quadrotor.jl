@@ -172,23 +172,23 @@ print_timed(res);
 
 # Script to plot the results:
 
-function plot_helper!(fig, vars; show_simulation::Bool=true)
+function plot_helper(vars)
     goal_states_projected = cartesian_product(Interval(0, T),
                                               project(goal_states, [vars[2]]))
+    fig = plot()
     plot!(fig, goal_states_projected; color=:cyan, lab="goal")
     plot!(fig, sol; vars=vars, color=:yellow, lab="")
-    if show_simulation
-        plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
-    end
-    fig = DisplayAs.Text(DisplayAs.PNG(fig))
+    plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
+    return fig
 end;
 
 # Plot the results:
 
 vars = (0, 3)
-fig = plot(xlab="t", ylab="x₃")
-fig = plot_helper!(fig, vars)
-## savefig("Quadrotor-t-x3.png")  # command to save the plot to a file
+fig = plot_helper(vars)
+plot!(fig; xlab="t", ylab="x₃")
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+## savefig(fig, "Quadrotor.png")  # command to save the plot to a file
 
 end  #jl
 nothing  #jl
