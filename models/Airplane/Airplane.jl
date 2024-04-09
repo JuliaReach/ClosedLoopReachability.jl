@@ -281,7 +281,7 @@ else
     ylims!(-1.05, 1.05)
 end
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig(fig, "Airplane-x2-x7.png")  # command to save the plot to a file
+## savefig(fig, "Airplane.png")  # command to save the plot to a file
 
 end  #jl
 nothing  #jl

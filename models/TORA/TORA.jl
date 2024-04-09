@@ -306,7 +306,7 @@ lens!(fig, [-0.785, -0.735], [-0.47, -0.41]; inset=(1, bbox(0.2, 0.4, 0.2, 0.2))
 lens!(fig, [0.0, 0.25], [-0.85, -0.7]; inset=(1, bbox(0.6, 0.4, 0.2, 0.2)),
       lc=:black, xticks=[0, 0.2], yticks=[-0.8, -0.7], subplot=3)
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig(fig, "TORA-ReLUtanh-x1-x2.png")  # command to save the plot to a file
+## savefig(fig, "TORA-ReLUtanh.png")  # command to save the plot to a file
 
 #-
 
@@ -316,7 +316,7 @@ lens!(fig, [-0.785, -0.735], [-0.47, -0.41]; inset=(1, bbox(0.2, 0.4, 0.2, 0.2))
 lens!(fig, [0.09, 0.22], [-0.9, -0.8]; inset=(1, bbox(0.6, 0.4, 0.2, 0.2)),
       lc=:black, xticks=[0.1, 0.2], yticks=[-0.9, -0.8], subplot=3)
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig(fig, "TORA-sigmoid-x1-x2.png")  # command to save the plot to a file
+## savefig(fig, "TORA-sigmoid.png")  # command to save the plot to a file
 
 end  #jl
 nothing  #jl

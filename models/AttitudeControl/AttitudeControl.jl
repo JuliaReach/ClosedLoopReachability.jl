@@ -161,7 +161,7 @@ vars = (1, 2)
 fig = plot_helper(vars)
 plot!(fig; xlab="ω₁", ylab="ω₂")
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig(fig, "AttitudeControl-x1-x2.png")  # command to save the plot to a file
+## savefig(fig, "AttitudeControl.png")  # command to save the plot to a file
 
 end  #jl
 nothing  #jl

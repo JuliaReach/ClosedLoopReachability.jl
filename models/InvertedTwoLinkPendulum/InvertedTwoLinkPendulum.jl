@@ -265,7 +265,7 @@ fig = plot_helper(vars, sol_lr, sim_lr, prob_lr, spec_lr)
 plot!(fig; xlab="θ₁'", ylab="θ₂'")
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
 ## Command to save the plot to a file:
-## savefig(fig, "InvertedTwoLinkPendulum-less-robust-x$(vars[1])-x$(vars[2]).png")
+## savefig(fig, "InvertedTwoLinkPendulum-less-robust.png")
 
 #-
 
@@ -274,7 +274,7 @@ fig = plot_helper(vars, sol_mr, sim_mr, prob_mr, spec_mr)
 plot!(fig; xlab="θ₁'", ylab="θ₂'")
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
 ## Command to save the plot to a file:
-## savefig(fig, "InvertedTwoLinkPendulum-more-robust-x$(vars[1])-x$(vars[2]).png")
+## savefig(fig, "InvertedTwoLinkPendulum-more-robust.png")
 
 end  #jl
 nothing  #jl
