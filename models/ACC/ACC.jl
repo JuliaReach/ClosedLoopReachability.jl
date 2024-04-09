@@ -221,7 +221,7 @@ sol_tanh, sim_tanh = run(use_relu_controller=false);
 
 # Script to plot the results:
 
-function plot_helper(sol, sim, scenario)
+function plot_helper(sol, sim)
     F = overapproximate(flowpipe(sol), Zonotope)
 
     fp_rel = linear_map(Matrix(d_rel'), F)
@@ -230,22 +230,26 @@ function plot_helper(sol, sim, scenario)
     fp_safe = affine_map(Matrix(d_safe'), F, [D_default])
     output_map_safe = x -> dot(d_safe, x) + D_default
 
-    fig = plot(leg=(0.4, 0.3), xlab="time")
+    fig = plot(leg=(0.4, 0.3))
     plot!(fig, fp_rel; vars=(0, 1), c=:red, alpha=0.4)
     plot!(fig, fp_safe; vars=(0, 1), c=:blue, alpha=0.4)
     plot_simulation!(fig, sim; output_map=output_map_rel, color=:red, lab="Drel")
     plot_simulation!(fig, sim; output_map=output_map_safe, color=:blue, lab="Dsafe")
-    ## savefig("ACC-$scenario.png")  # command to save the plot to a file
-    fig = DisplayAs.Text(DisplayAs.PNG(fig))
+    plot!(fig; xlab="time")
+    return fig
 end;
 
 # Plot the results:
 
-fig = plot_helper(sol_relu, sim_relu, "ReLU")
+fig = plot_helper(sol_relu, sim_relu)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+## savefig(fig, "ACC-ReLU.png")  # command to save the plot to a file
 
 #-
 
-fig = plot_helper(sol_tanh, sim_tanh, "tanh")
+fig = plot_helper(sol_tanh, sim_tanh)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+## savefig(fig, "ACC-tanh.png")  # command to save the plot to a file
 
 end  #jl
 nothing  #jl

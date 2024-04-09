@@ -258,19 +258,21 @@ print_timed(res);
 
 # Script to plot the results:
 
-function plot_helper!(fig, vars)
+function plot_helper(vars)
+    fig = plot()
     plot!(fig, project(safe_states, vars); color=:lightgreen, lab="safe")
     plot!(fig, project(initial_state(prob), vars); c=:cornflowerblue, alpha=1, lab="X₀")
     plot!(fig, sol; vars=vars, color=:yellow, lab="")
     lab_sim = falsification ? "simulation" : ""
     plot_simulation!(fig, sim; vars=vars, color=:black, lab=lab_sim)
+    return fig
 end;
 
 # Plot the results:
 
 vars = (2, 7)
-fig = plot(xlab="s_y", ylab="ϕ", leg=:bottomleft)
-fig = plot_helper!(fig, vars)
+fig = plot_helper(vars)
+plot!(fig; xlab="s_y", ylab="ϕ", leg=:bottomleft)
 if falsification
     xlims!(-0.01, 0.65)
     ylims!(0.85, 1.01)
@@ -279,7 +281,7 @@ else
     ylims!(-1.05, 1.05)
 end
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("Airplane-x2-x7.png")  # command to save the plot to a file
+## savefig(fig, "Airplane-x2-x7.png")  # command to save the plot to a file
 
 end  #jl
 nothing  #jl

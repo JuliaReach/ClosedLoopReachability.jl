@@ -145,23 +145,23 @@ print_timed(res);
 
 # Script to plot the results:
 
-function plot_helper!(fig, vars; show_simulation::Bool=true)
+function plot_helper(vars)
+    fig = plot()
     plot!(fig, project(unsafe_states, vars); color=:red, alpha=:0.2,
           lab="unsafe", leg=:topleft)
     plot!(fig, sol; vars=vars, color=:yellow, lab="")
     plot!(fig, project(X₀, vars); c=:cornflowerblue, alpha=1, lab="X₀")
-    if show_simulation
-        plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
-    end
-    fig = DisplayAs.Text(DisplayAs.PNG(fig))
+    plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
+    return fig
 end;
 
 # Plot the results:
 
 vars = (1, 2)
-fig = plot(xlab="ω₁", ylab="ω₂")
-fig = plot_helper!(fig, vars)
-## savefig("AttitudeControl-x1-x2.png")  # command to save the plot to a file
+fig = plot_helper(vars)
+plot!(fig; xlab="ω₁", ylab="ω₂")
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+## savefig(fig, "AttitudeControl-x1-x2.png")  # command to save the plot to a file
 
 end  #jl
 nothing  #jl

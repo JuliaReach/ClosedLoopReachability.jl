@@ -244,40 +244,37 @@ sol_mr, sim_mr, prob_mr, spec_mr = run(less_robust_scenario=false);
 
 # Script to plot the results:
 
-function plot_helper!(fig, vars, sol, sim, prob, spec, scenario)
+function plot_helper(vars, sol, sim, prob, spec)
     safe_states = spec.ext
+    fig = plot()
     plot!(fig, project(safe_states, vars); color=:lightgreen, lab="safe")
     plot!(fig, sol; vars=vars, color=:yellow, lab="")
     plot!(fig, project(initial_state(prob), vars); c=:cornflowerblue, alpha=1, lab="X₀")
     lab_sim = falsification ? "simulation" : ""
     plot_simulation!(fig, sim; vars=vars, color=:black, lab=lab_sim)
     if falsification
-        plot!(leg=:topleft)
+        plot!(fig; leg=:topleft)
     end
-    ## Command to save the plot to a file:
-    ## savefig("InvertedTwoLinkPendulum-$scenario-x$(vars[1])-x$(vars[2]).png")
-    fig = DisplayAs.Text(DisplayAs.PNG(fig))
+    return fig
 end;
 
 # Plot the results:
 
 vars=(3, 4)
-fig = plot(xlab="θ₁'", ylab="θ₂'")
-xlims!(-0.7, 1.7)
-ylims!(-1.6, 1.5)
-fig = plot_helper!(fig, vars, sol_lr, sim_lr, prob_lr, spec_lr, "less-robust")
+fig = plot_helper(vars, sol_lr, sim_lr, prob_lr, spec_lr)
+plot!(fig; xlab="θ₁'", ylab="θ₂'")
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+## Command to save the plot to a file:
+## savefig(fig, "InvertedTwoLinkPendulum-less-robust-x$(vars[1])-x$(vars[2]).png")
 
 #-
 
 vars=(3, 4)
-fig = plot(xlab="θ₁'", ylab="θ₂'")
-if falsification
-    ylims!(-1.0, 1.5)
-else
-    xlims!(-1.8, 1.5)
-    ylims!(-1.6, 1.5)
-end
-fig = plot_helper!(fig, vars, sol_mr, sim_mr, prob_mr, spec_mr, "more-robust")
+fig = plot_helper(vars, sol_mr, sim_mr, prob_mr, spec_mr)
+plot!(fig; xlab="θ₁'", ylab="θ₂'")
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+## Command to save the plot to a file:
+## savefig(fig, "InvertedTwoLinkPendulum-more-robust-x$(vars[1])-x$(vars[2]).png")
 
 end  #jl
 nothing  #jl
