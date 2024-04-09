@@ -145,7 +145,8 @@ T2_warmup = 2 * period2;  # shorter time horizon for warm-up run
 
 # To enclose the continuous dynamics, we use a Taylor-model-based algorithm:
 
-algorithm_plant = TMJets(abstol=1e-10, orderT=8, orderQ=3);
+algorithm_plant_1 = TMJets(abstol=3e-2, orderT=3, orderQ=1);
+algorithm_plant_2 = TMJets(abstol=2e-2, orderT=3, orderQ=1);
 
 # To propagate sets through the neural network, we use the `DeepZ` algorithm.
 # For verification, we also use an additional splitting strategy to increase the
@@ -155,7 +156,8 @@ algorithm_controller = DeepZ();
 
 # The verification benchmark is given below:
 
-function benchmark(prob; T=T, splitter, predicate, silent::Bool=false)
+function benchmark(prob; T=T, splitter, algorithm_plant, predicate,
+                   silent::Bool=false)
     ## Solve the controlled system:
     silent || println("Flowpipe construction:")
     res = @timed solve(prob; T=T, algorithm_controller=algorithm_controller,
@@ -184,30 +186,32 @@ function run(; scenario1::Bool, ReLUtanh_activations)
         prob = ControlledPlant(ivp1, controller_ReLU, vars_idx, period1;
                                postprocessing=control_postprocessing1)
         splitter = verification ? BoxSplitter([4, 4, 3, 5]) : NoSplitter()
+        algorithm_plant = algorithm_plant_1
         predicate = predicate1
         T = T1_reach
         T_warmup = T1_warmup
-    elseif ReLUtanh_activations
-        println("# Running analysis of scenario 2 with ReLUtanh activations")
-        prob = ControlledPlant(ivp2, controller_relutanh, vars_idx, period2;
-                               postprocessing=control_postprocessing2)
-        splitter = NoSplitter()
-        predicate = predicate2
-        T = T2
-        T_warmup = T2_warmup
     else
-        println("# Running analysis of scenario 2 with sigmoid activations")
-        prob = ControlledPlant(ivp2, controller_sigmoid, vars_idx, period2;
-                               postprocessing=control_postprocessing2)
         splitter = NoSplitter()
+        algorithm_plant = algorithm_plant_2
         predicate = predicate2
         T = T2
         T_warmup = T2_warmup
+        if ReLUtanh_activations
+            println("# Running analysis of scenario 2 with ReLUtanh activations")
+            prob = ControlledPlant(ivp2, controller_relutanh, vars_idx, period2;
+                                   postprocessing=control_postprocessing2)
+        else
+            println("# Running analysis of scenario 2 with sigmoid activations")
+            prob = ControlledPlant(ivp2, controller_sigmoid, vars_idx, period2;
+                                   postprocessing=control_postprocessing2)
+        end
     end
 
     ## Run the verification benchmark:
-    benchmark(prob; T=T_warmup, splitter=splitter, predicate=predicate, silent=true)  # warm-up
-    res = @timed benchmark(prob; T=T, splitter=splitter, predicate=predicate)  # benchmark
+    benchmark(prob; T=T_warmup, splitter=splitter,
+        algorithm_plant=algorithm_plant, predicate=predicate, silent=true)  # warm-up
+    res = @timed benchmark(prob; T=T, splitter=splitter,
+        algorithm_plant=algorithm_plant, predicate=predicate)  # benchmark
     sol, _ = res.value
     println("Total analysis time:")
     print_timed(res)

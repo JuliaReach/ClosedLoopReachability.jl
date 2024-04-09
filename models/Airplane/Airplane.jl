@@ -208,7 +208,7 @@ T_warmup = 2 * period;  # shorter time horizon for warm-up run
 
 # To enclose the continuous dynamics, we use a Taylor-model-based algorithm:
 
-algorithm_plant = TMJets(abstol=1e-10, orderT=7, orderQ=1);
+algorithm_plant = TMJets(abstol=2e-2, orderT=3, orderQ=1);
 
 # To propagate sets through the neural network, we use the `DeepZ` algorithm:
 
