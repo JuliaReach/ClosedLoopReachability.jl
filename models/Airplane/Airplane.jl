@@ -243,7 +243,8 @@ end;
 
 benchmark(T=T_warmup, silent=true)  # warm-up
 res = @timed benchmark(T=T)  # benchmark
-sol, _ = res.value
+sol, result = res.value
+@assert (result == "falsified") "falsification failed"
 println("Total analysis time:")
 print_timed(res)
 

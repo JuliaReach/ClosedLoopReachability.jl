@@ -195,7 +195,8 @@ function run(; use_relu_controller::Bool)
     ## Run the verification benchmark:
     benchmark(prob; T=T_warmup, silent=true)  # warm-up
     res = @timed benchmark(prob; T=T)  # benchmark
-    sol, _ = res.value
+    sol, result = res.value
+    @assert (result == "verified") "verification failed"
     println("Total analysis time:")
     print_timed(res)
 

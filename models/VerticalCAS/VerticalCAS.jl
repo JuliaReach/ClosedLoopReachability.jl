@@ -333,7 +333,8 @@ X0 = random_states(10, true, false)  # randomly sampled points (incl. vertices)
 println("Running $(length(X0)) simulations with central advisories")
 benchmark(X0; kmax=kmax_warmup, silent=true)  # warm-up
 res = @timed benchmark(X0; kmax=kmax)  # benchmark
-res_random, _ = res.value
+sol_random, result_random = res.value
+@assert (result_random == "falsified") "falsification failed"
 println("Total analysis time:")
 print_timed(res);
 
@@ -343,7 +344,8 @@ println("Running flowpipe construction (unsound) with central advisories:")
 X0 = all_states()
 benchmark(X0; kmax=kmax_warmup, silent=true)  # warm-up
 res = @timed benchmark(X0; kmax=kmax)  # benchmark
-res_all, _ = res.value
+sol_all, result_all = res.value
+@assert (result_all == "falsified") "falsification failed"
 println("Total analysis time:")
 print_timed(res);
 
@@ -365,8 +367,8 @@ function extend_x(vec::Vector)
     return [[extend_x(X) for X in subvec] for subvec in vec]
 end
 
-res_random = extend_x(res_random)
-res_all = extend_x(res_all);
+sol_random = extend_x(sol_random)
+sol_all = extend_x(sol_all);
 
 # Script to plot the results:
 
@@ -382,7 +384,7 @@ end;
 # Plot the results:
 
 fig = plot_helper()
-for o in res_random
+for o in sol_random
     plot!(fig, o; alpha=1, markershape=:none)
 end
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
@@ -393,7 +395,7 @@ fig = DisplayAs.Text(DisplayAs.PNG(fig))
 fig = plot_helper()
 for (i, c) in [(1, :brown), (2, :green), (3, :orange), (4, :cyan)]
     lab = "h_0′ = $(hdot0_0[i])"
-    for o in res_all[i]
+    for o in sol_all[i]
         plot!(fig, o; lw=2, alpha=1, seriestype=:shape, c=c, lab=lab)
         lab = ""
     end

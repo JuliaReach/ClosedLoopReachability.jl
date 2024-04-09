@@ -212,7 +212,8 @@ function run(; scenario1::Bool, ReLUtanh_activations)
         algorithm_plant=algorithm_plant, predicate=predicate, silent=true)  # warm-up
     res = @timed benchmark(prob; T=T, splitter=splitter,
         algorithm_plant=algorithm_plant, predicate=predicate)  # benchmark
-    sol, _ = res.value
+    sol, result = res.value
+    @assert (result == "verified") "verification failed"
     println("Total analysis time:")
     print_timed(res)
 

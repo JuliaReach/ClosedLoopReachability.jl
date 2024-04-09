@@ -216,7 +216,8 @@ function run(; less_robust_scenario::Bool)
     ## Run the falsification benchmark:
     benchmark(prob, spec; T=T_warmup, silent=true)  # warm-up
     res = @timed benchmark(prob, spec; T=spec.T)  # benchmark
-    sol, _ = res.value
+    sol, result = res.value
+    @assert (result == "falsified") "falsification failed"
     println("Total analysis time:")
     print_timed(res)
 
