@@ -13,7 +13,7 @@
 module TORA  #jl
 
 using ClosedLoopReachability
-import DifferentialEquations, Plots, DisplayAs
+import OrdinaryDiffEq, Plots, DisplayAs
 using ReachabilityBase.CurrentPath: @current_path
 using ReachabilityBase.Timing: print_timed
 using ClosedLoopReachability: UniformAdditivePostprocessing, NoSplitter, LinearMapPostprocessing
