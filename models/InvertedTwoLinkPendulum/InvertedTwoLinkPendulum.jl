@@ -172,7 +172,7 @@ end;
 
 # To enclose the continuous dynamics, we use a Taylor-model-based algorithm:
 
-algorithm_plant = TMJets(abstol=1e-9, orderT=8, orderQ=1);
+algorithm_plant = TMJets(abstol=1e-2, orderT=3, orderQ=1);
 
 # To propagate sets through the neural network, we use the `DeepZ` algorithm:
 
