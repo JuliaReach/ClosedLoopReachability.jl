@@ -46,7 +46,7 @@ end
 function _plot_simulation_vars!(fig, sim, vars; color, label)
     for simulation in trajectories(sim)
         for piece in simulation
-            Plots.plot!(fig, piece; vars=vars, color=color, lab=label)
+            Plots.plot!(fig, piece; idxs=vars, color=color, lab=label)
             label = ""  # overwrite to have exactly one label
         end
     end
