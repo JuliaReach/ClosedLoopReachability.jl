@@ -14,10 +14,11 @@ An object of type `EnsembleSimulationSolution`.
 
 ### Notes
 
-This function uses the ensemble simulations feature from `DifferentialEquations.jl`.
+This function uses the ensemble simulations feature from
+[`OrdinaryDiffEq.jl`](https://github.com/SciML/OrdinaryDiffEq.jl).
 """
 function simulate(cp::AbstractControlProblem, args...; kwargs...)
-    require(@__MODULE__, :DifferentialEquations; fun_name="simulate")
+    require(@__MODULE__, :OrdinaryDiffEq; fun_name="simulate")
 
     ivp = plant(cp)
     network = controller(cp)
@@ -44,7 +45,7 @@ function simulate(cp::AbstractControlProblem, args...; kwargs...)
 
     # preallocate
     extended = Vector{Vector{Float64}}(undef, trajectories)
-    simulations = Vector{DE.EnsembleSolution}(undef, iterations)
+    simulations = Vector{ODE.EnsembleSolution}(undef, iterations)
     all_controls = Vector{Vector{Vector{Float64}}}(undef, iterations)
     all_disturbances = Vector{Vector{Vector{Float64}}}(undef, iterations)
 

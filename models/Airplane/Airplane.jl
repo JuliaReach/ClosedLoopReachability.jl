@@ -5,7 +5,7 @@
 module Airplane  #jl
 
 using ClosedLoopReachability
-import DifferentialEquations, Plots, DisplayAs
+import OrdinaryDiffEq, Plots, DisplayAs
 using ReachabilityBase.CurrentPath: @current_path
 using ReachabilityBase.Timing: print_timed
 using Plots: plot, plot!, xlims!, ylims!
