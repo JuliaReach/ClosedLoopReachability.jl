@@ -155,16 +155,16 @@ end;
 vars = (1, 2)
 fig = plot_helper(vars)
 plot!(fig; xlab="x", ylab="y")
+## Plots.savefig(fig, "SpacecraftDocking-x-y.png")  # command to save the plot to a file
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig(fig, "SpacecraftDocking-x-y.png")  # command to save the plot to a file
 
 #-
 
 vars = (3, 4)
 fig = plot_helper(vars)
 plot!(fig; xlab="x'", ylab="y'")
+## Plots.savefig(fig, "SpacecraftDocking-x'-y'.png")  # command to save the plot to a file
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig(fig, "SpacecraftDocking-x'-y'.png")  # command to save the plot to a file
 
 end  #jl
 nothing  #jl

@@ -247,8 +247,8 @@ end;
 # Plot the results:
 
 fig = plot_helper(sol_relu, sim_relu)
+## Plots.savefig(fig, "ACC-ReLU.png")  # command to save the plot to a file
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig(fig, "ACC-ReLU.png")  # command to save the plot to a file
 
 #-
 

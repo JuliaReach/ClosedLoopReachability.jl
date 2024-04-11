@@ -280,8 +280,8 @@ else
     xlims!(-0.55, 0.55)
     ylims!(-1.05, 1.05)
 end
+## Plots.savefig(fig, "Airplane.png")  # command to save the plot to a file
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig(fig, "Airplane.png")  # command to save the plot to a file
 
 end  #jl
 nothing  #jl
