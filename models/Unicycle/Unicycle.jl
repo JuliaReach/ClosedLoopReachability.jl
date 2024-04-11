@@ -180,8 +180,8 @@ lens!(fig, [9.49, 9.56], [-4.51, -4.44]; inset=(1, bbox(0.65, 0.05, 0.25, 0.25))
       lc=:black, xticks=[9.5, 9.55], yticks=[-4.5, -4.45], subplot=2)
 lens!(fig, [0.3, 0.7], [-0.25, 0.25]; inset=(1, bbox(0.1, 0.3, 0.25, 0.25)),
       lc=:black, xticks=[0.4, 0.6], yticks=[-0.2, 0.2], subplot=3)
+## Plots.savefig(fig, "Unicycle-x1-x2.png")  # command to save the plot to a file
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig(fig, "Unicycle-x1-x2.png")  # command to save the plot to a file
 
 #-
 
@@ -192,8 +192,8 @@ lens!(fig, [2.09, 2.12], [1.495, 1.515]; inset=(1, bbox(0.72, 0.54, 0.25, 0.25))
       lc=:black, xticks=[2.1, 2.11], yticks=[1.5, 1.51], subplot=2)
 lens!(fig, [-0.1, 0.03], [-0.4, -0.15]; inset=(1, bbox(0.1, 0.1, 0.25, 0.25)),
       lc=:black, xticks=[-0.08, 0], yticks=[-0.3, -0.2], subplot=3)
+## Plots.savefig(fig, "Unicycle-x3-x4.png")  # command to save the plot to a file
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig(fig, "Unicycle-x3-x4.png")  # command to save the plot to a file
 
 end  #jl
 nothing  #jl

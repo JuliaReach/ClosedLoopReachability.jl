@@ -387,8 +387,8 @@ fig = plot_helper()
 for o in sol_random
     plot!(fig, o; alpha=1, markershape=:none)
 end
+## Plots.savefig("VerticalCAS-rand.png")  # command to save the plot to a file
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("VerticalCAS-rand.png")  # command to save the plot to a file
 
 #-
 
@@ -400,8 +400,8 @@ for (i, c) in [(1, :brown), (2, :green), (3, :orange), (4, :cyan)]
         lab = ""
     end
 end
+## Plots.savefig("VerticalCAS-sets.png")  # command to save the plot to a file
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig("VerticalCAS-sets.png")  # command to save the plot to a file
 
 end  #jl
 nothing  #jl

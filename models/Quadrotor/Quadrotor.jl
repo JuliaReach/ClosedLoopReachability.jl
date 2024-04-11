@@ -187,8 +187,8 @@ end;
 vars = (0, 3)
 fig = plot_helper(vars)
 plot!(fig; xlab="t", ylab="x₃")
+## Plots.savefig(fig, "Quadrotor.png")  # command to save the plot to a file
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig(fig, "Quadrotor.png")  # command to save the plot to a file
 
 end  #jl
 nothing  #jl

@@ -196,8 +196,8 @@ end;
 # Plot the results:
 
 fig = plot_helper()
+## Plots.savefig(fig, "InvertedPendulum.png")  # command to save the plot to a file
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-## savefig(fig, "InvertedPendulum.png")  # command to save the plot to a file
 
 end  #jl
 nothing  #jl
