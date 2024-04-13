@@ -67,7 +67,7 @@ function _solve_ensemble(ivp, X0_samples, tspan;
     # the third argument `repeat` is not needed here
     _prob_func(prob, i, _) = ODE.remake(prob; u0=X0_samples[i])
     ensemble_prob = ODE.EnsembleProblem(ODE.ODEProblem(field, first(X0_samples), tspan);
-                                       prob_func=_prob_func)
+                                        prob_func=_prob_func)
     return ODE.solve(ensemble_prob, trajectories_alg, ensemble_alg;
-                    trajectories=length(X0_samples))
+                     trajectories=length(X0_samples))
 end
