@@ -225,7 +225,8 @@ function _solve_one(R, X₀, W₀, S, t0, t1, algorithm_plant, reconstruction_me
     # get new control inputs from the controller
     U = controller_forward(algorithm_controller, controller, X₀, preprocessing, postprocessing)
 
-    dt = t0 .. t1
+    t_span = zero(t0) .. (t1 - t0)
+    t_offset = interval(t0)
 
     # split control inputs
     sols = Flowpipe[]
@@ -233,7 +234,7 @@ function _solve_one(R, X₀, W₀, S, t0, t1, algorithm_plant, reconstruction_me
         # combine states with new control inputs
         Q₀ = _reconstruct(reconstruction_method, P₀, Ui, R, t0)
 
-        sol = post(algorithm_plant, IVP(S, Q₀), dt)
+        sol = post(algorithm_plant, IVP(S, Q₀), t_span; Δt0=t_offset)
 
         t1′ = tend(sol)
         Δt = t1 - t1′  # difference of exact and actual control time
