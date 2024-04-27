@@ -3,7 +3,7 @@
 # ========================================
 
 function _project_oa(R::AbstractLazyReachSet, vars, ::Any; remove_zero_generators=true)
-    return Project(R, vars)
+    return project(R, vars)
 end
 
 function _project_oa(R::AbstractTaylorModelReachSet, vars, t; remove_zero_generators=true)
