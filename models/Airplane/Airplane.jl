@@ -262,7 +262,7 @@ function plot_helper(vars)
     fig = plot()
     plot!(fig, project(safe_states, vars); color=:lightgreen, lab="safe")
     plot!(fig, project(initial_state(prob), vars); c=:cornflowerblue, alpha=1, lab="X₀")
-    plot!(fig, sol; vars=vars, color=:yellow, lab="")
+    plot!(fig, sol; vars=vars, color=:yellow, lw=0, alpha=1, lab="")
     lab_sim = falsification ? "simulation" : ""
     plot_simulation!(fig, sim; vars=vars, color=:black, lab=lab_sim)
     return fig

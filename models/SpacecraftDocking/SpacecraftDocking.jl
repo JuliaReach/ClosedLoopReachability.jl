@@ -144,7 +144,7 @@ print_timed(res);
 
 function plot_helper(vars)
     fig = plot()
-    plot!(fig, sol; vars=vars, color=:yellow, lab="")
+    plot!(fig, sol; vars=vars, color=:yellow, lw=0, alpha=1, lab="")
     plot!(fig, project(X₀, vars); c=:cornflowerblue, alpha=0.7, lab="X₀")
     plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
     return fig
