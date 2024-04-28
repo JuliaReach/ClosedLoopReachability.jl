@@ -177,7 +177,7 @@ function plot_helper(vars)
                                               project(goal_states, [vars[2]]))
     fig = plot()
     plot!(fig, goal_states_projected; color=:cyan, lab="goal")
-    plot!(fig, sol; vars=vars, color=:yellow, lab="")
+    plot!(fig, sol; vars=vars, color=:yellow, lw=0, alpha=1, lab="")
     plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
     return fig
 end;

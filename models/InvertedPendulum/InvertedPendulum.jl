@@ -177,7 +177,7 @@ function plot_helper()
     unsafe_states_projected = cartesian_product(Interval(0.5, 1.0),
                                                 project(unsafe_states, [vars[2]]))
     plot!(fig, unsafe_states_projected; color=:red, alpha=:0.2, lab="unsafe")
-    plot!(fig, sol; vars=vars, color=:yellow, lab="")
+    plot!(fig, sol; vars=vars, color=:yellow, lw=0, alpha=1, lab="")
     initial_states_projected = cartesian_product(Singleton([0.0]), project(X₀, [vars[2]]))
     plot!(fig, initial_states_projected; c=:cornflowerblue, alpha=1, lab="X₀")
     if falsification

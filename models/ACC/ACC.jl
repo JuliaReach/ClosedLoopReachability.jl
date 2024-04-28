@@ -227,12 +227,12 @@ function plot_helper(sol, sim)
         ## Subdivide the reach sets in time to obtain more precise plots:
         R = overapproximate(R, Zonotope; ntdiv=5)
         R_rel = linear_map(Matrix(d_rel'), R)
-        plot!(fig, R_rel; vars=(0, 1), c=:red, alpha=0.4)
+        plot!(fig, R_rel; vars=(0, 1), c=:red, lw=0, alpha=0.4)
     end
 
     solz = overapproximate(flowpipe(sol), Zonotope)
     fp_safe = affine_map(Matrix(d_safe'), solz, [D_default])
-    plot!(fig, fp_safe; vars=(0, 1), c=:blue, alpha=0.4)
+    plot!(fig, fp_safe; vars=(0, 1), c=:blue, lw=0, alpha=0.4)
 
     output_map_rel = x -> dot(d_rel, x)
     plot_simulation!(fig, sim; output_map=output_map_rel, color=:red, lab="Drel")

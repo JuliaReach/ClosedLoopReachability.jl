@@ -160,7 +160,7 @@ Tint = try convert(Int, T) catch; T end;
 function plot_helper(vars; show_simulation::Bool=true)
     fig = plot()
     plot!(fig, project(goal_set, vars); color=:cyan, alpha=0.5, lab="goal")
-    plot!(fig, solz; vars=vars, color=:yellow, lab="")
+    plot!(fig, solz; vars=vars, color=:yellow, lw=0, alpha=1, lab="")
     plot!(fig, project(X₀, vars); color=:cornflowerblue, alpha=1, lab="X₀")
     R_end = sol[end]
     plot!(fig, overapproximate(R_end[end], Zonotope, tend(R_end));
