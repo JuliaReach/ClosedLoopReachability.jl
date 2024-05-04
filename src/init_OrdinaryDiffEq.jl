@@ -18,6 +18,7 @@ struct SimulationSolution{TT,CT,IT}
     disturbances::IT  # disturbances for each control cycle
 end
 
+Base.length(sol::SimulationSolution) = length(sol.trajectory)
 function Base.getindex(sol::SimulationSolution, i)
     return SimulationSolution(sol.trajectory[i],
                               sol.controls[i],
