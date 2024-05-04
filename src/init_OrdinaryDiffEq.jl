@@ -18,6 +18,11 @@ struct SimulationSolution{TT,CT,IT}
     disturbances::IT  # disturbances for each control cycle
 end
 
+function Base.getindex(sol::SimulationSolution, i)
+    return SimulationSolution(sol.trajectory[i],
+                              sol.controls[i],
+                              sol.disturbances[i])
+end
 trajectory(sol::SimulationSolution) = sol.trajectory
 controls(sol::SimulationSolution) = sol.controls
 disturbances(sol::SimulationSolution) = sol.disturbances
