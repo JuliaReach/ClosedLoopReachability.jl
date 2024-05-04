@@ -9,8 +9,7 @@ end
 export trajectory,
        trajectories,
        controls,
-       disturbances,
-       solution
+       disturbances
 
 struct SimulationSolution{TT,CT,IT}
     trajectory::TT  # trajectory pieces for each control cycle
@@ -49,7 +48,7 @@ function EnsembleSimulationSolution(simulations, controls, disturbances)
 end
 
 Base.length(ess::EnsembleSimulationSolution) = length(ess.solutions)
-solution(ess::EnsembleSimulationSolution, i) = ess.solutions[i]
+Base.getindex(ess::EnsembleSimulationSolution, i) = ess.solutions[i]
 trajectory(ess::EnsembleSimulationSolution, i) = trajectory(solution(ess, i))
 trajectories(ess::EnsembleSimulationSolution) = trajectory.(ess.solutions)
 controls(ess::EnsembleSimulationSolution, i) = controls(solution(ess, i))
