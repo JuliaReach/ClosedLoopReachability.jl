@@ -176,12 +176,12 @@ U₀ = ZeroSet(6);
 ivp = @ivp(x' = Airplane!(x), dim: 18, x(0) ∈ X₀ × U₀)
 prob = ControlledPlant(ivp, controller, vars_idx, period);
 
-# The safety specification is that ``(x_2, x_7, x_8, x_9) ∈ ±[0.5, 1, 1, 1]``
+# The safety specification is that ``(x_2, x_7, x_8, x_9) ∈ ±[1, 1, 1, 1]``
 # for 20 control periods. A sufficient condition for guaranteed violation is to
 # overapproximate the result with hyperrectangles.
 
 safe_states = concretize(CartesianProductArray([
-    Universe(1), Interval(-0.5, 0.5), Universe(4),
+    Universe(1), Interval(-1.0, 1.0), Universe(4),
     BallInf(zeros(3), 1.0), Universe(9)]))
 
 predicate_set(R) = isdisjoint(overapproximate(R, Hyperrectangle), safe_states)
@@ -197,7 +197,7 @@ function predicate(sol; silent::Bool=false)
 end
 
 if falsification
-    k = 4  # falsification can run for a shorter time horizon
+    k = 7  # falsification can run for a shorter time horizon
 else
     k = 20
 end
@@ -274,8 +274,8 @@ vars = (2, 7)
 fig = plot_helper(vars)
 plot!(fig; xlab="s_y", ylab="ϕ", leg=:bottomleft)
 if falsification
-    xlims!(-0.01, 0.65)
-    ylims!(0.85, 1.01)
+    xlims!(-0.01, 1.15)
+    ylims!(0.5, 1.01)
 else
     xlims!(-0.55, 0.55)
     ylims!(-1.05, 1.05)

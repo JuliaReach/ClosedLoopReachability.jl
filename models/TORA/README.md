@@ -1,6 +1,6 @@
 # Translational Oscillations by a Rotational Actuator (TORA)
 
-The ReLU controller was obtained from [here](https://github.com/verivital/ARCH-COMP2020/blob/31d517b3ff41f2271170f978447211e5ebfe14ed/benchmarks/Benchmark9-Tora/controllerTora.mat).
+The ReLU controller was obtained from [here](https://github.com/verivital/ARCH-COMP2024/blob/92a32d711a136bebc8f7d796140ef80323ce8272/benchmarks/Benchmark9-Tora/controllerTora.mat).
 
 The ReLU/tanh controller was obtained from [here](https://github.com/verivital/ARCH-COMP2022/blob/9edf874ffe2a4631a333ac3f61509243f33faadf/benchmarks/Tora_Heterogeneous/nn_tora_relu_tanh.mat).
 

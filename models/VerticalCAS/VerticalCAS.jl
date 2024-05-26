@@ -239,45 +239,22 @@ const adv_0 = :COC;
 # within ``k \in \{1, …, 10\}`` steps, i.e., ``h(k) > 100`` or ``h(k) < -100``,
 # for all possible choices of acceleration by the pilot.
 
-unsafe_states = HalfSpace([1.0, 0.0], 100.0) ∩ HalfSpace([-1.0, 0.0], 100.0)
+unsafe_states = HalfSpace([0.0, 1.0], 100.0) ∩ HalfSpace([0.0, -1.0], 100.0)
 
-predicate_set(R) = R ⊆ unsafe_states
+predicate_set(R) = isdisjoint(R, unsafe_states)
 
-predicate(sol) = any(predicate_set(R) for F in sol for R in F)
+predicate(sol) = all(predicate_set(R) for R in sol)
 
 kmax = 10
 kmax_warmup = 2;  # shorter time horizon for warm-up run
 
 # ## Analysis
 
-# Helper function to obtain random initial states:
+# Helper function to obtain initial states from hdot0(0):
 
-function random_states(k=1, include_vertices::Bool=false, rand_h0::Bool=true)
-    states = Vector{State{Singleton{Float64,Vector{Float64}}}}()
-    xs = sample(h_0, k; include_vertices=include_vertices)
-    for x in xs
-        if rand_h0
-            ## Use a random value for y:
-            y = hdot0_0[rand(1:4)]
-            S0 = State(Singleton([x[1], y]), τ_0, adv_0)
-            push!(states, S0)
-            continue
-        end
-        ## Use all possible values for y:
-        for i in 1:4
-            y = hdot0_0[i]
-            S0 = State(Singleton([x[1], y]), τ_0, adv_0)
-            push!(states, S0)
-        end
-    end
-    return states
-end;
-
-# Helper function to obtain all initial states:
-
-function all_states()
-    S0 = [convert(Zonotope, cartesian_product(h_0, Singleton([hdot0_0[i]]))) for i in 1:4]
-    return [State(S0i, τ_0, adv_0) for S0i in S0]
+function get_initial_states(hdot0_0i)
+    S0 = convert(Zonotope, cartesian_product(h_0, Singleton([hdot0_0i])))
+    return State(S0, τ_0, adv_0)
 end;
 
 # Helper function to run a simulation:
@@ -307,8 +284,8 @@ end;
 
 function benchmark(X0; kmax, silent::Bool=false)
     res = @timed begin
-        ensemble = [simulate_VerticalCAS(X0i; kmax=kmax) for X0i in X0]
-        _project.(ensemble)
+        seq = simulate_VerticalCAS(X0; kmax=kmax)
+        _project(seq)
     end
     sol = res.value
     silent || print_timed(res)
@@ -317,80 +294,68 @@ function benchmark(X0; kmax, silent::Bool=false)
     res = @timed predicate(sol)
     silent || print_timed(res)
     if res.value
+        silent || println("  The property is satisfied.")
+        result = "verified"
+    else
         silent || println("  The property is violated.")
         result = "falsified"
-    else
-        silent || println("  The property may be satisfied.")
-        result = "not falsified"
     end
 
     return sol, result
 end;
 
-# Simulation result for a random choice of velocity:
-
-X0 = random_states(10, true, false)  # randomly sampled points (incl. vertices)
-println("Running $(length(X0)) simulations with central advisories")
-benchmark(X0; kmax=kmax_warmup, silent=true)  # warm-up
-res = @timed benchmark(X0; kmax=kmax)  # benchmark
-sol_random, result_random = res.value
-@assert (result_random == "falsified") "falsification failed"
-println("Total analysis time:")
-print_timed(res);
-
 # Simulation result for all choices of velocity:
 
-println("Running flowpipe construction (unsound) with central advisories:")
-X0 = all_states()
-benchmark(X0; kmax=kmax_warmup, silent=true)  # warm-up
-res = @timed benchmark(X0; kmax=kmax)  # benchmark
-sol_all, result_all = res.value
-@assert (result_all == "falsified") "falsification failed"
-println("Total analysis time:")
-print_timed(res);
+println("Running flowpipe construction with central advisories:")
+sol_all = []
+for hdot0_0i in hdot0_0
+    println("Running instance hdot0(0) = $hdot0_0i:")
+    X0 = get_initial_states(hdot0_0i)
+    benchmark(X0; kmax=kmax_warmup, silent=true)  # warm-up
+    res = @timed benchmark(X0; kmax=kmax)  # benchmark
+    sol, result = res.value
+    push!(sol_all, sol)
+    if hdot0_0i ∈ [-19.5, -22.5]
+        @assert (result == "verified") "verification failed"
+    elseif hdot0_0i ∈ [-25.5, -28.5]
+        @assert (result == "falsified") "falsification failed"
+    end
+    println("Total analysis time:")
+    print_timed(res)
+end
 
 # ## Results
 
 # Preprocess the results (extend from time points to time intervals):
 
-function extend_x(X::Singleton)
-    return LineSegment(element(X), element(X) .+ [Δτ, 0])
+function extend_x(X::Singleton; Δ=Δτ)
+    return LineSegment(element(X) .- [Δ, 0], element(X))
 end
 
-function extend_x(cp::CartesianProduct)
+function extend_x(cp::CartesianProduct; Δ=Δτ)
     x = first(element(first(cp)))
-    X = Interval(x, x + Δτ)
+    X = Interval(x - Δ, x)
     return CartesianProduct(X, LazySets.second(cp))
 end
 
-function extend_x(vec::Vector)
-    return [[extend_x(X) for X in subvec] for subvec in vec]
+function extend_x(sol_all::Vector)
+    return [vcat([extend_x(X) for X in F[1:(end - 1)]], extend_x(F[end]; Δ=0.1)) for F in sol_all]
 end
 
-sol_random = extend_x(sol_random)
 sol_all = extend_x(sol_all);
 
 # Script to plot the results:
 
 function plot_helper()
-    fig = plot(xlims=(14, 26), ylims=(-200, -50), ylab="h (vertical distance)",
-               xlab="τ (time to reach horizontally)", xflip=true, leg=:topright)
+    fig = plot(ylab="h (vertical distance)", xlab="τ (time to reach horizontally)",
+               xflip=true, leg=:topright, xticks=14:25)
     unsafe_states_projected = cartesian_product(Universe(1),
-                                                project(unsafe_states, [1]))
+                                                project(unsafe_states, [2]))
     plot!(fig, unsafe_states_projected; alpha=0.2, c=:red, lab="unsafe")
     return fig
 end;
 
 # Plot the results:
-
-fig = plot_helper()
-for o in sol_random
-    plot!(fig, o; alpha=1, markershape=:none)
-end
-## Plots.savefig("VerticalCAS-rand.png")  # command to save the plot to a file
-fig = DisplayAs.Text(DisplayAs.PNG(fig))
-
-#-
 
 fig = plot_helper()
 for (i, c) in [(1, :brown), (2, :green), (3, :orange), (4, :cyan)]
@@ -400,7 +365,8 @@ for (i, c) in [(1, :brown), (2, :green), (3, :orange), (4, :cyan)]
         lab = ""
     end
 end
-## Plots.savefig("VerticalCAS-sets.png")  # command to save the plot to a file
+plot!(fig, xlims=(14.9, 25), ylims=(-310, -70))
+## Plots.savefig("VerticalCAS.png")  # command to save the plot to a file
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 end  #jl

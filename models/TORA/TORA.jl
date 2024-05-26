@@ -108,7 +108,7 @@ ivp1 = @ivp(x' = TORA!(x), dim: 5, x(0) ∈ X₀1 × U);
 
 safe_states = cartesian_product(BallInf(zeros(4), 2.0), Universe(1))
 
-predicate1(sol) = overapproximate(sol, Hyperrectangle) ⊆ safe_states
+predicate1(sol, T) = overapproximate(sol, Hyperrectangle) ⊆ safe_states
 
 T1 = 20.0  # time horizon
 T1_warmup = 2 * period1  # shorter time horizon for warm-up run
@@ -136,7 +136,7 @@ goal_states = cartesian_product(Hyperrectangle(low=[-0.1, -0.9], high=[0.2, -0.6
 
 predicate_set2(R) = overapproximate(R, Hyperrectangle) ⊆ goal_states
 
-predicate2(sol) = predicate_set2(sol[end][end])
+predicate2(sol, T) = all(predicate_set2(F[end]) for F in sol if T ∈ tspan(F))
 
 T2 = 5.0  # time horizon
 T2_warmup = 2 * period2;  # shorter time horizon for warm-up run
@@ -156,7 +156,7 @@ algorithm_controller = DeepZ();
 
 # The verification benchmark is given below:
 
-function benchmark(prob; T=T, splitter, algorithm_plant, predicate,
+function benchmark(prob; T, splitter, algorithm_plant, predicate,
                    silent::Bool=false)
     ## Solve the controlled system:
     silent || println("Flowpipe construction:")
@@ -167,7 +167,7 @@ function benchmark(prob; T=T, splitter, algorithm_plant, predicate,
 
     ## Check the property:
     silent || println("Property checking:")
-    res = @timed predicate(sol)
+    res = @timed predicate(sol, T)
     silent || print_timed(res)
     if res.value
         silent || println("  The property is satisfied.")
