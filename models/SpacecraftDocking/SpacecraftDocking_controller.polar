@@ -6,10 +6,10 @@
 256
 4
 Affine
-Affine
+tanh
 tanh
 Affine
-Affine
+tanh
 0.009999999776482582
 0.0
 0.0

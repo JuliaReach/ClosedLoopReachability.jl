@@ -10,7 +10,6 @@ using ClosedLoopReachability
 import OrdinaryDiffEq, Plots, DisplayAs
 using ReachabilityBase.CurrentPath: @current_path
 using ReachabilityBase.Timing: print_timed
-using ClosedLoopReachability: ProjectionPostprocessing
 using Plots: plot, plot!
 
 # ## Model
@@ -39,16 +38,13 @@ const two_n = 2 * n
 end;
 
 # We are given a neural-network controller with 4 hidden layers of 4, 256,
-# 256, and 4 neurons, respectively, tanh activations in the third hidden layer,
-# and identity activations everywhere else. In particular, the first and
-# last layer represent a pre- and postprocessing via linear maps. The controller
-# has 4 inputs (the state variables) and 4 outputs, of which only the first two
-# are meaningful (``F_x, F_y``).
+# 256, and 4 neurons, respectively, identity activations in the first and fourth
+# hidden layer (which represent a pre- and postprocessing via linear maps), and
+# tanh activations everywhere else. The controller has 4 inputs (the state
+# variables) and 2 outputs (``F_x, F_y``).
 
 path = @current_path("SpacecraftDocking", "SpacecraftDocking_controller.polar")
-controller = read_POLAR(path)
-
-postprocessing = ProjectionPostprocessing(1:2);
+controller = read_POLAR(path);
 
 # The control period is 1 time unit.
 
@@ -58,14 +54,13 @@ period = 1.0;
 
 # We consider a smaller uncertain initial condition than originally proposed:
 
-X₀ = Hyperrectangle([88, 88, 0.0, 0], [1, 1, 0.01, 0.01])
+X₀ = Hyperrectangle(low=[70, 70, -0.14, -0.14], high=[106, 106, 0.14, 0.14])
 U₀ = ZeroSet(2);
 
 # The control problem is:
 
 ivp = @ivp(x' = SpacecraftDocking!(x), dim: 6, x(0) ∈ X₀ × U₀)
-prob = ControlledPlant(ivp, controller, vars_idx, period;
-                       postprocessing=postprocessing);
+prob = ControlledPlant(ivp, controller, vars_idx, period);
 
 # The safety specification is given as follows:
 #
@@ -145,25 +140,23 @@ print_timed(res);
 function plot_helper(vars)
     fig = plot()
     plot!(fig, sol; vars=vars, color=:yellow, lw=0, alpha=1, lab="")
-    plot!(fig, project(X₀, vars); c=:cornflowerblue, alpha=0.7, lab="X₀")
+    if vars[1] == 0
+        initial_states_projected = cartesian_product(Singleton([0.0]), project(X₀, [vars[2]]))
+        plot!(fig, initial_states_projected; c=:cornflowerblue, alpha=1, lab="X₀",
+              m=:none, lw=3)
+    else
+        plot!(fig, project(X₀, vars); c=:cornflowerblue, alpha=1, lab="X₀")
+    end
     plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
     return fig
 end;
 
 # Plot the results:
 
-vars = (1, 2)
+vars = (0, 1)
 fig = plot_helper(vars)
-plot!(fig; xlab="x", ylab="y")
-## Plots.savefig(fig, "SpacecraftDocking-x-y.png")  # command to save the plot to a file
-fig = DisplayAs.Text(DisplayAs.PNG(fig))
-
-#-
-
-vars = (3, 4)
-fig = plot_helper(vars)
-plot!(fig; xlab="x'", ylab="y'")
-## Plots.savefig(fig, "SpacecraftDocking-x'-y'.png")  # command to save the plot to a file
+plot!(fig; xlab="t", ylab="x₁")
+## Plots.savefig(fig, "SpacecraftDocking.png")  # command to save the plot to a file
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 end  #jl

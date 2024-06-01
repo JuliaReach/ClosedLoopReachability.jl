@@ -114,7 +114,7 @@ goal_states = HPolyhedron([HalfSpace(SingleEntryVector(3, 15, -1.0), -0.94),
 
 predicate_set(R) = overapproximate(R, Hyperrectangle) ⊆ goal_states
 
-predicate(sol) = predicate_set(sol[end][end])
+predicate(sol) = all(predicate_set(F[end]) for F in sol if T ∈ tspan(F))
 
 T = 5.0
 T_warmup = 2 * period;  # shorter time horizon for warm-up run

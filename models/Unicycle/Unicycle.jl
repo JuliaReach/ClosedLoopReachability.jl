@@ -92,7 +92,7 @@ goal_set = cartesian_product(Hyperrectangle(zeros(4), [0.6, 0.2, 0.06, 0.3]),
 
 predicate_set(R) = overapproximate(R, Hyperrectangle, tend(R)) ⊆ goal_set
 
-predicate(sol) = predicate_set(sol[end][end])
+predicate(sol) = all(predicate_set(F[end]) for F in sol if T ∈ tspan(F))
 
 T = 10.0
 T_warmup = 2 * period;  # shorter time horizon for warm-up run
@@ -162,9 +162,14 @@ function plot_helper(vars; show_simulation::Bool=true)
     plot!(fig, project(goal_set, vars); color=:cyan, alpha=0.5, lab="goal")
     plot!(fig, solz; vars=vars, color=:yellow, lw=0, alpha=1, lab="")
     plot!(fig, project(X₀, vars); color=:cornflowerblue, alpha=1, lab="X₀")
-    R_end = sol[end]
-    plot!(fig, overapproximate(R_end[end], Zonotope, tend(R_end));
-          vars=vars, color=:orange, lab="reach set at t = $Tint")
+    lab = "reach set at t = $Tint"
+    for F in sol
+        if T ∈ tspan(F)
+            plot!(fig, overapproximate(F[end], Zonotope, tend(F));
+                  vars=vars, color=:orange, lab=lab)
+            lab = ""
+        end
+    end
     if show_simulation
         plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
     end

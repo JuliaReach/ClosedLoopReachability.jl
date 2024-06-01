@@ -10,13 +10,22 @@ using ClosedLoopReachability
 import OrdinaryDiffEq, Plots, DisplayAs
 using ReachabilityBase.CurrentPath: @current_path
 using ReachabilityBase.Timing: print_timed
-using ClosedLoopReachability: Specification
+using ClosedLoopReachability: Specification, NoSplitter
 using Plots: plot, plot!, xlims!, ylims!
 
+# The following option determines whether the verification settings should be
+# used in the less robust scenario. The verification settings are chosen to show
+# that the safety property is satisfied, which is expensive in this case.
+# Concretely, we split the initial states into small chunks and run many
+# analyses. Without the verification settings, the analysis is only run for a
+# short time horizon.
+
+const verification = false;
+
 # The following option determines whether the falsification settings should be
-# used. The falsification settings are sufficient to show that the safety
-# property is violated. Concretely, we start from an initial point and use a
-# smaller time horizon.
+# used in the more robust scenario. The falsification settings are sufficient to
+# show that the safety property is violated. Concretely, we start from an
+# initial point and use a smaller time horizon.
 
 const falsification = true;
 
@@ -115,13 +124,9 @@ function InvertedTwoLinkPendulum_spec(less_robust_scenario::Bool)
     controller = less_robust_scenario ? controller_lr : controller_mr
 
     X₀ = BallInf(fill(1.15, 4), 0.15)
-    if falsification
+    if falsification && !less_robust_scenario
         ## Choose a single point in the initial states (here: the top-most one):
-        if less_robust_scenario
-            X₀ = Singleton(high(X₀))
-        else
-            X₀ = Singleton(low(X₀))
-        end
+        X₀ = Singleton(high(X₀))
     end
     U₀ = ZeroSet(2)
 
@@ -133,31 +138,46 @@ function InvertedTwoLinkPendulum_spec(less_robust_scenario::Bool)
 
     ## Safety specification:
     if less_robust_scenario
-        box = BallInf(fill(0.35, 4), 1.35)
+        box = BallInf(fill(0.15, 4), 1.85)
     else
-        box = BallInf(fill(0.5, 4), 1.0)
+        box = BallInf(fill(0.0, 4), 1.5)
     end
     safe_states = cartesian_product(box, Universe(2))
 
-    predicate_set(R) = isdisjoint(overapproximate(R, Hyperrectangle), safe_states)
+    predicate_set_safe(R) = overapproximate(R, Hyperrectangle) ⊆ safe_states
+    predicate_set_unsafe(R) = isdisjoint(overapproximate(R, Hyperrectangle), safe_states)
 
-    function predicate(sol; silent::Bool=false)
+    function predicate_safe(sol; silent::Bool=false)
         for F in sol, R in F
-            if predicate_set(R)
-                silent || println("  Violation for time range $(tspan(R)).")
+            if !predicate_set_safe(R)
+                silent || println("  Potential violation for time range $(tspan(R)).")
+                return false
+            end
+        end
+        return true
+    end
+
+    function predicate_unsafe(sol)
+        for F in sol, R in F
+            if predicate_set_unsafe(R)
                 return true
             end
         end
         return false
     end
 
-    if falsification
+    if less_robust_scenario
+        predicate = predicate_safe
+    else
+        predicate = predicate_unsafe
+    end
+
+    if !verification && less_robust_scenario
+        ## Run for a shorter time horizon if verification is deactivated:
+        k = 2
+    elseif falsification && !less_robust_scenario
         ## Falsification can run for a shorter time horizon:
-        if less_robust_scenario
-            k = 5
-        else
-            k = 7
-        end
+        k = 18
     else
         k = 20
     end
@@ -170,34 +190,46 @@ end;
 
 # ## Analysis
 
-# To enclose the continuous dynamics, we use a Taylor-model-based algorithm:
-
-algorithm_plant = TMJets(abstol=1e-2, orderT=3, orderQ=1);
-
-# To propagate sets through the neural network, we use the `DeepZ` algorithm:
+# To enclose the continuous dynamics, we use a Taylor-model-based algorithm. We
+# also use an additional splitting strategy to increase the precision. These
+# algorithms are defined later for each scenario. To propagate sets through the
+# neural network, we use the `DeepZ` algorithm:
 
 algorithm_controller = DeepZ();
 
-# The falsification benchmark is given below:
+# The verification/falsification benchmark (depending on the scenario) is given
+# below:
 
-function benchmark(prob, spec; T, silent::Bool=false)
+function benchmark(prob, spec; T, algorithm_plant, splitter, less_robust_scenario, silent::Bool=false)
     ## Solve the controlled system:
     silent || println("Flowpipe construction:")
     res = @timed solve(prob; T=T, algorithm_controller=algorithm_controller,
-                       algorithm_plant=algorithm_plant)
+                       algorithm_plant=algorithm_plant, splitter=splitter)
     sol = res.value
     silent || print_timed(res)
 
     ## Check the property:
     silent || println("Property checking:")
-    res = @timed spec.predicate(sol; silent=silent)
-    silent || print_timed(res)
-    if res.value
-        silent || println("  The property is violated.")
-        result = "falsified"
+    if less_robust_scenario
+        res = @timed spec.predicate(sol; silent=silent)
+        silent || print_timed(res)
+        if res.value
+            silent || println("  The property is verified.")
+            result = "verified"
+        else
+            silent || println("  The property may be violated.")
+            result = "not verified"
+        end
     else
-        silent || println("  The property may be satisfied.")
-        result = "not falsified"
+        res = @timed spec.predicate(sol)
+        silent || print_timed(res)
+        if res.value
+            silent || println("  The property is violated.")
+            result = "falsified"
+        else
+            silent || println("  The property may be satisfied.")
+            result = "not falsified"
+        end
     end
 
     return sol, result
@@ -206,26 +238,38 @@ end
 function run(; less_robust_scenario::Bool)
     if less_robust_scenario
         println("# Running analysis with less robust scenario")
+        algorithm_plant = TMJets(abstol=1e-9, orderT=5, orderQ=1)
+        splitter = !verification ? BoxSplitter([[1.15], [1.15], Float64[], [1.2]]) :
+            BoxSplitter([[1.15], [1.15], [1.12, 1.25], [1.05, 1.11, 1.165, 1.21, 1.257]])
         T_warmup = 2 * period_lr  # shorter time horizon for warm-up run
     else
         println("# Running analysis with more robust scenario")
+        algorithm_plant = TMJets(abstol=1e-2, orderT=3, orderQ=1)
+        splitter = NoSplitter()
         T_warmup = 2 * period_mr  # shorter time horizon for warm-up run
     end
     prob, spec = InvertedTwoLinkPendulum_spec(less_robust_scenario)
 
-    ## Run the falsification benchmark:
-    benchmark(prob, spec; T=T_warmup, silent=true)  # warm-up
-    res = @timed benchmark(prob, spec; T=spec.T)  # benchmark
+    ## Run the verification/falsification benchmark:
+    benchmark(prob, spec; T=T_warmup, algorithm_plant=algorithm_plant, splitter=splitter,
+              less_robust_scenario=less_robust_scenario, silent=true)  # warm-up
+    res = @timed benchmark(prob, spec; T=spec.T, algorithm_plant=algorithm_plant,  # benchmark
+                           splitter=splitter, less_robust_scenario=less_robust_scenario)
     sol, result = res.value
-    @assert (result == "falsified") "falsification failed"
+    if verification && less_robust_scenario
+        @assert (result == "verified") "verification failed"
+    elseif !less_robust_scenario
+        @assert (result == "falsified") "falsification failed"
+    end
     println("Total analysis time:")
     print_timed(res)
 
     ## Compute some simulations:
     println("Simulation:")
-    trajectories = falsification ? 1 : 10
+    simulations = less_robust_scenario || !falsification
+    trajectories = simulations ? 10 : 1
     res = @timed simulate(prob; T=spec.T, trajectories=trajectories,
-                          include_vertices=!falsification)
+                          include_vertices=simulations)
     sim = res.value
     print_timed(res)
 
@@ -244,33 +288,39 @@ sol_mr, sim_mr, prob_mr, spec_mr = run(less_robust_scenario=false);
 
 # Script to plot the results:
 
-function plot_helper(vars, sol, sim, prob, spec)
+function plot_helper(vars, sol, sim, prob, spec; lab_sim="")
     safe_states = spec.ext
     fig = plot()
     plot!(fig, project(safe_states, vars); color=:lightgreen, lab="safe")
     plot!(fig, sol; vars=vars, color=:yellow, lw=0, alpha=1, lab="")
     plot!(fig, project(initial_state(prob), vars); c=:cornflowerblue, alpha=1, lab="X₀")
-    lab_sim = falsification ? "simulation" : ""
     plot_simulation!(fig, sim; vars=vars, color=:black, lab=lab_sim)
-    if falsification
-        plot!(fig; leg=:topleft)
-    end
     return fig
 end;
 
 # Plot the results:
 
-vars=(3, 4)
+vars = (1, 2)
 fig = plot_helper(vars, sol_lr, sim_lr, prob_lr, spec_lr)
-plot!(fig; xlab="θ₁'", ylab="θ₂'")
+plot!(fig; xlab="θ₁", ylab="θ₂")
 ## Command to save the plot to a file:
-## Plots.savefig(fig, "InvertedTwoLinkPendulum-less-robust.png")
+## Plots.savefig(fig, "InvertedTwoLinkPendulum-less-robust-x1x2.png")
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 #-
 
-vars=(3, 4)
-fig = plot_helper(vars, sol_mr, sim_mr, prob_mr, spec_mr)
+vars = (3, 4)
+fig = plot_helper(vars, sol_lr, sim_lr, prob_lr, spec_lr)
+plot!(fig; xlab="θ₁'", ylab="θ₂'")
+## Command to save the plot to a file:
+## Plots.savefig(fig, "InvertedTwoLinkPendulum-less-robust-x3x4.png")
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+
+#-
+
+vars = (3, 4)
+lab_sim = falsification ? "simulation" : ""
+fig = plot_helper(vars, sol_mr, sim_mr, prob_mr, spec_mr; lab_sim=lab_sim)
 plot!(fig; xlab="θ₁'", ylab="θ₂'")
 ## Command to save the plot to a file:
 ## Plots.savefig(fig, "InvertedTwoLinkPendulum-more-robust.png")
