@@ -99,21 +99,21 @@ vars_idx = Dict(:states => 1:12, :controls => 13:18)
 const m = 1.0
 const g = 1.0
 
-Tψ(ψ) = [cos(ψ)  -sin(ψ)  0;
-         sin(ψ)   cos(ψ)  0;
-              0        0  1]
+Tψ(ψ) = [ cos(ψ)  -sin(ψ)  zero(ψ);
+          sin(ψ)   cos(ψ)  zero(ψ);
+         zero(ψ)  zero(ψ)   one(ψ)]
 
-Tθ(θ) = [ cos(θ)  0  sin(θ);
-               0  1       0;
-         -sin(θ)  0  cos(θ)]
+Tθ(θ) = [ cos(θ)  zero(θ)   sin(θ);
+         zero(θ)   one(θ)  zero(θ);
+         -sin(θ)  zero(θ)   cos(θ)]
 
-Tϕ(ϕ) = [1       0        0;
-         0  cos(ϕ)  -sin(ϕ);
-         0  sin(ϕ)   cos(ϕ)]
+Tϕ(ϕ) = [one(ϕ)  zero(ϕ)  zero(ϕ);
+         zero(ϕ)  cos(ϕ)  -sin(ϕ);
+         zero(ϕ)  sin(ϕ)   cos(ϕ)]
 
-Rϕθ(ϕ, θ) = [1  tan(θ) * sin(ϕ)  tan(θ) * cos(ϕ);
-             0           cos(θ)          -sin(ϕ);
-             0  sec(θ) * sin(ϕ)  sec(θ) * cos(ϕ)]
+Rϕθ(ϕ, θ) = [ one(ϕ)  tan(θ) * sin(ϕ)  tan(θ) * cos(ϕ);
+             zero(ϕ)           cos(θ)          -sin(ϕ);
+             zero(ϕ)  sec(θ) * sin(ϕ)  sec(θ) * cos(ϕ)]
 
 @taylorize function Airplane!(dx, x, params, t)
     s_x, s_y, s_z, v_x, v_y, v_z, ϕ, θ, ψ, r, p, q, Fx, Fy, Fz, Mx, My, Mz = x
