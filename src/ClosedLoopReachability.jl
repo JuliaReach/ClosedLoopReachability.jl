@@ -17,7 +17,15 @@ export BoxSplitter,
        IndexedSplitter,
        SignSplitter
 
-# solvers
-export solve, simulate
+# solve
+export solve
+
+# simulation
+export simulate,
+       trajectory,
+       trajectories,
+       controls,
+       disturbances,
+       solutions
 
 end  # module
