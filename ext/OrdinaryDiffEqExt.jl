@@ -1,4 +1,6 @@
-import .OrdinaryDiffEq
+module OrdinaryDiffEqExt
+
+isdefined(Base, :get_extension) ? (import OrdinaryDiffEq) : (import .OrdinaryDiffEq)
 const ODE = OrdinaryDiffEq
 
 if isdefined(OrdinaryDiffEq, :controls)
@@ -80,3 +82,5 @@ function _solve_ensemble(ivp, X0_samples, tspan;
     return ODE.solve(ensemble_prob, trajectories_alg, ensemble_alg;
                      trajectories=length(X0_samples))
 end
+
+end  # module
