@@ -13,11 +13,19 @@ ReachabilityBase = "379f33d0-9447-4353-bd03-d664070e549f"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 
+[weakdeps]
+OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
+Requires = "ae029012-a4dd-5104-9daa-d747884805df"
+
+[extensions]
+OrdinaryDiffEqExt = "OrdinaryDiffEq"
+
 [compat]
 CommonSolve = "0.1 - 0.2"
 ControllerFormats = "0.1 - 0.2"
 LazySets = "2.14, 3"
 NeuralNetworkReachability = "0.1"
+OrdinaryDiffEq = "6"
 Parameters = "0.12"
 ReachabilityAnalysis = "0.14.5 - 0.27"
 ReachabilityBase = "0.2.1 - 0.3"

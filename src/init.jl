@@ -1,4 +1,7 @@
-using Requires, Reexport
+@static if !isdefined(Base, :get_extension)
+    using Requires
+end
+using Reexport
 
 using ControllerFormats
 # namespace conflict
@@ -32,12 +35,14 @@ const IA = IntervalArithmetic
 import CommonSolve: solve
 
 # optional dependencies
-function __init__()
-    @require OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed" begin
-        include("init_OrdinaryDiffEq.jl")
-        @require Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80" begin
-            import .Plots
-            include("init_OrdinaryDiffEq_Plots.jl")
+@static if !isdefined(Base, :get_extension)
+    function __init__()
+        @require OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed" begin
+            include("../ext/OrdinaryDiffEqExt.jl")
+            @require Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80" begin
+                import .Plots
+                include("init_OrdinaryDiffEq_Plots.jl")
+            end
         end
     end
 end
