@@ -1,3 +1,13 @@
+module OrdinaryDiffEqPlotsExt
+
+@static if isdefined(Base, :get_extension)
+    import OrdinaryDiffEq
+    import Plots
+else
+    import .OrdinaryDiffEq
+    import .Plots
+end
+
 export plot_simulation!
 
 # convenience function for plotting simulation results
@@ -64,3 +74,5 @@ function _plot_simulation_output_map!(fig, sim, output_map; color, label)
     end
     return fig
 end
+
+end  # module
