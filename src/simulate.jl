@@ -157,3 +157,11 @@ function _solve_ensemble(ivp, extended, tspan; kwargs...)
     require(mod, :OrdinaryDiffEq; fun_name="simulate")
     return nothing
 end
+
+# defined in `OrdinaryDiffEqPlotsExt.jl`
+function plot_simulation!(fig, sim; vars=nothing, output_map=nothing, kwargs...)
+    mod = isdefined(Base, :get_extension) ?
+          Base.get_extension(@__MODULE__, :OrdinaryDiffEqPlotsExt) : @__MODULE__
+    require(mod, [:OrdinaryDiffEq, :Plots]; fun_name="plot_simulation!")
+    return nothing
+end

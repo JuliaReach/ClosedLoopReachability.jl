@@ -28,4 +28,7 @@ export simulate,
        disturbances,
        solutions
 
+# plotting
+export plot_simulation!
+
 end  # module
