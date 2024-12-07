@@ -1,3 +1,13 @@
+struct SimulationSolution{TT,CT,IT}
+    trajectory::TT  # trajectory pieces for each control cycle
+    controls::CT  # control inputs for each control cycle
+    disturbances::IT  # disturbances for each control cycle
+end
+
+struct EnsembleSimulationSolution{TT,CT,IT}
+    solutions::Vector{SimulationSolution{TT,CT,IT}}
+end
+
 """
     simulate(cp::AbstractControlProblem, args...; kwargs...)
 

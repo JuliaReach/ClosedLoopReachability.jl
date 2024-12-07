@@ -3,9 +3,11 @@ module OrdinaryDiffEqPlotsExt
 @static if isdefined(Base, :get_extension)
     import OrdinaryDiffEq
     import Plots
+    using ClosedLoopReachability: EnsembleSimulationSolution
 else
     import .OrdinaryDiffEq
     import .Plots
+    using ..EnsembleSimulationSolution
 end
 
 export plot_simulation!
