@@ -1,65 +1,19 @@
 module OrdinaryDiffEqExt
 
-@static if isdefined(Base, :get_extension)
-    import OrdinaryDiffEq
-    using ClosedLoopReachability: SimulationSolution, EnsembleSimulationSolution
-else
-    import .OrdinaryDiffEq
-    using ..SimulationSolution
-    using ..EnsembleSimulationSolution
-end
+import OrdinaryDiffEq
 const ODE = OrdinaryDiffEq
 
+using ClosedLoopReachability: EnsembleSimulationSolution, AbstractControlProblem, plant, controller,
+                              states, project, initial_state, period, _get_tspan,
+                              control_preprocessing, control_postprocessing, tstart, diam, sample,
+                              apply, forward, tend
+import ClosedLoopReachability.ReachabilityAnalysis
+import ClosedLoopReachability: states, controls, disturbances
 
 if isdefined(OrdinaryDiffEq, :controls)
     # before v7, DE had deps importing ModelingToolkit, which exports `controls`
     import .OrdinaryDiffEq: controls
 end
-
-export trajectory,
-       trajectories,
-       controls,
-       disturbances,
-       solutions
-
-Base.length(sol::SimulationSolution) = length(sol.trajectory)
-function Base.getindex(sol::SimulationSolution, i)
-    return SimulationSolution(sol.trajectory[i],
-                              sol.controls[i],
-                              sol.disturbances[i])
-end
-trajectory(sol::SimulationSolution) = sol.trajectory
-controls(sol::SimulationSolution) = sol.controls
-disturbances(sol::SimulationSolution) = sol.disturbances
-
-
-# constructor from a bulk input
-function EnsembleSimulationSolution(simulations, controls, disturbances)
-    n = length(simulations)  # number of pieces
-    m = length(simulations[1])  # number of trajectories
-    @assert n == length(controls) == length(disturbances) "incompatible lengths"
-    @assert all(m == length(piece) for piece in simulations)
-
-    simulations_new = @inbounds [[simulations[i].u[j] for i in 1:n] for j in 1:m]
-    controls_new = @inbounds [[controls[i][j] for i in 1:n] for j in 1:m]
-    disturbances_new = @inbounds [[(isassigned(disturbances, i) ? disturbances[i][j] : nothing)
-                                   for i in 1:n] for j in 1:m]
-    solutions = @inbounds [SimulationSolution(simulations_new[j],
-                                              controls_new[j], disturbances_new[j]) for j in 1:m]
-    return EnsembleSimulationSolution(solutions)
-end
-
-Base.length(ess::EnsembleSimulationSolution) = length(ess.solutions)
-Base.getindex(ess::EnsembleSimulationSolution, i) = ess.solutions[i]
-function solutions(ess::EnsembleSimulationSolution, i)
-    return EnsembleSimulationSolution([sol[i] for sol in ess.solutions])
-end
-trajectory(ess::EnsembleSimulationSolution, i) = trajectory(solution(ess, i))
-trajectories(ess::EnsembleSimulationSolution) = trajectory.(ess.solutions)
-controls(ess::EnsembleSimulationSolution, i) = controls(solution(ess, i))
-controls(ess::EnsembleSimulationSolution) = controls.(ess.solutions)
-disturbances(ess::EnsembleSimulationSolution, i) = disturbances(solution(ess, i))
-disturbances(ess::EnsembleSimulationSolution) = disturbances.(ess.solutions)
 
 # simulation of multiple trajectories for an ODE system and a time span
 # currently we can't use this method from RA because the sampling should be made from outside the function

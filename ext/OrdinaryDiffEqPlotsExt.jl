@@ -1,16 +1,10 @@
 module OrdinaryDiffEqPlotsExt
 
-@static if isdefined(Base, :get_extension)
-    import OrdinaryDiffEq
-    import Plots
-    using ClosedLoopReachability: EnsembleSimulationSolution
-else
-    import .OrdinaryDiffEq
-    import .Plots
-    using ..EnsembleSimulationSolution
-end
+import OrdinaryDiffEq
+import Plots
+using ClosedLoopReachability: EnsembleSimulationSolution, trajectories
 
-export plot_simulation!
+import ClosedLoopReachability: plot_simulation!
 
 # convenience function for plotting simulation results
 # use `output_map` to plot a linear combination of the state variables
