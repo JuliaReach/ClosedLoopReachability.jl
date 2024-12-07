@@ -1,7 +1,15 @@
 module OrdinaryDiffEqExt
 
-isdefined(Base, :get_extension) ? (import OrdinaryDiffEq) : (import .OrdinaryDiffEq)
+@static if isdefined(Base, :get_extension)
+    import OrdinaryDiffEq
+    using ClosedLoopReachability: SimulationSolution, EnsembleSimulationSolution
+else
+    import .OrdinaryDiffEq
+    using ..SimulationSolution
+    using ..EnsembleSimulationSolution
+end
 const ODE = OrdinaryDiffEq
+
 
 if isdefined(OrdinaryDiffEq, :controls)
     # before v7, DE had deps importing ModelingToolkit, which exports `controls`
@@ -14,12 +22,6 @@ export trajectory,
        disturbances,
        solutions
 
-struct SimulationSolution{TT,CT,IT}
-    trajectory::TT  # trajectory pieces for each control cycle
-    controls::CT  # control inputs for each control cycle
-    disturbances::IT  # disturbances for each control cycle
-end
-
 Base.length(sol::SimulationSolution) = length(sol.trajectory)
 function Base.getindex(sol::SimulationSolution, i)
     return SimulationSolution(sol.trajectory[i],
@@ -30,9 +32,6 @@ trajectory(sol::SimulationSolution) = sol.trajectory
 controls(sol::SimulationSolution) = sol.controls
 disturbances(sol::SimulationSolution) = sol.disturbances
 
-struct EnsembleSimulationSolution{TT,CT,IT}
-    solutions::Vector{SimulationSolution{TT,CT,IT}}
-end
 
 # constructor from a bulk input
 function EnsembleSimulationSolution(simulations, controls, disturbances)
