@@ -1,6 +1,6 @@
 # # Unicycle
 #
-# The Unicycle benchmark models a unicycle vehicle [^AKM].
+# The Unicycle benchmark models a unicycle vehicle [AlthoffKM17](@cite).
 #
 # ![](Unicycle_explanation.png)
 
@@ -202,9 +202,3 @@ fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 end  #jl
 nothing  #jl
-
-# ## References
-
-# [^AKM]: Matthias Althoff, Markus Koschi, and Stefanie Manzinger (2017).
-#         *CommonRoad: Composable benchmarks for motion planning on roads.* In
-#         [IEEE Intelligent Vehicles Symposium](https://doi.org/10.1109/IVS.2017.7995802).

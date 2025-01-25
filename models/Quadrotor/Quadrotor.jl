@@ -21,7 +21,7 @@ using Plots: plot, plot!
 # ``(x_7, x_8, x_9)`` is the (roll, pitch, yaw) angle, and
 # ``(x_{10}, x_{11}, x_{12})`` is the (roll, pitch, yaw) rate. The control
 # inputs ``(u_1, u_2, u_3)`` represent the torque. For more details we refer to
-# [^B].
+# [Beard08](@citet).
 
 vars_idx = Dict(:states => 1:12, :controls => 13:15)
 
@@ -192,8 +192,3 @@ fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 end  #jl
 nothing  #jl
-
-# ## References
-
-# [^B]: Randal Beard (2008). *Quadrotor dynamics and control*.
-#       [Technical report](https://scholarsarchive.byu.edu/facpub/1325/).
