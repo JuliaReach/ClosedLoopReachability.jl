@@ -2,7 +2,7 @@
 #
 # The Adaptive Cruise Control (ACC) benchmark models a car that drives at a set
 # velocity and maintains a safe distance from a lead car by adjusting the
-# longitudinal acceleration [^TCMMJK].
+# longitudinal acceleration [TranCLMJK19](@cite).
 #
 # ![](ACC_explanation.png)
 
@@ -258,11 +258,3 @@ fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 end  #jl
 nothing  #jl
-
-# ## References
-
-# [^TCMMJK]: Hoang-Dung Tran, Feiyang Cai, Diego Manzanas Lopez, Patrick Musau,
-#            Taylor T. Johnson, and Xenofon D. Koutsoukos (2019). *Safety
-#            verification of cyber-physical systems with reinforcement learning
-#            control*. In
-#            [ACM Trans. Embed. Comput. Syst.](https://doi.org/10.1145/3358230)

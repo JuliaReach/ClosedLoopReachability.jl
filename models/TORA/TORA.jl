@@ -3,7 +3,7 @@
 # The TORA benchmark models a cart attached to a wall with a spring. The cart is
 # free to move on a friction-less surface and has a weight attached to an arm,
 # which is free to rotate about an axis. This serves as the control input to
-# stabilize the cart at the origin ``x = 0`` [^JFK].
+# stabilize the cart at the origin ``x = 0`` [JankovicFK96](@cite).
 #
 # ![](TORA_explanation.png)
 #
@@ -320,9 +320,3 @@ fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 end  #jl
 nothing  #jl
-
-# ## References
-
-# [^JFK]: Mrdjan Jankovic, Daniel Fontaine, and Petar V. Kokotovic. *TORA
-#         example: cascade- and passivity-based control designs*. In
-#         [IEEE Trans. Control. Syst. Technol.](https://doi.org/10.1109/87.491203)

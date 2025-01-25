@@ -1,6 +1,6 @@
 # # Attitude Control
 #
-# The Attitude Control benchmark models a rigid-body system [^PPR].
+# The Attitude Control benchmark models a rigid-body system [PrajnaPR04](@cite).
 
 module AttitudeControl  #jl
 
@@ -165,9 +165,3 @@ fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 end  #jl
 nothing  #jl
-
-# ## References
-
-# [^PPR]: Stephen Prajna, Pablo A. Parrilo, and Anders Rantzer (2004).
-#         *Nonlinear control synthesis by convex optimization*. In
-#         [IEEE Trans. Autom. Control](https://doi.org/10.1109/TAC.2003.823000).

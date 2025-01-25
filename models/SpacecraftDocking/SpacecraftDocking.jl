@@ -16,7 +16,7 @@ using Plots: plot, plot!
 
 # There are 4 state variables ``(s_x, s_y, \dot{s}_x, \dot{s}_y)``, where
 # ``(s_x, s_y)`` is the position and ``(\dot{s}_x, \dot{s}_y)`` is the velocity
-# of the spacecraft [^RCMGDH].
+# of the spacecraft [RavaioliCMGDH22](@cite).
 
 vars_idx = Dict(:states => 1:4, :controls => 5:6)
 
@@ -161,11 +161,3 @@ fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 end  #jl
 nothing  #jl
-
-# ## References
-
-# [^RCMGDH]: Umberto J. Ravaioli, James Cunningham, John McCarroll, Vardaan
-#            Gangal, Kyle Dunlap, and Kerianne L. Hobbs (2022). *Safe
-#            reinforcement learning benchmark environments for aerospace control
-#            systems*. In
-#            [IEEE Aerospace Conference](https://doi.org/10.1109/AERO53065.2022.9843750).

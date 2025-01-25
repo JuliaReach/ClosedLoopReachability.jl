@@ -2,7 +2,7 @@
 #
 # The VerticalCAS benchmark considers a collision avoidance system (CAS),
 # required for commercial aircraft, which gives vertical climbrate advisories
-# to pilots [^JK][^ABKL].
+# to pilots [JulianK19, AkintundeBKL20](@cite).
 
 module VerticalCAS  #jl
 
@@ -371,15 +371,3 @@ fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 end  #jl
 nothing  #jl
-
-# ## References
-
-# [^JK]: Kyle D. Julian and Mykel J. Kochenderfer (2019). *A reachability method
-#        for verifying dynamical systems with deep neural network controllers*.
-#        [arXiv:1903.00520](https://arxiv.org/pdf/1903.00520.pdf).
-#
-# [^ABKL]: Michael E. Akintunde, Elena Botoeva, Panagiotis Kouvaros, and Alessio
-#          Lomuscio (2020). *Formal verification of neural agents in
-#          non-deterministic environments*. In [Proceedings of the 19th
-#          International Conference on Autonomous Agents and Multiagent
-#          Systems](http://ifaamas.org/Proceedings/aamas2020/pdfs/p25.pdf).

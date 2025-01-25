@@ -1,4 +1,4 @@
-using Documenter, ClosedLoopReachability
+using Documenter, ClosedLoopReachability, DocumenterCitations
 
 DocMeta.setdocmeta!(ClosedLoopReachability, :DocTestSetup,
                     :(using ClosedLoopReachability); recursive=true)
@@ -6,12 +6,15 @@ DocMeta.setdocmeta!(ClosedLoopReachability, :DocTestSetup,
 # generate models
 include("generate.jl")
 
+bib = CitationBibliography(joinpath(@__DIR__, "src", "refs.bib"); style=:alpha)
+
 makedocs(; sitename="ClosedLoopReachability.jl",
          modules=[ClosedLoopReachability],
          format=Documenter.HTML(; prettyurls=get(ENV, "CI", nothing) == "true",
                                 collapselevel=1,
-                                assets=["assets/aligned.css"]),
+                                assets=["assets/aligned.css", "assets/citations.css"]),
          pagesonly=true,
+         plugins=[bib],
          pages=["Home" => "index.md",
                 "Examples" => Any[
                                   #
@@ -28,7 +31,8 @@ makedocs(; sitename="ClosedLoopReachability.jl",
                                   #
                                   ],
                 "API Reference" => Any["Problem types" => "lib/problems.md",
-                                       "Solvers" => "lib/solvers.md"]])
+                                       "Solvers" => "lib/solvers.md"],
+                "Bibliography" => "bibliography.md"])
 
 deploydocs(; repo="github.com/JuliaReach/ClosedLoopReachability.jl.git",
            push_preview=true)
