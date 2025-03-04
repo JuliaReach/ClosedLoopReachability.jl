@@ -2,12 +2,10 @@
 
 | **Documentation** | **Status** | **Community** | **License** |
 |:-----------------:|:----------:|:-------------:|:-----------:|
-| [![docs-dev][dev-img]][dev-url] | [![CI][ci-img]][ci-url] [![codecov][cov-img]][cov-url] [![PkgEval][pkgeval-img]][pkgeval-url] [![aqua][aqua-img]][aqua-url] [![dev-commits][dev-commits-url]][dev-commits-target] | [![zulip][chat-img]][chat-url] [![JuliaHub][juliahub-img]][juliahub-url] | [![license][lic-img]][lic-url] |
+| [![docs-dev][dev-img]][dev-url] | [![codecov][cov-img]][cov-url] [![PkgEval][pkgeval-img]][pkgeval-url] [![aqua][aqua-img]][aqua-url] [![dev-commits][dev-commits-url]][dev-commits-target] | [![zulip][chat-img]][chat-url] [![JuliaHub][juliahub-img]][juliahub-url] | [![license][lic-img]][lic-url] |
 
 [dev-img]: https://img.shields.io/badge/docs-latest-blue.svg
 [dev-url]: https://juliareach.github.io/ClosedLoopReachability.jl/dev/
-[ci-img]: https://github.com/JuliaReach/ClosedLoopReachability.jl/workflows/CI/badge.svg
-[ci-url]: https://github.com/JuliaReach/ClosedLoopReachability.jl/actions/workflows/test-master.yml
 [cov-img]: https://codecov.io/github/JuliaReach/ClosedLoopReachability.jl/coverage.svg
 [cov-url]: https://app.codecov.io/github/JuliaReach/ClosedLoopReachability.jl
 [pkgeval-img]: https://juliaci.github.io/NanosoldierReports/pkgeval_badges/C/ClosedLoopReachability.svg
