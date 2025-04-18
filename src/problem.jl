@@ -49,8 +49,12 @@ function apply(postprocessing::LinearMapPostprocessing, x)
     return postprocessing.map * x
 end
 
-function apply(postprocessing::LinearMapPostprocessing, X::LazySet)
+function apply(postprocessing::LinearMapPostprocessing{<:AbstractMatrix}, X::LazySet)
     return linear_map(postprocessing.map, X)
+end
+
+function apply(postprocessing::LinearMapPostprocessing{<:Number}, X::LazySet)
+    return scale(postprocessing.map, X)
 end
 
 # =====================
