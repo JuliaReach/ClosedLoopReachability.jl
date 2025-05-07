@@ -188,23 +188,23 @@ function run(; less_robust_scenario::Bool)
     return sol, sim, prob, spec
 end;</code></pre><p>Run the analysis script for the less robust scenario:</p><pre><code class="language-julia hljs">sol_lr, sim_lr, prob_lr, spec_lr = run(less_robust_scenario=true);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis with less robust scenario
 Flowpipe construction:
- 31.507897 seconds (502.60 M allocations: 21.511 GiB, 27.04% gc time)
+ 32.539870 seconds (502.60 M allocations: 21.511 GiB, 28.01% gc time)
 Property checking:
-  0.310978 seconds (5.94 M allocations: 260.475 MiB, 8.75% gc time)
+  0.293453 seconds (5.94 M allocations: 260.475 MiB, 6.68% gc time)
   The property is verified.
 Total analysis time:
- 31.826073 seconds (508.54 M allocations: 21.766 GiB, 26.86% gc time, 0.00% compilation time)
+ 32.840844 seconds (508.54 M allocations: 21.766 GiB, 27.81% gc time, 0.00% compilation time)
 Simulation:
-  0.998753 seconds (2.12 M allocations: 109.403 MiB, 0.00% compilation time)</code></pre><p>Run the analysis script for the more robust scenario:</p><pre><code class="language-julia hljs">sol_mr, sim_mr, prob_mr, spec_mr = run(less_robust_scenario=false);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis with more robust scenario
+  1.068045 seconds (2.15 M allocations: 110.976 MiB, 1.52% gc time, 0.00% compilation time)</code></pre><p>Run the analysis script for the more robust scenario:</p><pre><code class="language-julia hljs">sol_mr, sim_mr, prob_mr, spec_mr = run(less_robust_scenario=false);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis with more robust scenario
 Flowpipe construction:
-  0.584773 seconds (12.66 M allocations: 587.131 MiB, 10.83% gc time)
+  0.611186 seconds (12.66 M allocations: 587.137 MiB, 14.78% gc time)
 Property checking:
-  0.011685 seconds (116.67 k allocations: 5.434 MiB)
+  0.008300 seconds (116.67 k allocations: 5.434 MiB)
   The property is violated.
 Total analysis time:
-  0.602176 seconds (12.78 M allocations: 593.239 MiB, 10.52% gc time, 0.00% compilation time)
+  0.625279 seconds (12.78 M allocations: 593.245 MiB, 14.44% gc time, 0.00% compilation time)
 Simulation:
-  0.107933 seconds (86.02 k allocations: 4.524 MiB, 0.00% compilation time)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper(vars, sol, sim, prob, spec; lab_sim=&quot;&quot;)
+  0.109340 seconds (90.67 k allocations: 4.750 MiB, 0.00% compilation time)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper(vars, sol, sim, prob, spec; lab_sim=&quot;&quot;)
     safe_states = spec.ext
     fig = plot()
     plot!(fig, project(safe_states, vars); color=:lightgreen, lab=&quot;safe&quot;)
@@ -217,15 +217,15 @@ fig = plot_helper(vars, sol_lr, sim_lr, prob_lr, spec_lr)
 plot!(fig; xlab=&quot;θ₁&quot;, ylab=&quot;θ₂&quot;)
 # Command to save the plot to a file:
 # Plots.savefig(fig, &quot;InvertedTwoLinkPendulum-less-robust-x1-x2.png&quot;)
-fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="8b3c4327.png" alt="Example block output"/><pre><code class="language-julia hljs">vars = (3, 4)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="9b70ae84.png" alt="Example block output"/><pre><code class="language-julia hljs">vars = (3, 4)
 fig = plot_helper(vars, sol_lr, sim_lr, prob_lr, spec_lr)
 plot!(fig; xlab=&quot;θ₁&#39;&quot;, ylab=&quot;θ₂&#39;&quot;)
 # Command to save the plot to a file:
 # Plots.savefig(fig, &quot;InvertedTwoLinkPendulum-less-robust-x3-x4.png&quot;)
-fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="0afcde57.png" alt="Example block output"/><pre><code class="language-julia hljs">vars = (3, 4)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="910fa478.png" alt="Example block output"/><pre><code class="language-julia hljs">vars = (3, 4)
 lab_sim = falsification ? &quot;simulation&quot; : &quot;&quot;
 fig = plot_helper(vars, sol_mr, sim_mr, prob_mr, spec_mr; lab_sim=lab_sim)
 plot!(fig; xlab=&quot;θ₁&#39;&quot;, ylab=&quot;θ₂&#39;&quot;)
 # Command to save the plot to a file:
 # Plots.savefig(fig, &quot;InvertedTwoLinkPendulum-more-robust.png&quot;)
-fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="f6f4225c.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../InvertedPendulum/">« Inverted Pendulum</a><a class="docs-footer-nextpage" href="../Quadrotor/">Quadrotor »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.10.1 on <span class="colophon-date" title="Friday 18 April 2025 07:15">Friday 18 April 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="f6f4225c.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../InvertedPendulum/">« Inverted Pendulum</a><a class="docs-footer-nextpage" href="../Quadrotor/">Quadrotor »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.10.2 on <span class="colophon-date" title="Wednesday 7 May 2025 21:34">Wednesday 7 May 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
