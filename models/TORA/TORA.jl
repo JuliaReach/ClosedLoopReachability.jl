@@ -238,13 +238,13 @@ sol_r, sim_r = run(scenario1=true, ReLUtanh_activations=nothing);
 
 # ### Scenario 2
 
-# Run the verification benchmark for the controller with ReLU/tanh activations:
-
-sol_rt, sim_rt = run(scenario1=false, ReLUtanh_activations=true);
-
 # Run the verification benchmark for the controller with sigmoid activations:
 
 sol_sig, sim_sig = run(scenario1=false, ReLUtanh_activations=false);
+
+# Run the verification benchmark for the controller with ReLU/tanh activations:
+
+sol_rt, sim_rt = run(scenario1=false, ReLUtanh_activations=true);
 
 # ## Results
 
@@ -300,22 +300,22 @@ end;
 
 # Plot the results:
 
-fig = plot_helper2(sol_rt, sim_rt)
-lens!(fig, [-0.785, -0.735], [-0.47, -0.41]; inset=(1, bbox(0.2, 0.4, 0.2, 0.2)),
-      lc=:black, xticks=[-0.77, -0.75], yticks=[-0.45, -0.43], subplot=3)
-lens!(fig, [0.0, 0.25], [-0.85, -0.7]; inset=(1, bbox(0.6, 0.4, 0.2, 0.2)),
-      lc=:black, xticks=[0, 0.2], yticks=[-0.8, -0.7], subplot=3)
-## Plots.savefig(fig, "TORA-ReLUtanh.png")  # command to save the plot to a file
-fig = DisplayAs.Text(DisplayAs.PNG(fig))
-
-#-
-
 fig = plot_helper2(sol_sig, sim_sig)
 lens!(fig, [-0.785, -0.735], [-0.47, -0.41]; inset=(1, bbox(0.2, 0.4, 0.2, 0.2)),
       lc=:black, xticks=[-0.77, -0.75], yticks=[-0.45, -0.43], subplot=3)
 lens!(fig, [0.09, 0.22], [-0.9, -0.8]; inset=(1, bbox(0.6, 0.4, 0.2, 0.2)),
       lc=:black, xticks=[0.1, 0.2], yticks=[-0.9, -0.8], subplot=3)
 ## Plots.savefig(fig, "TORA-sigmoid.png")  # command to save the plot to a file
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+
+#-
+
+fig = plot_helper2(sol_rt, sim_rt)
+lens!(fig, [-0.785, -0.735], [-0.47, -0.41]; inset=(1, bbox(0.2, 0.4, 0.2, 0.2)),
+      lc=:black, xticks=[-0.77, -0.75], yticks=[-0.45, -0.43], subplot=3)
+lens!(fig, [0.0, 0.25], [-0.85, -0.7]; inset=(1, bbox(0.6, 0.4, 0.2, 0.2)),
+      lc=:black, xticks=[0, 0.2], yticks=[-0.8, -0.7], subplot=3)
+## Plots.savefig(fig, "TORA-ReLUtanh.png")  # command to save the plot to a file
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 end  #jl
