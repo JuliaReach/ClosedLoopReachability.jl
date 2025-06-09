@@ -80,12 +80,11 @@ function simulate(cp::AbstractControlProblem, args...; kwargs...)
         T = i < iterations ? (t + τ) : tend(time_span)
 
         # simulate system for the next period
-        simulations[i] = _solve_ensemble(ivp, extended, (t, T);
-                                         inplace=inplace)
+        simulations[i] = _solve_ensemble(ivp, extended, (t, T); inplace=inplace)
 
         # project to state variables
         for j in 1:trajectories
-            ode_solution = simulations[i][j]
+            ode_solution = simulations[i].u[j]
             final_extended = ode_solution.u[end]
             x0_vec[j] = final_extended[st_vars]
         end
