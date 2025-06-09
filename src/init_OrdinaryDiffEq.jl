@@ -39,7 +39,7 @@ function EnsembleSimulationSolution(simulations, controls, disturbances)
     @assert n == length(controls) == length(disturbances) "incompatible lengths"
     @assert all(m == length(piece) for piece in simulations)
 
-    simulations_new = @inbounds [[simulations[i][j] for i in 1:n] for j in 1:m]
+    simulations_new = @inbounds [[simulations[i].u[j] for i in 1:n] for j in 1:m]
     controls_new = @inbounds [[controls[i][j] for i in 1:n] for j in 1:m]
     disturbances_new = @inbounds [[(isassigned(disturbances, i) ? disturbances[i][j] : nothing)
                                    for i in 1:n] for j in 1:m]
