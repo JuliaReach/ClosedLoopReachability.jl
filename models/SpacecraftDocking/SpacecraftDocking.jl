@@ -72,7 +72,9 @@ prob = ControlledPlant(ivp, controller, vars_idx, period);
 
 function predicate_point(v::Union{AbstractVector,IntervalBox})
     x, y, x′, y′, F_x, F_y = v
-    return sqrt(x′^2 + y′^2) <= 0.2 + two_n * sqrt(x^2 + y^2)
+    lhs = sqrt(x′^2 + y′^2)
+    rhs = 0.2 + two_n * sqrt(x^2 + y^2)
+    return sup(lhs) <= inf(rhs)
 end
 
 function predicate_set(R)
