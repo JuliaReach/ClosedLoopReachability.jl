@@ -163,33 +163,33 @@ for hdot0_0i in hdot0_0
     print_timed(res)
 end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Running flowpipe construction with central advisories:
 Running instance hdot0(0) = -19.5:
-  0.000279 seconds (2.10 k allocations: 272.734 KiB)
+  0.000271 seconds (2.10 k allocations: 272.734 KiB)
 Property checking:
-  0.000611 seconds (6.59 k allocations: 304.047 KiB)
+  0.000647 seconds (6.59 k allocations: 304.047 KiB)
   The property is satisfied.
 Total analysis time:
-  0.018068 seconds (28.18 k allocations: 1.917 MiB, 0.00% compilation time)
+  0.018437 seconds (28.18 k allocations: 1.917 MiB, 0.00% compilation time)
 Running instance hdot0(0) = -22.5:
-  0.000211 seconds (2.10 k allocations: 272.734 KiB)
+  0.000213 seconds (2.10 k allocations: 272.734 KiB)
 Property checking:
-  0.000533 seconds (6.59 k allocations: 304.047 KiB)
+  0.000665 seconds (6.59 k allocations: 304.047 KiB)
   The property is satisfied.
 Total analysis time:
-  0.000830 seconds (8.82 k allocations: 967.547 KiB)
+  0.000974 seconds (8.82 k allocations: 967.547 KiB)
 Running instance hdot0(0) = -25.5:
-  0.000224 seconds (2.10 k allocations: 272.734 KiB)
+  0.000277 seconds (2.10 k allocations: 272.734 KiB)
 Property checking:
-  0.000157 seconds (1.79 k allocations: 82.578 KiB)
+  0.000188 seconds (1.79 k allocations: 82.578 KiB)
   The property is violated.
 Total analysis time:
-  0.000451 seconds (4.02 k allocations: 747.875 KiB)
+  0.000733 seconds (4.02 k allocations: 747.875 KiB)
 Running instance hdot0(0) = -28.5:
-  0.000212 seconds (2.11 k allocations: 275.453 KiB)
+  0.000215 seconds (2.11 k allocations: 275.453 KiB)
 Property checking:
-  0.000166 seconds (1.79 k allocations: 82.578 KiB)
+  0.000171 seconds (1.79 k allocations: 82.578 KiB)
   The property is violated.
 Total analysis time:
-  0.000444 seconds (4.03 k allocations: 749.078 KiB)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Preprocess the results (extend from time points to time intervals):</p><pre><code class="language-julia hljs">function extend_x(X::Singleton; Δ=Δτ)
+  0.000450 seconds (4.03 k allocations: 749.078 KiB)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Preprocess the results (extend from time points to time intervals):</p><pre><code class="language-julia hljs">function extend_x(X::Singleton; Δ=Δτ)
     return LineSegment(element(X) .- [Δ, 0], element(X))
 end
 
@@ -220,4 +220,4 @@ for (i, c) in [(1, :brown), (2, :green), (3, :orange), (4, :cyan)]
 end
 plot!(fig, xlims=(14.9, 25), ylims=(-310, -70))
 # Plots.savefig(&quot;VerticalCAS.png&quot;)  # command to save the plot to a file
-fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="803b1287.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../Unicycle/">« Unicycle</a><a class="docs-footer-nextpage" href="../../lib/problems/">Problem types »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Saturday 23 August 2025 18:06">Saturday 23 August 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="803b1287.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../Unicycle/">« Unicycle</a><a class="docs-footer-nextpage" href="../../lib/problems/">Problem types »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Saturday 23 August 2025 18:16">Saturday 23 August 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
