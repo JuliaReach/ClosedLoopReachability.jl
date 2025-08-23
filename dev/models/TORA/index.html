@@ -123,32 +123,32 @@ function run(; scenario1::Bool, ReLUtanh_activations)
     return sol, sim
 end;</code></pre><h3 id="Scenario-1-3"><a class="docs-heading-anchor" href="#Scenario-1-3">Scenario 1</a><a class="docs-heading-anchor-permalink" href="#Scenario-1-3" title="Permalink"></a></h3><p>Run the verification benchmark:</p><pre><code class="language-julia hljs">sol_r, sim_r = run(scenario1=true, ReLUtanh_activations=nothing);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis of scenario 1 with ReLU activations
 Flowpipe construction:
-  0.046818 seconds (1.10 M allocations: 50.204 MiB)
+  0.044781 seconds (1.10 M allocations: 50.202 MiB)
 Property checking:
-  0.003516 seconds (75.99 k allocations: 3.320 MiB)
+  0.003425 seconds (75.99 k allocations: 3.320 MiB)
   The property is satisfied.
 Total analysis time:
-  0.056063 seconds (1.18 M allocations: 54.194 MiB, 0.00% compilation time)
+  0.053939 seconds (1.18 M allocations: 54.193 MiB, 0.00% compilation time)
 Simulation:
-  0.656511 seconds (1.81 M allocations: 94.070 MiB, 0.00% compilation time)</code></pre><h3 id="Scenario-2-3"><a class="docs-heading-anchor" href="#Scenario-2-3">Scenario 2</a><a class="docs-heading-anchor-permalink" href="#Scenario-2-3" title="Permalink"></a></h3><p>Run the verification benchmark for the controller with sigmoid activations:</p><pre><code class="language-julia hljs">sol_sig, sim_sig = run(scenario1=false, ReLUtanh_activations=false);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis of scenario 2 with sigmoid activations
+  0.656518 seconds (1.81 M allocations: 94.093 MiB, 0.00% compilation time)</code></pre><h3 id="Scenario-2-3"><a class="docs-heading-anchor" href="#Scenario-2-3">Scenario 2</a><a class="docs-heading-anchor-permalink" href="#Scenario-2-3" title="Permalink"></a></h3><p>Run the verification benchmark for the controller with sigmoid activations:</p><pre><code class="language-julia hljs">sol_sig, sim_sig = run(scenario1=false, ReLUtanh_activations=false);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis of scenario 2 with sigmoid activations
 Flowpipe construction:
-  0.307895 seconds (5.64 M allocations: 252.954 MiB, 16.17% gc time)
+  0.311123 seconds (5.64 M allocations: 252.969 MiB, 17.52% gc time)
 Property checking:
-  0.000428 seconds (8.32 k allocations: 372.422 KiB)
+  0.000422 seconds (8.32 k allocations: 372.422 KiB)
   The property is satisfied.
 Total analysis time:
-  0.313825 seconds (5.65 M allocations: 253.989 MiB, 15.87% gc time, 0.00% compilation time)
+  0.317142 seconds (5.65 M allocations: 254.004 MiB, 17.19% gc time, 0.00% compilation time)
 Simulation:
-  0.079165 seconds (82.55 k allocations: 4.781 MiB, 0.00% compilation time)</code></pre><p>Run the verification benchmark for the controller with ReLU/tanh activations:</p><pre><code class="language-julia hljs">sol_rt, sim_rt = run(scenario1=false, ReLUtanh_activations=true);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis of scenario 2 with ReLUtanh activations
+  0.078396 seconds (82.46 k allocations: 4.778 MiB, 0.00% compilation time)</code></pre><p>Run the verification benchmark for the controller with ReLU/tanh activations:</p><pre><code class="language-julia hljs">sol_rt, sim_rt = run(scenario1=false, ReLUtanh_activations=true);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis of scenario 2 with ReLUtanh activations
 Flowpipe construction:
-  0.265928 seconds (4.89 M allocations: 220.304 MiB, 16.01% gc time)
+  0.268611 seconds (4.89 M allocations: 220.293 MiB, 16.93% gc time)
 Property checking:
-  0.000401 seconds (8.32 k allocations: 372.422 KiB)
+  0.000409 seconds (8.32 k allocations: 372.422 KiB)
   The property is satisfied.
 Total analysis time:
-  0.266493 seconds (4.90 M allocations: 221.176 MiB, 15.98% gc time)
+  0.269215 seconds (4.90 M allocations: 221.166 MiB, 16.89% gc time)
 Simulation:
-  0.002877 seconds (30.87 k allocations: 2.064 MiB)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><h3 id="Scenario-1-4"><a class="docs-heading-anchor" href="#Scenario-1-4">Scenario 1</a><a class="docs-heading-anchor-permalink" href="#Scenario-1-4" title="Permalink"></a></h3><p>Preprocess the results:</p><pre><code class="language-julia hljs">solz = overapproximate(sol_r, Zonotope);</code></pre><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper1(vars)
+  0.003150 seconds (30.88 k allocations: 2.065 MiB)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><h3 id="Scenario-1-4"><a class="docs-heading-anchor" href="#Scenario-1-4">Scenario 1</a><a class="docs-heading-anchor-permalink" href="#Scenario-1-4" title="Permalink"></a></h3><p>Preprocess the results:</p><pre><code class="language-julia hljs">solz = overapproximate(sol_r, Zonotope);</code></pre><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper1(vars)
     fig = plot()
     plot!(fig, project(safe_states, vars); color=:lightgreen, lab=&quot;safe&quot;)
     plot!(fig, solz; vars=vars, color=:yellow, lw=0, alpha=1, lab=&quot;&quot;)
@@ -159,11 +159,11 @@ end;</code></pre><p>Plot the results:</p><pre><code class="language-julia hljs">
 fig = plot_helper1(vars)
 plot!(fig; xlab=&quot;x₁&quot;, ylab=&quot;x₂&quot;)
 # Plots.savefig(fig, &quot;TORA-ReLU-x1-x2.png&quot;)  # command to save the plot to a file
-fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="7f23eb3a.png" alt="Example block output"/><pre><code class="language-julia hljs">vars = (3, 4)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="da15e6d7.png" alt="Example block output"/><pre><code class="language-julia hljs">vars = (3, 4)
 fig = plot_helper1(vars)
 plot!(fig; xlab=&quot;x₃&quot;, ylab=&quot;x₄&quot;)
 # Plots.savefig(fig, &quot;TORA-ReLU-x3-x4.png&quot;)  # command to save the plot to a file
-fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="82b16107.png" alt="Example block output"/><h3 id="Scenario-2-4"><a class="docs-heading-anchor" href="#Scenario-2-4">Scenario 2</a><a class="docs-heading-anchor-permalink" href="#Scenario-2-4" title="Permalink"></a></h3><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper2(sol, sim)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="6d92182f.png" alt="Example block output"/><h3 id="Scenario-2-4"><a class="docs-heading-anchor" href="#Scenario-2-4">Scenario 2</a><a class="docs-heading-anchor-permalink" href="#Scenario-2-4" title="Permalink"></a></h3><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper2(sol, sim)
     vars = (1, 2)
     fig = plot()
     plot!(fig, project(goal_states, vars); color=:cyan, lab=&quot;goal&quot;)
@@ -178,10 +178,10 @@ lens!(fig, [-0.785, -0.735], [-0.47, -0.41]; inset=(1, bbox(0.2, 0.4, 0.2, 0.2))
 lens!(fig, [0.09, 0.22], [-0.9, -0.8]; inset=(1, bbox(0.6, 0.4, 0.2, 0.2)),
       lc=:black, xticks=[0.1, 0.2], yticks=[-0.9, -0.8], subplot=3)
 # Plots.savefig(fig, &quot;TORA-sigmoid.png&quot;)  # command to save the plot to a file
-fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="31614445.png" alt="Example block output"/><pre><code class="language-julia hljs">fig = plot_helper2(sol_rt, sim_rt)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="71a6cf67.png" alt="Example block output"/><pre><code class="language-julia hljs">fig = plot_helper2(sol_rt, sim_rt)
 lens!(fig, [-0.785, -0.735], [-0.47, -0.41]; inset=(1, bbox(0.2, 0.4, 0.2, 0.2)),
       lc=:black, xticks=[-0.77, -0.75], yticks=[-0.45, -0.43], subplot=3)
 lens!(fig, [0.0, 0.25], [-0.85, -0.7]; inset=(1, bbox(0.6, 0.4, 0.2, 0.2)),
       lc=:black, xticks=[0, 0.2], yticks=[-0.8, -0.7], subplot=3)
 # Plots.savefig(fig, &quot;TORA-ReLUtanh.png&quot;)  # command to save the plot to a file
-fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="15fe3821.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../SpacecraftDocking/">« Spacecraft Docking</a><a class="docs-footer-nextpage" href="../Unicycle/">Unicycle »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Monday 18 August 2025 13:43">Monday 18 August 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="044c2b02.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../SpacecraftDocking/">« Spacecraft Docking</a><a class="docs-footer-nextpage" href="../Unicycle/">Unicycle »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Saturday 23 August 2025 18:06">Saturday 23 August 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
