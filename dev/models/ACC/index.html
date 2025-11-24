@@ -4,7 +4,154 @@ import OrdinaryDiffEq, Plots, DisplayAs
 using ReachabilityBase.CurrentPath: @current_path
 using ReachabilityBase.Timing: print_timed
 using ClosedLoopReachability: FunctionPreprocessing
-using Plots: plot, plot!</code></pre><h2 id="Model"><a class="docs-heading-anchor" href="#Model">Model</a><a id="Model-1"></a><a class="docs-heading-anchor-permalink" href="#Model" title="Permalink"></a></h2><p>The cars&#39; dynamics are modeled as follows:</p><p class="math-container">\[\begin{aligned}
+using Plots: plot, plot!</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Precompiling packages...
+Info Given TaylorIntegrationDiffEqExt was explicitly requested, output will be shown live 
+WARNING: Imported binding OrdinaryDiffEq.OrdinaryDiffEqAdaptiveAlgorithm was undeclared at import time during import to TaylorIntegrationDiffEqExt.
+WARNING: Imported binding OrdinaryDiffEq.OrdinaryDiffEqConstantCache was undeclared at import time during import to TaylorIntegrationDiffEqExt.
+WARNING: Imported binding OrdinaryDiffEq.OrdinaryDiffEqMutableCache was undeclared at import time during import to TaylorIntegrationDiffEqExt.
+ERROR: LoadError: UndefVarError: `OrdinaryDiffEqAdaptiveAlgorithm` not defined in `TaylorIntegrationDiffEqExt`
+Suggestion: this global was defined as `OrdinaryDiffEq.OrdinaryDiffEqAdaptiveAlgorithm` but not assigned a value.
+Stacktrace:
+ [1] top-level scope
+   @ ~/.julia/packages/TaylorIntegration/THG4G/ext/TaylorIntegrationDiffEqExt.jl:36
+ [2] include(mod::Module, _path::String)
+   @ Base ./Base.jl:306
+ [3] include_package_for_output(pkg::Base.PkgId, input::String, depot_path::Vector{String}, dl_load_path::Vector{String}, load_path::Vector{String}, concrete_deps::Vector{Pair{Base.PkgId, UInt128}}, source::Nothing)
+   @ Base ./loading.jl:3021
+ [4] top-level scope
+   @ stdin:5
+ [5] eval(m::Module, e::Any)
+   @ Core ./boot.jl:489
+ [6] include_string(mapexpr::typeof(identity), mod::Module, code::String, filename::String)
+   @ Base ./loading.jl:2867
+ [7] include_string
+   @ ./loading.jl:2877 [inlined]
+ [8] exec_options(opts::Base.JLOptions)
+   @ Base ./client.jl:315
+ [9] _start()
+   @ Base ./client.jl:550
+in expression starting at /home/runner/.julia/packages/TaylorIntegration/THG4G/ext/TaylorIntegrationDiffEqExt.jl:3
+in expression starting at stdin:5
+              ✗ TaylorIntegration → TaylorIntegrationDiffEqExt
+  0 dependencies successfully precompiled in 6 seconds. 249 already precompiled.
+WARNING: Imported binding OrdinaryDiffEq.OrdinaryDiffEqAdaptiveAlgorithm was undeclared at import time during import to TaylorIntegrationDiffEqExt.
+WARNING: Imported binding OrdinaryDiffEq.OrdinaryDiffEqConstantCache was undeclared at import time during import to TaylorIntegrationDiffEqExt.
+WARNING: Imported binding OrdinaryDiffEq.OrdinaryDiffEqMutableCache was undeclared at import time during import to TaylorIntegrationDiffEqExt.
+ERROR: LoadError: UndefVarError: `OrdinaryDiffEqAdaptiveAlgorithm` not defined in `TaylorIntegrationDiffEqExt`
+Suggestion: this global was defined as `OrdinaryDiffEq.OrdinaryDiffEqAdaptiveAlgorithm` but not assigned a value.
+Stacktrace:
+ [1] top-level scope
+   @ ~/.julia/packages/TaylorIntegration/THG4G/ext/TaylorIntegrationDiffEqExt.jl:36
+ [2] include(mod::Module, _path::String)
+   @ Base ./Base.jl:306
+ [3] include_package_for_output(pkg::Base.PkgId, input::String, depot_path::Vector{String}, dl_load_path::Vector{String}, load_path::Vector{String}, concrete_deps::Vector{Pair{Base.PkgId, UInt128}}, source::String)
+   @ Base ./loading.jl:3021
+ [4] top-level scope
+   @ stdin:5
+ [5] eval(m::Module, e::Any)
+   @ Core ./boot.jl:489
+ [6] include_string(mapexpr::typeof(identity), mod::Module, code::String, filename::String)
+   @ Base ./loading.jl:2867
+ [7] include_string
+   @ ./loading.jl:2877 [inlined]
+ [8] exec_options(opts::Base.JLOptions)
+   @ Base ./client.jl:315
+ [9] _start()
+   @ Base ./client.jl:550
+in expression starting at /home/runner/.julia/packages/TaylorIntegration/THG4G/ext/TaylorIntegrationDiffEqExt.jl:3
+in expression starting at stdin:5
+┌ Error: Error during loading of extension TaylorIntegrationDiffEqExt of TaylorIntegration, use `Base.retry_load_extensions()` to retry.
+│   exception =
+│    1-element ExceptionStack:
+│    Failed to precompile TaylorIntegrationDiffEqExt [21fdf329-9f0e-520d-ae26-dab38dab1a79] to &quot;/home/runner/.julia/compiled/v1.12/TaylorIntegrationDiffEqExt/jl_auGcoi&quot;.
+│    Stacktrace:
+│      [1] error(s::String)
+│        @ Base ./error.jl:44
+│      [2] compilecache(pkg::Base.PkgId, path::String, internal_stderr::IO, internal_stdout::IO, keep_loaded_modules::Bool; flags::Cmd, cacheflags::Base.CacheFlags, reasons::Dict{String, Int64}, loadable_exts::Vector{Base.PkgId})
+│        @ Base ./loading.jl:3308
+│      [3] (::Base.var&quot;#__require_prelocked##0#__require_prelocked##1&quot;{Base.PkgId, String, Dict{String, Int64}})()
+│        @ Base ./loading.jl:2676
+│      [4] mkpidlock(f::Base.var&quot;#__require_prelocked##0#__require_prelocked##1&quot;{Base.PkgId, String, Dict{String, Int64}}, at::String, pid::Int32; kwopts::@Kwargs{stale_age::Int64, wait::Bool})
+│        @ FileWatching.Pidfile /opt/hostedtoolcache/julia/1.12.2/x64/share/julia/stdlib/v1.12/FileWatching/src/pidfile.jl:93
+│      [5] #mkpidlock#7
+│        @ /opt/hostedtoolcache/julia/1.12.2/x64/share/julia/stdlib/v1.12/FileWatching/src/pidfile.jl:88 [inlined]
+│      [6] trymkpidlock(::Function, ::Vararg{Any}; kwargs::@Kwargs{stale_age::Int64})
+│        @ FileWatching.Pidfile /opt/hostedtoolcache/julia/1.12.2/x64/share/julia/stdlib/v1.12/FileWatching/src/pidfile.jl:114
+│      [7] #invokelatest_gr#232
+│        @ ./reflection.jl:1297 [inlined]
+│      [8] invokelatest_gr
+│        @ ./reflection.jl:1289 [inlined]
+│      [9] maybe_cachefile_lock(f::Base.var&quot;#__require_prelocked##0#__require_prelocked##1&quot;{Base.PkgId, String, Dict{String, Int64}}, pkg::Base.PkgId, srcpath::String; stale_age::Int64)
+│        @ Base ./loading.jl:3879
+│     [10] maybe_cachefile_lock(f::Function, pkg::Base.PkgId, srcpath::String)
+│        @ Base ./loading.jl:3876
+│     [11] __require_prelocked(pkg::Base.PkgId, env::Nothing)
+│        @ Base ./loading.jl:2662
+│     [12] _require_prelocked(uuidkey::Base.PkgId, env::Nothing)
+│        @ Base ./loading.jl:2490
+│     [13] _require_prelocked(uuidkey::Base.PkgId)
+│        @ Base ./loading.jl:2484
+│     [14] run_extension_callbacks(extid::Base.ExtensionId)
+│        @ Base ./loading.jl:1604
+│     [15] run_extension_callbacks(pkgid::Base.PkgId)
+│        @ Base ./loading.jl:1641
+│     [16] run_package_callbacks(modkey::Base.PkgId)
+│        @ Base ./loading.jl:1457
+│     [17] _require_prelocked(uuidkey::Base.PkgId, env::String)
+│        @ Base ./loading.jl:2498
+│     [18] macro expansion
+│        @ ./loading.jl:2418 [inlined]
+│     [19] macro expansion
+│        @ ./lock.jl:376 [inlined]
+│     [20] __require(into::Module, mod::Symbol)
+│        @ Base ./loading.jl:2383
+│     [21] require(into::Module, mod::Symbol)
+│        @ Base ./loading.jl:2359
+│     [22] eval(m::Module, e::Any)
+│        @ Core ./boot.jl:489
+│     [23] #61
+│        @ ~/.julia/packages/Documenter/xvqbW/src/expander_pipeline.jl:879 [inlined]
+│     [24] cd(f::Documenter.var&quot;#61#62&quot;{Module, Expr}, dir::String)
+│        @ Base.Filesystem ./file.jl:112
+│     [25] (::Documenter.var&quot;#59#60&quot;{Documenter.Page, Module, Expr})()
+│        @ Documenter ~/.julia/packages/Documenter/xvqbW/src/expander_pipeline.jl:878
+│     [26] (::IOCapture.var&quot;#12#13&quot;{Type{InterruptException}, Documenter.var&quot;#59#60&quot;{Documenter.Page, Module, Expr}, IOContext{Base.PipeEndpoint}, IOContext{Base.PipeEndpoint}, Base.PipeEndpoint, Base.PipeEndpoint})()
+│        @ IOCapture ~/.julia/packages/IOCapture/MR051/src/IOCapture.jl:170
+│     [27] with_logstate(f::IOCapture.var&quot;#12#13&quot;{Type{InterruptException}, Documenter.var&quot;#59#60&quot;{Documenter.Page, Module, Expr}, IOContext{Base.PipeEndpoint}, IOContext{Base.PipeEndpoint}, Base.PipeEndpoint, Base.PipeEndpoint}, logstate::Base.CoreLogging.LogState)
+│        @ Base.CoreLogging ./logging/logging.jl:540
+│     [28] with_logger(f::Function, logger::Base.CoreLogging.ConsoleLogger)
+│        @ Base.CoreLogging ./logging/logging.jl:651
+│     [29] capture(f::Documenter.var&quot;#59#60&quot;{Documenter.Page, Module, Expr}; rethrow::Type, color::Bool, passthrough::Bool, capture_buffer::IOBuffer, io_context::Vector{Any})
+│        @ IOCapture ~/.julia/packages/IOCapture/MR051/src/IOCapture.jl:167
+│     [30] runner(::Type{Documenter.Expanders.ExampleBlocks}, node::MarkdownAST.Node{Nothing}, page::Documenter.Page, doc::Documenter.Document)
+│        @ Documenter ~/.julia/packages/Documenter/xvqbW/src/expander_pipeline.jl:877
+│     [31] dispatch(::Type{Documenter.Expanders.ExpanderPipeline}, ::MarkdownAST.Node{Nothing}, ::Vararg{Any})
+│        @ Documenter.Selectors ~/.julia/packages/Documenter/xvqbW/src/utilities/Selectors.jl:170
+│     [32] expand(doc::Documenter.Document)
+│        @ Documenter ~/.julia/packages/Documenter/xvqbW/src/expander_pipeline.jl:60
+│     [33] runner(::Type{Documenter.Builder.ExpandTemplates}, doc::Documenter.Document)
+│        @ Documenter ~/.julia/packages/Documenter/xvqbW/src/builder_pipeline.jl:224
+│     [34] dispatch(::Type{Documenter.Builder.DocumentPipeline}, x::Documenter.Document)
+│        @ Documenter.Selectors ~/.julia/packages/Documenter/xvqbW/src/utilities/Selectors.jl:170
+│     [35] #89
+│        @ ~/.julia/packages/Documenter/xvqbW/src/makedocs.jl:283 [inlined]
+│     [36] withenv(::Documenter.var&quot;#89#90&quot;{Documenter.Document}, ::Pair{String, Nothing}, ::Vararg{Pair{String, Nothing}})
+│        @ Base ./env.jl:265
+│     [37] #87
+│        @ ~/.julia/packages/Documenter/xvqbW/src/makedocs.jl:282 [inlined]
+│     [38] cd(f::Documenter.var&quot;#87#88&quot;{Documenter.Document}, dir::String)
+│        @ Base.Filesystem ./file.jl:112
+│     [39] makedocs(; debug::Bool, format::Documenter.HTMLWriter.HTML, kwargs::@Kwargs{sitename::String, modules::Vector{Module}, pagesonly::Bool, plugins::Vector{CitationBibliography}, pages::Vector{Pair{String, Any}}})
+│        @ Documenter ~/.julia/packages/Documenter/xvqbW/src/makedocs.jl:281
+│     [40] top-level scope
+│        @ ~/work/ClosedLoopReachability.jl/ClosedLoopReachability.jl/docs/make.jl:11
+│     [41] include(mod::Module, _path::String)
+│        @ Base ./Base.jl:306
+│     [42] exec_options(opts::Base.JLOptions)
+│        @ Base ./client.jl:317
+│     [43] _start()
+│        @ Base ./client.jl:550
+└ @ Base loading.jl:1614</code></pre><h2 id="Model"><a class="docs-heading-anchor" href="#Model">Model</a><a id="Model-1"></a><a class="docs-heading-anchor-permalink" href="#Model" title="Permalink"></a></h2><p>The cars&#39; dynamics are modeled as follows:</p><p class="math-container">\[\begin{aligned}
 \dot{x}_{lead} &amp;= v_{lead} \\
 \dot{v}_{lead} &amp;= γ_{lead} \\
 \dot{γ}_{lead} &amp;= -2 γ_{lead} + 2 a_{lead} - u v_{lead}^2 \\
@@ -120,23 +267,23 @@ end;</code></pre><p>For each controller we execute the same analysis script, whi
     return sol, sim
 end;</code></pre><p>Run the analysis script for the ReLU controller:</p><pre><code class="language-julia hljs">sol_relu, sim_relu = run(use_relu_controller=true);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis with ReLU controller
 Flowpipe construction:
-  0.390955 seconds (7.02 M allocations: 363.998 MiB, 16.50% gc time)
+  0.570511 seconds (5.62 M allocations: 342.885 MiB, 9.47% gc time)
 Property checking:
-  0.029288 seconds (589.21 k allocations: 26.572 MiB)
+  0.042565 seconds (384.68 k allocations: 24.102 MiB)
   The property is satisfied.
 Total analysis time:
-  0.502570 seconds (7.67 M allocations: 394.121 MiB, 12.83% gc time, 0.00% compilation time)
+  0.710049 seconds (6.11 M allocations: 372.899 MiB, 7.61% gc time, 0.00% compilation time)
 Simulation:
-  4.836273 seconds (10.13 M allocations: 538.457 MiB, 9.49% gc time, 0.00% compilation time)</code></pre><p>Run the analysis script for the tanh controller:</p><pre><code class="language-julia hljs">sol_tanh, sim_tanh = run(use_relu_controller=false);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis with tanh controller
+  4.909132 seconds (16.48 M allocations: 825.057 MiB, 1.82% gc time, 0.00% compilation time: 2% of which was recompilation)</code></pre><p>Run the analysis script for the tanh controller:</p><pre><code class="language-julia hljs">sol_tanh, sim_tanh = run(use_relu_controller=false);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis with tanh controller
 Flowpipe construction:
-  0.394887 seconds (7.04 M allocations: 366.951 MiB, 9.79% gc time)
+  1.176027 seconds (5.64 M allocations: 345.785 MiB, 54.07% gc time)
 Property checking:
-  0.029344 seconds (589.21 k allocations: 26.572 MiB)
+  0.041856 seconds (384.68 k allocations: 24.102 MiB)
   The property is satisfied.
 Total analysis time:
-  0.424459 seconds (7.63 M allocations: 394.032 MiB, 9.11% gc time)
+  1.218896 seconds (6.02 M allocations: 370.614 MiB, 52.16% gc time)
 Simulation:
-  0.059359 seconds (333.30 k allocations: 21.500 MiB, 0.00% compilation time)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper(sol, sim)
+  0.100701 seconds (304.95 k allocations: 20.071 MiB, 0.00% compilation time)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper(sol, sim)
     fig = plot(leg=(0.4, 0.3))
     for F in sol, R in F
         # Subdivide the reach sets in time to obtain more precise plots:
@@ -159,6 +306,6 @@ Simulation:
     return fig
 end;</code></pre><p>Plot the results:</p><pre><code class="language-julia hljs">fig = plot_helper(sol_relu, sim_relu)
 # Plots.savefig(fig, &quot;ACC-ReLU.png&quot;)  # command to save the plot to a file
-fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="40337998.png" alt="Example block output"/><pre><code class="language-julia hljs">fig = plot_helper(sol_tanh, sim_tanh)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="da162e81.png" alt="Example block output"/><pre><code class="language-julia hljs">fig = plot_helper(sol_tanh, sim_tanh)
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-# savefig(fig, &quot;ACC-tanh.png&quot;)  # command to save the plot to a file</code></pre><img src="99732e41.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« Home</a><a class="docs-footer-nextpage" href="../Airplane/">Airplane »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Saturday 23 August 2025 18:16">Saturday 23 August 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+# savefig(fig, &quot;ACC-tanh.png&quot;)  # command to save the plot to a file</code></pre><img src="02e1512a.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« Home</a><a class="docs-footer-nextpage" href="../Airplane/">Airplane »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Monday 24 November 2025 07:09">Monday 24 November 2025</span>. Using Julia version 1.12.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
