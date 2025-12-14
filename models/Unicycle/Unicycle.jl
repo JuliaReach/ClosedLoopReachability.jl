@@ -92,7 +92,7 @@ goal_set = cartesian_product(Hyperrectangle(zeros(4), [0.6, 0.2, 0.06, 0.3]),
 
 predicate_set(R) = overapproximate(R, Hyperrectangle, tend(R)) ⊆ goal_set
 
-predicate(sol) = all(predicate_set(F[end]) for F in sol if T ∈ tspan(F))
+predicate(sol, T) = all(predicate_set(F[end]) for F in sol if T ∈ Interval(tspan(F)))
 
 T = 10.0
 T_warmup = 2 * period;  # shorter time horizon for warm-up run
@@ -121,7 +121,7 @@ function benchmark(; T=T, silent::Bool=false)
 
     ## Check the property:
     silent || println("Property checking:")
-    res = @timed predicate(sol)
+    res = @timed predicate(sol, [T])
     silent || print_timed(res)
     if res.value
         silent || println("  The property is satisfied.")
@@ -164,7 +164,7 @@ function plot_helper(vars; show_simulation::Bool=true)
     plot!(fig, project(X₀, vars); color=:cornflowerblue, alpha=1, lab="X₀")
     lab = "reach set at t = $Tint"
     for F in sol
-        if T ∈ tspan(F)
+        if [T] ∈ Interval(tspan(F))
             plot!(fig, overapproximate(F[end], Zonotope, tend(F));
                   vars=vars, color=:orange, lab=lab)
             lab = ""

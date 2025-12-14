@@ -10,6 +10,7 @@ using ClosedLoopReachability
 import OrdinaryDiffEq, Plots, DisplayAs
 using ReachabilityBase.CurrentPath: @current_path
 using ReachabilityBase.Timing: print_timed
+using ClosedLoopReachability.ReachabilityAnalysis.IntervalBoxes: IntervalBox
 using Plots: plot, plot!
 
 # ## Model

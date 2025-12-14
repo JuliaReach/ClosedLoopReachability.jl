@@ -114,7 +114,7 @@ goal_states = HPolyhedron([HalfSpace(SingleEntryVector(3, 15, -1.0), -0.94),
 
 predicate_set(R) = overapproximate(R, Hyperrectangle) ⊆ goal_states
 
-predicate(sol) = all(predicate_set(F[end]) for F in sol if T ∈ tspan(F))
+predicate(sol, T) = all(predicate_set(F[end]) for F in sol if T ∈ Interval(tspan(F)))
 
 T = 5.0
 T_warmup = 2 * period;  # shorter time horizon for warm-up run
@@ -141,7 +141,7 @@ function benchmark(; T=T, silent::Bool=false)
 
     ## Check the property:
     silent || println("Property checking:")
-    res = @timed predicate(sol)
+    res = @timed predicate(sol, [T])
     silent || print_timed(res)
     if res.value
         silent || println("  The property is satisfied.")
