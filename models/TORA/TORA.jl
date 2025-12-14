@@ -136,7 +136,7 @@ goal_states = cartesian_product(Hyperrectangle(low=[-0.1, -0.9], high=[0.2, -0.6
 
 predicate_set2(R) = overapproximate(R, Hyperrectangle) ⊆ goal_states
 
-predicate2(sol, T) = all(predicate_set2(F[end]) for F in sol if T ∈ tspan(F))
+predicate2(sol, T) = all(predicate_set2(F[end]) for F in sol if T ∈ Interval(tspan(F)))
 
 T2 = 5.0  # time horizon
 T2_warmup = 2 * period2;  # shorter time horizon for warm-up run
@@ -167,7 +167,7 @@ function benchmark(prob; T, splitter, algorithm_plant, predicate,
 
     ## Check the property:
     silent || println("Property checking:")
-    res = @timed predicate(sol, T)
+    res = @timed predicate(sol, [T])
     silent || print_timed(res)
     if res.value
         silent || println("  The property is satisfied.")
