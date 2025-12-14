@@ -14,10 +14,10 @@ using NeuralNetworkReachability.ForwardAlgorithms: ForwardAlgorithm
 # namespace conflict
 using ReachabilityAnalysis: dim
 # unexported methods
-using ReachabilityAnalysis: _check_dim, _get_tspan, _default_cpost,  # NOTE: these are internal symbols
-                            ReachSolution, InitialValueProblem, numtype, post,
-                            AbstractContinuousPost, AbstractLazyReachSet,
-                            AbstractTaylorModelReachSet, zeroBox, symBox
+using ReachabilityAnalysis: AbstractContinuousPost, AbstractLazyReachSet,  # NOTE: these are internal symbols
+                            AbstractTaylorModelReachSet, InitialValueProblem,
+                            TimeInterval, ReachSolution, numtype, post, symBox,
+                            zeroBox, _check_dim, _default_cpost, _get_tspan
 using ReachabilityBase.Require: require
 using ReachabilityBase.Comparison: isapproxzero
 using TaylorModels: TaylorModel1, TaylorModelN, fp_rpa

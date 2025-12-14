@@ -4,8 +4,8 @@ import Aqua, ExplicitImports
 @testset "ExplicitImports tests" begin
     ignores = (:AbstractContinuousPost, :AbstractLazyReachSet,
                :AbstractTaylorModelReachSet, :ForwardAlgorithm, :ReachSolution,
-               :_check_dim, :_default_cpost, :_get_tspan, :numtype, :post,
-               :solve, :symBox, :zeroBox)
+               :TimeInterval, :_check_dim, :_default_cpost, :_get_tspan,
+               :numtype, :post, :solve, :symBox, :zeroBox)
     @test isnothing(ExplicitImports.check_all_explicit_imports_are_public(ClosedLoopReachability;
                                                                           ignore=ignores))
     @test isnothing(ExplicitImports.check_all_explicit_imports_via_owners(ClosedLoopReachability))
