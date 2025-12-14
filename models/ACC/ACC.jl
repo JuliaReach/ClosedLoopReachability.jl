@@ -8,7 +8,7 @@
 
 module ACC  #jl
 
-using ClosedLoopReachability
+using ClosedLoopReachability, LinearAlgebra
 import OrdinaryDiffEq, Plots, DisplayAs
 using ReachabilityBase.CurrentPath: @current_path
 using ReachabilityBase.Timing: print_timed
