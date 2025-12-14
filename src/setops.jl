@@ -74,11 +74,10 @@ function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Laz
 
     # fill the components for the inputs
     if method.box || isa(U₀, AbstractHyperrectangle)
-        B₀ = convert(IntervalBox, box_approximation(U₀))
+        B₀ = box_approximation(U₀)
         @inbounds for i in 1:m
-            I = B₀[i]
-            p = mid(I) + zero(TaylorN(n + m; order=orderQ))
-            d = diam(I) / 2
+            p = center(B₀, i) + zero(TaylorN(n + m; order=orderQ))
+            d = radius_hyperrectangle(B₀, i)
             rem = interval(-d, d)
             vTM[n + i] = TaylorModel1(Taylor1(p, orderT), rem, zeroI, Δtn)
         end
