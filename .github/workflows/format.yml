@@ -18,7 +18,7 @@ jobs:
           using JuliaFormatter; format("src/"); format("test/"); format("docs/")'
       - name: Create pull request
         id: cpr
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: Format .jl files
