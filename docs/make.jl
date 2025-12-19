@@ -1,4 +1,7 @@
+ENV["GKSwstype"] = "100"  # prevent plots from opening interactively
+
 using Documenter, ClosedLoopReachability, DocumenterCitations
+import Plots
 
 DocMeta.setdocmeta!(ClosedLoopReachability, :DocTestSetup,
                     :(using ClosedLoopReachability); recursive=true)
