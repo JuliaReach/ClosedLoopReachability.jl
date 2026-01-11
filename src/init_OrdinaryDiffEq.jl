@@ -68,9 +68,9 @@ function _solve_ensemble(ivp, X0_samples, tspan;
                          inplace=true,
                          kwargs...)
     if inplace
-        field = ReachabilityAnalysis.inplace_field!(ivp)
+        field = ReachabilityAnalysis.inplace_field!(ivp)  # NOTE: this is an internal function
     else
-        field = ReachabilityAnalysis.outofplace_field(ivp)
+        field = ReachabilityAnalysis.outofplace_field(ivp)  # NOTE: this is an internal function
     end
 
     # the third argument `repeat` is not needed here

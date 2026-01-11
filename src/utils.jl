@@ -21,7 +21,7 @@ function random_affine_ivp(n, m)
         end
     end
 
-    X0 = LazySets.rand(BallInf; dim=n)
+    X0 = rand(BallInf; dim=n)
     U0 = ZeroSet(m)  # needed but ignored
 
     system = BlackBoxContinuousSystem(random_system!, n + m)

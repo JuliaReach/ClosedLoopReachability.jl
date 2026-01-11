@@ -34,10 +34,10 @@ function ZonotopeSplitter(generators=nothing, splits=nothing)
             p = ngens(Z)
             generators = 1:p
             splits = ones(Int, p)
-            return LazySets.split(Z, generators, splits)
+            return split(Z, generators, splits)
         end
     else
-        split_fun = Z -> LazySets.split(Z, generators, splits)
+        split_fun = Z -> split(Z, generators, splits)
     end
     return Splitter(split_fun)
 end
