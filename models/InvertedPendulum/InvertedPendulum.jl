@@ -8,9 +8,10 @@ module InvertedPendulum  #jl
 
 using ClosedLoopReachability
 import OrdinaryDiffEq, Plots, DisplayAs
+using ReachabilityBase.Arrays: SingleEntryVector
 using ReachabilityBase.CurrentPath: @current_path
 using ReachabilityBase.Timing: print_timed
-using ClosedLoopReachability: SingleEntryVector, Specification, NoSplitter
+using ClosedLoopReachability: Specification, NoSplitter
 using Plots: plot, plot!, xlims!, ylims!, lens!, bbox, savefig
 
 # ## Model
