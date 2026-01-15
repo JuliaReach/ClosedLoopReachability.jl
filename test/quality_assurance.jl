@@ -27,7 +27,7 @@ import Aqua, ExplicitImports
                :linear_map, :low, :mid, :ngens, :overapproximate, :polynomial,
                :project, :rand, :remainder, :rsetrep, :sample, :scale, :set,
                :set_variables, :size, :sup, :system, :tend, :translate, :tstart,
-               :(×))
+               :(×), :shift, :vars)
     @test isnothing(ExplicitImports.check_no_implicit_imports(ClosedLoopReachability;
                                                               ignore=ignores))
     ignores = (:controller, )
