@@ -1,8 +1,9 @@
-using Requires, Reexport
+using Requires: @require
+using Reexport: @reexport
 
-using ControllerFormats
-# namespace conflict
-using ControllerFormats: Id
+using Base: isempty
+using ControllerFormats: ActivationFunction, DenseLayerOp, FeedforwardNetwork,
+                         Id, ReLU
 # controller formats and parsers
 @reexport using ControllerFormats.FileFormats
 
@@ -13,14 +14,13 @@ using NeuralNetworkReachability.ForwardAlgorithms: ForwardAlgorithm
 # namespace conflict
 using ReachabilityAnalysis: dim
 # unexported methods
-using ReachabilityAnalysis: _check_dim, _get_tspan, _get_cpost, _default_cpost,
+using ReachabilityAnalysis: _check_dim, _get_tspan, _default_cpost,  # NOTE: these are internal symbols
                             ReachSolution, InitialValueProblem, numtype, post,
-                            AbstractContinuousPost, TimeInterval,
-                            AbstractLazyReachSet, AbstractTaylorModelReachSet,
-                            TaylorModel1, TaylorModelN, fp_rpa, zeroBox, symBox
+                            AbstractContinuousPost, AbstractLazyReachSet,
+                            AbstractTaylorModelReachSet, zeroBox, symBox
+using ReachabilityAnalysis.TM: TaylorModel1, TaylorModelN, fp_rpa
 
-using ReachabilityBase.Require
-using ReachabilityBase.Arrays: SingleEntryVector
+using ReachabilityBase.Require: require
 using ReachabilityBase.Comparison: isapproxzero
 
 using Parameters: @with_kw

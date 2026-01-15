@@ -8,9 +8,9 @@ module Quadrotor  #jl
 
 using ClosedLoopReachability
 import OrdinaryDiffEq, Plots, DisplayAs
+using ReachabilityBase.Arrays: SingleEntryVector
 using ReachabilityBase.CurrentPath: @current_path
 using ReachabilityBase.Timing: print_timed
-using ClosedLoopReachability: SingleEntryVector
 using Plots: plot, plot!
 
 # ## Model
