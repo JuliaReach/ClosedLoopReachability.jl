@@ -34,7 +34,7 @@ Stacktrace:
 in expression starting at /home/runner/.julia/packages/TaylorIntegration/THG4G/ext/TaylorIntegrationDiffEqExt.jl:3
 in expression starting at stdin:5
               ✗ TaylorIntegration → TaylorIntegrationDiffEqExt
-  0 dependencies successfully precompiled in 6 seconds. 244 already precompiled.
+  0 dependencies successfully precompiled in 5 seconds. 244 already precompiled.
 WARNING: Imported binding OrdinaryDiffEq.@unpack was undeclared at import time during import to TaylorIntegrationDiffEqExt.
 WARNING: Imported binding OrdinaryDiffEq.OrdinaryDiffEqAdaptiveAlgorithm was undeclared at import time during import to TaylorIntegrationDiffEqExt.
 WARNING: Imported binding OrdinaryDiffEq.OrdinaryDiffEqConstantCache was undeclared at import time during import to TaylorIntegrationDiffEqExt.
@@ -65,7 +65,7 @@ in expression starting at stdin:5
 ┌ Error: Error during loading of extension TaylorIntegrationDiffEqExt of TaylorIntegration, use `Base.retry_load_extensions()` to retry.
 │   exception =
 │    1-element ExceptionStack:
-│    Failed to precompile TaylorIntegrationDiffEqExt [21fdf329-9f0e-520d-ae26-dab38dab1a79] to &quot;/home/runner/.julia/compiled/v1.12/TaylorIntegrationDiffEqExt/jl_ESIDni&quot;.
+│    Failed to precompile TaylorIntegrationDiffEqExt [21fdf329-9f0e-520d-ae26-dab38dab1a79] to &quot;/home/runner/.julia/compiled/v1.12/TaylorIntegrationDiffEqExt/jl_ls2nRK&quot;.
 │    Stacktrace:
 │      [1] error(s::String)
 │        @ Base ./error.jl:44
@@ -269,23 +269,23 @@ end;</code></pre><p>For each controller we execute the same analysis script, whi
     return sol, sim
 end;</code></pre><p>Run the analysis script for the ReLU controller:</p><pre><code class="language-julia hljs">sol_relu, sim_relu = run(use_relu_controller=true);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis with ReLU controller
 Flowpipe construction:
-  0.909248 seconds (5.62 M allocations: 342.873 MiB, 9.02% gc time)
+  0.575101 seconds (5.62 M allocations: 342.867 MiB, 9.36% gc time)
 Property checking:
-  0.063607 seconds (384.68 k allocations: 24.102 MiB)
+  0.042577 seconds (384.68 k allocations: 24.102 MiB)
   The property is satisfied.
 Total analysis time:
-  1.070306 seconds (6.11 M allocations: 372.885 MiB, 7.66% gc time, 0.00% compilation time)
+  0.711663 seconds (6.11 M allocations: 372.875 MiB, 7.57% gc time, 0.00% compilation time)
 Simulation:
-  4.966214 seconds (16.49 M allocations: 825.622 MiB, 2.48% gc time, 0.00% compilation time: 2% of which was recompilation)</code></pre><p>Run the analysis script for the tanh controller:</p><pre><code class="language-julia hljs">sol_tanh, sim_tanh = run(use_relu_controller=false);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis with tanh controller
+  4.935690 seconds (16.49 M allocations: 825.551 MiB, 3.81% gc time, 0.00% compilation time: 2% of which was recompilation)</code></pre><p>Run the analysis script for the tanh controller:</p><pre><code class="language-julia hljs">sol_tanh, sim_tanh = run(use_relu_controller=false);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis with tanh controller
 Flowpipe construction:
-  1.623747 seconds (5.64 M allocations: 345.785 MiB, 47.54% gc time)
+  1.142401 seconds (5.64 M allocations: 345.785 MiB, 51.62% gc time)
 Property checking:
-  0.066379 seconds (384.68 k allocations: 24.102 MiB)
+  0.042199 seconds (384.68 k allocations: 24.102 MiB)
   The property is satisfied.
 Total analysis time:
-  1.691201 seconds (6.02 M allocations: 370.615 MiB, 45.65% gc time)
+  1.184949 seconds (6.02 M allocations: 370.614 MiB, 49.77% gc time)
 Simulation:
-  0.163556 seconds (304.55 k allocations: 20.051 MiB, 0.00% compilation time)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper(sol, sim)
+  0.100314 seconds (305.00 k allocations: 20.075 MiB, 0.00% compilation time)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper(sol, sim)
     fig = plot(leg=(0.4, 0.3))
     for F in sol, R in F
         # Subdivide the reach sets in time to obtain more precise plots:
@@ -308,6 +308,6 @@ Simulation:
     return fig
 end;</code></pre><p>Plot the results:</p><pre><code class="language-julia hljs">fig = plot_helper(sol_relu, sim_relu)
 # Plots.savefig(fig, &quot;ACC-ReLU.png&quot;)  # command to save the plot to a file
-fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="f6d9f10d.png" alt="Example block output"/><pre><code class="language-julia hljs">fig = plot_helper(sol_tanh, sim_tanh)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="e1d878c0.png" alt="Example block output"/><pre><code class="language-julia hljs">fig = plot_helper(sol_tanh, sim_tanh)
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-# savefig(fig, &quot;ACC-tanh.png&quot;)  # command to save the plot to a file</code></pre><img src="468a7aaf.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« Home</a><a class="docs-footer-nextpage" href="../Airplane/">Airplane »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Thursday 15 January 2026 19:41">Thursday 15 January 2026</span>. Using Julia version 1.12.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+# savefig(fig, &quot;ACC-tanh.png&quot;)  # command to save the plot to a file</code></pre><img src="44788128.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« Home</a><a class="docs-footer-nextpage" href="../Airplane/">Airplane »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Thursday 15 January 2026 20:27">Thursday 15 January 2026</span>. Using Julia version 1.12.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
