@@ -30,7 +30,7 @@ import Aqua, ExplicitImports
                :(×), :shift, :vars)
     @test isnothing(ExplicitImports.check_no_implicit_imports(ClosedLoopReachability;
                                                               ignore=ignores))
-    ignores = (:controller, )
+    ignores = (:controller,)
     @test isnothing(ExplicitImports.check_no_self_qualified_accesses(ClosedLoopReachability;
                                                                      ignore=ignores))
     @test isnothing(ExplicitImports.check_no_stale_explicit_imports(ClosedLoopReachability))
