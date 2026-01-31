@@ -70,14 +70,14 @@ println(&quot;Simulation:&quot;)
 res = @timed simulate(prob; T=T, trajectories=5, include_vertices=false)
 sim = res.value
 print_timed(res);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Flowpipe construction:
- 20.293955 seconds (147.42 M allocations: 9.228 GiB, 20.00% gc time)
+ 20.425306 seconds (147.42 M allocations: 9.228 GiB, 20.39% gc time)
 Property checking:
-  0.099982 seconds (289.97 k allocations: 17.000 MiB, 0.00% compilation time)
+  0.101592 seconds (289.97 k allocations: 17.000 MiB, 0.00% compilation time)
   The property is satisfied.
 Total analysis time:
- 20.397639 seconds (147.71 M allocations: 9.245 GiB, 19.90% gc time, 0.00% compilation time)
+ 20.531126 seconds (147.71 M allocations: 9.245 GiB, 20.28% gc time, 0.00% compilation time)
 Simulation:
-  0.693502 seconds (2.25 M allocations: 117.737 MiB, 0.00% compilation time)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Preprocess the results:</p><pre><code class="language-julia hljs">solz = overapproximate(sol, Zonotope)
+  0.705894 seconds (2.25 M allocations: 117.717 MiB, 0.00% compilation time)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Preprocess the results:</p><pre><code class="language-julia hljs">solz = overapproximate(sol, Zonotope)
 Tint = try convert(Int, T) catch; T end;</code></pre><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper(vars; show_simulation::Bool=true)
     fig = plot()
     plot!(fig, project(goal_set, vars); color=:cyan, alpha=0.5, lab=&quot;goal&quot;)
@@ -103,7 +103,7 @@ lens!(fig, [9.49, 9.56], [-4.51, -4.44]; inset=(1, bbox(0.65, 0.05, 0.25, 0.25))
 lens!(fig, [0.3, 0.7], [-0.25, 0.25]; inset=(1, bbox(0.1, 0.3, 0.25, 0.25)),
       lc=:black, xticks=[0.4, 0.6], yticks=[-0.2, 0.2], subplot=3)
 # Plots.savefig(fig, &quot;Unicycle-x1-x2.png&quot;)  # command to save the plot to a file
-fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="25f969e7.png" alt="Example block output"/><pre><code class="language-julia hljs">vars = (3, 4)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="ac7ee3de.png" alt="Example block output"/><pre><code class="language-julia hljs">vars = (3, 4)
 fig = plot_helper(vars; show_simulation=false)
 plot!(fig; xlab=&quot;x₃&quot;, ylab=&quot;x₄&quot;, leg=:bottom)
 lens!(fig, [2.09, 2.12], [1.495, 1.515]; inset=(1, bbox(0.72, 0.54, 0.25, 0.25)),
@@ -111,4 +111,4 @@ lens!(fig, [2.09, 2.12], [1.495, 1.515]; inset=(1, bbox(0.72, 0.54, 0.25, 0.25))
 lens!(fig, [-0.1, 0.03], [-0.4, -0.15]; inset=(1, bbox(0.1, 0.1, 0.25, 0.25)),
       lc=:black, xticks=[-0.08, 0], yticks=[-0.3, -0.2], subplot=3)
 # Plots.savefig(fig, &quot;Unicycle-x3-x4.png&quot;)  # command to save the plot to a file
-fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="1a9655e2.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../TORA/">« Translational Oscillations by a Rotational Actuator (TORA)</a><a class="docs-footer-nextpage" href="../VerticalCAS/">Vertical Collision Avoidance System (VerticalCAS) »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Friday 30 January 2026 23:58">Friday 30 January 2026</span>. Using Julia version 1.12.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="1a9655e2.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../TORA/">« Translational Oscillations by a Rotational Actuator (TORA)</a><a class="docs-footer-nextpage" href="../VerticalCAS/">Vertical Collision Avoidance System (VerticalCAS) »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Saturday 31 January 2026 12:54">Saturday 31 January 2026</span>. Using Julia version 1.12.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
