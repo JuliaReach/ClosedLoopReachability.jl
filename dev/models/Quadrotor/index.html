@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Quadrotor · ClosedLoopReachability.jl</title><meta name="title" content="Quadrotor · ClosedLoopReachability.jl"/><meta property="og:title" content="Quadrotor · ClosedLoopReachability.jl"/><meta property="twitter:title" content="Quadrotor · ClosedLoopReachability.jl"/><meta name="description" content="Documentation for ClosedLoopReachability.jl."/><meta property="og:description" content="Documentation for ClosedLoopReachability.jl."/><meta property="twitter:description" content="Documentation for ClosedLoopReachability.jl."/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/aligned.css" rel="stylesheet" type="text/css"/><link href="../../assets/citations.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="ClosedLoopReachability.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">ClosedLoopReachability.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><input class="collapse-toggle" id="menuitem-2" type="checkbox" checked/><label class="tocitem" for="menuitem-2"><span class="docs-label">Examples</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../ACC/">Adaptive Cruise Control (ACC)</a></li><li><a class="tocitem" href="../Airplane/">Airplane</a></li><li><a class="tocitem" href="../AttitudeControl/">Attitude Control</a></li><li><a class="tocitem" href="../InvertedPendulum/">Inverted Pendulum</a></li><li><a class="tocitem" href="../InvertedTwoLinkPendulum/">Inverted Two-Link Pendulum</a></li><li class="is-active"><a class="tocitem" href>Quadrotor</a><ul class="internal"><li><a class="tocitem" href="#Model"><span>Model</span></a></li><li><a class="tocitem" href="#Specification"><span>Specification</span></a></li><li><a class="tocitem" href="#Analysis"><span>Analysis</span></a></li><li><a class="tocitem" href="#Results"><span>Results</span></a></li></ul></li><li><a class="tocitem" href="../SpacecraftDocking/">Spacecraft Docking</a></li><li><a class="tocitem" href="../TORA/">Translational Oscillations by a Rotational Actuator (TORA)</a></li><li><a class="tocitem" href="../Unicycle/">Unicycle</a></li><li><a class="tocitem" href="../VerticalCAS/">Vertical Collision Avoidance System (VerticalCAS)</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-3" type="checkbox"/><label class="tocitem" for="menuitem-3"><span class="docs-label">API Reference</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../lib/problems/">Problem types</a></li><li><a class="tocitem" href="../../lib/solvers/">Solvers</a></li></ul></li><li><a class="tocitem" href="../../bibliography/">Bibliography</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Examples</a></li><li class="is-active"><a href>Quadrotor</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Quadrotor</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/JuliaReach/ClosedLoopReachability.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/JuliaReach/ClosedLoopReachability.jl/blob/master/models/Quadrotor/Quadrotor.jl" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Quadrotor"><a class="docs-heading-anchor" href="#Quadrotor">Quadrotor</a><a id="Quadrotor-1"></a><a class="docs-heading-anchor-permalink" href="#Quadrotor" title="Permalink"></a></h1><p>The Quadrotor benchmark is a model of a flying drone with four rotors.</p><p><img src="../Quadrotor_explanation.png" alt/></p><pre><code class="language-julia hljs">using ClosedLoopReachability
+import OrdinaryDiffEq, Plots, DisplayAs
+using ReachabilityBase.Arrays: SingleEntryVector
+using ReachabilityBase.CurrentPath: @current_path
+using ReachabilityBase.Timing: print_timed
+using Plots: plot, plot!</code></pre><h2 id="Model"><a class="docs-heading-anchor" href="#Model">Model</a><a id="Model-1"></a><a class="docs-heading-anchor-permalink" href="#Model" title="Permalink"></a></h2><p>There are 12 state variables <span>$(x_1, …, x_{12})$</span>, where <span>$(x_1, x_2)$</span> is the inertial position (north and east), <span>$x_3$</span> is the altitude, <span>$(x_4, x_5, x_6)$</span> is the velocity (longitudinal, lateral, vertical), <span>$(x_7, x_8, x_9)$</span> is the (roll, pitch, yaw) angle, and <span>$(x_{10}, x_{11}, x_{12})$</span> is the (roll, pitch, yaw) rate. The control inputs <span>$(u_1, u_2, u_3)$</span> represent the torque. For more details we refer to <a href="../../bibliography/#Beard08">Beard [Bea08]</a>.</p><pre><code class="language-julia hljs">vars_idx = Dict(:states =&gt; 1:12, :controls =&gt; 13:15)
+
+const g = 9.81
+const m = 1.4
+const Jx = 0.054
+const Jy = 0.054
+const Jz = 0.104
+const Cyzx = (Jy - Jz) / Jx
+const Czxy = (Jz - Jx) / Jy
+const Cxyz = (Jx - Jy) / Jz
+const τψ = 0.0
+const Tz = τψ / Jz;</code></pre><p>The differential equations can be simplified using knowledge about the model constants:</p><pre><code class="language-julia hljs">@taylorize function Quadrotor!(dx, x, p, t)
+    x₁, x₂, x₃, x₄, x₅, x₆, x₇, x₈, x₉, x₁₀, x₁₁, x₁₂, u₁, u₂, u₃ = x
+
+    F₁ = g + u₁ / m
+    Tx = u₂ / Jx
+    Ty = u₃ / Jy
+    sx7 = sin(x₇)
+    cx7 = cos(x₇)
+    sx8 = sin(x₈)
+    cx8 = cos(x₈)
+    sx9 = sin(x₉)
+    cx9 = cos(x₉)
+    sx7sx9 = sx7 * sx9
+    sx7cx9 = sx7 * cx9
+    cx7sx9 = cx7 * sx9
+    cx7cx9 = cx7 * cx9
+    sx7cx8 = sx7 * cx8
+    cx7cx8 = cx7 * cx8
+    sx7_cx8 = sx7 / cx8
+    x4cx8 = cx8 * x₄
+    xdot9 = sx7_cx8 * x₁₁
+
+    dx[1] = (cx9 * x4cx8 + (sx7cx9 * sx8 - cx7sx9) * x₅) + (cx7cx9 * sx8 + sx7sx9) * x₆
+    dx[2] = (sx9 * x4cx8 + (sx7sx9 * sx8 + cx7cx9) * x₅) + (cx7sx9 * sx8 - sx7cx9) * x₆
+    dx[3] = (sx8 * x₄ - sx7cx8 * x₅) - cx7cx8 * x₆
+    dx[4] = -x₁₁ * x₆ - g * sx8
+    dx[5] = x₁₀ * x₆ + g * sx7cx8
+    dx[6] = (x₁₁ * x₄ - x₁₀ * x₅) + (g * cx7cx8 - F₁)
+    dx[7] = x₁₀ + sx8 * xdot9
+    dx[8] = cx7 * x₁₁
+    dx[9] = xdot9
+    dx[10] = Tx
+    dx[11] = Ty
+    dx[12] = zero(x[12])
+    dx[13] = zero(u₁)
+    dx[14] = zero(u₂)
+    dx[15] = zero(u₃)
+    return dx
+end;</code></pre><p>We are given a neural-network controller with 3 hidden layers of 64 neurons each and sigmoid activations. The controller has 12 inputs (the state variables) and 3 outputs (<span>$u_1, u_2, u_3$</span>).</p><pre><code class="language-julia hljs">path = @current_path(&quot;Quadrotor&quot;, &quot;Quadrotor_controller.polar&quot;)
+controller = read_POLAR(path);</code></pre><p>The control period is 0.1 time units.</p><pre><code class="language-julia hljs">period = 0.1;</code></pre><h2 id="Specification"><a class="docs-heading-anchor" href="#Specification">Specification</a><a id="Specification-1"></a><a class="docs-heading-anchor-permalink" href="#Specification" title="Permalink"></a></h2><p>We consider a smaller uncertain initial condition than originally proposed; specifically, the set is a hyperrectangle with 1% of the original radius:</p><pre><code class="language-julia hljs">r = [0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0, 0, 0, 0, 0, 0]  # original radius
+X₀ = Hyperrectangle(zeros(12), 0.01 * r)
+U₀ = ZeroSet(3);</code></pre><p>The control problem is:</p><pre><code class="language-julia hljs">ivp = @ivp(x&#39; = Quadrotor!(x), dim: 15, x(0) ∈ X₀ × U₀)
+prob = ControlledPlant(ivp, controller, vars_idx, period);</code></pre><p>The specification is to stabilize the attitude <span>$x_3$</span> to the goal region <span>$[0.94, 1.06]$</span> until a time horizon of 50 time units. A sufficient condition for guaranteed verification is to overapproximate the result at the end with a hyperrectangle.</p><pre><code class="language-julia hljs">goal_states = HPolyhedron([HalfSpace(SingleEntryVector(3, 15, -1.0), -0.94),
+                           HalfSpace(SingleEntryVector(3, 15, 1.0), 1.06)])
+
+predicate_set(R) = overapproximate(R, Hyperrectangle) ⊆ goal_states
+
+predicate(sol) = all(predicate_set(F[end]) for F in sol if T ∈ tspan(F))
+
+T = 5.0
+T_warmup = 2 * period;  # shorter time horizon for warm-up run</code></pre><h2 id="Analysis"><a class="docs-heading-anchor" href="#Analysis">Analysis</a><a id="Analysis-1"></a><a class="docs-heading-anchor-permalink" href="#Analysis" title="Permalink"></a></h2><p>To enclose the continuous dynamics, we use a Taylor-model-based algorithm:</p><pre><code class="language-julia hljs">algorithm_plant = TMJets(abstol=1e-1, orderT=3, orderQ=1);</code></pre><p>To propagate sets through the neural network, we use the <code>DeepZ</code> algorithm:</p><pre><code class="language-julia hljs">algorithm_controller = DeepZ();</code></pre><p>The verification benchmark is given below:</p><pre><code class="language-julia hljs">function benchmark(; T=T, silent::Bool=false)
+    # Solve the controlled system:
+    silent || println(&quot;Flowpipe construction:&quot;)
+    res = @timed solve(prob; T=T, algorithm_controller=algorithm_controller,
+                       algorithm_plant=algorithm_plant)
+    sol = res.value
+    silent || print_timed(res)
+
+    # Check the property:
+    silent || println(&quot;Property checking:&quot;)
+    res = @timed predicate(sol)
+    silent || print_timed(res)
+    if res.value
+        silent || println(&quot;  The property is satisfied.&quot;)
+        result = &quot;verified&quot;
+    else
+        silent || println(&quot;  The property may be violated.&quot;)
+        result = &quot;not verified&quot;
+    end
+
+    return sol, result
+end;</code></pre><p>Run the verification benchmark and compute some simulations:</p><pre><code class="language-julia hljs">benchmark(T=T_warmup, silent=true)  # warm-up
+res = @timed benchmark(T=T)  # benchmark
+sol, result = res.value
+@assert (result == &quot;verified&quot;) &quot;verification failed&quot;
+println(&quot;Total analysis time:&quot;)
+print_timed(res)
+
+println(&quot;Simulation:&quot;)
+res = @timed simulate(prob; T=T, trajectories=1, include_vertices=false)
+sim = res.value
+print_timed(res);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Flowpipe construction:
+  9.655284 seconds (64.55 M allocations: 4.261 GiB, 18.42% gc time)
+Property checking:
+  0.316527 seconds (692.12 k allocations: 34.482 MiB, 0.00% compilation time)
+  The property is satisfied.
+Total analysis time:
+  9.979217 seconds (65.24 M allocations: 4.295 GiB, 17.86% gc time, 0.00% compilation time)
+Simulation:
+  0.598857 seconds (2.43 M allocations: 121.339 MiB, 0.00% compilation time)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper(vars)
+    goal_states_projected = cartesian_product(Interval(0, T),
+                                              project(goal_states, [vars[2]]))
+    fig = plot()
+    plot!(fig, goal_states_projected; color=:cyan, lab=&quot;goal&quot;)
+    plot!(fig, sol; vars=vars, color=:yellow, lw=0, alpha=1, lab=&quot;&quot;)
+    plot_simulation!(fig, sim; vars=vars, color=:black, lab=&quot;&quot;)
+    return fig
+end;</code></pre><p>Plot the results:</p><pre><code class="language-julia hljs">vars = (0, 3)
+fig = plot_helper(vars)
+plot!(fig; xlab=&quot;t&quot;, ylab=&quot;x₃&quot;)
+# Plots.savefig(fig, &quot;Quadrotor.png&quot;)  # command to save the plot to a file
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="53b9c193.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../InvertedTwoLinkPendulum/">« Inverted Two-Link Pendulum</a><a class="docs-footer-nextpage" href="../SpacecraftDocking/">Spacecraft Docking »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Friday 30 January 2026 23:58">Friday 30 January 2026</span>. Using Julia version 1.12.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

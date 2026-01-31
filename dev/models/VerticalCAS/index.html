@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Vertical Collision Avoidance System (VerticalCAS) · ClosedLoopReachability.jl</title><meta name="title" content="Vertical Collision Avoidance System (VerticalCAS) · ClosedLoopReachability.jl"/><meta property="og:title" content="Vertical Collision Avoidance System (VerticalCAS) · ClosedLoopReachability.jl"/><meta property="twitter:title" content="Vertical Collision Avoidance System (VerticalCAS) · ClosedLoopReachability.jl"/><meta name="description" content="Documentation for ClosedLoopReachability.jl."/><meta property="og:description" content="Documentation for ClosedLoopReachability.jl."/><meta property="twitter:description" content="Documentation for ClosedLoopReachability.jl."/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/aligned.css" rel="stylesheet" type="text/css"/><link href="../../assets/citations.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="ClosedLoopReachability.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">ClosedLoopReachability.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><input class="collapse-toggle" id="menuitem-2" type="checkbox" checked/><label class="tocitem" for="menuitem-2"><span class="docs-label">Examples</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../ACC/">Adaptive Cruise Control (ACC)</a></li><li><a class="tocitem" href="../Airplane/">Airplane</a></li><li><a class="tocitem" href="../AttitudeControl/">Attitude Control</a></li><li><a class="tocitem" href="../InvertedPendulum/">Inverted Pendulum</a></li><li><a class="tocitem" href="../InvertedTwoLinkPendulum/">Inverted Two-Link Pendulum</a></li><li><a class="tocitem" href="../Quadrotor/">Quadrotor</a></li><li><a class="tocitem" href="../SpacecraftDocking/">Spacecraft Docking</a></li><li><a class="tocitem" href="../TORA/">Translational Oscillations by a Rotational Actuator (TORA)</a></li><li><a class="tocitem" href="../Unicycle/">Unicycle</a></li><li class="is-active"><a class="tocitem" href>Vertical Collision Avoidance System (VerticalCAS)</a><ul class="internal"><li><a class="tocitem" href="#Model"><span>Model</span></a></li><li><a class="tocitem" href="#Specification"><span>Specification</span></a></li><li><a class="tocitem" href="#Analysis"><span>Analysis</span></a></li><li><a class="tocitem" href="#Results"><span>Results</span></a></li></ul></li></ul></li><li><input class="collapse-toggle" id="menuitem-3" type="checkbox"/><label class="tocitem" for="menuitem-3"><span class="docs-label">API Reference</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../lib/problems/">Problem types</a></li><li><a class="tocitem" href="../../lib/solvers/">Solvers</a></li></ul></li><li><a class="tocitem" href="../../bibliography/">Bibliography</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Examples</a></li><li class="is-active"><a href>Vertical Collision Avoidance System (VerticalCAS)</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Vertical Collision Avoidance System (VerticalCAS)</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/JuliaReach/ClosedLoopReachability.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/JuliaReach/ClosedLoopReachability.jl/blob/master/models/VerticalCAS/VerticalCAS.jl" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Vertical-Collision-Avoidance-System-(VerticalCAS)"><a class="docs-heading-anchor" href="#Vertical-Collision-Avoidance-System-(VerticalCAS)">Vertical Collision Avoidance System (VerticalCAS)</a><a id="Vertical-Collision-Avoidance-System-(VerticalCAS)-1"></a><a class="docs-heading-anchor-permalink" href="#Vertical-Collision-Avoidance-System-(VerticalCAS)" title="Permalink"></a></h1><p>The VerticalCAS benchmark considers a collision avoidance system (CAS), required for commercial aircraft, which gives vertical climbrate advisories to pilots [<a href="../../bibliography/#JulianK19">JK19</a>, <a href="../../bibliography/#AkintundeBKL20">ABKL20</a>].</p><pre><code class="language-julia hljs">using ClosedLoopReachability, LinearAlgebra
+import Plots, DisplayAs
+using ReachabilityBase.CurrentPath: @current_path
+using ReachabilityBase.Timing: print_timed
+using ClosedLoopReachability: FeedforwardNetwork
+using Plots: plot, plot!</code></pre><h2 id="Model"><a class="docs-heading-anchor" href="#Model">Model</a><a id="Model-1"></a><a class="docs-heading-anchor-permalink" href="#Model" title="Permalink"></a></h2><p>This model is a closed-loop variant of the aircraft collision avoidance system ACAS X. The considered scenario involves two aircraft, the ownship and the intruder, where the ownship is equipped with a collision avoidance system referred to as VerticalCAS. VerticalCAS issues vertical climbrate advisories to the ownship pilot every second to avoid a near mid-air collision (NMAC), which is the region where the aircraft are separated by less than 100 ft vertically and 500 ft horizontally. The ownship is assumed to have a constant horizontal speed, and the intruder is assumed to follow a constant horizontal trajectory toward the ownship. The figure below illustrates the scenario, where the ownship is shown in black and the intruder is shown in red.</p><p><img src="../VerticalCAS_explanation.png" alt/></p><p>The current geometry of the system is described by the intruder altitude relative to the ownship <span>$h$</span> (in ft), the ownship vertical climbrate <span>$\dot{h}_0$</span> (in ft/min), and the time <span>$τ$</span> (in seconds) until the ownship and intruder are no longer horizontally separated. We can assume that the intruder is static and the horizontal separation <span>$τ$</span> decreases by 1 each second.</p><p>In addition to the parameters describing the geometry of the encounter, the dynamics also depend on the advisory <span>$\textit{adv}$</span> issued to the ownship at the previous time step. The following data structure stores all this information:</p><pre><code class="language-julia hljs">struct State{T}
+    state::T  # state for (h, hdot0) variables
+    τ::Float64
+    adv::Symbol
+end;</code></pre><p>There are 9 advisories, each of which instructs the pilot to accelerate until the vertical climbrate of the ownship complies with the advisory:</p><ol><li>COC: Clear of Conflict</li><li>DNC: Do Not Climb</li><li>DND: Do Not Descend</li><li>DES1500: Descend at least 1500 ft/min</li><li>CL1500: Climb at least 1500 ft/min</li><li>SDES1500: Strengthen Descent to at least 1500 ft/min</li><li>SCL1500: Strengthen Climb to at least 1500 ft/min</li><li>SDES2500: Strengthen Descent to at least 2500 ft/min</li><li>SCL2500: Strengthen Climb to at least 2500 ft/min</li></ol><pre><code class="language-julia hljs">const index2advisory = [:COC, :DNC, :DND, :DES1500, :CL1500,
+                        :SDES1500, :SCL1500, :SDES2500, :SCL2500];</code></pre><p>We create a dictionary that maps each advisory to a set corresponding to the respective constraint on the climbrate:</p><pre><code class="language-julia hljs">const advisory2set = Dict{Symbol,LazySet}()
+advisory2set[:COC] = EmptySet(1)
+advisory2set[:DNC] = HalfSpace([1.0], 0.0)
+advisory2set[:DND] = HalfSpace([-1.0], 0.0)
+advisory2set[:DES1500] = HalfSpace([1.0], -1500.0)
+advisory2set[:CL1500] = HalfSpace([-1.0], -1500.0)
+advisory2set[:SDES1500] = HalfSpace([1.0], -1500.0)
+advisory2set[:SCL1500] = HalfSpace([-1.0], -1500.0)
+advisory2set[:SDES2500] = HalfSpace([1.0], -2500.0)
+advisory2set[:SCL2500] = HalfSpace([-1.0], -2500.0);</code></pre><p>VerticalCAS is implemented as nine neural networks <span>$N_i$</span>, one for each (previous) advisory. All neural networks have the same structure: five hidden layers of 20 neurons each and ReLU activations, three inputs (<span>$h, \dot{h}_0, τ$</span>), and nine outputs representing the score of each possible advisory.</p><p>We create a dictionary that maps each advisory to the respective controller:</p><pre><code class="language-julia hljs">const advisory2controller = Dict{Symbol,FeedforwardNetwork}()
+
+path_prefix = @current_path(&quot;VerticalCAS&quot;, &quot;&quot;)
+for i in 1:9
+    path = joinpath(path_prefix, &quot;VerticalCAS_controller_$(i).polar&quot;)
+    adv = index2advisory[i]
+    advisory2controller[adv] = read_POLAR(path)
+end;</code></pre><p>Before passing the input to the neural networks, it has to be normalized by shifting and scaling in each dimension:</p><pre><code class="language-julia hljs">const normalization_additive = -[0.0, 0, 20]
+const normalization_multiplicative = 1.0 ./ [16000.0, 5000, 40]
+const normalization_multiplicative_X = diagm(normalization_multiplicative)
+
+function normalize(x::AbstractVector)
+    y = x .+ normalization_additive
+    z = normalization_multiplicative .* y
+    return z
+end
+
+function normalize(X::LazySet)
+    Y = translate(X, normalization_additive)
+    Z = linear_map(normalization_multiplicative_X, Y)
+    return Z
+end;</code></pre><p>Given a current state <span>$(h, \dot{h}_0, τ, \textit{adv})$</span>, the new advisory <span>$\textit{adv}$</span> is computed as the argmax of the output score of <span>$N_{\textit{adv}}$</span> on <span>$(h, \dot{h}_0, τ)$</span>:</p><pre><code class="language-julia hljs">function next_adv(X::LazySet, τ, adv; algorithm_controller=DeepZ())
+    Y = cartesian_product(X, Singleton([τ]))
+    Y = normalize(Y)
+    out = forward(Y, advisory2controller[adv], algorithm_controller)
+    imax = argmax(high(out))
+    return index2advisory[imax]
+end
+
+function next_adv(X::Singleton, τ, adv; algorithm_controller=nothing)
+    v = vcat(element(X), τ)
+    v = normalize(v)
+    u = forward(v, advisory2controller[adv])
+    imax = argmax(u)
+    return index2advisory[imax]
+end;</code></pre><p>Given the new advisory, the pilot can choose acceleration <span>$\ddot{h}_0$</span> as follows.</p><ol><li>If the new advisory is COC (1), then any acceleration from the set <span>$\left\{-\dfrac{g}{8}, 0, \dfrac{g}{8}\right\}$</span> can be chosen, where <span>$g$</span> represents the gravitational constant <span>$32.2$</span> ft/s<span>$^2$</span>.</li><li>For all remaining advisories, if the previous advisory coincides with the new one and the current climb rate complies with the new advisory (e.g., <span>$\dot{h}_0$</span> is non-positive for DNC and <span>$\dot{h}_0 ≥ 1500$</span> for CL1500), the acceleration <span>$\ddot{h}_0$</span> is <span>$0$</span>.</li><li>Otherwise, the pilot can choose acceleration <span>$\ddot{h}_0$</span> from the sets given below (for convenience, we also list the options for COC again).<ol><li>COC: <span>$\left\{-\dfrac{g}{8}, 0, \dfrac{g}{8}\right\}$</span></li><li>DNC: <span>$\left\{-\dfrac{g}{3}, -\dfrac{7g}{24}, -\dfrac{g}{4}\right\}$</span></li><li>DND: <span>$\left\{\dfrac{g}{4}, \dfrac{7g}{24}, \dfrac{g}{3}\right\}$</span></li><li>DES1500: <span>$\left\{-\dfrac{g}{3}, -\dfrac{7g}{24}, -\dfrac{g}{4}\right\}$</span></li><li>CL1500: <span>$\left\{\dfrac{g}{4}, \dfrac{7g}{24}, \dfrac{g}{3}\right\}$</span></li><li>SDES1500: <span>$\left\{-\dfrac{g}{3}\right\}$</span></li><li>SCL1500: <span>$\left\{\dfrac{g}{3}\right\}$</span></li><li>SDES2500: <span>$\left\{-\dfrac{g}{3}\right\}$</span></li><li>SCL2500: <span>$\left\{\dfrac{g}{3}\right\}$</span></li></ol></li></ol><p>Below we only consider the central options.</p><pre><code class="language-julia hljs">const g = 32.2
+const acc_central = Dict(:COC =&gt; 0.0, :DNC =&gt; -7g / 24, :DND =&gt; 7g / 24,
+                         :DES1500 =&gt; -7g / 24, :CL1500 =&gt; 7g / 24, :SDES1500 =&gt; -g / 3,
+                         :SCL1500 =&gt; g / 3, :SDES2500 =&gt; -g / 3, :SCL2500 =&gt; g / 3);</code></pre><p>The following function receives <span>$X = [h, \dot{h}_0, τ, \textit{adv}&#39;]$</span> as well as the previous advisory <span>$\textit{adv}$</span>, and returns the new acceleration <span>$\ddot{h}_0$</span>:</p><pre><code class="language-julia hljs">function next_acc(X::State, adv; acc=acc_central)
+    # Project on hdot and transform units from ft/s to ft/min:
+    hdot = 60 * _interval(X.state, 2)
+
+    # New advisory:
+    adv′ = X.adv
+
+    # Check whether the current state complies with the advisory:
+    comply = hdot ⊆ advisory2set[adv′]
+
+    return (comply &amp;&amp; adv == adv′) ? 0.0 : acc[adv′]
+end;</code></pre><p>Given the current system state <span>$(h, \dot{h}_0, τ, \textit{adv})$</span>, the new advisory <span>$\textit{adv}&#39;$</span>, and the acceleration <span>$\ddot{h}_0$</span>, the new state of the system <span>$(h(k+1), \dot{h}_0(k+1), τ(k+1),\textit{adv}(k+1))$</span> is computed as follows:</p><p class="math-container">\[\begin{aligned}
+h(k+1) &amp;= h(k) - \dot{h}_0(k) Δτ - 0.5 \ddot{h}_0(k) Δτ^2 \\
+\dot{h}_0(k+1) &amp;= \dot{h}_0(k) + \ddot{h}_0(k) Δτ \\
+τ(k+1) &amp;= τ(k) - Δτ \\
+\textit{adv}(k+1) &amp;= \textit{adv}&#39;
+\end{aligned}\]</p><p>where <span>$Δτ = 1$</span>.</p><pre><code class="language-julia hljs">const Δτ = 1.0
+const A = [1 -Δτ; 0 1]  # dynamics matrix (h, \dot{h}_0)
+
+function VerticalCAS!(out::Vector{&lt;:State}, kmax::Int; acc, algorithm_controller)
+    # Unpack the initial state:
+    X0 = first(out)
+    S = X0.state
+    τ = X0.τ
+    adv = X0.adv
+
+    for k in 1:kmax
+        # Get the next advisory and acceleration:
+        adv′ = next_adv(S, τ, adv; algorithm_controller=algorithm_controller)
+        X = State(S, τ, adv′)
+        hddot = next_acc(X, adv; acc=acc)
+
+        # Compute and store the next state:
+        b = [-hddot * Δτ^2 / 2, hddot * Δτ]
+        S′ = affine_map(A, S, b)
+        τ′ = τ - Δτ
+        X′ = State(S′, τ′, adv′)
+        push!(out, X′)
+
+        # Update the current state:
+        S = S′
+        τ = τ′
+        adv = adv′
+    end
+    return out
+end;</code></pre><h2 id="Specification"><a class="docs-heading-anchor" href="#Specification">Specification</a><a id="Specification-1"></a><a class="docs-heading-anchor-permalink" href="#Specification" title="Permalink"></a></h2><p>The uncertain initial condition is <span>$h \in [-133, -129]$</span>, <span>$\dot{h}_0 \in \{-19.5, -22.5, -25.5, -28.5\}$</span>, <span>$τ = 25$</span>, and <span>$\textit{adv} = \text{COC}$</span>:</p><pre><code class="language-julia hljs">const h_0 = Interval(-133.0, -129.0)
+const hdot0_0 = [-19.5, -22.5, -25.5, -28.5]
+const τ_0 = 25.0
+const adv_0 = :COC;</code></pre><p>The safety specification is that the ownship avoids entering the NMAC zone within <span>$k \in \{1, …, 10\}$</span> steps, i.e., <span>$h(k) &gt; 100$</span> or <span>$h(k) &lt; -100$</span>, for all possible choices of acceleration by the pilot.</p><pre><code class="language-julia hljs">unsafe_states = HalfSpace([0.0, 1.0], 100.0) ∩ HalfSpace([0.0, -1.0], 100.0)
+
+predicate_set(R) = isdisjoint(R, unsafe_states)
+
+predicate(sol) = all(predicate_set(R) for R in sol)
+
+kmax = 10
+kmax_warmup = 2;  # shorter time horizon for warm-up run</code></pre><h2 id="Analysis"><a class="docs-heading-anchor" href="#Analysis">Analysis</a><a id="Analysis-1"></a><a class="docs-heading-anchor-permalink" href="#Analysis" title="Permalink"></a></h2><p>Helper function to obtain initial states from hdot0(0):</p><pre><code class="language-julia hljs">function get_initial_states(hdot0_0i)
+    S0 = convert(Zonotope, cartesian_product(h_0, Singleton([hdot0_0i])))
+    return State(S0, τ_0, adv_0)
+end;</code></pre><p>Helper function to run a simulation:</p><pre><code class="language-julia hljs">function simulate_VerticalCAS(X0::State; kmax)
+    out = [X0]
+    sizehint!(out, kmax + 1)
+    VerticalCAS!(out, kmax; acc=acc_central, algorithm_controller=DeepZ())
+    return out
+end;</code></pre><p>Helper function to obtain an interval of dimension <code>i</code>:</p><pre><code class="language-julia hljs">_interval(X::LazySet, i) = Interval(extrema(X, i)...);</code></pre><p>Helper function to project onto the <span>$h$</span> variable:</p><pre><code class="language-julia hljs">function _project(X::Vector{State{T}}) where {T&lt;:Singleton}
+    return [Singleton([Xi.τ, Xi.state.element[1]]) for Xi in X]
+end
+
+function _project(X::Vector{State{T}}) where {T&lt;:LazySet}
+    return [Singleton([Xi.τ]) × _interval(Xi.state, 1) for Xi in X]
+end;</code></pre><p>The falsification benchmark is given below:</p><pre><code class="language-julia hljs">function benchmark(X0; kmax, silent::Bool=false)
+    res = @timed begin
+        seq = simulate_VerticalCAS(X0; kmax=kmax)
+        _project(seq)
+    end
+    sol = res.value
+    silent || print_timed(res)
+
+    silent || println(&quot;Property checking:&quot;)
+    res = @timed predicate(sol)
+    silent || print_timed(res)
+    if res.value
+        silent || println(&quot;  The property is satisfied.&quot;)
+        result = &quot;verified&quot;
+    else
+        silent || println(&quot;  The property is violated.&quot;)
+        result = &quot;falsified&quot;
+    end
+
+    return sol, result
+end;</code></pre><p>Simulation result for all choices of velocity:</p><pre><code class="language-julia hljs">println(&quot;Running flowpipe construction with central advisories:&quot;)
+sol_all = []
+for hdot0_0i in hdot0_0
+    println(&quot;Running instance hdot0(0) = $hdot0_0i:&quot;)
+    X0 = get_initial_states(hdot0_0i)
+    benchmark(X0; kmax=kmax_warmup, silent=true)  # warm-up
+    res = @timed benchmark(X0; kmax=kmax)  # benchmark
+    sol, result = res.value
+    push!(sol_all, sol)
+    if hdot0_0i ∈ [-19.5, -22.5]
+        @assert (result == &quot;verified&quot;) &quot;verification failed&quot;
+    elseif hdot0_0i ∈ [-25.5, -28.5]
+        @assert (result == &quot;falsified&quot;) &quot;falsification failed&quot;
+    end
+    println(&quot;Total analysis time:&quot;)
+    print_timed(res)
+end</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Running flowpipe construction with central advisories:
+Running instance hdot0(0) = -19.5:
+  0.000633 seconds (2.14 k allocations: 271.953 KiB)
+Property checking:
+  0.000645 seconds (6.41 k allocations: 271.562 KiB)
+  The property is satisfied.
+Total analysis time:
+  0.018785 seconds (24.43 k allocations: 1.855 MiB, 0.00% compilation time)
+Running instance hdot0(0) = -22.5:
+  0.000558 seconds (2.14 k allocations: 271.953 KiB)
+Property checking:
+  0.000640 seconds (6.41 k allocations: 271.562 KiB)
+  The property is satisfied.
+Total analysis time:
+  0.001290 seconds (8.64 k allocations: 1.076 MiB)
+Running instance hdot0(0) = -25.5:
+  0.000535 seconds (2.14 k allocations: 271.953 KiB)
+Property checking:
+  0.000165 seconds (1.74 k allocations: 73.719 KiB)
+  The property is violated.
+Total analysis time:
+  0.000786 seconds (3.97 k allocations: 903.625 KiB)
+Running instance hdot0(0) = -28.5:
+  0.000553 seconds (2.15 k allocations: 274.578 KiB)
+Property checking:
+  0.000161 seconds (1.74 k allocations: 73.719 KiB)
+  The property is violated.
+Total analysis time:
+  0.000781 seconds (3.98 k allocations: 906.531 KiB)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Preprocess the results (extend from time points to time intervals):</p><pre><code class="language-julia hljs">function extend_x(X::Singleton; Δ=Δτ)
+    return LineSegment(element(X) .- [Δ, 0], element(X))
+end
+
+function extend_x(cp::CartesianProduct; Δ=Δτ)
+    x = first(element(first(cp)))
+    X = Interval(x - Δ, x)
+    return CartesianProduct(X, LazySets.second(cp))
+end
+
+function extend_x(sol_all::Vector)
+    return [vcat([extend_x(X) for X in F[1:(end - 1)]], extend_x(F[end]; Δ=0.1)) for F in sol_all]
+end
+
+sol_all = extend_x(sol_all);</code></pre><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper()
+    fig = plot(ylab=&quot;h (vertical distance)&quot;, xlab=&quot;τ (time to reach horizontally)&quot;,
+               xflip=true, leg=:topright, xticks=14:25)
+    unsafe_states_projected = cartesian_product(Universe(1),
+                                                project(unsafe_states, [2]))
+    plot!(fig, unsafe_states_projected; alpha=0.2, c=:red, lab=&quot;unsafe&quot;)
+    return fig
+end;</code></pre><p>Plot the results:</p><pre><code class="language-julia hljs">fig = plot_helper()
+for (i, c) in [(1, :brown), (2, :green), (3, :orange), (4, :cyan)]
+    lab = &quot;h_0′ = $(hdot0_0[i])&quot;
+    for o in sol_all[i]
+        plot!(fig, o; lw=2, alpha=1, seriestype=:shape, c=c, lab=lab)
+        lab = &quot;&quot;
+    end
+end
+plot!(fig, xlims=(14.9, 25), ylims=(-310, -70))
+# Plots.savefig(&quot;VerticalCAS.png&quot;)  # command to save the plot to a file
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="803b1287.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../Unicycle/">« Unicycle</a><a class="docs-footer-nextpage" href="../../lib/problems/">Problem types »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Friday 30 January 2026 23:58">Friday 30 January 2026</span>. Using Julia version 1.12.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
