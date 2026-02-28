@@ -22,12 +22,12 @@ import Aqua, ExplicitImports
                :IntervalArithmetic, :IntervalBox, :LazySet, :LazySets,
                :MathematicalSystems, :MixedFlowpipe, :ReachabilityBase,
                :Taylor1, :TaylorModelReachSet, :TaylorN, :ZeroSet, :Zonotope,
-               :box_approximation, :cartesian_product, :diam, :domain,
+               :box_approximation, :cartesian_product, :center, :diam, :domain,
                :evaluate, :get_order, :high, :initial_state, :interval,
                :linear_map, :low, :mid, :ngens, :overapproximate, :polynomial,
-               :project, :rand, :remainder, :rsetrep, :sample, :scale, :set,
-               :set_variables, :size, :sup, :system, :tend, :translate, :tstart,
-               :(×), :shift, :vars)
+               :project, :radius_hyperrectangle, :rand, :remainder, :rsetrep,
+               :sample, :scale, :set, :set_variables, :size, :sup, :system,
+               :tend, :translate, :tstart, :(×), :shift, :vars)
     @test isnothing(ExplicitImports.check_no_implicit_imports(ClosedLoopReachability;
                                                               ignore=ignores))
     ignores = (:controller,)
