@@ -96,14 +96,14 @@ function InvertedPendulum_spec(verification::Bool)
 
     function predicate_set_safe(R)
         t = tspan(R)
-        return sup(t) <= 0.5 ||
+        return tend(t) <= 0.5 ||
             isdisjoint(overapproximate(R, Hyperrectangle), unsafe_states)
     end
 
     function predicate_safe(sol; silent::Bool=false)
         for F in sol
             t = tspan(F)
-            if sup(t) <= 0.5
+            if tend(t) <= 0.5
                 continue
             end
             for R in F
@@ -118,14 +118,14 @@ function InvertedPendulum_spec(verification::Bool)
 
     function predicate_set_unsafe(R)
         t = tspan(R)
-        return inf(t) >= 0.5 && sup(t) <= 1.0 &&
+        return tstart(t) >= 0.5 && tend(t) <= 1.0 &&
             overapproximate(R, Hyperrectangle) ⊆ unsafe_states
     end
 
     function predicate_unsafe(sol; silent::Bool=false)
         for F in sol
             t = tspan(F)
-            if sup(t) < 0.5
+            if tend(t) < 0.5
                 continue
             end
             for R in F
