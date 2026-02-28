@@ -18,10 +18,9 @@ using ReachabilityAnalysis: _check_dim, _get_tspan, _default_cpost,  # NOTE: the
                             ReachSolution, InitialValueProblem, numtype, post,
                             AbstractContinuousPost, AbstractLazyReachSet,
                             AbstractTaylorModelReachSet, zeroBox, symBox
-using ReachabilityAnalysis.TM: TaylorModel1, TaylorModelN, fp_rpa
-
 using ReachabilityBase.Require: require
 using ReachabilityBase.Comparison: isapproxzero
+using TaylorModels: TaylorModel1, TaylorModelN, fp_rpa
 
 using Parameters: @with_kw
 

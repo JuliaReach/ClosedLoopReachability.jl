@@ -12,6 +12,7 @@ ReachabilityAnalysis = "1e97bd63-91d1-579d-8e8d-501d2b57c93f"
 ReachabilityBase = "379f33d0-9447-4353-bd03-d664070e549f"
 Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
 Requires = "ae029012-a4dd-5104-9daa-d747884805df"
+TaylorModels = "314ce334-5f6e-57ae-acf6-00b6e903104a"
 
 [compat]
 CommonSolve = "0.1 - 0.2"
@@ -23,4 +24,5 @@ ReachabilityAnalysis = "0.14.5 - 0.28"
 ReachabilityBase = "0.2.1 - 0.3"
 Reexport = "0.2, 1"
 Requires = "0.5, 1"
+TaylorModels = "0.7 - 0.8"
 julia = "1.6"
