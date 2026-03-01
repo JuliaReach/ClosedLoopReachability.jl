@@ -8,66 +8,62 @@ using Plots: plot, plot!</code></pre><pre class="documenter-example-output"><cod
 Info Given TaylorIntegrationDiffEqExt was explicitly requested, output will be shown live 
 WARNING: Imported binding OrdinaryDiffEq.@unpack was undeclared at import time during import to TaylorIntegrationDiffEqExt.
 WARNING: Imported binding OrdinaryDiffEq.@cache was undeclared at import time during import to TaylorIntegrationDiffEqExt.
-WARNING: Imported binding OrdinaryDiffEq.OrdinaryDiffEqAdaptiveAlgorithm was undeclared at import time during import to TaylorIntegrationDiffEqExt.
-WARNING: Imported binding OrdinaryDiffEq.OrdinaryDiffEqConstantCache was undeclared at import time during import to TaylorIntegrationDiffEqExt.
-WARNING: Imported binding OrdinaryDiffEq.OrdinaryDiffEqMutableCache was undeclared at import time during import to TaylorIntegrationDiffEqExt.
-ERROR: LoadError: UndefVarError: `OrdinaryDiffEqAdaptiveAlgorithm` not defined in `TaylorIntegrationDiffEqExt`
-Suggestion: this global was defined as `OrdinaryDiffEq.OrdinaryDiffEqAdaptiveAlgorithm` but not assigned a value.
+ERROR: LoadError: UndefVarError: `@unpack` not defined in `TaylorIntegrationDiffEqExt`
+Suggestion: this global was defined as `OrdinaryDiffEq.var&quot;@unpack&quot;` but not assigned a value.
+Hint: a global variable of this name also exists in UnPack.
+    - Also exported by Parameters (loaded but not imported in Main).
 Stacktrace:
- [1] top-level scope
-   @ ~/.julia/packages/TaylorIntegration/THG4G/ext/TaylorIntegrationDiffEqExt.jl:36
- [2] include(mod::Module, _path::String)
+ [1] include(mod::Module, _path::String)
    @ Base ./Base.jl:306
- [3] include_package_for_output(pkg::Base.PkgId, input::String, depot_path::Vector{String}, dl_load_path::Vector{String}, load_path::Vector{String}, concrete_deps::Vector{Pair{Base.PkgId, UInt128}}, source::Nothing)
+ [2] include_package_for_output(pkg::Base.PkgId, input::String, depot_path::Vector{String}, dl_load_path::Vector{String}, load_path::Vector{String}, concrete_deps::Vector{Pair{Base.PkgId, UInt128}}, source::Nothing)
    @ Base ./loading.jl:3024
- [4] top-level scope
+ [3] top-level scope
    @ stdin:5
- [5] eval(m::Module, e::Any)
+ [4] eval(m::Module, e::Any)
    @ Core ./boot.jl:489
- [6] include_string(mapexpr::typeof(identity), mod::Module, code::String, filename::String)
+ [5] include_string(mapexpr::typeof(identity), mod::Module, code::String, filename::String)
    @ Base ./loading.jl:2870
- [7] include_string
+ [6] include_string
    @ ./loading.jl:2880 [inlined]
- [8] exec_options(opts::Base.JLOptions)
+ [7] exec_options(opts::Base.JLOptions)
    @ Base ./client.jl:315
- [9] _start()
+ [8] _start()
    @ Base ./client.jl:550
-in expression starting at /home/runner/.julia/packages/TaylorIntegration/THG4G/ext/TaylorIntegrationDiffEqExt.jl:3
+in expression starting at /home/runner/.julia/packages/TaylorIntegration/UV8vp/ext/TaylorIntegrationDiffEqExt.jl:206
+in expression starting at /home/runner/.julia/packages/TaylorIntegration/UV8vp/ext/TaylorIntegrationDiffEqExt.jl:3
 in expression starting at stdin:5
               ✗ TaylorIntegration → TaylorIntegrationDiffEqExt
-  0 dependencies successfully precompiled in 6 seconds. 245 already precompiled.
+  0 dependencies successfully precompiled in 6 seconds. 247 already precompiled.
 WARNING: Imported binding OrdinaryDiffEq.@unpack was undeclared at import time during import to TaylorIntegrationDiffEqExt.
 WARNING: Imported binding OrdinaryDiffEq.@cache was undeclared at import time during import to TaylorIntegrationDiffEqExt.
-WARNING: Imported binding OrdinaryDiffEq.OrdinaryDiffEqAdaptiveAlgorithm was undeclared at import time during import to TaylorIntegrationDiffEqExt.
-WARNING: Imported binding OrdinaryDiffEq.OrdinaryDiffEqConstantCache was undeclared at import time during import to TaylorIntegrationDiffEqExt.
-WARNING: Imported binding OrdinaryDiffEq.OrdinaryDiffEqMutableCache was undeclared at import time during import to TaylorIntegrationDiffEqExt.
-ERROR: LoadError: UndefVarError: `OrdinaryDiffEqAdaptiveAlgorithm` not defined in `TaylorIntegrationDiffEqExt`
-Suggestion: this global was defined as `OrdinaryDiffEq.OrdinaryDiffEqAdaptiveAlgorithm` but not assigned a value.
+ERROR: LoadError: UndefVarError: `@unpack` not defined in `TaylorIntegrationDiffEqExt`
+Suggestion: this global was defined as `OrdinaryDiffEq.var&quot;@unpack&quot;` but not assigned a value.
+Hint: a global variable of this name also exists in UnPack.
+    - Also exported by Parameters (loaded but not imported in Main).
 Stacktrace:
- [1] top-level scope
-   @ ~/.julia/packages/TaylorIntegration/THG4G/ext/TaylorIntegrationDiffEqExt.jl:36
- [2] include(mod::Module, _path::String)
+ [1] include(mod::Module, _path::String)
    @ Base ./Base.jl:306
- [3] include_package_for_output(pkg::Base.PkgId, input::String, depot_path::Vector{String}, dl_load_path::Vector{String}, load_path::Vector{String}, concrete_deps::Vector{Pair{Base.PkgId, UInt128}}, source::String)
+ [2] include_package_for_output(pkg::Base.PkgId, input::String, depot_path::Vector{String}, dl_load_path::Vector{String}, load_path::Vector{String}, concrete_deps::Vector{Pair{Base.PkgId, UInt128}}, source::String)
    @ Base ./loading.jl:3024
- [4] top-level scope
+ [3] top-level scope
    @ stdin:5
- [5] eval(m::Module, e::Any)
+ [4] eval(m::Module, e::Any)
    @ Core ./boot.jl:489
- [6] include_string(mapexpr::typeof(identity), mod::Module, code::String, filename::String)
+ [5] include_string(mapexpr::typeof(identity), mod::Module, code::String, filename::String)
    @ Base ./loading.jl:2870
- [7] include_string
+ [6] include_string
    @ ./loading.jl:2880 [inlined]
- [8] exec_options(opts::Base.JLOptions)
+ [7] exec_options(opts::Base.JLOptions)
    @ Base ./client.jl:315
- [9] _start()
+ [8] _start()
    @ Base ./client.jl:550
-in expression starting at /home/runner/.julia/packages/TaylorIntegration/THG4G/ext/TaylorIntegrationDiffEqExt.jl:3
+in expression starting at /home/runner/.julia/packages/TaylorIntegration/UV8vp/ext/TaylorIntegrationDiffEqExt.jl:206
+in expression starting at /home/runner/.julia/packages/TaylorIntegration/UV8vp/ext/TaylorIntegrationDiffEqExt.jl:3
 in expression starting at stdin:5
 ┌ Error: Error during loading of extension TaylorIntegrationDiffEqExt of TaylorIntegration, use `Base.retry_load_extensions()` to retry.
 │   exception =
 │    1-element ExceptionStack:
-│    Failed to precompile TaylorIntegrationDiffEqExt [21fdf329-9f0e-520d-ae26-dab38dab1a79] to &quot;/home/runner/.julia/compiled/v1.12/TaylorIntegrationDiffEqExt/jl_Bfvd4a&quot;.
+│    Failed to precompile TaylorIntegrationDiffEqExt [21fdf329-9f0e-520d-ae26-dab38dab1a79] to &quot;/home/runner/.julia/compiled/v1.12/TaylorIntegrationDiffEqExt/jl_3gL8L9&quot;.
 │    Stacktrace:
 │      [1] error(s::String)
 │        @ Base ./error.jl:44
@@ -271,23 +267,23 @@ end;</code></pre><p>For each controller we execute the same analysis script, whi
     return sol, sim
 end;</code></pre><p>Run the analysis script for the ReLU controller:</p><pre><code class="language-julia hljs">sol_relu, sim_relu = run(use_relu_controller=true);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis with ReLU controller
 Flowpipe construction:
-  0.599997 seconds (5.62 M allocations: 342.372 MiB, 10.31% gc time)
+  0.480108 seconds (2.53 M allocations: 180.511 MiB, 14.77% gc time)
 Property checking:
-  0.042835 seconds (384.68 k allocations: 24.102 MiB)
+  0.032808 seconds (126.01 k allocations: 7.308 MiB)
   The property is satisfied.
 Total analysis time:
-  0.743083 seconds (6.11 M allocations: 372.380 MiB, 8.33% gc time, 0.00% compilation time)
+  0.609527 seconds (2.76 M allocations: 193.672 MiB, 11.63% gc time, 0.00% compilation time)
 Simulation:
-  4.986993 seconds (15.88 M allocations: 795.944 MiB, 4.14% gc time, 0.00% compilation time: 2% of which was recompilation)</code></pre><p>Run the analysis script for the tanh controller:</p><pre><code class="language-julia hljs">sol_tanh, sim_tanh = run(use_relu_controller=false);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis with tanh controller
+  4.777112 seconds (15.92 M allocations: 797.687 MiB, 2.53% gc time, 0.00% compilation time: 2% of which was recompilation)</code></pre><p>Run the analysis script for the tanh controller:</p><pre><code class="language-julia hljs">sol_tanh, sim_tanh = run(use_relu_controller=false);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis with tanh controller
 Flowpipe construction:
-  1.164885 seconds (5.63 M allocations: 345.078 MiB, 52.09% gc time)
+  0.516191 seconds (2.54 M allocations: 182.684 MiB, 19.50% gc time)
 Property checking:
-  0.042767 seconds (384.68 k allocations: 24.102 MiB)
+  0.032686 seconds (126.01 k allocations: 7.308 MiB)
   The property is satisfied.
 Total analysis time:
-  1.208232 seconds (6.02 M allocations: 369.908 MiB, 50.22% gc time)
+  0.549092 seconds (2.66 M allocations: 190.719 MiB, 18.33% gc time)
 Simulation:
-  0.101811 seconds (297.28 k allocations: 19.571 MiB, 0.00% compilation time)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper(sol, sim)
+  0.101962 seconds (297.54 k allocations: 19.591 MiB, 0.00% compilation time)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper(sol, sim)
     fig = plot(leg=(0.4, 0.3))
     for F in sol, R in F
         # Subdivide the reach sets in time to obtain more precise plots:
@@ -310,6 +306,6 @@ Simulation:
     return fig
 end;</code></pre><p>Plot the results:</p><pre><code class="language-julia hljs">fig = plot_helper(sol_relu, sim_relu)
 # Plots.savefig(fig, &quot;ACC-ReLU.png&quot;)  # command to save the plot to a file
-fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="5c2d0648.png" alt="Example block output"/><pre><code class="language-julia hljs">fig = plot_helper(sol_tanh, sim_tanh)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="04bd39b6.png" alt="Example block output"/><pre><code class="language-julia hljs">fig = plot_helper(sol_tanh, sim_tanh)
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
-# savefig(fig, &quot;ACC-tanh.png&quot;)  # command to save the plot to a file</code></pre><img src="29882e5d.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« Home</a><a class="docs-footer-nextpage" href="../Airplane/">Airplane »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Saturday 28 February 2026 23:00">Saturday 28 February 2026</span>. Using Julia version 1.12.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+# savefig(fig, &quot;ACC-tanh.png&quot;)  # command to save the plot to a file</code></pre><img src="847ca4ce.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../">« Home</a><a class="docs-footer-nextpage" href="../Airplane/">Airplane »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Sunday 1 March 2026 21:33">Sunday 1 March 2026</span>. Using Julia version 1.12.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
