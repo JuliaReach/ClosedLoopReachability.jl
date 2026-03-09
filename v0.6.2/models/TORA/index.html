@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Translational Oscillations by a Rotational Actuator (TORA) · ClosedLoopReachability.jl</title><meta name="title" content="Translational Oscillations by a Rotational Actuator (TORA) · ClosedLoopReachability.jl"/><meta property="og:title" content="Translational Oscillations by a Rotational Actuator (TORA) · ClosedLoopReachability.jl"/><meta property="twitter:title" content="Translational Oscillations by a Rotational Actuator (TORA) · ClosedLoopReachability.jl"/><meta name="description" content="Documentation for ClosedLoopReachability.jl."/><meta property="og:description" content="Documentation for ClosedLoopReachability.jl."/><meta property="twitter:description" content="Documentation for ClosedLoopReachability.jl."/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/aligned.css" rel="stylesheet" type="text/css"/><link href="../../assets/citations.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="ClosedLoopReachability.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">ClosedLoopReachability.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><input class="collapse-toggle" id="menuitem-2" type="checkbox" checked/><label class="tocitem" for="menuitem-2"><span class="docs-label">Examples</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../ACC/">Adaptive Cruise Control (ACC)</a></li><li><a class="tocitem" href="../Airplane/">Airplane</a></li><li><a class="tocitem" href="../AttitudeControl/">Attitude Control</a></li><li><a class="tocitem" href="../InvertedPendulum/">Inverted Pendulum</a></li><li><a class="tocitem" href="../InvertedTwoLinkPendulum/">Inverted Two-Link Pendulum</a></li><li><a class="tocitem" href="../Quadrotor/">Quadrotor</a></li><li><a class="tocitem" href="../SpacecraftDocking/">Spacecraft Docking</a></li><li class="is-active"><a class="tocitem" href>Translational Oscillations by a Rotational Actuator (TORA)</a><ul class="internal"><li><a class="tocitem" href="#Model"><span>Model</span></a></li><li><a class="tocitem" href="#Specification"><span>Specification</span></a></li><li><a class="tocitem" href="#Analysis"><span>Analysis</span></a></li><li><a class="tocitem" href="#Results"><span>Results</span></a></li></ul></li><li><a class="tocitem" href="../Unicycle/">Unicycle</a></li><li><a class="tocitem" href="../VerticalCAS/">Vertical Collision Avoidance System (VerticalCAS)</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-3" type="checkbox"/><label class="tocitem" for="menuitem-3"><span class="docs-label">API Reference</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../lib/problems/">Problem types</a></li><li><a class="tocitem" href="../../lib/solvers/">Solvers</a></li></ul></li><li><a class="tocitem" href="../../bibliography/">Bibliography</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Examples</a></li><li class="is-active"><a href>Translational Oscillations by a Rotational Actuator (TORA)</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Translational Oscillations by a Rotational Actuator (TORA)</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/JuliaReach/ClosedLoopReachability.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/JuliaReach/ClosedLoopReachability.jl/blob/master/models/TORA/TORA.jl" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Translational-Oscillations-by-a-Rotational-Actuator-(TORA)"><a class="docs-heading-anchor" href="#Translational-Oscillations-by-a-Rotational-Actuator-(TORA)">Translational Oscillations by a Rotational Actuator (TORA)</a><a id="Translational-Oscillations-by-a-Rotational-Actuator-(TORA)-1"></a><a class="docs-heading-anchor-permalink" href="#Translational-Oscillations-by-a-Rotational-Actuator-(TORA)" title="Permalink"></a></h1><p>The TORA benchmark models a cart attached to a wall with a spring. The cart is free to move on a friction-less surface and has a weight attached to an arm, which is free to rotate about an axis. This serves as the control input to stabilize the cart at the origin <span>$x = 0$</span> [<a href="../../bibliography/#JankovicFK96">JFK96</a>].</p><p><img src="../TORA_explanation.png" alt/></p><p>We consider two different scenarios. In the first scenario, we have a safety specification. In the other scenario, we have a reachability specification.</p><pre><code class="language-julia hljs">using ClosedLoopReachability
+import OrdinaryDiffEq, Plots, DisplayAs
+using ReachabilityBase.CurrentPath: @current_path
+using ReachabilityBase.Timing: print_timed
+using ClosedLoopReachability: UniformAdditivePostprocessing, NoSplitter, LinearMapPostprocessing
+using Plots: plot, plot!, lens!, bbox</code></pre><p>The following option determines whether the verification settings should be used in the first scenario. The verification settings are chosen to show that the safety property is satisfied, which is expensive in this case. Concretely, we split the initial states into small chunks and run many analyses. Without the verification settings, the analysis is only run for a short time horizon.</p><pre><code class="language-julia hljs">const verification = false;</code></pre><h2 id="Model"><a class="docs-heading-anchor" href="#Model">Model</a><a id="Model-1"></a><a class="docs-heading-anchor-permalink" href="#Model" title="Permalink"></a></h2><p>The model is four-dimensional. The dynamics are given by the following equations:</p><p class="math-container">\[\begin{aligned}
+\dot{x}_1 &amp;= x_2 \\
+\dot{x}_2 &amp;= -x_1 + 0.1 \sin(x_3) \\
+\dot{x}_3 &amp;= x_4  \\
+\dot{x}_4 &amp;= u
+\end{aligned}\]</p><pre><code class="language-julia hljs">vars_idx = Dict(:states =&gt; 1:4, :controls =&gt; 5)
+
+@taylorize function TORA!(dx, x, p, t)
+    x₁, x₂, x₃, x₄, u = x
+
+    dx[1] = x₂
+    dx[2] = -x₁ + (0.1 * sin(x₃))
+    dx[3] = x₄
+    dx[4] = u
+    dx[5] = zero(u)
+    return dx
+end;</code></pre><p>We are given three neural-network controllers. All controllers have 3 hidden layers of 100 neurons each, 6 inputs (the state variables), and 1 output (<span>$u$</span>). The output of the neural networks <span>$N(x)$</span> needs to be normalized in order to obtain <span>$u$</span>.</p><h3 id="Scenario-1"><a class="docs-heading-anchor" href="#Scenario-1">Scenario 1</a><a id="Scenario-1-1"></a><a class="docs-heading-anchor-permalink" href="#Scenario-1" title="Permalink"></a></h3><p>The controller uses ReLU activations in all layers, including the output layer. The output normalization is <span>$u = N(x) - 10$</span>. The control period is 1 time unit.</p><pre><code class="language-julia hljs">path = @current_path(&quot;TORA&quot;, &quot;TORA_ReLU_controller.polar&quot;)
+controller_ReLU = read_POLAR(path)
+
+control_postprocessing1 = UniformAdditivePostprocessing(-10.0)
+
+period1 = 1.0;</code></pre><h3 id="Scenario-2"><a class="docs-heading-anchor" href="#Scenario-2">Scenario 2</a><a id="Scenario-2-1"></a><a class="docs-heading-anchor-permalink" href="#Scenario-2" title="Permalink"></a></h3><p>One controller has ReLU activations in all hidden layers and tanh activations in the output layer. The other controller has sigmoid activations in all layers, including the output layer. The output normalization is <span>$u = 11 N(x)$</span>. The control period is 0.5 time units.</p><pre><code class="language-julia hljs">path = @current_path(&quot;TORA&quot;, &quot;TORA_ReLUtanh_controller.polar&quot;)
+controller_relutanh = read_POLAR(path)
+path = @current_path(&quot;TORA&quot;, &quot;TORA_sigmoid_controller.polar&quot;)
+controller_sigmoid = read_POLAR(path)
+
+control_postprocessing2 = LinearMapPostprocessing(11.0)
+
+period2 = 0.5;</code></pre><h2 id="Specification"><a class="docs-heading-anchor" href="#Specification">Specification</a><a id="Specification-1"></a><a class="docs-heading-anchor-permalink" href="#Specification" title="Permalink"></a></h2><h3 id="Scenario-1-2"><a class="docs-heading-anchor" href="#Scenario-1-2">Scenario 1</a><a class="docs-heading-anchor-permalink" href="#Scenario-1-2" title="Permalink"></a></h3><p>The uncertain initial condition is <span>$x_1 ∈ [0.6, 0.7], x_2 ∈ [−0.7, −0.6], x_3 ∈ [−0.4, −0.3], x_4 ∈ [0.5, 0.6]$</span>.</p><pre><code class="language-julia hljs">X₀1 = Hyperrectangle(low=[0.6, -0.7, -0.4, 0.5], high=[0.7, -0.6, -0.3, 0.6])
+U = ZeroSet(1);</code></pre><p>The initial-value problem is:</p><pre><code class="language-julia hljs">ivp1 = @ivp(x&#39; = TORA!(x), dim: 5, x(0) ∈ X₀1 × U);</code></pre><p>The safety specification is to stay within the box <span>$x ∈ [−2, 2]^4$</span> for a time horizon of 20 time units. A sufficient condition for guaranteed verification is to overapproximate the result with hyperrectangles.</p><pre><code class="language-julia hljs">safe_states = cartesian_product(BallInf(zeros(4), 2.0), Universe(1))
+
+predicate1(sol, T) = overapproximate(sol, Hyperrectangle) ⊆ safe_states
+
+T1 = 20.0  # time horizon
+T1_warmup = 2 * period1  # shorter time horizon for warm-up run
+T1_reach = verification ? T1 : T1_warmup;  # shorter time horizon if not verifying</code></pre><h3 id="Scenario-2-2"><a class="docs-heading-anchor" href="#Scenario-2-2">Scenario 2</a><a class="docs-heading-anchor-permalink" href="#Scenario-2-2" title="Permalink"></a></h3><p>The uncertain initial condition is <span>$x_1 ∈ [-0.77, -0.75], x_2 ∈ [-0.45, -0.43], x_3 ∈ [0.51, 0.54], x_4 ∈ [-0.3, -0.28]$</span>.</p><pre><code class="language-julia hljs">X₀2 = Hyperrectangle(low=[-0.77, -0.45, 0.51, -0.3], high=[-0.75, -0.43, 0.54, -0.28])
+U = ZeroSet(1);</code></pre><p>The initial-value problem is:</p><pre><code class="language-julia hljs">ivp2 = @ivp(x&#39; = TORA!(x), dim: 5, x(0) ∈ X₀2 × U);</code></pre><p>The specification is to reach the goal region <span>$x_1 ∈ [-0.1, 0.2], x_2 ∈ [-0.9, -0.6]$</span> within 5 time units. A sufficient condition for guaranteed verification is to overapproximate the result at the end with a hyperrectangle.</p><pre><code class="language-julia hljs">goal_states = cartesian_product(Hyperrectangle(low=[-0.1, -0.9], high=[0.2, -0.6]),
+                                Universe(3))
+
+predicate_set2(R) = overapproximate(R, Hyperrectangle) ⊆ goal_states
+
+predicate2(sol, T) = all(predicate_set2(F[end]) for F in sol if T ∈ tspan(F))
+
+T2 = 5.0  # time horizon
+T2_warmup = 2 * period2;  # shorter time horizon for warm-up run</code></pre><h2 id="Analysis"><a class="docs-heading-anchor" href="#Analysis">Analysis</a><a id="Analysis-1"></a><a class="docs-heading-anchor-permalink" href="#Analysis" title="Permalink"></a></h2><p>To enclose the continuous dynamics, we use a Taylor-model-based algorithm:</p><pre><code class="language-julia hljs">algorithm_plant_1 = TMJets(abstol=3e-2, orderT=3, orderQ=1);
+algorithm_plant_2 = TMJets(abstol=2e-2, orderT=3, orderQ=1);</code></pre><p>To propagate sets through the neural network, we use the <code>DeepZ</code> algorithm. For verification, we also use an additional splitting strategy to increase the precision in scenario 1.</p><pre><code class="language-julia hljs">algorithm_controller = DeepZ();</code></pre><p>The verification benchmark is given below:</p><pre><code class="language-julia hljs">function benchmark(prob; T, splitter, algorithm_plant, predicate,
+                   silent::Bool=false)
+    # Solve the controlled system:
+    silent || println(&quot;Flowpipe construction:&quot;)
+    res = @timed solve(prob; T=T, algorithm_controller=algorithm_controller,
+                       algorithm_plant=algorithm_plant, splitter=splitter)
+    sol = res.value
+    silent || print_timed(res)
+
+    # Check the property:
+    silent || println(&quot;Property checking:&quot;)
+    res = @timed predicate(sol, T)
+    silent || print_timed(res)
+    if res.value
+        silent || println(&quot;  The property is satisfied.&quot;)
+        result = &quot;verified&quot;
+    else
+        silent || println(&quot;  The property may be violated.&quot;)
+        result = &quot;not verified&quot;
+    end
+
+    return sol, result
+end;
+
+function run(; scenario1::Bool, ReLUtanh_activations)
+    if scenario1
+        println(&quot;# Running analysis of scenario 1 with ReLU activations&quot;)
+        prob = ControlledPlant(ivp1, controller_ReLU, vars_idx, period1;
+                               postprocessing=control_postprocessing1)
+        splitter = verification ? BoxSplitter([4, 4, 3, 5]) : NoSplitter()
+        algorithm_plant = algorithm_plant_1
+        predicate = predicate1
+        T = T1_reach
+        T_warmup = T1_warmup
+    else
+        splitter = NoSplitter()
+        algorithm_plant = algorithm_plant_2
+        predicate = predicate2
+        T = T2
+        T_warmup = T2_warmup
+        if ReLUtanh_activations
+            println(&quot;# Running analysis of scenario 2 with ReLUtanh activations&quot;)
+            prob = ControlledPlant(ivp2, controller_relutanh, vars_idx, period2;
+                                   postprocessing=control_postprocessing2)
+        else
+            println(&quot;# Running analysis of scenario 2 with sigmoid activations&quot;)
+            prob = ControlledPlant(ivp2, controller_sigmoid, vars_idx, period2;
+                                   postprocessing=control_postprocessing2)
+        end
+    end
+
+    # Run the verification benchmark:
+    benchmark(prob; T=T_warmup, splitter=splitter,
+        algorithm_plant=algorithm_plant, predicate=predicate, silent=true)  # warm-up
+    res = @timed benchmark(prob; T=T, splitter=splitter,
+        algorithm_plant=algorithm_plant, predicate=predicate)  # benchmark
+    sol, result = res.value
+    @assert (result == &quot;verified&quot;) &quot;verification failed&quot;
+    println(&quot;Total analysis time:&quot;)
+    print_timed(res)
+
+    # Compute some simulations:
+    println(&quot;Simulation:&quot;)
+    if scenario1
+        res = @timed simulate(prob; T=T, trajectories=10, include_vertices=true)
+    else
+        res = @timed simulate(prob; T=T, trajectories=1, include_vertices=true)
+    end
+    sim = res.value
+    print_timed(res)
+
+    return sol, sim
+end;</code></pre><h3 id="Scenario-1-3"><a class="docs-heading-anchor" href="#Scenario-1-3">Scenario 1</a><a class="docs-heading-anchor-permalink" href="#Scenario-1-3" title="Permalink"></a></h3><p>Run the verification benchmark:</p><pre><code class="language-julia hljs">sol_r, sim_r = run(scenario1=true, ReLUtanh_activations=nothing);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis of scenario 1 with ReLU activations
+Flowpipe construction:
+  0.045238 seconds (1.10 M allocations: 50.213 MiB)
+Property checking:
+  0.003538 seconds (75.99 k allocations: 3.320 MiB)
+  The property is satisfied.
+Total analysis time:
+  0.054482 seconds (1.18 M allocations: 54.204 MiB, 0.00% compilation time)
+Simulation:
+  0.654153 seconds (1.81 M allocations: 94.064 MiB, 0.00% compilation time)</code></pre><h3 id="Scenario-2-3"><a class="docs-heading-anchor" href="#Scenario-2-3">Scenario 2</a><a class="docs-heading-anchor-permalink" href="#Scenario-2-3" title="Permalink"></a></h3><p>Run the verification benchmark for the controller with sigmoid activations:</p><pre><code class="language-julia hljs">sol_sig, sim_sig = run(scenario1=false, ReLUtanh_activations=false);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis of scenario 2 with sigmoid activations
+Flowpipe construction:
+  0.309268 seconds (5.64 M allocations: 252.963 MiB, 17.32% gc time)
+Property checking:
+  0.000415 seconds (8.32 k allocations: 372.422 KiB)
+  The property is satisfied.
+Total analysis time:
+  0.315436 seconds (5.65 M allocations: 253.997 MiB, 16.98% gc time, 0.00% compilation time)
+Simulation:
+  0.081408 seconds (82.55 k allocations: 4.781 MiB, 0.00% compilation time)</code></pre><p>Run the verification benchmark for the controller with ReLU/tanh activations:</p><pre><code class="language-julia hljs">sol_rt, sim_rt = run(scenario1=false, ReLUtanh_activations=true);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis of scenario 2 with ReLUtanh activations
+Flowpipe construction:
+  0.264979 seconds (4.89 M allocations: 220.290 MiB, 17.03% gc time)
+Property checking:
+  0.000406 seconds (8.32 k allocations: 372.422 KiB)
+  The property is satisfied.
+Total analysis time:
+  0.265550 seconds (4.90 M allocations: 221.163 MiB, 16.99% gc time)
+Simulation:
+  0.002925 seconds (30.89 k allocations: 2.065 MiB)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><h3 id="Scenario-1-4"><a class="docs-heading-anchor" href="#Scenario-1-4">Scenario 1</a><a class="docs-heading-anchor-permalink" href="#Scenario-1-4" title="Permalink"></a></h3><p>Preprocess the results:</p><pre><code class="language-julia hljs">solz = overapproximate(sol_r, Zonotope);</code></pre><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper1(vars)
+    fig = plot()
+    plot!(fig, project(safe_states, vars); color=:lightgreen, lab=&quot;safe&quot;)
+    plot!(fig, solz; vars=vars, color=:yellow, lw=0, alpha=1, lab=&quot;&quot;)
+    plot!(fig, project(X₀1, vars); c=:cornflowerblue, alpha=1, lab=&quot;X₀&quot;)
+    plot_simulation!(fig, sim_r; vars=vars, color=:black, lab=&quot;&quot;)
+    return fig
+end;</code></pre><p>Plot the results:</p><pre><code class="language-julia hljs">vars = (1, 2)
+fig = plot_helper1(vars)
+plot!(fig; xlab=&quot;x₁&quot;, ylab=&quot;x₂&quot;)
+# Plots.savefig(fig, &quot;TORA-ReLU-x1-x2.png&quot;)  # command to save the plot to a file
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="8fbea1fe.png" alt="Example block output"/><pre><code class="language-julia hljs">vars = (3, 4)
+fig = plot_helper1(vars)
+plot!(fig; xlab=&quot;x₃&quot;, ylab=&quot;x₄&quot;)
+# Plots.savefig(fig, &quot;TORA-ReLU-x3-x4.png&quot;)  # command to save the plot to a file
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="6c4cc15e.png" alt="Example block output"/><h3 id="Scenario-2-4"><a class="docs-heading-anchor" href="#Scenario-2-4">Scenario 2</a><a class="docs-heading-anchor-permalink" href="#Scenario-2-4" title="Permalink"></a></h3><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper2(sol, sim)
+    vars = (1, 2)
+    fig = plot()
+    plot!(fig, project(goal_states, vars); color=:cyan, lab=&quot;goal&quot;)
+    plot!(fig, sol; vars=vars, color=:yellow, lw=0, alpha=1, lab=&quot;&quot;)
+    plot!(fig, project(X₀2, vars); c=:cornflowerblue, alpha=1, lab=&quot;X₀&quot;)
+    plot_simulation!(fig, sim; vars=vars, color=:black, lab=&quot;&quot;)
+    plot!(fig; xlab=&quot;x₁&quot;, ylab=&quot;x₂&quot;)
+    return fig
+end;</code></pre><p>Plot the results:</p><pre><code class="language-julia hljs">fig = plot_helper2(sol_sig, sim_sig)
+lens!(fig, [-0.785, -0.735], [-0.47, -0.41]; inset=(1, bbox(0.2, 0.4, 0.2, 0.2)),
+      lc=:black, xticks=[-0.77, -0.75], yticks=[-0.45, -0.43], subplot=3)
+lens!(fig, [0.09, 0.22], [-0.9, -0.8]; inset=(1, bbox(0.6, 0.4, 0.2, 0.2)),
+      lc=:black, xticks=[0.1, 0.2], yticks=[-0.9, -0.8], subplot=3)
+# Plots.savefig(fig, &quot;TORA-sigmoid.png&quot;)  # command to save the plot to a file
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="aa413207.png" alt="Example block output"/><pre><code class="language-julia hljs">fig = plot_helper2(sol_rt, sim_rt)
+lens!(fig, [-0.785, -0.735], [-0.47, -0.41]; inset=(1, bbox(0.2, 0.4, 0.2, 0.2)),
+      lc=:black, xticks=[-0.77, -0.75], yticks=[-0.45, -0.43], subplot=3)
+lens!(fig, [0.0, 0.25], [-0.85, -0.7]; inset=(1, bbox(0.6, 0.4, 0.2, 0.2)),
+      lc=:black, xticks=[0, 0.2], yticks=[-0.8, -0.7], subplot=3)
+# Plots.savefig(fig, &quot;TORA-ReLUtanh.png&quot;)  # command to save the plot to a file
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="a7884890.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../SpacecraftDocking/">« Spacecraft Docking</a><a class="docs-footer-nextpage" href="../Unicycle/">Unicycle »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Sunday 17 August 2025 10:19">Sunday 17 August 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
