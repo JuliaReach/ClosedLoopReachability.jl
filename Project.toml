@@ -19,10 +19,25 @@ CommonSolve = "0.2"
 ControllerFormats = "0.1 - 0.2"
 LazySets = "5 - 6"
 NeuralNetworkReachability = "0.1"
+OrdinaryDiffEq = "6"
 Parameters = "0.12"
+Plots = "1"
 ReachabilityAnalysis = "0.29 - 0.30"
 ReachabilityBase = "0.3"
 Reexport = "0.2, 1"
 Requires = "0.5, 1"
 TaylorModels = "0.7 - 0.9"
 julia = "1.6"
+
+[extensions]
+OrdinaryDiffEqExt = "OrdinaryDiffEq"
+OrdinaryDiffEqPlotsExt = ["OrdinaryDiffEq", "Plots"]
+
+[extras]
+OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+
+[weakdeps]
+OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+Requires = "ae029012-a4dd-5104-9daa-d747884805df"

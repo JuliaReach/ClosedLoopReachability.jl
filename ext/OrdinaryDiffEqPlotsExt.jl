@@ -1,9 +1,20 @@
-export plot_simulation!
+module OrdinaryDiffEqPlotsExt
+
+import ClosedLoopReachability
+using ClosedLoopReachability: EnsembleSimulationSolution, trajectories
+
+@static if isdefined(Base, :get_extension)
+    import OrdinaryDiffEq
+    import Plots
+else
+    import .OrdinaryDiffEq
+    import .Plots
+end
 
 # convenience function for plotting simulation results
 # use `output_map` to plot a linear combination of the state variables
-function plot_simulation!(fig, sim::EnsembleSimulationSolution; vars=nothing, output_map=nothing,
-                          kwargs...)
+function ClosedLoopReachability.plot_simulation!(fig, sim::EnsembleSimulationSolution; vars=nothing,
+                                                 output_map=nothing, kwargs...)
     # The main problem is that plotting trajectories one by one changes the plot
     # limits. Hence we store the plot limits from an existing figure and restore
     # them after plotting all trajectories.
@@ -50,6 +61,7 @@ function _plot_simulation_vars!(fig, sim, vars; color, label)
             label = ""  # overwrite to have exactly one label
         end
     end
+    return nothing
 end
 
 function _plot_simulation_output_map!(fig, sim, output_map; color, label)
@@ -64,3 +76,5 @@ function _plot_simulation_output_map!(fig, sim, output_map; color, label)
     end
     return fig
 end
+
+end  # module
