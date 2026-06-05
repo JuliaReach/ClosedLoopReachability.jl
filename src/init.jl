@@ -13,8 +13,9 @@ using ControllerFormats: ActivationFunction, DenseLayerOp, FeedforwardNetwork,
 using NeuralNetworkReachability.ForwardAlgorithms: ForwardAlgorithm
 
 @reexport using ReachabilityAnalysis
-# namespace conflict
+# namespace conflicts
 using ReachabilityAnalysis: dim
+using LazySets: order  # temporary fix until ReachabilityAnalysis fixes this
 # unexported methods
 using ReachabilityAnalysis: AbstractContinuousPost, AbstractLazyReachSet,  # NOTE: these are internal symbols
                             AbstractTaylorModelReachSet, InitialValueProblem,
