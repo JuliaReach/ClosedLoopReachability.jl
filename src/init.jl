@@ -24,6 +24,7 @@ using ReachabilityAnalysis: AbstractContinuousPost, AbstractLazyReachSet,  # NOT
 using ReachabilityBase.Require: require
 using ReachabilityBase.Comparison: isapproxzero
 using TaylorModels: TaylorModel1, TaylorModelN, fp_rpa
+import TaylorSeries as TS
 
 using Parameters: @with_kw
 
