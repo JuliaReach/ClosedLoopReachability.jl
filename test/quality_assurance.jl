@@ -9,9 +9,12 @@ import Aqua, ExplicitImports
     @test isnothing(ExplicitImports.check_all_explicit_imports_are_public(ClosedLoopReachability;
                                                                           ignore=ignores))
     @test isnothing(ExplicitImports.check_all_explicit_imports_via_owners(ClosedLoopReachability))
-    ignores = (:inplace_field!, :outofplace_field)
+    ignores = [:inplace_field!, :outofplace_field]
+    if v"1.10" <= VERSION < v"1.11"
+        push!(ignores, :get_extension)
+    end
     @test isnothing(ExplicitImports.check_all_qualified_accesses_are_public(ClosedLoopReachability;
-                                                                            ignore=ignores))
+                                                                            ignore=Tuple(ignores)))
     @test isnothing(ExplicitImports.check_all_qualified_accesses_via_owners(ClosedLoopReachability))
     # due to reexporting ControllerFormats.FileFormats, NeuralNetworkReachability.ForwardAlgorithms,
     # and ReachabilityAnalysis

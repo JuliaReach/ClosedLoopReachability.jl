@@ -29,7 +29,7 @@ Reexport = "0.2, 1"
 Requires = "0.5, 1"
 TaylorModels = "0.7 - 0.9"
 TaylorSeries = "0.21.10"
-julia = "1.6"
+julia = "1.10"
 
 [extensions]
 OrdinaryDiffEqExt = "OrdinaryDiffEq"
