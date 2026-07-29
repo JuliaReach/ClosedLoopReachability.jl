@@ -125,7 +125,7 @@ function next_adv(X::LazySet, τ, adv; algorithm_controller=DeepZ())
 end
 
 function next_adv(X::Singleton, τ, adv; algorithm_controller=nothing)
-    v = vcat(element(X), τ)
+    v = vcat(center(X), τ)
     v = normalize(v)
     u = forward(v, advisory2controller[adv])
     imax = argmax(u)
@@ -273,7 +273,7 @@ _interval(X::LazySet, i) = Interval(extrema(X, i)...);
 # Helper function to project onto the ``h`` variable:
 
 function _project(X::Vector{State{T}}) where {T<:Singleton}
-    return [Singleton([Xi.τ, Xi.state.element[1]]) for Xi in X]
+    return [Singleton([Xi.τ, center(Xi.state, 1)]) for Xi in X]
 end
 
 function _project(X::Vector{State{T}}) where {T<:LazySet}
@@ -329,11 +329,11 @@ end
 # Preprocess the results (extend from time points to time intervals):
 
 function extend_x(X::Singleton; Δ=Δτ)
-    return LineSegment(element(X) .- [Δ, 0], element(X))
+    return LineSegment(center(X) .- [Δ, 0], center(X))
 end
 
 function extend_x(cp::CartesianProduct; Δ=Δτ)
-    x = first(element(first(cp)))
+    x = first(center(first(cp)))
     X = Interval(x - Δ, x)
     return CartesianProduct(X, LazySets.second(cp))
 end
