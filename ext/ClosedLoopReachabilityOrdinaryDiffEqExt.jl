@@ -1,4 +1,4 @@
-module OrdinaryDiffEqExt
+module ClosedLoopReachabilityOrdinaryDiffEqExt
 
 import ClosedLoopReachability
 import ClosedLoopReachability.ReachabilityAnalysis as RA

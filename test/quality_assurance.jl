@@ -7,9 +7,11 @@ import Aqua, ExplicitImports
                                                :ReachSolution, :TimeInterval, :_check_dim,
                                                :_default_cpost, :_get_tspan, :numtype, :post,
                                                :solve, :symBox, :zeroBox)
-    ignores_all_qualified_accesses_are_public = (:inplace_field!, :outofplace_field,
-                                                 # fixed in versions after v"1.10"
-                                                 :get_extension)
+    ignores_all_qualified_accesses_are_public = [:inplace_field!, :outofplace_field]
+    if v"1.10" <= VERSION < v"1.11"  # v1.10 was more strict with this
+        push!(ignores_all_qualified_accesses_are_public, :get_extension)
+    end
+    ignores_all_qualified_accesses_are_public = Tuple(ignores_all_qualified_accesses_are_public)
     # due to reexporting ControllerFormats.FileFormats, NeuralNetworkReachability.ForwardAlgorithms,
     # and ReachabilityAnalysis
     ignores_no_implicit_imports = (:FileFormats, :ForwardAlgorithms, :ReachabilityAnalysis,

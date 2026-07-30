@@ -1,4 +1,4 @@
-module OrdinaryDiffEqPlotsExt
+module ClosedLoopReachabilityOrdinaryDiffEqPlotsExt
 
 import ClosedLoopReachability
 using ClosedLoopReachability: EnsembleSimulationSolution, trajectories
