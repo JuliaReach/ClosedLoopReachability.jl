@@ -36,9 +36,9 @@ import CommonSolve: solve
 @static if !isdefined(Base, :get_extension)
     function __init__()
         @require OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed" begin
-            include("../ext/OrdinaryDiffEqExt.jl")
+            include("../ext/ClosedLoopReachabilityOrdinaryDiffEqExt.jl")
             @require Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80" begin
-                include("../ext/OrdinaryDiffEqPlotsExt.jl")
+                include("../ext/ClosedLoopReachabilityOrdinaryDiffEqPlotsExt.jl")
             end
         end
     end

@@ -142,26 +142,27 @@ function simulate(cp::AbstractControlProblem, args...; kwargs...)
     return EnsembleSimulationSolution(simulations, all_controls, all_disturbances)
 end
 
-# defined in `OrdinaryDiffEqExt.jl`
+# defined in `ClosedLoopReachabilityOrdinaryDiffEqExt.jl`
 function _initialize_simulation_container(iterations)
     mod = isdefined(Base, :get_extension) ?
-          Base.get_extension(@__MODULE__, :OrdinaryDiffEqExt) : @__MODULE__
+          Base.get_extension(@__MODULE__, :ClosedLoopReachabilityOrdinaryDiffEqExt) : @__MODULE__
     require(mod, :OrdinaryDiffEq; fun_name="simulate")
     return nothing
 end
 
-# defined in `OrdinaryDiffEqExt.jl`
+# defined in `ClosedLoopReachabilityOrdinaryDiffEqExt.jl`
 function _solve_ensemble(ivp, extended, tspan; kwargs...)
     mod = isdefined(Base, :get_extension) ?
-          Base.get_extension(@__MODULE__, :OrdinaryDiffEqExt) : @__MODULE__
+          Base.get_extension(@__MODULE__, :ClosedLoopReachabilityOrdinaryDiffEqExt) : @__MODULE__
     require(mod, :OrdinaryDiffEq; fun_name="simulate")
     return nothing
 end
 
-# defined in `OrdinaryDiffEqPlotsExt.jl`
+# defined in `ClosedLoopReachabilityOrdinaryDiffEqPlotsExt.jl`
 function plot_simulation!(fig, sim; vars=nothing, output_map=nothing, kwargs...)
     mod = isdefined(Base, :get_extension) ?
-          Base.get_extension(@__MODULE__, :OrdinaryDiffEqPlotsExt) : @__MODULE__
+          Base.get_extension(@__MODULE__, :ClosedLoopReachabilityOrdinaryDiffEqPlotsExt) :
+          @__MODULE__
     require(mod, [:OrdinaryDiffEq, :Plots]; fun_name="plot_simulation!")
     return nothing
 end
