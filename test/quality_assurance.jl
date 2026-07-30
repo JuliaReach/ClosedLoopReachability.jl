@@ -9,7 +9,9 @@ import Aqua, ExplicitImports
     @test isnothing(ExplicitImports.check_all_explicit_imports_are_public(ClosedLoopReachability;
                                                                           ignore=ignores))
     @test isnothing(ExplicitImports.check_all_explicit_imports_via_owners(ClosedLoopReachability))
-    ignores = (:inplace_field!, :outofplace_field)
+    ignores = (:inplace_field!, :outofplace_field,
+               # fixed in versions after v"1.10"
+               :get_extension)
     @test isnothing(ExplicitImports.check_all_qualified_accesses_are_public(ClosedLoopReachability;
                                                                             ignore=ignores))
     @test isnothing(ExplicitImports.check_all_qualified_accesses_via_owners(ClosedLoopReachability))
