@@ -22,10 +22,10 @@ import Aqua, ExplicitImports
                                    :MathematicalSystems, :MixedFlowpipe, :ReachabilityBase,
                                    :Taylor1, :TaylorModelReachSet, :TaylorSeries, :TaylorN,
                                    :ZeroSet, :Zonotope, :box_approximation, :cartesian_product,
-                                   :center, :diam, :domain, :evaluate, :get_order, :high,
-                                   :initial_state, :interval, :linear_map, :low, :mid, :ngens,
-                                   :overapproximate, :polynomial, :project, :radius_hyperrectangle,
-                                   :rand, :remainder, :rsetrep, :sample, :scale, :set, :size, :sup,
+                                   :center, :diam, :domain, :evaluate, :high, :initial_state,
+                                   :interval, :linear_map, :low, :mid, :ngens, :overapproximate,
+                                   :polynomial, :project, :radius_hyperrectangle, :rand,
+                                   :remainder, :rsetrep, :sample, :scale, :set, :size, :sup,
                                    :system, :tend, :translate, :tstart, :(×), :shift, :vars)
     ignores_no_self_qualified_accesses = (:controller,)
     ExplicitImports.test_explicit_imports(ClosedLoopReachability;

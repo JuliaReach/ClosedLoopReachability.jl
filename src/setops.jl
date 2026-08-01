@@ -59,8 +59,8 @@ function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Laz
     vTM = Vector{TaylorModel1{TaylorN{N},N}}(undef, n + m)
 
     # construct state variables
-    orderT = TS.get_order(first(S))
-    orderQ = TS.get_order(X_Δt[1])
+    orderT = TS.order(first(S))
+    orderQ = TS.order(X_Δt[1])
 
     zeroI = interval(zero(N), zero(N))
     Δtn = zeroI
@@ -92,7 +92,7 @@ function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Laz
 
         space = default_space[]
         if space.num_vars != n + m || space.order != orderQ
-            x = variables!("x"; numvars=n + m, order=orderQ)
+            x = variables!("x"; numvars=n + m, order=orderQ, nowarn=true)
         else
             x = variables(N, space)
         end
