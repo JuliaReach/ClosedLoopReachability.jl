@@ -88,3 +88,14 @@ function random_control_problems(n::Integer, m::Integer; ivp=nothing, period=0.1
 
     return problems
 end
+
+# source: https://discourse.julialang.org/t/conditional-multithreading/32421/12
+macro cthreads(flag, expr)
+    quote
+        if $(flag)
+            Threads.@threads $expr
+        else
+            $expr
+        end
+    end |> esc
+end

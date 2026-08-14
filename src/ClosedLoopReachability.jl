@@ -1,5 +1,9 @@
 module ClosedLoopReachability
 
+# flag to (de)activate parallelism
+# deactivated by default because the GLPK solver is not thread-safe
+const PARALLEL = false
+
 include("init.jl")
 include("problem.jl")
 include("setops.jl")
