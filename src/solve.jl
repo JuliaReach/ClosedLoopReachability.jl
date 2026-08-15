@@ -159,7 +159,7 @@ function _solve(cp::ControlledPlant,
                                       reconstruction_method, algorithm_controller, controller,
                                       preprocessing, postprocessing, input_splitter)
     # parallelize analysis of the remaining parts
-    Threads.@threads for i in 2:length(results)
+    @cthreads PARALLEL for i in 2:length(results)
         @inbounds results[i] = _solve_one(R, X₀s[i], W₀, S, t0, t1, algorithm_plant,
                                           reconstruction_method, algorithm_controller, controller,
                                           preprocessing, postprocessing, input_splitter)
@@ -187,7 +187,7 @@ function _solve(cp::ControlledPlant,
         X₀s = haskey(splitter, k) ? apply(splitter[k], X₀) : [X₀]
         results = Vector{Vector{Flowpipe}}(undef, length(X₀s))
         # parallelize analysis
-        Threads.@threads for i in eachindex(results)
+        @cthreads PARALLEL for i in eachindex(results)
             @inbounds results[i] = _solve_one(R, X₀s[i], W₀, S, t0, t1, algorithm_plant,
                                               reconstruction_method, algorithm_controller,
                                               controller, preprocessing, postprocessing,
