@@ -107,7 +107,7 @@ algorithm_plant = TMJets(abstol=1e-1, orderT=3, orderQ=1);
 # also use an additional splitting strategy to increase the precision.
 
 algorithm_controller = DeepZ()
-splitter = BoxSplitter([3, 1, 7, 1]);
+splitter = BoxSplitter([4, 1, 8, 1]);
 
 # The verification benchmark is given below:
 
