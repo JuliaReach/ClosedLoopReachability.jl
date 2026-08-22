@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Airplane · ClosedLoopReachability.jl</title><meta name="title" content="Airplane · ClosedLoopReachability.jl"/><meta property="og:title" content="Airplane · ClosedLoopReachability.jl"/><meta property="twitter:title" content="Airplane · ClosedLoopReachability.jl"/><meta name="description" content="Documentation for ClosedLoopReachability.jl."/><meta property="og:description" content="Documentation for ClosedLoopReachability.jl."/><meta property="twitter:description" content="Documentation for ClosedLoopReachability.jl."/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/aligned.css" rel="stylesheet" type="text/css"/><link href="../../assets/citations.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="ClosedLoopReachability.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">ClosedLoopReachability.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><input class="collapse-toggle" id="menuitem-2" type="checkbox" checked/><label class="tocitem" for="menuitem-2"><span class="docs-label">Examples</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../ACC/">Adaptive Cruise Control (ACC)</a></li><li class="is-active"><a class="tocitem" href>Airplane</a><ul class="internal"><li><a class="tocitem" href="#Model"><span>Model</span></a></li><li><a class="tocitem" href="#Specification"><span>Specification</span></a></li><li><a class="tocitem" href="#Analysis"><span>Analysis</span></a></li><li><a class="tocitem" href="#Results"><span>Results</span></a></li></ul></li><li><a class="tocitem" href="../AttitudeControl/">Attitude Control</a></li><li><a class="tocitem" href="../InvertedPendulum/">Inverted Pendulum</a></li><li><a class="tocitem" href="../InvertedTwoLinkPendulum/">Inverted Two-Link Pendulum</a></li><li><a class="tocitem" href="../Quadrotor/">Quadrotor</a></li><li><a class="tocitem" href="../SpacecraftDocking/">Spacecraft Docking</a></li><li><a class="tocitem" href="../TORA/">Translational Oscillations by a Rotational Actuator (TORA)</a></li><li><a class="tocitem" href="../Unicycle/">Unicycle</a></li><li><a class="tocitem" href="../VerticalCAS/">Vertical Collision Avoidance System (VerticalCAS)</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-3" type="checkbox"/><label class="tocitem" for="menuitem-3"><span class="docs-label">API Reference</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../lib/problems/">Problem types</a></li><li><a class="tocitem" href="../../lib/solvers/">Solvers</a></li></ul></li><li><a class="tocitem" href="../../bibliography/">Bibliography</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Examples</a></li><li class="is-active"><a href>Airplane</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Airplane</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/JuliaReach/ClosedLoopReachability.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/JuliaReach/ClosedLoopReachability.jl/blob/master/models/Airplane/Airplane.jl" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Airplane"><a class="docs-heading-anchor" href="#Airplane">Airplane</a><a id="Airplane-1"></a><a class="docs-heading-anchor-permalink" href="#Airplane" title="Permalink"></a></h1><p>The Airplane benchmark is a simple model of a flying airplane.</p><pre><code class="language-julia hljs">using ClosedLoopReachability
+import OrdinaryDiffEq, Plots, DisplayAs
+using ReachabilityBase.CurrentPath: @current_path
+using ReachabilityBase.Timing: print_timed
+using Plots: plot, plot!, xlims!, ylims!</code></pre><p>The following option determines whether the falsification settings should be used. The falsification settings are sufficient to show that the safety property is violated. Concretely, we start from an initial point and use a smaller time horizon.</p><pre><code class="language-julia hljs">const falsification = true;</code></pre><h2 id="Model"><a class="docs-heading-anchor" href="#Model">Model</a><a id="Model-1"></a><a class="docs-heading-anchor-permalink" href="#Model" title="Permalink"></a></h2><p>There are 12 state variables:</p><p class="math-container">\[(s_x, s_y, s_z, v_x, v_y, v_z, ϕ, θ, ψ, r, p, q)\]</p><p>where <span>$(s_x, s_y, s_z)$</span> is the position of the center of gravity and <span>$(v_x, v_y, v_z)$</span> are the components of velocity, both in <span>$(x, y, z)$</span> directions, <span>$(p, q, r)$</span> are the body rotation rates, and <span>$(ϕ, θ, ψ)$</span> are the Euler angles. The coordinates are visualized below.</p><p><img src="../Airplane_explanation.png" alt/></p><p>The equations of motion are reduced to:</p><p class="math-container">\[\begin{aligned}
+\dot{v}_x &amp;= − g \sin(θ) + \dfrac{F_x}{m} - q v_z + r v_y \\
+\dot{v}_y &amp;= g \cos(θ) \sin(ϕ) + \dfrac{F_y}{m} - r v_x + p v_z \\
+\dot{v}_z &amp;= g \cos(θ) \cos(ϕ) + \dfrac{F_z}{m} - p v_y + q v_x \\
+I_x \dot{p} + I_{xz} \dot{r} &amp;= M_x - (I_z - I_y) q r - I_{xz} p q \\
+I_y \dot{q} &amp;= M_y - I_{xz}(r^2 - p^2) - (I_x - I_z) p r \\
+I_{xz} \dot{p} + I_z \dot{r} &amp;= M_z - (I_y - I_x) q p - I_{xz} r q
+\end{aligned}\]</p><p>where <span>$m$</span> denotes the mass of the airplane, <span>$I_x$</span>, <span>$I_y$</span>, <span>$I_z$</span>, and <span>$I_{xz}$</span> are the moments of inertia with respect to the indicated axis, and the control parameters consist of the three force components <span>$F_x$</span>, <span>$F_y$</span>, <span>$F_z$</span> and the three moment components <span>$M_x$</span>, <span>$M_y$</span>, <span>$M_z$</span>. For simplicity, we assume that the aerodynamic forces are absorbed in the <span>$F$</span>&#39;s. Beside the above six equations, we have six additional kinematic equations:</p><p class="math-container">\[\begin{pmatrix}
+\dot{s}_x \\ \dot{s}_y \\ \dot{s}_z
+\end{pmatrix}
+=
+\begin{pmatrix}
+\cos(ψ) &amp; -\sin(ψ) &amp; 0 \\
+\sin(ψ) &amp; \cos(ψ) &amp; 0 \\
+0 &amp; 0 &amp; 1
+\end{pmatrix}
+\begin{pmatrix}
+\cos(θ) &amp; 0 &amp; \sin(θ) \\
+0 &amp; 1 &amp; 0 \\
+-\sin(θ) &amp; 0 &amp; \cos(θ)
+\end{pmatrix}
+\begin{pmatrix}
+1 &amp; 0 &amp; 0 \\
+0 &amp; \cos(ϕ) &amp; -\sin(ϕ) \\
+0 &amp; \sin(ϕ) &amp; \cos(ϕ)
+\end{pmatrix}
+\begin{pmatrix}
+v_x \\ v_y \\ v_z
+\end{pmatrix}\]</p><p>and</p><p class="math-container">\[\begin{pmatrix}
+\dot{ϕ} \\ \dot{θ} \\ \dot{ψ}
+\end{pmatrix}
+=
+\begin{pmatrix}
+1 &amp; \tan(θ) \sin(ϕ) &amp; \tan(θ) \cos(ϕ) \\
+0 &amp; \cos(ϕ) &amp; -\sin(ϕ) \\
+0 &amp; \sec(θ) sin(ϕ) &amp; \sec(θ) \cos(ϕ)
+\end{pmatrix}
+\begin{pmatrix}
+p \\ q \\ r
+\end{pmatrix}\]</p><p>For simplicity of the control design, the parameters have been chosen to have some nominal dimensionless values: <span>$m = 1$</span>, <span>$I_x = I_y = I_z = 1$</span>, <span>$I_{xz} = 0$</span> and <span>$g = 1$</span>.</p><pre><code class="language-julia hljs">vars_idx = Dict(:states =&gt; 1:12, :controls =&gt; 13:18)
+
+const m = 1.0
+const g = 1.0
+
+Tψ(ψ) = [ cos(ψ)  -sin(ψ)  zero(ψ);
+          sin(ψ)   cos(ψ)  zero(ψ);
+         zero(ψ)  zero(ψ)   one(ψ)]
+
+Tθ(θ) = [ cos(θ)  zero(θ)   sin(θ);
+         zero(θ)   one(θ)  zero(θ);
+         -sin(θ)  zero(θ)   cos(θ)]
+
+Tϕ(ϕ) = [one(ϕ)  zero(ϕ)  zero(ϕ);
+         zero(ϕ)  cos(ϕ)  -sin(ϕ);
+         zero(ϕ)  sin(ϕ)   cos(ϕ)]
+
+Rϕθ(ϕ, θ) = [ one(ϕ)  tan(θ) * sin(ϕ)  tan(θ) * cos(ϕ);
+             zero(ϕ)           cos(θ)          -sin(ϕ);
+             zero(ϕ)  sec(θ) * sin(ϕ)  sec(θ) * cos(ϕ)]
+
+@taylorize function Airplane!(dx, x, params, t)
+    s_x, s_y, s_z, v_x, v_y, v_z, ϕ, θ, ψ, r, p, q, Fx, Fy, Fz, Mx, My, Mz = x
+
+    T_ψ = Tψ(ψ)
+    T_θ = Tθ(θ)
+    T_ϕ = Tϕ(ϕ)
+    mat_1 = T_ψ * T_θ * T_ϕ
+    xyz = mat_1 * vcat(v_x, v_y, v_z)
+
+    mat_2 = Rϕθ(ϕ, θ)
+    ϕθψ = mat_2 * vcat(p, q, r)
+
+    dx[1] = xyz[1]
+    dx[2] = xyz[2]
+    dx[3] = xyz[3]
+    dx[4] = -g * sin(θ) + Fx / m - q * v_z + r * v_y
+    dx[5] = g * cos(θ) * sin(ϕ) + Fy / m - r * v_x + p * v_z
+    dx[6] = g * cos(θ) * cos(ϕ) + Fz / m - p * v_y + q * v_x
+    dx[7] = ϕθψ[1]
+    dx[8] = ϕθψ[2]
+    dx[9] = ϕθψ[3]
+    dx[10] = Mz  # simplified term
+    dx[11] = Mx  # simplified term
+    dx[12] = My  # simplified term
+    dx[13] = zero(Fx)
+    dx[14] = zero(Fy)
+    dx[15] = zero(Fz)
+    dx[16] = zero(Mx)
+    dx[17] = zero(My)
+    dx[18] = zero(Mz)
+    return dx
+end;</code></pre><p>We are given a neural-network controller with 3 hidden layers of 100, 100, and 20 neurons, respectively, and ReLU activations. The controller has 12 inputs (the state variables) and 6 outputs (<span>$F_x, F_y, F_z, M_x, M_y, M_z$</span>).</p><pre><code class="language-julia hljs">path = @current_path(&quot;Airplane&quot;, &quot;Airplane_controller.polar&quot;)
+controller = read_POLAR(path);</code></pre><p>The control period is 0.1 time units.</p><pre><code class="language-julia hljs">period = 0.1;</code></pre><h2 id="Specification"><a class="docs-heading-anchor" href="#Specification">Specification</a><a id="Specification-1"></a><a class="docs-heading-anchor-permalink" href="#Specification" title="Permalink"></a></h2><p>The uncertain initial condition is:</p><pre><code class="language-julia hljs">X₀ = Hyperrectangle(low=[0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    high=[0.0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0])
+if falsification
+    # Choose a single point in the initial states (here: the top-most one):
+    X₀ = Singleton(high(X₀))
+end
+U₀ = ZeroSet(6);</code></pre><p>The control problem is:</p><pre><code class="language-julia hljs">ivp = @ivp(x&#39; = Airplane!(x), dim: 18, x(0) ∈ X₀ × U₀)
+prob = ControlledPlant(ivp, controller, vars_idx, period);</code></pre><p>The safety specification is that <span>$(x_2, x_7, x_8, x_9) ∈ ±[1, 1, 1, 1]$</span> for 20 control periods. A sufficient condition for guaranteed violation is to overapproximate the result with hyperrectangles.</p><pre><code class="language-julia hljs">safe_states = concretize(CartesianProductArray([
+    Universe(1), Interval(-1.0, 1.0), Universe(4),
+    BallInf(zeros(3), 1.0), Universe(9)]))
+
+predicate_set(R) = isdisjoint(overapproximate(R, Hyperrectangle), safe_states)
+
+function predicate(sol; silent::Bool=false)
+    for F in sol, R in F
+        if predicate_set(R)
+            silent || println(&quot;  Violation for time range $(tspan(R)).&quot;)
+            return true
+        end
+    end
+    return false
+end
+
+if falsification
+    k = 7  # falsification can run for a shorter time horizon
+else
+    k = 20
+end
+T = k * period
+T_warmup = 2 * period;  # shorter time horizon for warm-up run</code></pre><h2 id="Analysis"><a class="docs-heading-anchor" href="#Analysis">Analysis</a><a id="Analysis-1"></a><a class="docs-heading-anchor-permalink" href="#Analysis" title="Permalink"></a></h2><p>To enclose the continuous dynamics, we use a Taylor-model-based algorithm:</p><pre><code class="language-julia hljs">algorithm_plant = TMJets(abstol=2e-2, orderT=3, orderQ=1);</code></pre><p>To propagate sets through the neural network, we use the <code>DeepZ</code> algorithm:</p><pre><code class="language-julia hljs">algorithm_controller = DeepZ();</code></pre><p>The falsification benchmark is given below:</p><pre><code class="language-julia hljs">function benchmark(; T=T, silent::Bool=false)
+    # Solve the controlled system:
+    silent || println(&quot;Flowpipe construction:&quot;)
+    res = @timed solve(prob; T=T, algorithm_controller=algorithm_controller,
+                       algorithm_plant=algorithm_plant)
+    sol = res.value
+    silent || print_timed(res)
+
+    # Check the property:
+    silent || println(&quot;Property checking:&quot;)
+    res = @timed predicate(sol; silent=silent)
+    silent || print_timed(res)
+    if res.value
+        silent || println(&quot;  The property is violated.&quot;)
+        result = &quot;falsified&quot;
+    else
+        silent || println(&quot;  The property may be satisfied.&quot;)
+        result = &quot;not falsified&quot;
+    end
+
+    return sol, result
+end;</code></pre><p>Run the falsification benchmark and compute some simulations:</p><pre><code class="language-julia hljs">benchmark(T=T_warmup, silent=true)  # warm-up
+res = @timed benchmark(T=T)  # benchmark
+sol, result = res.value
+@assert (result == &quot;falsified&quot;) &quot;falsification failed&quot;
+println(&quot;Total analysis time:&quot;)
+print_timed(res)
+
+println(&quot;Simulation:&quot;)
+res = @timed simulate(prob; T=T, trajectories=falsification ? 1 : 10,
+                      include_vertices=!falsification)
+sim = res.value
+print_timed(res);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Flowpipe construction:
+  3.095837 seconds (61.07 M allocations: 3.080 GiB, 10.84% gc time, 0.00% compilation time)
+Property checking:
+  Violation for time range [0.66286, 0.700001].
+  0.090492 seconds (447.19 k allocations: 22.742 MiB, 0.00% compilation time)
+  The property is violated.
+Total analysis time:
+  3.190606 seconds (61.52 M allocations: 3.103 GiB, 10.52% gc time, 0.00% compilation time)
+Simulation:
+  1.762824 seconds (5.60 M allocations: 287.975 MiB, 1.56% gc time, 0.00% compilation time)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper(vars)
+    fig = plot()
+    plot!(fig, project(safe_states, vars); color=:lightgreen, lab=&quot;safe&quot;)
+    plot!(fig, project(initial_state(prob), vars); c=:cornflowerblue, alpha=1, lab=&quot;X₀&quot;)
+    plot!(fig, sol; vars=vars, color=:yellow, lw=0, alpha=1, lab=&quot;&quot;)
+    lab_sim = falsification ? &quot;simulation&quot; : &quot;&quot;
+    plot_simulation!(fig, sim; vars=vars, color=:black, lab=lab_sim)
+    return fig
+end;</code></pre><p>Plot the results:</p><pre><code class="language-julia hljs">vars = (2, 7)
+fig = plot_helper(vars)
+plot!(fig; xlab=&quot;s_y&quot;, ylab=&quot;ϕ&quot;, leg=:bottomleft)
+if falsification
+    xlims!(-0.01, 1.15)
+    ylims!(0.5, 1.01)
+else
+    xlims!(-0.55, 0.55)
+    ylims!(-1.05, 1.05)
+end
+# Plots.savefig(fig, &quot;Airplane.png&quot;)  # command to save the plot to a file
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="6df04e50.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../ACC/">« Adaptive Cruise Control (ACC)</a><a class="docs-footer-nextpage" href="../AttitudeControl/">Attitude Control »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Saturday 23 August 2025 18:33">Saturday 23 August 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
