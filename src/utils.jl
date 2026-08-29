@@ -91,8 +91,7 @@ end
 
 # source: https://discourse.julialang.org/t/conditional-multithreading/32421/12
 macro cthreads(flag, expr)
-    return esc(
-               quote
+    return esc(quote
                    if $(flag)
                        Threads.@threads $expr
                    else
