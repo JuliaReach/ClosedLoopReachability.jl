@@ -5,8 +5,8 @@ import Aqua, ExplicitImports
     ignores_all_explicit_imports_are_public = (:AbstractContinuousPost, :AbstractLazyReachSet,
                                                :AbstractTaylorModelReachSet, :ForwardAlgorithm,
                                                :ReachSolution, :TimeInterval, :_check_dim,
-                                               :_default_cpost, :_get_tspan, :numtype, :post,
-                                               :solve, :symBox, :zeroBox)
+                                               :_default_cpost, :_get_tspan, :default_space,
+                                               :numtype, :post, :solve, :symBox, :zeroBox)
     ignores_all_qualified_accesses_are_public = [:inplace_field!, :outofplace_field]
     if v"1.10" <= VERSION < v"1.11"  # v1.10 was more strict with this
         push!(ignores_all_qualified_accesses_are_public, :get_extension)
@@ -20,13 +20,13 @@ import Aqua, ExplicitImports
                                    :BlackBoxContinuousSystem, :Flowpipe, :IVP, :Interval,
                                    :IntervalArithmetic, :IntervalBox, :LazySet, :LazySets,
                                    :MathematicalSystems, :MixedFlowpipe, :ReachabilityBase,
-                                   :Taylor1, :TaylorModelReachSet, :TaylorN, :ZeroSet, :Zonotope,
-                                   :box_approximation, :cartesian_product, :center, :diam, :domain,
-                                   :evaluate, :get_order, :high, :initial_state, :interval,
-                                   :linear_map, :low, :mid, :ngens, :overapproximate, :polynomial,
-                                   :project, :radius_hyperrectangle, :rand, :remainder, :rsetrep,
-                                   :sample, :scale, :set, :set_variables, :size, :sup, :system,
-                                   :tend, :translate, :tstart, :(×), :shift, :vars)
+                                   :Taylor1, :TaylorModelReachSet, :TaylorSeries, :TaylorN,
+                                   :ZeroSet, :Zonotope, :box_approximation, :cartesian_product,
+                                   :center, :diam, :domain, :evaluate, :high, :initial_state,
+                                   :interval, :linear_map, :low, :mid, :ngens, :overapproximate,
+                                   :polynomial, :project, :radius_hyperrectangle, :rand,
+                                   :remainder, :rsetrep, :sample, :scale, :set, :size, :sup,
+                                   :system, :tend, :translate, :tstart, :(×), :shift, :vars)
     ignores_no_self_qualified_accesses = (:controller,)
     ExplicitImports.test_explicit_imports(ClosedLoopReachability;
                                           all_explicit_imports_are_public=(ignore=ignores_all_explicit_imports_are_public,),
