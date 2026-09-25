@@ -20,10 +20,11 @@ using ClosedLoopReachability: UniformAdditivePostprocessing, NoSplitter, LinearM
 using Plots: plot, plot!, lens!, bbox
 
 # The following option determines whether the verification settings should be
-# used in the first scenario. The verification settings are chosen to show that
+# used in the second scenario. The verification settings are chosen to show that
 # the safety property is satisfied, which is expensive in this case. Concretely,
 # we split the initial states into small chunks and run many analyses. Without
-# the verification settings, the analysis is only run for a short time horizon.
+# the verification settings, the analysis is only run for a smaller subset of
+# the initial states.
 const verification = false;
 
 
@@ -92,10 +93,10 @@ period2 = 0.5;
 #
 # ### Scenario 1
 
-# The uncertain initial condition is ``x_1 ∈ [0.6, 0.7], x_2 ∈ [−0.7, −0.6],
-# x_3 ∈ [−0.4, −0.3], x_4 ∈ [0.5, 0.6]``.
+# We consider a smaller uncertain initial condition than originally proposed;
+# specifically, the set is a hyperrectangle with 1% of the original radius:
 
-X₀1 = Hyperrectangle(low=[0.6, -0.7, -0.4, 0.5], high=[0.7, -0.6, -0.3, 0.6])
+X₀1 = Hyperrectangle([0.65, -0.65, -0.35, 0.55], 0.01 * [0.05, 0.05, 0.05, 0.05])
 U = ZeroSet(1);
 
 # The initial-value problem is:
@@ -108,18 +109,19 @@ ivp1 = @ivp(x' = TORA!(x), dim: 5, x(0) ∈ X₀1 × U);
 
 safe_states = cartesian_product(BallInf(zeros(4), 2.0), Universe(1))
 
-predicate1(sol, T) = overapproximate(sol, Hyperrectangle) ⊆ safe_states
+predicate1(sol, T) = (overapproximate(sol, Hyperrectangle) ⊆ safe_states, nothing)
 
 T1 = 20.0  # time horizon
 T1_warmup = 2 * period1  # shorter time horizon for warm-up run
-T1_reach = verification ? T1 : T1_warmup;  # shorter time horizon if not verifying
 
 # ### Scenario 2
 
 # The uncertain initial condition is ``x_1 ∈ [-0.77, -0.75],
 # x_2 ∈ [-0.45, -0.43], x_3 ∈ [0.51, 0.54], x_4 ∈ [-0.3, -0.28]``.
 
-X₀2 = Hyperrectangle(low=[-0.77, -0.45, 0.51, -0.3], high=[-0.75, -0.43, 0.54, -0.28])
+c = [-0.76, -0.44, 0.525, -0.29]
+r = [0.01, 0.01, 0.015, 0.01]
+X₀2 = verification ? Hyperrectangle(c, r) : Hyperrectangle(c, 0.01 * r)
 U = ZeroSet(1);
 
 # The initial-value problem is:
@@ -134,9 +136,39 @@ ivp2 = @ivp(x' = TORA!(x), dim: 5, x(0) ∈ X₀2 × U);
 goal_states = cartesian_product(Hyperrectangle(low=[-0.1, -0.9], high=[0.2, -0.6]),
                                 Universe(3))
 
-predicate_set2(R) = overapproximate(R, Hyperrectangle) ⊆ goal_states
+predicate_set2(R, t) = overapproximate(R, Hyperrectangle, t) ⊆ goal_states
 
-predicate2(sol, T) = all(predicate_set2(F[end]) for F in sol if T ∈ tspan(F))
+# Prove inclusion in the goal set for the last reach set at different points in
+# time, since there is no common time when all states satisfy the property.
+
+function predicate2(sol, T)
+    times = Float64[]
+    for F in sol
+        if T ∉ tspan(F)
+            continue
+        end
+        R = F[end]
+        t = tstart(R)
+        steps = 10
+        Δt = (tend(R) - tstart(R)) / steps
+        satisfied = false
+        for j in 0:steps
+            if j == steps
+                t = tend(R)  # needed for rounding issues
+            end
+            if predicate_set2(R, t)
+                satisfied = true
+                push!(times, t)
+                break
+            end
+            t += Δt
+        end
+        if !satisfied
+            return false, times
+        end
+    end
+    return true, times
+end
 
 T2 = 5.0  # time horizon
 T2_warmup = 2 * period2;  # shorter time horizon for warm-up run
@@ -145,12 +177,11 @@ T2_warmup = 2 * period2;  # shorter time horizon for warm-up run
 
 # To enclose the continuous dynamics, we use a Taylor-model-based algorithm:
 
-algorithm_plant_1 = TMJets(abstol=3e-2, orderT=3, orderQ=1);
-algorithm_plant_2 = TMJets(abstol=2e-2, orderT=3, orderQ=1);
+algorithm_plant = TMJets(abstol=1e-3, orderT=3, orderQ=2);
 
 # To propagate sets through the neural network, we use the `DeepZ` algorithm.
 # For verification, we also use an additional splitting strategy to increase the
-# precision in scenario 1.
+# precision in scenario 2.
 
 algorithm_controller = DeepZ();
 
@@ -169,7 +200,7 @@ function benchmark(prob; T, splitter, algorithm_plant, predicate,
     silent || println("Property checking:")
     res = @timed predicate(sol, T)
     silent || print_timed(res)
-    if res.value
+    if res.value[1]
         silent || println("  The property is satisfied.")
         result = "verified"
     else
@@ -177,7 +208,7 @@ function benchmark(prob; T, splitter, algorithm_plant, predicate,
         result = "not verified"
     end
 
-    return sol, result
+    return sol, result, res.value[2]
 end;
 
 function run(; scenario1::Bool, ReLUtanh_activations)
@@ -185,26 +216,29 @@ function run(; scenario1::Bool, ReLUtanh_activations)
         println("# Running analysis of scenario 1 with ReLU activations")
         prob = ControlledPlant(ivp1, controller_ReLU, vars_idx, period1;
                                postprocessing=control_postprocessing1)
-        splitter = verification ? BoxSplitter([4, 4, 3, 5]) : NoSplitter()
-        algorithm_plant = algorithm_plant_1
+        splitter = NoSplitter()
         predicate = predicate1
-        T = T1_reach
+        T = T1
         T_warmup = T1_warmup
     else
-        splitter = NoSplitter()
-        algorithm_plant = algorithm_plant_2
+        if ReLUtanh_activations
+            println("# Running analysis of scenario 2 with ReLUtanh activations")
+            controller = controller_relutanh
+            splitter = verification ?
+                       BoxSplitter([[-0.763, -0.757], [-0.445, -0.44, -0.435], [0.52], [-0.29]]) :
+                       NoSplitter()
+        else
+            println("# Running analysis of scenario 2 with sigmoid activations")
+            controller = controller_sigmoid
+            splitter = verification ?
+                       BoxSplitter([[-0.768, -0.766, -0.764, -0.762, -0.76, -0.758, -0.755, -0.752], [-0.449, -0.447, -0.445, -0.443, -0.441, -0.439, -0.437, -0.435, -0.433, -0.431], [0.518, 0.525, 0.532], [-0.2934, -0.2867]]) :
+                       NoSplitter()
+        end
+        prob = ControlledPlant(ivp2, controller, vars_idx, period2;
+                               postprocessing=control_postprocessing2)
         predicate = predicate2
         T = T2
         T_warmup = T2_warmup
-        if ReLUtanh_activations
-            println("# Running analysis of scenario 2 with ReLUtanh activations")
-            prob = ControlledPlant(ivp2, controller_relutanh, vars_idx, period2;
-                                   postprocessing=control_postprocessing2)
-        else
-            println("# Running analysis of scenario 2 with sigmoid activations")
-            prob = ControlledPlant(ivp2, controller_sigmoid, vars_idx, period2;
-                                   postprocessing=control_postprocessing2)
-        end
     end
 
     ## Run the verification benchmark:
@@ -212,7 +246,7 @@ function run(; scenario1::Bool, ReLUtanh_activations)
         algorithm_plant=algorithm_plant, predicate=predicate, silent=true)  # warm-up
     res = @timed benchmark(prob; T=T, splitter=splitter,
         algorithm_plant=algorithm_plant, predicate=predicate)  # benchmark
-    sol, result = res.value
+    sol, result, times = res.value
     @assert (result == "verified") "verification failed"
     println("Total analysis time:")
     print_timed(res)
@@ -227,24 +261,24 @@ function run(; scenario1::Bool, ReLUtanh_activations)
     sim = res.value
     print_timed(res)
 
-    return sol, sim
+    return sol, sim, times
 end;
 
 # ### Scenario 1
 
 # Run the verification benchmark:
 
-sol_r, sim_r = run(scenario1=true, ReLUtanh_activations=nothing);
+sol_r, sim_r, _ = run(scenario1=true, ReLUtanh_activations=nothing);
 
 # ### Scenario 2
 
 # Run the verification benchmark for the controller with sigmoid activations:
 
-sol_sig, sim_sig = run(scenario1=false, ReLUtanh_activations=false);
+sol_sig, sim_sig, times_sig = run(scenario1=false, ReLUtanh_activations=false);
 
 # Run the verification benchmark for the controller with ReLU/tanh activations:
 
-sol_rt, sim_rt = run(scenario1=false, ReLUtanh_activations=true);
+sol_rt, sim_rt, times_rt = run(scenario1=false, ReLUtanh_activations=true);
 
 # ## Results
 
@@ -287,11 +321,24 @@ fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 # Script to plot the results:
 
-function plot_helper2(sol, sim)
+Tint = try convert(Int, T2) catch; T2 end;
+
+function plot_helper2(sol, sim, times)
     vars = (1, 2)
     fig = plot()
     plot!(fig, project(goal_states, vars); color=:cyan, lab="goal")
     plot!(fig, sol; vars=vars, color=:yellow, lw=0, alpha=1, lab="")
+    lab = "reach set at t ≈ $Tint"
+    i = 1
+    for F in sol
+        if T2 ∉ tspan(F)
+            continue
+        end
+        plot!(fig, overapproximate(F[end], Zonotope, times[i]);
+              vars=vars, color=:orange, lab=lab)
+        lab = ""
+        i += 1
+    end
     plot!(fig, project(X₀2, vars); c=:cornflowerblue, alpha=1, lab="X₀")
     plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
     plot!(fig; xlab="x₁", ylab="x₂")
@@ -300,7 +347,7 @@ end;
 
 # Plot the results:
 
-fig = plot_helper2(sol_sig, sim_sig)
+fig = plot_helper2(sol_sig, sim_sig, times_sig)
 lens!(fig, [-0.785, -0.735], [-0.47, -0.41]; inset=(1, bbox(0.2, 0.4, 0.2, 0.2)),
       lc=:black, xticks=[-0.77, -0.75], yticks=[-0.45, -0.43], subplot=3)
 lens!(fig, [0.09, 0.22], [-0.9, -0.8]; inset=(1, bbox(0.6, 0.4, 0.2, 0.2)),
@@ -310,11 +357,13 @@ fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
 #-
 
-fig = plot_helper2(sol_rt, sim_rt)
+fig = plot_helper2(sol_rt, sim_rt, times_rt)
 lens!(fig, [-0.785, -0.735], [-0.47, -0.41]; inset=(1, bbox(0.2, 0.4, 0.2, 0.2)),
       lc=:black, xticks=[-0.77, -0.75], yticks=[-0.45, -0.43], subplot=3)
-lens!(fig, [0.0, 0.25], [-0.85, -0.7]; inset=(1, bbox(0.6, 0.4, 0.2, 0.2)),
-      lc=:black, xticks=[0, 0.2], yticks=[-0.8, -0.7], subplot=3)
+if !verification
+    lens!(fig, [0.05, 0.22], [-0.92, -0.7]; inset=(1, bbox(0.6, 0.4, 0.15, 0.2)),
+          lc=:black, xticks=[0, 0.2], yticks=[-0.8, -0.7], subplot=3)
+end
 ## Plots.savefig(fig, "TORA-ReLUtanh.png")  # command to save the plot to a file
 fig = DisplayAs.Text(DisplayAs.PNG(fig))
 
