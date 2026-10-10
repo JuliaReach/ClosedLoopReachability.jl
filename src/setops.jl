@@ -82,8 +82,8 @@ function _reconstruct(method::TaylorModelReconstructor, P₀::LazySet, U₀::Laz
             vTM[n + i] = TaylorModel1(Taylor1(p, orderT), rem, zeroI, Δtn)
         end
     else
-        Z₀ = ReachabilityAnalysis._convert_or_overapproximate(U₀, Zonotope)
-        Z₀ = ReachabilityAnalysis._reduce_order(Z₀, 2; force_reduction=true)
+        Z₀ = ReachabilityAnalysis._convert_or_overapproximate(Zonotope, U₀)
+        Z₀ = reduce_order(Z₀, 2)
         # NOTE if we used _overapproximate_structured directly :
         # Utm₀ = set(ReachabilityAnalysis._overapproximate_structured(Z₀, TaylorModelReachSet, orderT=orderT, orderQ=orderQ))
         # @inbounds for i in 1:m

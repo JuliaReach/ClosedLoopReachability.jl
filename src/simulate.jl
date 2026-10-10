@@ -39,11 +39,11 @@ Base.getindex(ess::EnsembleSimulationSolution, i) = ess.solutions[i]
 function solutions(ess::EnsembleSimulationSolution, i)
     return EnsembleSimulationSolution([sol[i] for sol in ess.solutions])
 end
-trajectory(ess::EnsembleSimulationSolution, i) = trajectory(solution(ess, i))
+trajectory(ess::EnsembleSimulationSolution, i) = trajectory(ess[i])
 trajectories(ess::EnsembleSimulationSolution) = trajectory.(ess.solutions)
-controls(ess::EnsembleSimulationSolution, i) = controls(solution(ess, i))
+controls(ess::EnsembleSimulationSolution, i) = controls(ess[i])
 controls(ess::EnsembleSimulationSolution) = controls.(ess.solutions)
-disturbances(ess::EnsembleSimulationSolution, i) = disturbances(solution(ess, i))
+disturbances(ess::EnsembleSimulationSolution, i) = disturbances(ess[i])
 disturbances(ess::EnsembleSimulationSolution) = disturbances.(ess.solutions)
 
 """
@@ -71,7 +71,8 @@ function simulate(cp::AbstractControlProblem, args...; kwargs...)
     st_vars = states(cp)
     dist_vars = disturbances(cp)
     X₀ = project(initial_state(cp), st_vars)
-    if !isempty(dist_vars)
+    use_disturbance = !isempty(dist_vars)
+    if use_disturbance
         W₀ = project(initial_state(cp), dist_vars)
     end
     τ = period(cp)
@@ -107,19 +108,17 @@ function simulate(cp::AbstractControlProblem, args...; kwargs...)
         all_controls[i] = control_signals
 
         # compute disturbances
-        if !isempty(dist_vars)
+        if use_disturbance
             disturbance_signals = sample(W₀, trajectories)
             all_disturbances[i] = disturbance_signals
-        else
-            disturbance_signals = nothing
         end
 
         # extend system state with disturbances
         for j in 1:trajectories
-            if isnothing(disturbance_signals)
-                extended[j] = vcat(x0_vec[j], control_signals[j])
-            else
+            if use_disturbance
                 extended[j] = vcat(x0_vec[j], disturbance_signals[j], control_signals[j])
+            else
+                extended[j] = vcat(x0_vec[j], control_signals[j])
             end
         end
 

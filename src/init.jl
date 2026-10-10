@@ -4,6 +4,7 @@ end
 using Reexport: @reexport
 
 using Base: isempty
+using LinearAlgebra: isdiag
 using ControllerFormats: ActivationFunction, DenseLayerOp, FeedforwardNetwork,
                          Id, ReLU
 # controller formats and parsers

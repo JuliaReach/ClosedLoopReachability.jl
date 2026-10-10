@@ -25,8 +25,9 @@ import Aqua, ExplicitImports, JET
                                    :center, :diam, :domain, :evaluate, :high, :initial_state,
                                    :interval, :linear_map, :low, :mid, :ngens, :overapproximate,
                                    :polynomial, :project, :radius_hyperrectangle, :rand,
-                                   :remainder, :rsetrep, :sample, :scale, :set, :size, :sup,
-                                   :system, :tend, :translate, :tstart, :(×), :shift, :vars)
+                                   :reduce_order, :remainder, :rsetrep, :sample, :scale, :set,
+                                   :size, :sup, :system, :tend, :translate, :tstart, :(×), :shift,
+                                   :vars)
     ignores_no_self_qualified_accesses = (:controller,)
     ExplicitImports.test_explicit_imports(ClosedLoopReachability;
                                           all_explicit_imports_are_public=(ignore=ignores_all_explicit_imports_are_public,),
