@@ -1,0 +1,115 @@
+module SpacecraftDocking
+
+using ClosedLoopReachability
+import OrdinaryDiffEq, Plots, DisplayAs
+using ReachabilityBase.CurrentPath: @current_path
+using ReachabilityBase.Timing: print_timed
+using Plots: plot, plot!
+
+vars_idx = Dict(:states => 1:4, :controls => 5:6)
+
+const m = 12.0
+const n = 0.001027
+const three_n² = 3 * n^2
+const two_n = 2 * n
+
+@taylorize function SpacecraftDocking!(dx, x, p, t)
+    s_x, s_y, s_x′, s_y′, F_x, F_y = x
+
+    dx[1] = s_x′
+    dx[2] = s_y′
+    dx[3] = three_n² * s_x + two_n * s_y′ + F_x / m
+    dx[4] = -two_n * s_x′ + F_y / m
+    dx[5] = zero(F_x)
+    dx[6] = zero(F_y)
+    return dx
+end;
+
+path = @current_path("SpacecraftDocking", "SpacecraftDocking_controller.polar")
+controller = read_POLAR(path);
+
+period = 1.0;
+
+X₀ = Hyperrectangle(low=[70, 70, -0.14, -0.14], high=[106, 106, 0.14, 0.14])
+U₀ = ZeroSet(2);
+
+ivp = @ivp(x' = SpacecraftDocking!(x), dim: 6, x(0) ∈ X₀ × U₀)
+prob = ControlledPlant(ivp, controller, vars_idx, period);
+
+function predicate_point(v::Union{AbstractVector,IntervalBox})
+    x, y, x′, y′, F_x, F_y = v
+    lhs = sqrt(x′^2 + y′^2)
+    rhs = 0.2 + two_n * sqrt(x^2 + y^2)
+    return sup(lhs) <= inf(rhs)
+end
+
+function predicate_set(R)
+    return predicate_point(convert(IntervalBox, box_approximation(R)))
+end
+
+predicate(sol) = all(predicate_set(R) for F in sol for R in F)
+
+T = 40.0
+T_warmup = 2 * period;  # shorter time horizon for warm-up run
+
+algorithm_plant = TMJets(abstol=5e-1, orderT=3, orderQ=1);
+
+algorithm_controller = DeepZ();
+
+function benchmark(; T=T, silent::Bool=false)
+    # Solve the controlled system:
+    silent || println("Flowpipe construction:")
+    res = @timed solve(prob; T=T, algorithm_controller=algorithm_controller,
+                       algorithm_plant=algorithm_plant)
+    sol = res.value
+    silent || print_timed(res)
+
+    # Check the property:
+    silent || println("Property checking:")
+    res = @timed predicate(sol)
+    silent || print_timed(res)
+    if res.value
+        silent || println("  The property is satisfied.")
+        result = "verified"
+    else
+        silent || println("  The property may be violated.")
+        result = "not verified"
+    end
+
+    return sol, result
+end;
+
+benchmark(T=T_warmup, silent=true)  # warm-up
+res = @timed benchmark(T=T)  # benchmark
+sol, result = res.value
+@assert (result == "verified") "verification failed"
+println("Total analysis time:")
+print_timed(res)
+
+println("Simulation:")
+res = @timed simulate(prob; T=T, trajectories=1, include_vertices=true)
+sim = res.value
+print_timed(res);
+
+function plot_helper(vars)
+    fig = plot()
+    plot!(fig, sol; vars=vars, color=:yellow, lw=0, alpha=1, lab="")
+    if vars[1] == 0
+        initial_states_projected = cartesian_product(Singleton([0.0]), project(X₀, [vars[2]]))
+        plot!(fig, initial_states_projected; c=:cornflowerblue, alpha=1, lab="X₀",
+              m=:none, lw=3)
+    else
+        plot!(fig, project(X₀, vars); c=:cornflowerblue, alpha=1, lab="X₀")
+    end
+    plot_simulation!(fig, sim; vars=vars, color=:black, lab="")
+    return fig
+end;
+
+vars = (0, 1)
+fig = plot_helper(vars)
+plot!(fig; xlab="t", ylab="x₁")
+# Plots.savefig(fig, "SpacecraftDocking.png")  # command to save the plot to a file
+fig = DisplayAs.Text(DisplayAs.PNG(fig))
+
+end
+nothing
