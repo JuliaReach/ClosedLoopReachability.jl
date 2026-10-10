@@ -1,5 +1,5 @@
 using ClosedLoopReachability, Test
-import Aqua, ExplicitImports
+import Aqua, ExplicitImports, JET
 
 @testset "ExplicitImports tests" begin
     ignores_all_explicit_imports_are_public = (:AbstractContinuousPost, :AbstractLazyReachSet,
@@ -25,14 +25,20 @@ import Aqua, ExplicitImports
                                    :center, :diam, :domain, :evaluate, :high, :initial_state,
                                    :interval, :linear_map, :low, :mid, :ngens, :overapproximate,
                                    :polynomial, :project, :radius_hyperrectangle, :rand,
-                                   :remainder, :rsetrep, :sample, :scale, :set, :size, :sup,
-                                   :system, :tend, :translate, :tstart, :(×), :shift, :vars)
+                                   :reduce_order, :remainder, :rsetrep, :sample, :scale, :set,
+                                   :size, :sup, :system, :tend, :translate, :tstart, :(×), :shift,
+                                   :vars)
     ignores_no_self_qualified_accesses = (:controller,)
     ExplicitImports.test_explicit_imports(ClosedLoopReachability;
                                           all_explicit_imports_are_public=(ignore=ignores_all_explicit_imports_are_public,),
                                           all_qualified_accesses_are_public=(ignore=ignores_all_qualified_accesses_are_public,),
                                           no_implicit_imports=(ignore=ignores_no_implicit_imports,),
                                           no_self_qualified_accesses=(ignore=ignores_no_self_qualified_accesses,))
+end
+
+@testset "JET tests" begin
+    # false positives for Base functionality
+    JET.test_package(ClosedLoopReachability; target_modules=(ClosedLoopReachability,))
 end
 
 @testset "Aqua tests" begin
