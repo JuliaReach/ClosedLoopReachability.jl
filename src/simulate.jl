@@ -93,6 +93,7 @@ function simulate(cp::AbstractControlProblem, args...; kwargs...)
     # preallocate
     extended = Vector{Vector{Float64}}(undef, trajectories)
     simulations = _initialize_simulation_container(iterations)
+    @assert !isnothing(simulations)
     all_controls = Vector{Vector{Vector{Float64}}}(undef, iterations)
     all_disturbances = Vector{Vector{Vector{Float64}}}(undef, iterations)
 
@@ -109,6 +110,7 @@ function simulate(cp::AbstractControlProblem, args...; kwargs...)
 
         # compute disturbances
         if use_disturbance
+            @assert @isdefined W₀
             disturbance_signals = sample(W₀, trajectories)
             all_disturbances[i] = disturbance_signals
         end
@@ -116,6 +118,7 @@ function simulate(cp::AbstractControlProblem, args...; kwargs...)
         # extend system state with disturbances
         for j in 1:trajectories
             if use_disturbance
+                @assert @isdefined disturbance_signals
                 extended[j] = vcat(x0_vec[j], disturbance_signals[j], control_signals[j])
             else
                 extended[j] = vcat(x0_vec[j], control_signals[j])
