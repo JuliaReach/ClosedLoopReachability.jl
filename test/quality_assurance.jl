@@ -1,5 +1,5 @@
 using ClosedLoopReachability, Test
-import Aqua, ExplicitImports
+import Aqua, ExplicitImports, JET
 
 @testset "ExplicitImports tests" begin
     ignores_all_explicit_imports_are_public = (:AbstractContinuousPost, :AbstractLazyReachSet,
@@ -33,6 +33,11 @@ import Aqua, ExplicitImports
                                           all_qualified_accesses_are_public=(ignore=ignores_all_qualified_accesses_are_public,),
                                           no_implicit_imports=(ignore=ignores_no_implicit_imports,),
                                           no_self_qualified_accesses=(ignore=ignores_no_self_qualified_accesses,))
+end
+
+@testset "JET tests" begin
+    # false positives for Base functionality
+    JET.test_package(ClosedLoopReachability; target_modules=(ClosedLoopReachability,))
 end
 
 @testset "Aqua tests" begin
