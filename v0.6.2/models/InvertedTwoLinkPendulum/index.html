@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Inverted Two-Link Pendulum · ClosedLoopReachability.jl</title><meta name="title" content="Inverted Two-Link Pendulum · ClosedLoopReachability.jl"/><meta property="og:title" content="Inverted Two-Link Pendulum · ClosedLoopReachability.jl"/><meta property="twitter:title" content="Inverted Two-Link Pendulum · ClosedLoopReachability.jl"/><meta name="description" content="Documentation for ClosedLoopReachability.jl."/><meta property="og:description" content="Documentation for ClosedLoopReachability.jl."/><meta property="twitter:description" content="Documentation for ClosedLoopReachability.jl."/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/aligned.css" rel="stylesheet" type="text/css"/><link href="../../assets/citations.css" rel="stylesheet" type="text/css"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="ClosedLoopReachability.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">ClosedLoopReachability.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">Home</a></li><li><input class="collapse-toggle" id="menuitem-2" type="checkbox" checked/><label class="tocitem" for="menuitem-2"><span class="docs-label">Examples</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../ACC/">Adaptive Cruise Control (ACC)</a></li><li><a class="tocitem" href="../Airplane/">Airplane</a></li><li><a class="tocitem" href="../AttitudeControl/">Attitude Control</a></li><li><a class="tocitem" href="../InvertedPendulum/">Inverted Pendulum</a></li><li class="is-active"><a class="tocitem" href>Inverted Two-Link Pendulum</a><ul class="internal"><li><a class="tocitem" href="#Model"><span>Model</span></a></li><li><a class="tocitem" href="#Specification"><span>Specification</span></a></li><li><a class="tocitem" href="#Analysis"><span>Analysis</span></a></li><li><a class="tocitem" href="#Results"><span>Results</span></a></li></ul></li><li><a class="tocitem" href="../Quadrotor/">Quadrotor</a></li><li><a class="tocitem" href="../SpacecraftDocking/">Spacecraft Docking</a></li><li><a class="tocitem" href="../TORA/">Translational Oscillations by a Rotational Actuator (TORA)</a></li><li><a class="tocitem" href="../Unicycle/">Unicycle</a></li><li><a class="tocitem" href="../VerticalCAS/">Vertical Collision Avoidance System (VerticalCAS)</a></li></ul></li><li><input class="collapse-toggle" id="menuitem-3" type="checkbox"/><label class="tocitem" for="menuitem-3"><span class="docs-label">API Reference</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../../lib/problems/">Problem types</a></li><li><a class="tocitem" href="../../lib/solvers/">Solvers</a></li></ul></li><li><a class="tocitem" href="../../bibliography/">Bibliography</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Examples</a></li><li class="is-active"><a href>Inverted Two-Link Pendulum</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Inverted Two-Link Pendulum</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/JuliaReach/ClosedLoopReachability.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/JuliaReach/ClosedLoopReachability.jl/blob/master/models/InvertedTwoLinkPendulum/InvertedTwoLinkPendulum.jl" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Inverted-Two-Link-Pendulum"><a class="docs-heading-anchor" href="#Inverted-Two-Link-Pendulum">Inverted Two-Link Pendulum</a><a id="Inverted-Two-Link-Pendulum-1"></a><a class="docs-heading-anchor-permalink" href="#Inverted-Two-Link-Pendulum" title="Permalink"></a></h1><p>The Inverted Two-Link Pendulum benchmark is a classical inverted pendulum with two links. We consider two different scenarios, which we respectively refer to as the less robust and the more robust scenario.</p><pre><code class="language-julia hljs">using ClosedLoopReachability
+import OrdinaryDiffEq, Plots, DisplayAs
+using ReachabilityBase.CurrentPath: @current_path
+using ReachabilityBase.Timing: print_timed
+using ClosedLoopReachability: Specification, NoSplitter
+using Plots: plot, plot!, xlims!, ylims!</code></pre><p>The following option determines whether the verification settings should be used in the less robust scenario. The verification settings are chosen to show that the safety property is satisfied, which is expensive in this case. Concretely, we split the initial states into small chunks and run many analyses. Without the verification settings, the analysis is only run for a short time horizon.</p><pre><code class="language-julia hljs">const verification = false;</code></pre><p>The following option determines whether the falsification settings should be used in the more robust scenario. The falsification settings are sufficient to show that the safety property is violated. Concretely, we start from an initial point and use a smaller time horizon.</p><pre><code class="language-julia hljs">const falsification = true;</code></pre><h2 id="Model"><a class="docs-heading-anchor" href="#Model">Model</a><a id="Model-1"></a><a class="docs-heading-anchor-permalink" href="#Model" title="Permalink"></a></h2><p>The double-link inverted pendulum consists of equal point masses <span>$m$</span> at the end of connected mass-less links of length <span>$L$</span>. Both links are actuated with torques <span>$T_1$</span> and <span>$T_2$</span>. We assume viscous friction with coefficient <span>$c$</span>.</p><p>The governing equations of motion can be obtained as:</p><p class="math-container">\[\begin{aligned}
+2 \ddot θ_1 + \ddot θ_2 cos(θ_2 - θ_1) - \ddot θ_2^2 sin(θ_2 - θ_1) -
+    2 \dfrac{g}{L} sin(θ_1) + \dfrac{c}{m L^2} \dot{θ}_1 &amp;= \dfrac{1}{m L^2} T_1 \\
+\ddot θ_1 cos(θ_2 - θ_1) + \ddot θ_2 + \ddot θ_1^2 sin(θ_2 - θ_1) -
+    \dfrac{g}{L} sin(θ_2) + \dfrac{c}{m L^2} \dot{θ}_2 &amp;= \dfrac{1}{m L^2} T_2
+\end{aligned}\]</p><p>where <span>$θ_1$</span> and <span>$θ_2$</span> are the angles that the links make with the upward vertical axis, <span>$\dot{θ}_1$</span> and <span>$\dot{θ}_2$</span> are the angular velocities, and <span>$g$</span> is the gravitational acceleration. The state vector is <span>$(θ_1, θ_2, \dot{θ}_1, \dot{θ}_2)$</span>. See the picture below for a visualization.</p><p><img src="../InvertedTwoLinkPendulum_explanation.png" alt/></p><p>The dynamics are given as first-order differential equations below.</p><pre><code class="language-julia hljs">vars_idx = Dict(:states =&gt; 1:4, :controls =&gt; 5:6)
+
+const m = 0.5
+const L = 0.5
+const c = 0.0
+const g = 1.0
+const gL = g / L
+const mL = 1 / (m * L^2)
+
+@taylorize function InvertedTwoLinkPendulum!(dx, x, p, t)
+    θ₁, θ₂, θ₁′, θ₂′, T₁, T₂ = x
+
+    Δ12 = θ₁ - θ₂
+    cos12 = cos(Δ12)
+    x3sin12 = θ₁′^2 * sin(Δ12)
+    x4sin12 = θ₂′^2 * sin(Δ12) / 2
+    gLsin1 = gL * sin(θ₁)
+    gLsin2 = gL * sin(θ₂)
+    T1_frac = (T₁ - c * θ₁′) * (0.5 * mL)
+    T2_frac = (T₂ - c * θ₂′) * mL
+    bignum = x3sin12 - cos12 * (gLsin1 - x4sin12 + T1_frac) + gLsin2 + T2_frac
+    denom = cos12^2 / 2 - 1
+
+    dx[1] = θ₁′
+    dx[2] = θ₂′
+    dx[3] = cos12 * bignum / (2 * denom) - x4sin12 + gLsin1 + T1_frac
+    dx[4] = -bignum / denom
+    dx[5] = zero(T₁)
+    dx[6] = zero(T₂)
+    return dx
+end;</code></pre><p>We are given two neural-network controllers with 2 hidden layers of 25 neurons each and ReLU activations. Both controllers have 4 inputs (the state variables) and 2 output (<span>$T₁$</span> and <span>$T₂$</span>).</p><pre><code class="language-julia hljs">path = @current_path(&quot;InvertedTwoLinkPendulum&quot;,
+                     &quot;InvertedTwoLinkPendulum_controller_less_robust.polar&quot;)
+controller_lr = read_POLAR(path)
+
+path = @current_path(&quot;InvertedTwoLinkPendulum&quot;,
+                     &quot;InvertedTwoLinkPendulum_controller_more_robust.polar&quot;)
+controller_mr = read_POLAR(path);</code></pre><p>The controllers have different control periods: 0.05 (less robust) resp. 0.02 (more robust) time units.</p><pre><code class="language-julia hljs">period_lr = 0.05
+period_mr = 0.02;</code></pre><h2 id="Specification"><a class="docs-heading-anchor" href="#Specification">Specification</a><a id="Specification-1"></a><a class="docs-heading-anchor-permalink" href="#Specification" title="Permalink"></a></h2><p>The uncertain initial condition is <span>$(θ_1, θ_2, \dot{θ}_1, \dot{θ}_2) ∈ [1, 1.3]^4$</span>.</p><p>The safety specification is that, for all times <span>$t$</span> for 20 control periods, we have <span>$(θ_1, θ_2, \dot{θ}_1, \dot{θ}_2) ∈ [-1, 1.7]^4$</span> (less robust scenario) respectively <span>$(θ_1, θ_2, \dot{θ}_1, \dot{θ}_2) ∈ [-0.5, 1.5]^4$</span> (more robust scenario). A sufficient condition for guaranteed violation is to overapproximate the result with hyperrectangles.</p><p>The following script creates a different problem instance for the less robust and the more robust scenario, respectively.</p><pre><code class="language-julia hljs">function InvertedTwoLinkPendulum_spec(less_robust_scenario::Bool)
+    controller = less_robust_scenario ? controller_lr : controller_mr
+
+    X₀ = BallInf(fill(1.15, 4), 0.15)
+    if falsification &amp;&amp; !less_robust_scenario
+        # Choose a single point in the initial states (here: the top-most one):
+        X₀ = Singleton(high(X₀))
+    end
+    U₀ = ZeroSet(2)
+
+    period = less_robust_scenario ? period_lr : period_mr
+
+    # The control problem is:
+    ivp = @ivp(x&#39; = InvertedTwoLinkPendulum!(x), dim: 6, x(0) ∈ X₀ × U₀)
+    prob = ControlledPlant(ivp, controller, vars_idx, period)
+
+    # Safety specification:
+    if less_robust_scenario
+        box = BallInf(fill(0.15, 4), 1.85)
+    else
+        box = BallInf(fill(0.0, 4), 1.5)
+    end
+    safe_states = cartesian_product(box, Universe(2))
+
+    predicate_set_safe(R) = overapproximate(R, Hyperrectangle) ⊆ safe_states
+    predicate_set_unsafe(R) = isdisjoint(overapproximate(R, Hyperrectangle), safe_states)
+
+    function predicate_safe(sol; silent::Bool=false)
+        for F in sol, R in F
+            if !predicate_set_safe(R)
+                silent || println(&quot;  Potential violation for time range $(tspan(R)).&quot;)
+                return false
+            end
+        end
+        return true
+    end
+
+    function predicate_unsafe(sol)
+        for F in sol, R in F
+            if predicate_set_unsafe(R)
+                return true
+            end
+        end
+        return false
+    end
+
+    if less_robust_scenario
+        predicate = predicate_safe
+    else
+        predicate = predicate_unsafe
+    end
+
+    if !verification &amp;&amp; less_robust_scenario
+        # Run for a shorter time horizon if verification is deactivated:
+        k = 2
+    elseif falsification &amp;&amp; !less_robust_scenario
+        # Falsification can run for a shorter time horizon:
+        k = 18
+    else
+        k = 20
+    end
+    T = k * period  # time horizon
+
+    spec = Specification(T, predicate, safe_states)
+
+    return prob, spec
+end;</code></pre><h2 id="Analysis"><a class="docs-heading-anchor" href="#Analysis">Analysis</a><a id="Analysis-1"></a><a class="docs-heading-anchor-permalink" href="#Analysis" title="Permalink"></a></h2><p>To enclose the continuous dynamics, we use a Taylor-model-based algorithm. We also use an additional splitting strategy to increase the precision. These algorithms are defined later for each scenario. To propagate sets through the neural network, we use the <code>DeepZ</code> algorithm:</p><pre><code class="language-julia hljs">algorithm_controller = DeepZ();</code></pre><p>The verification/falsification benchmark (depending on the scenario) is given below:</p><pre><code class="language-julia hljs">function benchmark(prob, spec; T, algorithm_plant, splitter, less_robust_scenario, silent::Bool=false)
+    # Solve the controlled system:
+    silent || println(&quot;Flowpipe construction:&quot;)
+    res = @timed solve(prob; T=T, algorithm_controller=algorithm_controller,
+                       algorithm_plant=algorithm_plant, splitter=splitter)
+    sol = res.value
+    silent || print_timed(res)
+
+    # Check the property:
+    silent || println(&quot;Property checking:&quot;)
+    if less_robust_scenario
+        res = @timed spec.predicate(sol; silent=silent)
+        silent || print_timed(res)
+        if res.value
+            silent || println(&quot;  The property is verified.&quot;)
+            result = &quot;verified&quot;
+        else
+            silent || println(&quot;  The property may be violated.&quot;)
+            result = &quot;not verified&quot;
+        end
+    else
+        res = @timed spec.predicate(sol)
+        silent || print_timed(res)
+        if res.value
+            silent || println(&quot;  The property is violated.&quot;)
+            result = &quot;falsified&quot;
+        else
+            silent || println(&quot;  The property may be satisfied.&quot;)
+            result = &quot;not falsified&quot;
+        end
+    end
+
+    return sol, result
+end
+
+function run(; less_robust_scenario::Bool)
+    if less_robust_scenario
+        println(&quot;# Running analysis with less robust scenario&quot;)
+        algorithm_plant = TMJets(abstol=1e-9, orderT=5, orderQ=1)
+        splitter = !verification ? BoxSplitter([[1.15], [1.15], Float64[], [1.2]]) :
+            BoxSplitter([[1.15], [1.15], [1.12, 1.25], [1.05, 1.11, 1.165, 1.21, 1.257]])
+        T_warmup = 2 * period_lr  # shorter time horizon for warm-up run
+    else
+        println(&quot;# Running analysis with more robust scenario&quot;)
+        algorithm_plant = TMJets(abstol=1e-2, orderT=3, orderQ=1)
+        splitter = NoSplitter()
+        T_warmup = 2 * period_mr  # shorter time horizon for warm-up run
+    end
+    prob, spec = InvertedTwoLinkPendulum_spec(less_robust_scenario)
+
+    # Run the verification/falsification benchmark:
+    benchmark(prob, spec; T=T_warmup, algorithm_plant=algorithm_plant, splitter=splitter,
+              less_robust_scenario=less_robust_scenario, silent=true)  # warm-up
+    res = @timed benchmark(prob, spec; T=spec.T, algorithm_plant=algorithm_plant,  # benchmark
+                           splitter=splitter, less_robust_scenario=less_robust_scenario)
+    sol, result = res.value
+    if verification &amp;&amp; less_robust_scenario
+        @assert (result == &quot;verified&quot;) &quot;verification failed&quot;
+    elseif !less_robust_scenario
+        @assert (result == &quot;falsified&quot;) &quot;falsification failed&quot;
+    end
+    println(&quot;Total analysis time:&quot;)
+    print_timed(res)
+
+    # Compute some simulations:
+    println(&quot;Simulation:&quot;)
+    simulations = less_robust_scenario || !falsification
+    trajectories = simulations ? 10 : 1
+    res = @timed simulate(prob; T=spec.T, trajectories=trajectories,
+                          include_vertices=simulations)
+    sim = res.value
+    print_timed(res)
+
+    return sol, sim, prob, spec
+end;</code></pre><p>Run the analysis script for the less robust scenario:</p><pre><code class="language-julia hljs">sol_lr, sim_lr, prob_lr, spec_lr = run(less_robust_scenario=true);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis with less robust scenario
+Flowpipe construction:
+ 33.891516 seconds (502.60 M allocations: 21.511 GiB, 27.18% gc time)
+Property checking:
+  0.320797 seconds (5.94 M allocations: 260.475 MiB, 9.23% gc time)
+  The property is verified.
+Total analysis time:
+ 34.220048 seconds (508.54 M allocations: 21.766 GiB, 27.00% gc time, 0.00% compilation time)
+Simulation:
+  1.054896 seconds (2.23 M allocations: 115.023 MiB, 0.00% compilation time)</code></pre><p>Run the analysis script for the more robust scenario:</p><pre><code class="language-julia hljs">sol_mr, sim_mr, prob_mr, spec_mr = run(less_robust_scenario=false);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis with more robust scenario
+Flowpipe construction:
+  0.613431 seconds (12.66 M allocations: 587.144 MiB, 11.19% gc time)
+Property checking:
+  0.033609 seconds (115.57 k allocations: 5.403 MiB, 68.35% gc time)
+  The property is violated.
+Total analysis time:
+  0.653401 seconds (12.78 M allocations: 593.222 MiB, 14.03% gc time, 0.00% compilation time)
+Simulation:
+  0.114938 seconds (89.62 k allocations: 4.741 MiB, 0.00% compilation time)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper(vars, sol, sim, prob, spec; lab_sim=&quot;&quot;)
+    safe_states = spec.ext
+    fig = plot()
+    plot!(fig, project(safe_states, vars); color=:lightgreen, lab=&quot;safe&quot;)
+    plot!(fig, sol; vars=vars, color=:yellow, lw=0, alpha=1, lab=&quot;&quot;)
+    plot!(fig, project(initial_state(prob), vars); c=:cornflowerblue, alpha=1, lab=&quot;X₀&quot;)
+    plot_simulation!(fig, sim; vars=vars, color=:black, lab=lab_sim)
+    return fig
+end;</code></pre><p>Plot the results:</p><pre><code class="language-julia hljs">vars = (1, 2)
+fig = plot_helper(vars, sol_lr, sim_lr, prob_lr, spec_lr)
+plot!(fig; xlab=&quot;θ₁&quot;, ylab=&quot;θ₂&quot;)
+# Command to save the plot to a file:
+# Plots.savefig(fig, &quot;InvertedTwoLinkPendulum-less-robust-x1-x2.png&quot;)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="a3c3b788.png" alt="Example block output"/><pre><code class="language-julia hljs">vars = (3, 4)
+fig = plot_helper(vars, sol_lr, sim_lr, prob_lr, spec_lr)
+plot!(fig; xlab=&quot;θ₁&#39;&quot;, ylab=&quot;θ₂&#39;&quot;)
+# Command to save the plot to a file:
+# Plots.savefig(fig, &quot;InvertedTwoLinkPendulum-less-robust-x3-x4.png&quot;)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="03bcdf44.png" alt="Example block output"/><pre><code class="language-julia hljs">vars = (3, 4)
+lab_sim = falsification ? &quot;simulation&quot; : &quot;&quot;
+fig = plot_helper(vars, sol_mr, sim_mr, prob_mr, spec_mr; lab_sim=lab_sim)
+plot!(fig; xlab=&quot;θ₁&#39;&quot;, ylab=&quot;θ₂&#39;&quot;)
+# Command to save the plot to a file:
+# Plots.savefig(fig, &quot;InvertedTwoLinkPendulum-more-robust.png&quot;)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="f6f4225c.png" alt="Example block output"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../InvertedPendulum/">« Inverted Pendulum</a><a class="docs-footer-nextpage" href="../Quadrotor/">Quadrotor »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Sunday 17 August 2025 10:19">Sunday 17 August 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
