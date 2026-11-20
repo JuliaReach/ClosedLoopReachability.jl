@@ -183,24 +183,24 @@ function run(; verification::Bool)
     return sol, sim, prob, spec
 end;</code></pre><p>Run the analysis script for the verification scenario:</p><pre><code class="language-julia hljs">sol_v, sim_v, prob_v, spec_v = run(verification=true);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis with verification scenario
 Flowpipe construction:
- 29.421505 seconds (30.99 M allocations: 1.543 GiB, 1.20% gc time)
+ 22.865452 seconds (30.99 M allocations: 1.543 GiB, 1.12% gc time)
 Property checking:
-  0.483553 seconds (843.37 k allocations: 45.893 MiB, 0.00% compilation time)
+  0.386729 seconds (843.37 k allocations: 45.909 MiB, 0.00% compilation time)
   The property is verified.
 Total analysis time:
- 29.912040 seconds (31.84 M allocations: 1.588 GiB, 1.18% gc time, 0.00% compilation time)
+ 23.257635 seconds (31.84 M allocations: 1.588 GiB, 1.10% gc time, 0.00% compilation time)
 Simulation:
-  0.618721 seconds (2.48 M allocations: 145.001 MiB, 0.00% compilation time)</code></pre><p>Run the analysis script for the falsification scenario:</p><pre><code class="language-julia hljs">sol_f, sim_f, prob_f, spec_f = run(verification=false);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis with falsification scenario
+  0.490868 seconds (2.76 M allocations: 158.971 MiB, 0.00% compilation time)</code></pre><p>Run the analysis script for the falsification scenario:</p><pre><code class="language-julia hljs">sol_f, sim_f, prob_f, spec_f = run(verification=false);</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi"># Running analysis with falsification scenario
 Flowpipe construction:
-  1.622666 seconds (1.75 M allocations: 88.813 MiB, 4.42% gc time)
+  1.288920 seconds (1.75 M allocations: 88.813 MiB, 4.49% gc time)
 Property checking:
   Violation for time range ReachabilityAnalysis.TimeInterval{IntervalArithmetic.Interval{Float64}}([0.5, 0.509134]).
-  0.035134 seconds (29.14 k allocations: 1.768 MiB, 0.00% compilation time)
+  0.030209 seconds (29.14 k allocations: 1.768 MiB, 0.00% compilation time)
   The property is violated.
 Total analysis time:
-  1.665521 seconds (1.78 M allocations: 91.436 MiB, 4.30% gc time, 0.00% compilation time)
+  1.326004 seconds (1.78 M allocations: 91.436 MiB, 4.37% gc time, 0.00% compilation time)
 Simulation:
-  0.101474 seconds (77.56 k allocations: 4.340 MiB, 0.00% compilation time)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper(sol, sim, prob, spec, verification)
+  0.086162 seconds (77.56 k allocations: 4.340 MiB, 0.00% compilation time)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><p>Script to plot the results:</p><pre><code class="language-julia hljs">function plot_helper(sol, sim, prob, spec, verification)
     vars = (0, 1)
     fig = plot(leg=:topright)
     lab = &quot;unsafe&quot;
@@ -224,7 +224,7 @@ ylims!(fig, 0.5, 1.2)
 lens!(fig, [0.49, 0.52], [0.99, 1.01]; inset=(1, bbox(0.1, 0.6, 0.3, 0.3)),
       lc=:black, xticks=[0.5], yticks=[1.0], subplot=3)
 # Plots.savefig(fig, &quot;InvertedPendulum_verification.png&quot;)  # command to save the plot to a file
-fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="7103489f.png" alt="Example block output" width="600" height="400"/><pre><code class="language-julia hljs">fig = plot_helper(sol_f, sim_f, prob_f, spec_f, false)
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="e3a1def3.png" alt="Example block output" width="600" height="400"/><pre><code class="language-julia hljs">fig = plot_helper(sol_f, sim_f, prob_f, spec_f, false)
 ylims!(fig, 0.95, 1.22)
 # Plots.savefig(fig, &quot;InvertedPendulum_falsification.png&quot;)  # command to save the plot to a file
-fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="e9209142.png" alt="Example block output" width="600" height="400"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../AttitudeControl/">« Attitude Control</a><a class="docs-footer-nextpage" href="../InvertedTwoLinkPendulum/">Inverted Two-Link Pendulum »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.20.0 on <span class="colophon-date" title="Saturday 14 November 2026 11:10">Saturday 14 November 2026</span>. Using Julia version 1.13.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+fig = DisplayAs.Text(DisplayAs.PNG(fig))</code></pre><img src="4c295702.png" alt="Example block output" width="600" height="400"/></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../AttitudeControl/">« Attitude Control</a><a class="docs-footer-nextpage" href="../InvertedTwoLinkPendulum/">Inverted Two-Link Pendulum »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.20.0 on <span class="colophon-date" title="Friday 20 November 2026 23:04">Friday 20 November 2026</span>. Using Julia version 1.13.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
